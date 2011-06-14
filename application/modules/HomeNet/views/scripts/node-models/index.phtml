@@ -1,0 +1,19 @@
+<h1>Node Models</h1>
+<?php $type = array(1 => 'Sensor Node', 2 => 'Base Station', 3 => 'Internet Node'); ?>
+<table class="ui-widget" width="100%">
+  <thead class="ui-widget-header">
+    <tr><th width="30">ID</th><th>Name</th><th>Description</th><th width="150">Edit/Delete</th></tr>
+    </thead>
+    <tbody class="ui-widget-content">
+<?php foreach($this->models as $model){ ?>
+<tr class="<?php echo $this->cycle(array("","ui-state-highlight"))->next()?>">
+    <td><?php echo $model->id ?></td>
+    <td><?php echo $type[$model->type].' '.$model->name ?></td>
+    <td><?php echo $model->description ?></td>
+    <td><a class="button" href="<?php echo $this->url(array('model'=>$model->id, 'action'=>'edit'),  'homenet-nodemodels-model'); ?>"><span class="ui-icon ui-icon-pencil"></span></a>
+        <a class="button" href="<?php echo $this->url(array('model'=>$model->id, 'action'=>'remove'),'homenet-nodemodels-model'); ?>"><span class="ui-icon ui-icon-closethick"></span></a></td>
+</tr>
+<?php } ?>
+</tbody>
+</table>
+<a class="button" href="<?php echo $this->url(array('action'=>'add'),'homenet-nodemodels'); ?>">Add Node Model</a>

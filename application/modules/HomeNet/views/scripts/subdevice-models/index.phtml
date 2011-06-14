@@ -1,0 +1,19 @@
+<h1>Subdevice Models</h1>
+
+<table class="ui-widget" width="100%">
+  <thead class="ui-widget-header">
+    <tr><th width="30">ID</th><th>Name</th><th>Description</th><th width="150">Edit/Delete</th></tr>
+    </thead>
+    <tbody class="ui-widget-content">
+<?php foreach($this->models as $model){ ?>
+<tr class="<?php echo $this->cycle(array("","ui-state-highlight"))->next()?>">
+    <td><?php echo $model->id ?></td>
+    <td><?php echo $model->name ?></td>
+    <td><?php echo $model->description ?></td>
+    <td><a class="button" href="<?php echo $this->url(array('model'=>$model->id, 'action'=>'edit'),'homenet-subdevicemodels-model'); ?>"><span class="ui-icon ui-icon-pencil"></span></a>
+        <a class="button" href="<?php echo $this->url(array('model'=>$model->id, 'action'=>'remove'),'homenet-subdevicemodels-model'); ?>"><span class="ui-icon ui-icon-closethick"></span></a></td>
+</tr>
+<?php } ?>
+</tbody>
+</table>
+<a class="button" href="<?php echo $this->url(array('action'=>'add'),'homenet-subdevicemodels'); ?>">Add Subdevice Model</a>

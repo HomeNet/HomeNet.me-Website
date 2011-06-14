@@ -1,0 +1,68 @@
+<div data-role="page">
+    <div data-role="header">
+        <h1>Home</h1>
+    </div>
+
+    <div data-role="content">
+
+
+    <ul data-role="listview" data-inset="true">
+            <li data-role="list-divider">Feed</li>
+
+        <?php 
+        $count = 5;
+        
+        
+        foreach ($this->alerts as $alert){
+
+            if($count == 0){
+                break;
+            }
+            $count--;
+
+    switch ($alert->level){
+        case HomeNet_Model_Alert::ERROR:
+            $icon = 'alert';
+            break;
+        case HomeNet_Model_Alert::WARNING:
+            $icon = 'alert';
+            break;
+        case HomeNet_Model_Alert::INFO:
+            $icon = 'info';
+            break;
+        case HomeNet_Model_Alert::CHANGE:
+            $icon = 'info';
+            break;
+        case HomeNet_Model_Alert::NEWITEM:
+
+            $icon = 'star';
+            break;
+        case HomeNet_Model_Alert::HIGH:
+            $icon = 'arrow-n';
+            break;
+        case HomeNet_Model_Alert::LOW:
+            $icon = 'arrow-s';
+            break;
+    }
+//<a href="index.html" data-role="button" data-icon="delete" data-iconpos="notext">Delete</a>
+
+    ?>
+
+             <li><span style="float: left; margin-right: 0.3em;" class="ui-icon ui-icon-<?php echo $icon ?>"></span><?php echo $alert->message ?>  </li>
+<?php } ?>
+
+             </ul>
+
+
+<?php echo $this->layout()->column ?>
+
+
+
+
+
+    </div>
+
+    <div data-role="footer">
+        <h4>HomeNet.me</h4>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="<?php echo $this->class ?>">
+
+    <?php echo $this->formLabel($this->element->getName(),
+            $this->element->getLabel()) ?>
+    <div class="form-input">
+        <?php
+        echo $this->{$this->element->helper}(
+                $this->element->getName(),
+                $this->element->getValue(),
+                $this->element->getAttribs()
+        ) ?>
+
+        <?php
+        
+        $errors = $this->element->getMessages();
+
+        if (!empty($errors)) {
+            echo $this->formErrors($errors);
+        }
+        ?>
+    </div>
+<?php
+        $description = $this->element->getDescription();
+
+        if (!empty($description)) {
+?><div class="hint"><?php echo $this->element->getDescription() ?></div><?php
+        }
+?>
+</div>

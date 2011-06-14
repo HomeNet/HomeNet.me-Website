@@ -1,0 +1,13 @@
+<?php
+#
+$options = array(
+    'indent'  => 16,
+    'ulClass' => 'navMenu ui-widget ui-state-default ui-corner-all'
+
+);
+
+$this->navigation()->menu()->setPartial(array('_menu.phtml','default'));
+
+echo $this->navigation()
+          ->menu()
+          ->render($this->homenetNav, $options);

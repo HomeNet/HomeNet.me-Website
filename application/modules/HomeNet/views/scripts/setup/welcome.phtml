@@ -1,0 +1,57 @@
+<h1>Welcome</h1>
+<div class="transparent box">
+    <p>Ready to create your own HomeNet? Here's a quick overview before we start.</p>
+</div>
+<h2>Do you have all the parts you need?</h2>
+<div class="transparent box">
+    <ul>
+        <li>Download the Developer Kit. It includes the necessary Arduino and Processing programs with all of the required libraries</li>
+        <li>PC (to link HomeNet to the Internet)</li>
+
+        <li>Hardware<ul>
+
+        <li>To try out the basic functionality of HomeNet, all you need is:
+            <ul>
+                <li>Arduino</li>
+                <li>Led (one leg to 3.3v, other leg to pin 9)</li>
+            </ul></li>
+        <li>To try out all of the functionality, you need to use an Arduino clone called a JeeNode which features a low cost, wireless transmitter.
+            <ul>
+                <li>Base Station Node: a <a href="http://code.google.com/p/homenet/wiki/JeeLink">JeeLink</a> or a JeeNode with serial programmer </li>
+                <li>Wireless Sensor Node: a JeeNode </li>
+                <li>Serial Programmer to Upload the sketches</li>
+                <li>Leds for <a href="http://code.google.com/p/homenet/wiki/DeviceStatusLights">Status Lights</a></li>
+                <li>1 Led to test the remote node</li>
+
+            </ul></li></ul></li>
+
+    </ul>
+    <p>Got all that? You're ready to get started.</p>
+</div>
+<h2>The Process</h2>
+<div class="transparent box">
+    <p>It's a multi step process to setup a new HomeNet. Here is a quick summery of the steps</p>
+    <ol>
+        <li>Create a profile for your Home</li>
+        <li>Add a room to your home</li>
+        <li>Get your HomeNet Apikey and Setup the HomeNet PC App</li>
+        <li>Create your HomeNet Base Station</li>
+        <li>Program your HomeNet Base Station</li>
+        <li>Test remote control of the HomeNet Base Station
+            <ul><li>If you are using Jeenodes you can also setup your first wireless node</li></ul></li>
+        <li>
+            Create your HomeNet Sensor Node
+        </li>
+        <li>Program your HomeNet Sensor Node</li>
+        <li>Test remote control of the HomeNet Sensor Node</li>
+    </ol>
+
+    <p>Please run this setup from the same PC as you plan on running the HomeNet App on.</p>
+
+    <p>If you don't get though all the steps today, thats ok. You can come back and pick up right where you left</p>
+</div>
+
+<a class="button cms-button-icon-right" href="<?php echo $this->url(array('action' => 'step', 'step' => 1), 'homenet-setup-index'); ?>">
+    Continue <span class="ui-icon ui-icon-circle-arrow-e "</span>
+</a>
+

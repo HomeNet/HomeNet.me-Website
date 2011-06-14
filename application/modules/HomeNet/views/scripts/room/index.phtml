@@ -1,0 +1,77 @@
+<h1><?php echo $this->roomName ?></h1>
+<a class="button" href="<?php echo $this->url(array('house' => $this->house, 'room' => $this->room, 'region' => $this->region, 'node' => $this->node, 'action' => 'info'), 'homenet-room') ?>">Information</a>
+<a class="button" href="<?php echo $this->url(array('house' => $this->house, 'room' => $this->room, 'region' => $this->region, 'node' => $this->node, 'action' => 'control'), 'homenet-room') ?>">Control</a>
+
+<?php
+$timeCache = array();
+
+foreach ($this->subdevices as $subdevice) {
+
+    if (!$subdevice->hasGraphs()) {
+        continue;
+    }
+
+    $presets = $subdevice->getGraphPresets();
+
+    $first = reset($presets);
+
+    if ($first['start'] instanceof Zend_Date) {
+        $start = $first['start']->getTimestamp();
+    } else {
+
+        $timeCache[$first['start']] = strtotime($first['start']);
+        $start2 = new Zend_Date($timeCache[$first['start']], Zend_Date::TIMESTAMP);
+    }
+
+    if ($first['end'] instanceof Zend_Date) {
+        $end = $first['end']->getTimestamp();
+    } else {
+        $timeCache[$first['end']] = strtotime($first['end']);
+        $end2 = new Zend_Date($timeCache[$first['end']], Zend_Date::TIMESTAMP);
+    }
+?>
+    <div class="ui-widget ui-state-default ui-corner-all homeNet-room-subdevice">
+        <h2><?php echo $subdevice->name ?></h2>
+
+        <div id="graph-<?php echo $subdevice->id ?>" class="subdevice-graph" style="height:100px;">
+
+            <img alt="graph" src="<?php echo $subdevice->getGraph($start2, $end2); ?>" />
+        </div>
+<?php
+$links = array();
+    foreach ($presets as $key => $value) {
+
+        if ($value['start'] instanceof Zend_Date) {
+            $start = $value['start']->getTimestamp();
+        } else {
+            if (empty($timeCache[$value['start']])) {
+                $timeCache[$value['start']] = strtotime($value['start']);
+            }
+            $start = $timeCache[$value['start']];
+        }
+
+        if ($value['end'] instanceof Zend_Date) {
+            $end = $value['end']->getTimestamp();
+        } else {
+            if (empty($timeCache[$value['end']])) {
+                $timeCache[$value['end']] = strtotime($value['end']);
+            }
+            $end = $timeCache[$value['end']];
+        }
+
+        
+        $links[] = $this->ajaxLink($key,
+                $this->url(array('house' => $this->house, 'subdevice' => $subdevice->id, 'action' => 'graph', 'start' => $start, 'end' => $end), 'homenet-subdevice-graph'),
+                array('update' => '#graph-' . $subdevice->id));
+        
+    }
+    echo implode(" &nbsp; ", $links);
+?>
+</div>
+<br />
+    <?php
+}
+    ?>
+<a class="button" href="<?php echo $this->url(array('house' => $this->house, 'room' => $this->room, 'region' => $this->region), 'homenet-node-add') ?>">Add Node</a>
+<a class="button" href="<?php echo $this->url(array('house' => $this->house, 'room' => $this->room, 'region' => $this->region, 'node' => $this->node, 'action' => 'edit'), 'homenet-room') ?>">Edit Room</a>
+<a class="button" href="<?php echo $this->url(array('house' => $this->house, 'room' => $this->room, 'region' => $this->region, 'node' => $this->node, 'action' => 'remove'), 'homenet-room') ?>">Remove Room</a>

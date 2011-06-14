@@ -1,0 +1,41 @@
+<div data-role="page">
+    <div data-role="header">
+        <h1><?php echo $this->roomName ?></h1>
+    </div>
+
+    <div data-role="navbar">
+            <ul>
+                    <li><a data-ajax="false"  href="<?php echo $this->url(array('house' => $this->house, 'room' => $this->room, 'region' => $this->region, 'node' => $this->node, 'action' => 'info'), 'homenet-room') ?>/">Information</a></li>
+                    <li><a data-ajax="false"   class="ui-btn-active" href="<?php echo $this->url(array('house' => $this->house, 'room' => $this->room, 'region' => $this->region, 'node' => $this->node, 'action' => 'control'), 'homenet-room') ?>/">Control</a></li>
+            </ul>
+    </div>
+
+    <div data-role="content">       
+        <?php
+        $timeCache = array();
+
+        foreach ($this->subdevices as $subdevice) {
+
+            if (!$subdevice->hasControls()) {
+                continue;
+            }
+        ?>
+            <div class="ui-body ui-body-b">
+                <h2><?php echo $subdevice->name ?></h2>
+
+                <div id="control-<?php echo $subdevice->id ?>" class="subdevice-graph" style="">
+<?php echo $subdevice->getControlForm(); ?>
+
+                </div>
+
+            </div>
+            <br />
+<?php
+        }
+?>
+    </div>
+
+    <div data-role="footer">
+        <h4>HomeNet.me</h4>
+    </div>
+</div>

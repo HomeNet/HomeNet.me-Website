@@ -1,0 +1,44 @@
+<h1>Feed</h1>
+<?php foreach ($this->alerts as $alert){ 
+    switch ($alert->level){
+        case HomeNet_Model_Alert::ERROR:
+            $class = 'ui-state-error';
+            $icon = 'ui-icon-alert';
+            break;
+        case HomeNet_Model_Alert::WARNING:
+            $class = 'ui-state-error';
+            $icon = 'ui-icon-alert';
+            break;
+        case HomeNet_Model_Alert::INFO:
+            $class = 'ui-state-highlight';
+            $icon = 'ui-icon-info';
+            break;
+        case HomeNet_Model_Alert::CHANGE:
+            $class = 'ui-state-highlight';
+            $icon = 'ui-icon-info';
+            break;
+        case HomeNet_Model_Alert::NEWITEM:
+            $class = 'ui-state-highlight';
+            $icon = 'ui-icon-star';
+            break;
+        case HomeNet_Model_Alert::HIGH:
+            $class = 'ui-state-highlight';
+            $icon = 'ui-icon-circle-arrow-n';
+            break;
+        case HomeNet_Model_Alert::LOW:
+            $class = 'ui-state-highlight';
+            $icon = 'ui-icon-circle-arrow-s';
+            break;
+    }
+    
+    
+    ?>
+<div class="ui-widget">
+				<div style="margin-bottom: 8px; padding: 0pt 0.7em;" class="<?php echo $class ?> ui-corner-all">
+					<p>
+
+                                            <span style="float: left; margin-right: 0.3em;" class="ui-icon <?php echo $icon ?>"></span>
+					<?php echo $alert->message ?></p>
+				</div>
+			</div>
+<?php } ?>

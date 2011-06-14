@@ -1,0 +1,44 @@
+<h1>Getting Started</h1>
+<?php if($this->step <= 1){?>
+<p>Ready to create your own HomeNet? Here's a quick overview before we start.</p>
+<h2>Do you have all the parts you need?</h2>
+<ul>
+    <li>HomeNet Sensor Node</li>
+    <li>HomeNet BaseStation</li>
+    <li>HomeNet PC App</li>
+</ul>
+<p>Got all that? You're ready to get started.</p>
+
+<h2>The Process</h2>
+<p>It's a multi step process to setup a new HomeNet. Here is a quick summery of the steps</p>
+<ol>
+    <li>Create a profile for your Home</li>
+    <li>Add rooms to your home</li>
+    <li>Setup the HomeNet PC App</li>
+    <li>Setup the HomeNet Base Station</li>
+    <li>Setup your first HomeNet Sensor Node</li>
+</ol>
+
+<p>Please run this setup from the same PC as you plan on running the HomeNet App on.</p>
+
+<p>If you don't get though all the steps today, thats ok. You can come back and pick up right where you left</p>
+<a class="button cms-button-icon-right" href="<?php echo $this->url(array('action' => 'step', 'step' => 1), 'homenet-setup-index'); ?>">
+    Continue <span class="ui-icon ui-icon-circle-arrow-e "</span>
+</a>
+<?php } elseif($this->step > 1){ ?>
+<p>It looks like you are in the process of setting up your HomeNet</p>
+<p>You can continue where you last were</p>
+<?php   if($this->step == 2){?>
+<a class="button cms-button-icon-right" href="<?php echo $this->baseUrl('homenet/setup/step/2'); ?>">
+    Continue <span class="ui-icon ui-icon-circle-arrow-e "</span>
+</a>
+<?php   } elseif($this->step == 3){ ?>
+<a class="button cms-button-icon-right" href="<?php echo $this->baseUrl('homenet/setup/step/3'); ?>">
+    Continue <span class="ui-icon ui-icon-circle-arrow-e "</span>
+</a>
+<?php   } elseif($this->step == 4){ ?>
+<a class="button cms-button-icon-right" href="<?php echo $this->baseUrl('homenet/setup/step/4'); ?>">
+    Continue <span class="ui-icon ui-icon-circle-arrow-e "</span>
+</a>
+<?php   }
+}?>
