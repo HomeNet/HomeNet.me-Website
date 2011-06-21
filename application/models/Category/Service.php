@@ -46,72 +46,77 @@ class Core_Model_Category_Service {
         $this->_mapper = $mapper;
     }
 
+        /**
+     * @param int $id
+     * @return Core_Model_Category_Interface 
+     */
     public function getObjectById($id){
-        $content = $this->getMapper()->fetchObjectById($id);
+        
+        $category = $this->getMapper()->fetchObjectById($id);
 
-        if (empty($content)) {
+        if (empty($category)) {
             throw new Exception('Category not found', 404);
         }
-        return $content;
+        return $category;
     }
+    
+    /**
+     * @param string $url
+     * @return Core_Model_Category_Interface 
+     */
+    public function getObjectByUrl($url){
+        
+        $category = $this->getMapper()->fetchObjectByUrl($id);
 
-//    public function getObjectsBySection($section){
-//        $contents = $this->getMapper()->fetchObjectsBySection($section);
-//
-////        if (empty($contents)) {
-////            throw new Exception('Apikey not found', 404);
-////        }
-//        return $contents;
-//    }
-
-//    public function getObjectsByIdHouse($id,$house){
-//        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
-//
-//        if (empty($apikeys)) {
-//            return array();
-//            //throw new Core_Model_Exception('Apikey not found', 404);
-//        }
-//        return $apikeys;
-//    }
-
-
-
-
-
+        if (empty($category)) {
+            throw new Exception('Category not found', 404);
+        }
+        return $category;
+    }
+/**
+     * @param mixed $category
+     * @throws InvalidArgumentException 
+     */
     public function create($category) {
         if ($category instanceof Core_Model_Category_Interface) {
             $h = $category;
         } elseif (is_array($category)) {
             $h = new Core_Model_Category(array('data' => $category));
         } else {
-            throw new Core_Model_Exception('Invalid Category');
+            throw new InvalidArgumentException('Invalid Category');
         }
 
         return $this->getMapper()->save($h);
     }
-
+/**
+     * @param mixed $category
+     * @throws InvalidArgumentException 
+     */
     public function update($category) {
         if ($category instanceof Core_Model_Category_Interface) {
             $h = $category;
         } elseif (is_array($category)) {
             $h = new Core_Model_Category(array('data' => $category));
         } else {
-            throw new Core_Model_Exception('Invalid Category');
+            throw new InvalidArgumentException('Invalid Category');
         }
         
         return $this->getMapper()->save($h);
     }
-
-    public function delete($content) {
-        if (is_int($content)) {
+/**
+     * @param mixed $category
+     * @throws InvalidArgumentException 
+     */
+    public function delete($category) {
+        if (is_int($category)) {
             $h = new Core_Model_Category();
-            $h->id = $content;
-        } elseif ($content instanceof Core_Model_Category_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Category(array('data' => $content));
+            $h->id = $category;
+        } elseif ($category instanceof Core_Model_Category_Interface) {
+            $h = $category;
+        } elseif (is_array($category)) {
+            $h = new Core_Model_Category(array('data' => $category));
         } else {
-            throw new Core_Model_Exception('Invalid Category');
+            throw new InvalidArgumentException('Invalid Category');
         }
 
         return $this->getMapper()->delete($h);

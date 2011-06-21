@@ -21,21 +21,20 @@
  */
 
 /**
- * @package HomeNet
- * @subpackage Apikey
+ * @package Core
+ * @subpackage Menu
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-interface HomeNet_Model_Content_MapperInterface {
+interface Core_Model_Menu_MapperInterface {
 
+     /**
+     * @return Core_Model_Menu_Interface
+     */
     public function fetchObjectById($id);
 
-    public function fetchObjectsBySection($section);
+    public function save(Core_Model_Menu_Interface $menu);
 
-//    public function fetchObjectsByIdHouse($id,$house);
-
-    public function save(Core_Model_Content_Interface $content);
-
-    public function delete(Core_Model_Content_Interface $content);
+    public function delete(Core_Model_Menu_Interface $menu);
 
 }

@@ -47,42 +47,55 @@ class Core_Model_Section_Service {
     public function setMapper(Core_Model_Section_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
-
+    
+    /**
+     * @param int $id
+     * @return Core_Model_Section_Interface 
+     */
     public function getObjectById($id){
-        $content = $this->getMapper()->fetchObjectById($id);
+        $section = $this->getMapper()->fetchObjectById($id);
 
-        if (empty($content)) {
-            throw new Exception('Section not found', 404);
+        if (empty($section)) {
+            throw new Exception('Section Not Found', 404);
         }
-        return $content;
+        return $section;
     }
 
-   
-
+   /**
+    * @param mixed $section
+    * @throws InvalidArgumentException 
+    */
     public function create($section) {
         if ($section instanceof Core_Model_Section_Interface) {
             $h = $section;
         } elseif (is_array($section)) {
             $h = new Core_Model_Section(array('data' => $section));
         } else {
-            throw new Core_Model_Exception('Invalid Section');
+            throw new InvalidArgumentException('Invalid Section');
         }
 
         return $this->getMapper()->save($h);
     }
-
+    
+  /**
+    * @param mixed $section
+    * @throws InvalidArgumentException 
+    */
     public function update($section) {
         if ($section instanceof Core_Model_Section_Interface) {
             $h = $section;
         } elseif (is_array($section)) {
             $h = new Core_Model_Section(array('data' => $section));
         } else {
-            throw new Core_Model_Exception('Invalid Section');
+            throw new InvalidArgumentException('Invalid Section');
         }
         
         return $this->getMapper()->save($h);
     }
-
+  /**
+    * @param mixed $section
+    * @throws InvalidArgumentException 
+    */
     public function delete($section) {
         if (is_int($section)) {
             $h = new Core_Model_Section();
@@ -92,7 +105,7 @@ class Core_Model_Section_Service {
         } elseif (is_array($section)) {
             $h = new Core_Model_Section(array('data' => $section));
         } else {
-            throw new Core_Model_Exception('Invalid Section');
+            throw new InvalidArgumentException('Invalid Section');
         }
 
         return $this->getMapper()->delete($h);

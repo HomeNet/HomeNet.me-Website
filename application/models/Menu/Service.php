@@ -46,63 +46,54 @@ class Core_Model_Menu_Service {
     public function setMapper(Core_Model_Menu_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
-
+    /**
+     * @param int $id
+     * @return Core_Model_Menu_Interface 
+     */
     public function getObjectById($id){
-        $content = $this->getMapper()->fetchObjectById($id);
+        $menu = $this->getMapper()->fetchObjectById($id);
 
-        if (empty($content)) {
-            throw new Exception('Content not found', 404);
+        if (empty($menu)) {
+            throw new Exception('Menu Not Found', 404);
         }
-        return $content;
+        return $menu;
     }
 
-    public function getObjectsBySection($section){
-        $contents = $this->getMapper()->fetchObjectsBySection($section);
-
-//        if (empty($contents)) {
-//            throw new Exception('Apikey not found', 404);
-//        }
-        return $contents;
-    }
-
-//    public function getObjectsByIdHouse($id,$house){
-//        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
-//
-//        if (empty($apikeys)) {
-//            return array();
-//            //throw new Core_Model_Exception('Apikey not found', 404);
-//        }
-//        return $apikeys;
-//    }
-
-
-
-
-
+  /**
+    * @param mixed $menu
+    * @throws InvalidArgumentException 
+    */
     public function create($menu) {
         if ($menu instanceof Core_Model_Menu_Interface) {
             $h = $menu;
         } elseif (is_array($menu)) {
             $h = new Core_Model_Menu(array('data' => $menu));
         } else {
-            throw new Core_Model_Exception('Invalid Menu');
+            throw new InvalidArgumentException('Invalid Menu');
         }
 
         return $this->getMapper()->save($h);
     }
 
+  /**
+    * @param mixed $menu
+    * @throws InvalidArgumentException 
+    */
     public function update($menu) {
         if ($menu instanceof Core_Model_Menu_Interface) {
             $h = $menu;
         } elseif (is_array($menu)) {
             $h = new Core_Model_Menu(array('data' => $menu));
         } else {
-            throw new Core_Model_Exception('Invalid Menu');
+            throw new InvalidArgumentException('Invalid Menu');
         }
         
         return $this->getMapper()->save($h);
     }
-
+  /**
+    * @param mixed $menu
+    * @throws InvalidArgumentException 
+    */
     public function delete($menu) {
         if (is_int($menu)) {
             $h = new Core_Model_Menu();
@@ -112,7 +103,7 @@ class Core_Model_Menu_Service {
         } elseif (is_array($menu)) {
             $h = new Core_Model_Menu(array('data' => $menu));
         } else {
-            throw new Core_Model_Exception('Invalid Menu');
+            throw new InvalidArgumentException('Invalid Menu');
         }
 
         return $this->getMapper()->delete($h);

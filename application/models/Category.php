@@ -45,6 +45,10 @@ class Core_Model_Category {
     /**
      * @var string
      */
+    public $url;
+    /**
+     * @var string
+     */
     public $title;
     /**
      * @var string

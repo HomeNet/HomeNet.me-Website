@@ -27,10 +27,18 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 interface Core_Model_Content_MapperInterface {
-
+    /**
+     * @return Core_Model_Content_Interface
+     */
     public function fetchObjectById($id);
-
+    /**
+     * @return Core_Model_Content_Interface
+     */
     public function fetchObjectsBySection($section);
+    /**
+     * @return Core_Model_Content_Interface
+     */
+    public function fetchObjectsByUrl($url);
 
 //    public function fetchObjectsByIdHouse($id,$house);
 

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -20,12 +21,12 @@
 
 /**
  * @package Core
- * @subpackage Menu
+ * @subpackage Group
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 class Core_Model_Content_Service {
-    
+
     /**
      * @var Core_Model_Content_MapperInterface
      */
@@ -47,7 +48,11 @@ class Core_Model_Content_Service {
         $this->_mapper = $mapper;
     }
 
-    public function getObjectById($id){
+    /**
+     * @param int $id
+     * @return Core_Model_Group_Interface 
+     */
+    public function getObjectById($id) {
         $content = $this->getMapper()->fetchObjectById($id);
 
         if (empty($content)) {
@@ -56,15 +61,14 @@ class Core_Model_Content_Service {
         return $content;
     }
 
-    public function getObjectsBySection($section){
-        $contents = $this->getMapper()->fetchObjectsBySection($section);
-
-//        if (empty($contents)) {
-//            throw new Exception('Apikey not found', 404);
-//        }
-        return $contents;
-    }
-
+//    public function getObjectsBySection($section){
+//        $contents = $this->getMapper()->fetchObjectsBySection($section);
+//
+////        if (empty($contents)) {
+////            throw new Exception('Apikey not found', 404);
+////        }
+//        return $contents;
+//    }
 //    public function getObjectsByIdHouse($id,$house){
 //        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
 //
@@ -75,15 +79,15 @@ class Core_Model_Content_Service {
 //        return $apikeys;
 //    }
 
-
-
-
-
-    public function create($content) {
-        if ($content instanceof Core_Model_Content_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+    /**
+     * @param mixed $group
+     * @throws InvalidArgumentException 
+     */
+    public function create($group) {
+        if ($group instanceof Core_Model_Content_Interface) {
+            $h = $group;
+        } elseif (is_array($group)) {
+            $h = new Core_Model_Content(array('data' => $group));
         } else {
             throw new Core_Model_Exception('Invalid Content');
         }
@@ -91,30 +95,39 @@ class Core_Model_Content_Service {
         return $this->getMapper()->save($h);
     }
 
-    public function update($content) {
-        if ($content instanceof Core_Model_Content_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+    /**
+     * @param mixed $group
+     * @throws InvalidArgumentException 
+     */
+    public function update($group) {
+        if ($group instanceof Core_Model_Content_Interface) {
+            $h = $group;
+        } elseif (is_array($group)) {
+            $h = new Core_Model_Content(array('data' => $group));
         } else {
             throw new Core_Model_Exception('Invalid Content');
         }
-        
+
         return $this->getMapper()->save($h);
     }
 
-    public function delete($content) {
-        if (is_int($content)) {
+    /**
+     * @param mixed $group
+     * @throws InvalidArgumentException 
+     */
+    public function delete($group) {
+        if (is_int($group)) {
             $h = new Core_Model_Content();
-            $h->id = $content;
-        } elseif ($content instanceof Core_Model_Content_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+            $h->id = $group;
+        } elseif ($group instanceof Core_Model_Content_Interface) {
+            $h = $group;
+        } elseif (is_array($group)) {
+            $h = new Core_Model_Content(array('data' => $group));
         } else {
             throw new Core_Model_Exception('Invalid Content');
         }
 
         return $this->getMapper()->delete($h);
     }
+
 }

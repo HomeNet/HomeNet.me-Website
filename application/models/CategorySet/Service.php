@@ -47,7 +47,10 @@ class Core_Model_CategorySet_Service {
     public function setMapper(Core_Model_CategorySet_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
-
+    /**
+     * @param int $id
+     * @return Core_Model_CategorySet_Interface 
+     */
     public function getObjectById($id){
         $content = $this->getMapper()->fetchObjectById($id);
 
@@ -57,48 +60,25 @@ class Core_Model_CategorySet_Service {
         return $content;
     }
 
-    public function getObjectsBySection($section){
-        $contents = $this->getMapper()->fetchObjectsBySection($section);
-
-//        if (empty($contents)) {
-//            throw new Exception('Apikey not found', 404);
-//        }
-        return $contents;
-    }
-
-//    public function getObjectsByIdHouse($id,$house){
-//        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
-//
-//        if (empty($apikeys)) {
-//            return array();
-//            //throw new Core_Model_Exception('Apikey not found', 404);
-//        }
-//        return $apikeys;
-//    }
-
-
-
-
-
     public function create($categorySet) {
         if ($categorySet instanceof Core_Model_CategorySet_Interface) {
             $h = $categorySet;
         } elseif (is_array($categorySet)) {
             $h = new Core_Model_CategorySet(array('data' => $categorySet));
         } else {
-            throw new Core_Model_Exception('Invalid Category Set');
+            throw new InvalidArgumentException('Invalid Category Set');
         }
 
         return $this->getMapper()->save($h);
     }
 
-    public function update($content) {
-        if ($content instanceof Core_Model_CategorySet_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_CategorySet(array('data' => $content));
+    public function update($categorySet) {
+        if ($categorySet instanceof Core_Model_CategorySet_Interface) {
+            $h = $categorySet;
+        } elseif (is_array($categorySet)) {
+            $h = new Core_Model_CategorySet(array('data' => $categorySet));
         } else {
-            throw new Core_Model_Exception('Invalid Category Set');
+            throw new InvalidArgumentException('Invalid Category Set');
         }
         
         return $this->getMapper()->save($h);
@@ -113,7 +93,7 @@ class Core_Model_CategorySet_Service {
         } elseif (is_array($categorySet)) {
             $h = new Core_Model_CategorySet(array('data' => $categorySet));
         } else {
-            throw new Core_Model_Exception('Invalid Category Set');
+            throw new InvalidArgumentException('Invalid Category Set');
         }
 
         return $this->getMapper()->delete($h);

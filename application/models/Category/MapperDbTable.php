@@ -46,28 +46,14 @@ class Core_Model_Category_MapperDbTable implements Core_Model_Category_MapperInt
         $this->_table = $table;
     }
 
-
-
-
-
-
-
     public function fetchObjectById($id){
         return $this->getTable()->find($id)->current();
     }
 
-//   public function fetchObjectsBySection($section){
-
-//       if(is_null($user)){
-//           $u = new Zend_Session_Namespace('User');
-//           $user = $u->id;
-//        }
-//
-//       $select = $this->getTable()->select()->where('user = ?',$user)
-//                                ->where('house = ?',$house);
-//
-//       return $this->getTable()->fetchAll($select);
-//    }
+   public function fetchObjectsByUrl($url){
+       $select = $this->getTable()->select()->where('url = ?',$url);
+       return $this->getTable()->fetchAll($select);
+    }
 
 
 //     public function fetchObjectsByIdHouse($id,$house){

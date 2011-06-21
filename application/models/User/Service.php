@@ -48,62 +48,57 @@ class Core_Model_User_Service {
         $this->_mapper = $mapper;
     }
 
+    /**
+     * @param int $id
+     * @return Core_Model_User_Interface
+     */
     public function getObjectById($id){
         $content = $this->getMapper()->fetchObjectById($id);
-
-        if (empty($content)) {
-            throw new Exception('user not found', 404);
-        }
         return $content;
     }
 
-    public function getObjectsBySection($section){
-        $contents = $this->getMapper()->fetchObjectsBySection($section);
-
-//        if (empty($contents)) {
-//            throw new Exception('Apikey not found', 404);
-//        }
+    /**
+     * @param int $group
+     * @return Core_Model_User_Interface[] 
+     */
+    public function getObjectsByGroup($group){
+        $contents = $this->getMapper()->fetchObjectsByGroup($group);
         return $contents;
     }
-
-//    public function getObjectsByIdHouse($id,$house){
-//        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
-//
-//        if (empty($apikeys)) {
-//            return array();
-//            //throw new Core_Model_Exception('Apikey not found', 404);
-//        }
-//        return $apikeys;
-//    }
-
-
-
-
-
+    /**
+     * @param mixed $user
+     * @throws InvalidArgumentException 
+     */
     public function create($user) {
         if ($user instanceof Core_Model_User_Interface) {
             $h = $user;
         } elseif (is_array($user)) {
             $h = new Core_Model_User(array('data' => $user));
         } else {
-            throw new Core_Model_Exception('Invalid User Object');
+            throw new InvalidArgumentException('Invalid User Object');
         }
 
         return $this->getMapper()->save($h);
     }
-
-    public function update($content) {
-        if ($content instanceof Core_Model_User_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_User(array('data' => $content));
+    /**
+     * @param mixed $user
+     * @throws InvalidArgumentException 
+     */
+    public function update($user) {
+        if ($user instanceof Core_Model_User_Interface) {
+            $h = $user;
+        } elseif (is_array($user)) {
+            $h = new Core_Model_User(array('data' => $user));
         } else {
-            throw new Core_Model_Exception('Invalid User Object');
+            throw new InvalidArgumentException('Invalid User Object');
         }
         
         return $this->getMapper()->save($h);
     }
-
+    /**
+     * @param mixed $user
+     * @throws InvalidArgumentException 
+     */
     public function delete($user) {
         if (is_int($user)) {
             $h = new Core_Model_User();
@@ -113,7 +108,7 @@ class Core_Model_User_Service {
         } elseif (is_array($user)) {
             $h = new Core_Model_User(array('data' => $user));
         } else {
-            throw new Core_Model_Exception('Invalid User Object');
+            throw new InvalidArgumentException('Invalid User Object');
         }
 
         return $this->getMapper()->delete($h);

@@ -26,19 +26,6 @@
  */
 class Core_Model_User {
     
-    /*
-     * id 	int(10) 		UNSIGNED 	No 		auto_increment 	Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	status 	tinyint(4) 			No 	-1 		Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	group 	int(10) 		UNSIGNED 	No 	2 		Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	username 	varchar(32) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	name 	varchar(56) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	location 	varchar(128) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	email 	varchar(128) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	created 	timestamp 			No 	CURRENT_TIMESTAMP 		Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	permissions 	text 	utf8_bin 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	settings
-     */
-
     /**
      * @var int
      */

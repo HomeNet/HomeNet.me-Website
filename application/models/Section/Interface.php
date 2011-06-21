@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -26,8 +27,10 @@
  */
 interface Core_Model_Section_Interface {
 
+    /**
+     * @return array
+     */
     public function toArray();
 
     public function fromArray(array $array);
-
 }

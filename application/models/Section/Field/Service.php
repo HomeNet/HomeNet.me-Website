@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -17,37 +18,41 @@
  * You should have received a copy of the GNU General Public License
  * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 /**
  * @package Core
  * @subpackage Content
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
+class Core_Model_SectionField_Service {
 
-class Core_Model_Content_Service {
-    
     /**
-     * @var Core_Model_Content_MapperInterface
+     * @var Core_Model_SectionField_MapperInterface
      */
     protected $_mapper;
 
     /**
-     * @return Core_Model_Content_MapperInterface
+     * @return Core_Model_SectionField_MapperInterface
      */
     public function getMapper() {
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new Core_Model_Content_MapperDbTable();
+            $this->_mapper = new Core_Model_SectionField_MapperDbTable();
         }
 
         return $this->_mapper;
     }
 
-    public function setMapper(Core_Model_Content_MapperInterface $mapper) {
+    public function setMapper(Core_Model_SectionField_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
-    public function getObjectById($id){
+    /**
+     * @param int $id
+     * @return Core_Model_SectionField_Interface 
+     */
+    public function getObjectById($id) {
         $content = $this->getMapper()->fetchObjectById($id);
 
         if (empty($content)) {
@@ -56,7 +61,11 @@ class Core_Model_Content_Service {
         return $content;
     }
 
-    public function getObjectsBySection($section){
+    /**
+     * @param int $id
+     * @return Core_Model_SectionField_Interface[]
+     */
+    public function getObjectsBySection($section) {
         $contents = $this->getMapper()->fetchObjectsBySection($section);
 
 //        if (empty($contents)) {
@@ -75,46 +84,55 @@ class Core_Model_Content_Service {
 //        return $apikeys;
 //    }
 
-
-
-
-
-    public function create($content) {
-        if ($content instanceof Core_Model_Content_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+    /**
+     * @param mixed $sectionField
+     * @throws InvalidArgumentException 
+     */
+    public function create($sectionField) {
+        if ($sectionField instanceof Core_Model_SectionField_Interface) {
+            $h = $sectionField;
+        } elseif (is_array($sectionField)) {
+            $h = new Core_Model_SectionField(array('data' => $sectionField));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new InvalidArgumentException('Invalid Content');
         }
 
         return $this->getMapper()->save($h);
     }
 
-    public function update($content) {
-        if ($content instanceof Core_Model_Content_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+    /**
+     * @param mixed $sectionField
+     * @throws InvalidArgumentException 
+     */
+    public function update($sectionField) {
+        if ($sectionField instanceof Core_Model_SectionField_Interface) {
+            $h = $sectionField;
+        } elseif (is_array($sectionField)) {
+            $h = new Core_Model_SectionField(array('data' => $sectionField));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new InvalidArgumentException('Invalid Content');
         }
-        
+
         return $this->getMapper()->save($h);
     }
 
-    public function delete($content) {
-        if (is_int($content)) {
-            $h = new Core_Model_Content();
-            $h->id = $content;
-        } elseif ($content instanceof Core_Model_Content_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+    /**
+     * @param mixed $sectionField
+     * @throws InvalidArgumentException 
+     */
+    public function delete($sectionField) {
+        if (is_int($sectionField)) {
+            $h = new Core_Model_SectionField();
+            $h->id = $sectionField;
+        } elseif ($sectionField instanceof Core_Model_SectionField_Interface) {
+            $h = $sectionField;
+        } elseif (is_array($sectionField)) {
+            $h = new Core_Model_SectionField(array('data' => $sectionField));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new InvalidArgumentException('Invalid Content');
         }
 
         return $this->getMapper()->delete($h);
     }
+
 }

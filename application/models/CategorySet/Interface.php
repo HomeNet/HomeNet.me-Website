@@ -26,6 +26,9 @@
  */
 interface Core_Model_CategorySet_Interface {
 
+    /**
+     * @return array
+     */
     public function toArray();
 
     public function fromArray(array $array);

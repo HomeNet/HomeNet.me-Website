@@ -20,12 +20,12 @@
  */
 
 /**
- * @package HomeNet
- * @subpackage Apikey
+ * @package Core
+ * @subpackage Category
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_DbTableRow_Apikey extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_Apikey_Interface {
+class Core_Model_DbTableRow_Category extends Zend_Db_Table_Row_Abstract implements Core_Model_Category_Interface {
 
 //    public $rooms;
 
@@ -38,6 +38,9 @@ class HomeNet_Model_DbTableRow_Apikey extends Zend_Db_Table_Row_Abstract impleme
         }
     }
 
+    /**
+     * @return array
+     */
     public function toArray(){
         return parent::toArray();
     }

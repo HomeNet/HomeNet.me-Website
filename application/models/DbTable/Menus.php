@@ -20,14 +20,17 @@
 
 /**
  * @package Core
- * @subpackage Content
+ * @subpackage Section
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-interface Core_Model_Content_Interface {
+class Core_Model_DbTable_Menus extends Zend_Db_Table_Abstract
+{
 
-    public function toArray();
-
-    public function fromArray(array $array);
+    protected $_name = 'menus';
+    
+    //protected $_rowClass = 'Core_Model_User';
+    protected $_rowClass = 'Core_Model_DbTableRow_Menu';
+   
 
 }

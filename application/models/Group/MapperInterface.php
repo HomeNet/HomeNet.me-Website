@@ -27,7 +27,9 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 interface Core_Model_Group_MapperInterface {
-
+ /**
+     * @return Core_Model_Group_Interface
+     */
     public function fetchObjectById($id);
 
 //    public function fetchObjectsBySection($section);

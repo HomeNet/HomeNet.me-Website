@@ -30,7 +30,7 @@ interface Core_Model_Category_MapperInterface {
 
     public function fetchObjectById($id);
 
-    public function fetchObjectsBySection($section);
+    public function fetchObjectsByUrl($url);
 
 //    public function fetchObjectsByIdHouse($id,$house);
 

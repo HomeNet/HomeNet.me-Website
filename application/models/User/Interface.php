@@ -26,8 +26,17 @@
  */
 interface Core_Model_User_Interface {
 
+    /**
+     * @return array
+     */
     public function toArray();
 
     public function fromArray(array $array);
+    
+    public function setSetting($key, $value);
+    
+    public function getSetting($key);
+    
+    public function clearSetting($key);
 
 }

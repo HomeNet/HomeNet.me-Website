@@ -28,6 +28,9 @@
  */
 interface Core_Model_User_MapperInterface {
 
+    /**
+     * @return Core_Model_User
+     */
     public function fetchObjectById($id);
 
 //    public function fetchObjectsBySection($section);

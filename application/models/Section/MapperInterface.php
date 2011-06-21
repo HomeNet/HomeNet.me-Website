@@ -28,6 +28,9 @@
  */
 interface Core_Model_Section_MapperInterface {
 
+    /**
+     * @return Core_Model_Section_Interface
+     */
     public function fetchObjectById($id);
 
 //    public function fetchObjectsBySection($section);

@@ -28,24 +28,5 @@ class Core_Model_DbTable_Users extends Zend_Db_Table_Abstract
 {
 
     protected $_name = 'users';
-    
-    protected $_rowClass = 'Core_Model_User';
-
-    /**
-     *
-     * @param int $id
-     * @return Core_Model_User
-     */
-    public function fetchUserById($id){
-
-        $row = $this->find($id)->current();
-
-        if (empty($row)) {
-            throw new CMS_Exception("Could not find user!");
-        }
-
-        return $row;
-    }
-
-
+    protected $_rowClass = 'Core_Model_DbTableRow_Users';
 }
