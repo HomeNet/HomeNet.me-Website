@@ -21,12 +21,12 @@
  */
 
 /**
- * @package HomeNet
- * @subpackage Apikey
+ * @package Core
+ * @subpackage Content
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-interface HomeNet_Model_Content_MapperInterface {
+interface Core_Model_Content_MapperInterface {
 
     public function fetchObjectById($id);
 

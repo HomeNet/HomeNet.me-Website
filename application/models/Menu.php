@@ -20,24 +20,11 @@
 
 /**
  * @package Core
- * @subpackage User
+ * @subpackage Menu
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_User {
-    
-    /*
-     * id 	int(10) 		UNSIGNED 	No 		auto_increment 	Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	status 	tinyint(4) 			No 	-1 		Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	group 	int(10) 		UNSIGNED 	No 	2 		Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	username 	varchar(32) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	name 	varchar(56) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	location 	varchar(128) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	email 	varchar(128) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	created 	timestamp 			No 	CURRENT_TIMESTAMP 		Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	permissions 	text 	utf8_bin 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	settings
-     */
+class Core_Model_Menu {
 
     /**
      * @var int
@@ -46,40 +33,23 @@ class Core_Model_User {
     /**
      * @var int
      */
-    public $status;
+    public $set;
     /**
      * @var int
      */
-    public $group = null;
+    public $parent = null;
+    /**
+     * @var int
+     */
+    public $order = 0;
     /**
      * @var string
      */
-    public $username;
+    public $title;
     /**
      * @var string
      */
-    public $name;
-    /**
-     * @var string
-     */
-    public $location;
-    /**
-     * @var string
-     */
-    public $email;
-    /**
-     * @var Zend_Date
-     */
-    public $created;
-    /**
-     * @var CMS_ACL
-     */
-    public $permission;
-    /**
-     * @var array
-     */
-    public $settings;
-
+    public $description = null;
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {

@@ -18,6 +18,12 @@
  * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @package Core
+ * @subpackage Menu
+ * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
+ */
 class Core_Model_Content_Service {
     
     /**

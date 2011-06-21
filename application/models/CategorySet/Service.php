@@ -18,26 +18,33 @@
  * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Core_Model_Content_Service {
+/**
+ * @package Core
+ * @subpackage CategorySet
+ * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
+ */
+
+class Core_Model_CategorySet_Service {
     
     /**
-     * @var Core_Model_Content_MapperInterface
+     * @var Core_Model_CategorySet_MapperInterface
      */
     protected $_mapper;
 
     /**
-     * @return Core_Model_Content_MapperInterface
+     * @return Core_Model_CategorySet_MapperInterface
      */
     public function getMapper() {
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new Core_Model_Content_MapperDbTable();
+            $this->_mapper = new Core_Model_CategorySet_MapperDbTable();
         }
 
         return $this->_mapper;
     }
 
-    public function setMapper(Core_Model_Content_MapperInterface $mapper) {
+    public function setMapper(Core_Model_CategorySet_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
@@ -45,7 +52,7 @@ class Core_Model_Content_Service {
         $content = $this->getMapper()->fetchObjectById($id);
 
         if (empty($content)) {
-            throw new Exception('Content not found', 404);
+            throw new Exception('Category Set Not Found', 404);
         }
         return $content;
     }
@@ -73,40 +80,40 @@ class Core_Model_Content_Service {
 
 
 
-    public function create($content) {
-        if ($content instanceof Core_Model_Content_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+    public function create($categorySet) {
+        if ($categorySet instanceof Core_Model_CategorySet_Interface) {
+            $h = $categorySet;
+        } elseif (is_array($categorySet)) {
+            $h = new Core_Model_CategorySet(array('data' => $categorySet));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new Core_Model_Exception('Invalid Category Set');
         }
 
         return $this->getMapper()->save($h);
     }
 
     public function update($content) {
-        if ($content instanceof Core_Model_Content_Interface) {
+        if ($content instanceof Core_Model_CategorySet_Interface) {
             $h = $content;
         } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+            $h = new Core_Model_CategorySet(array('data' => $content));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new Core_Model_Exception('Invalid Category Set');
         }
         
         return $this->getMapper()->save($h);
     }
 
-    public function delete($content) {
-        if (is_int($content)) {
-            $h = new Core_Model_Content();
-            $h->id = $content;
-        } elseif ($content instanceof Core_Model_Content_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+    public function delete($categorySet) {
+        if (is_int($categorySet)) {
+            $h = new Core_Model_CategorySet();
+            $h->id = $categorySet;
+        } elseif ($categorySet instanceof Core_Model_CategorySet_Interface) {
+            $h = $categorySet;
+        } elseif (is_array($categorySet)) {
+            $h = new Core_Model_CategorySet(array('data' => $categorySet));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new Core_Model_Exception('Invalid Category Set');
         }
 
         return $this->getMapper()->delete($h);

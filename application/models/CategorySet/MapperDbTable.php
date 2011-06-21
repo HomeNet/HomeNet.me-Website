@@ -27,17 +27,17 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Content_MapperDbTable implements Core_Model_Content_MapperInterface {
+class Core_Model_CategorySet_MapperDbTable implements Core_Model_CategorySet_MapperInterface {
 
     protected $_table = null;
 
     /**
      *
-     * @return Core_Model_DbTable_Content;
+     * @return Core_Model_DbTable_CategorySet;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_Content();
+            $this->_table = new Core_Model_DbTable_CategorySet();
         }
         return $this->_table;
     }
@@ -80,9 +80,9 @@ class Core_Model_Content_MapperDbTable implements Core_Model_Content_MapperInter
 
 
 
-    public function save(Core_Model_Content_Interface $content) {
+    public function save(Core_Model_CategorySet_Interface $content) {
 
-        if (($content instanceof Core_Model_DbTableRow_Content) && ($content->isConnected())) {
+        if (($content instanceof Core_Model_DbTableRow_CategorySet) && ($content->isConnected())) {
             $content->save();
             return;
         } elseif (!is_null($content->id)) {
@@ -102,9 +102,9 @@ class Core_Model_Content_MapperDbTable implements Core_Model_Content_MapperInter
         return $row;
     }
 
-    public function delete(Core_Model_Content_Interface $content) {
+    public function delete(Core_Model_CategorySet_Interface $content) {
 
-        if (($content instanceof Core_Model_DbTableRow_Content) && ($content->isConnected())) {
+        if (($content instanceof Core_Model_DbTableRow_CategorySet) && ($content->isConnected())) {
             $content->delete();
             return true;
         } elseif (!is_null($content->id)) {

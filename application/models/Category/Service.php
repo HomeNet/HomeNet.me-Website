@@ -17,27 +17,32 @@
  * You should have received a copy of the GNU General Public License
  * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-class Core_Model_Content_Service {
+/**
+ * @package Core
+ * @subpackage Category
+ * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
+ */
+class Core_Model_Category_Service {
     
     /**
-     * @var Core_Model_Content_MapperInterface
+     * @var Core_Model_Category_MapperInterface
      */
     protected $_mapper;
 
     /**
-     * @return Core_Model_Content_MapperInterface
+     * @return Core_Model_Category_MapperInterface
      */
     public function getMapper() {
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new Core_Model_Content_MapperDbTable();
+            $this->_mapper = new Core_Model_Category_MapperDbTable();
         }
 
         return $this->_mapper;
     }
 
-    public function setMapper(Core_Model_Content_MapperInterface $mapper) {
+    public function setMapper(Core_Model_Category_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
@@ -45,19 +50,19 @@ class Core_Model_Content_Service {
         $content = $this->getMapper()->fetchObjectById($id);
 
         if (empty($content)) {
-            throw new Exception('Content not found', 404);
+            throw new Exception('Category not found', 404);
         }
         return $content;
     }
 
-    public function getObjectsBySection($section){
-        $contents = $this->getMapper()->fetchObjectsBySection($section);
-
-//        if (empty($contents)) {
-//            throw new Exception('Apikey not found', 404);
-//        }
-        return $contents;
-    }
+//    public function getObjectsBySection($section){
+//        $contents = $this->getMapper()->fetchObjectsBySection($section);
+//
+////        if (empty($contents)) {
+////            throw new Exception('Apikey not found', 404);
+////        }
+//        return $contents;
+//    }
 
 //    public function getObjectsByIdHouse($id,$house){
 //        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
@@ -73,25 +78,25 @@ class Core_Model_Content_Service {
 
 
 
-    public function create($content) {
-        if ($content instanceof Core_Model_Content_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+    public function create($category) {
+        if ($category instanceof Core_Model_Category_Interface) {
+            $h = $category;
+        } elseif (is_array($category)) {
+            $h = new Core_Model_Category(array('data' => $category));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new Core_Model_Exception('Invalid Category');
         }
 
         return $this->getMapper()->save($h);
     }
 
-    public function update($content) {
-        if ($content instanceof Core_Model_Content_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+    public function update($category) {
+        if ($category instanceof Core_Model_Category_Interface) {
+            $h = $category;
+        } elseif (is_array($category)) {
+            $h = new Core_Model_Category(array('data' => $category));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new Core_Model_Exception('Invalid Category');
         }
         
         return $this->getMapper()->save($h);
@@ -99,14 +104,14 @@ class Core_Model_Content_Service {
 
     public function delete($content) {
         if (is_int($content)) {
-            $h = new Core_Model_Content();
+            $h = new Core_Model_Category();
             $h->id = $content;
-        } elseif ($content instanceof Core_Model_Content_Interface) {
+        } elseif ($content instanceof Core_Model_Category_Interface) {
             $h = $content;
         } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+            $h = new Core_Model_Category(array('data' => $content));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new Core_Model_Exception('Invalid Category');
         }
 
         return $this->getMapper()->delete($h);

@@ -20,13 +20,54 @@
 
 /**
  * @package Core
- * @subpackage Login
+ * @subpackage CategorySet
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Login
-{
-  
+class Core_Model_Category {
+
+    /**
+     * @var int
+     */
+    public $id;
+    /**
+     * @var string
+     */
+    public $package;
+    /**
+     * @var int
+     */
+    public $title;
+    /**
+     * @var boolean
+     */
+    public $visible = true;
+
+    public function __construct(array $config = array()) {
+        if (isset($config['data'])) {
+            $this->fromArray($config['data']);
+        }
+    }
+
+    public function fromArray(array $array) {
+
+        $vars = get_object_vars($this);
+
+        // die(debugArray($vars));
+
+        foreach ($array as $key => $value) {
+            if (array_key_exists($key, $vars)) {
+                $this->$key = $value;
+            }
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray() {
+
+        return get_object_vars($this);
+    }
 
 }
-

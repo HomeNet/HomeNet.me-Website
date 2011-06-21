@@ -18,26 +18,32 @@
  * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Core_Model_Content_Service {
+/**
+ * @package Core
+ * @subpackage Menu
+ * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
+ */
+class Core_Model_Menu_Service {
     
     /**
-     * @var Core_Model_Content_MapperInterface
+     * @var Core_Model_Menu_MapperInterface
      */
     protected $_mapper;
 
     /**
-     * @return Core_Model_Content_MapperInterface
+     * @return Core_Model_Menu_MapperInterface
      */
     public function getMapper() {
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new Core_Model_Content_MapperDbTable();
+            $this->_mapper = new Core_Model_Menu_MapperDbTable();
         }
 
         return $this->_mapper;
     }
 
-    public function setMapper(Core_Model_Content_MapperInterface $mapper) {
+    public function setMapper(Core_Model_Menu_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
@@ -73,40 +79,40 @@ class Core_Model_Content_Service {
 
 
 
-    public function create($content) {
-        if ($content instanceof Core_Model_Content_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+    public function create($menu) {
+        if ($menu instanceof Core_Model_Menu_Interface) {
+            $h = $menu;
+        } elseif (is_array($menu)) {
+            $h = new Core_Model_Menu(array('data' => $menu));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new Core_Model_Exception('Invalid Menu');
         }
 
         return $this->getMapper()->save($h);
     }
 
-    public function update($content) {
-        if ($content instanceof Core_Model_Content_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+    public function update($menu) {
+        if ($menu instanceof Core_Model_Menu_Interface) {
+            $h = $menu;
+        } elseif (is_array($menu)) {
+            $h = new Core_Model_Menu(array('data' => $menu));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new Core_Model_Exception('Invalid Menu');
         }
         
         return $this->getMapper()->save($h);
     }
 
-    public function delete($content) {
-        if (is_int($content)) {
-            $h = new Core_Model_Content();
-            $h->id = $content;
-        } elseif ($content instanceof Core_Model_Content_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Core_Model_Content(array('data' => $content));
+    public function delete($menu) {
+        if (is_int($menu)) {
+            $h = new Core_Model_Menu();
+            $h->id = $menu;
+        } elseif ($menu instanceof Core_Model_Menu_Interface) {
+            $h = $menu;
+        } elseif (is_array($menu)) {
+            $h = new Core_Model_Menu(array('data' => $menu));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new Core_Model_Exception('Invalid Menu');
         }
 
         return $this->getMapper()->delete($h);

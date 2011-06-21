@@ -20,25 +20,19 @@
 
 /**
  * @package Core
- * @subpackage User
+ * @subpackage Group
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_User {
-    
-    /*
-     * id 	int(10) 		UNSIGNED 	No 		auto_increment 	Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	status 	tinyint(4) 			No 	-1 		Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	group 	int(10) 		UNSIGNED 	No 	2 		Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	username 	varchar(32) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	name 	varchar(56) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	location 	varchar(128) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	email 	varchar(128) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	created 	timestamp 			No 	CURRENT_TIMESTAMP 		Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	permissions 	text 	utf8_bin 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	settings
-     */
-
+class Core_Model_Group {
+/**
+ * id 	int(10) 		UNSIGNED 	No 		auto_increment 	Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
+	parent 	int(10) 		UNSIGNED 	Yes 	NULL 		Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
+	status 	tinyint(4) 			No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
+	name 	varchar(64) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
+	description 	tinytext 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
+	user_count 	int(11)
+ */
     /**
      * @var int
      */
@@ -46,40 +40,23 @@ class Core_Model_User {
     /**
      * @var int
      */
-    public $status;
+    public $parent = null;
     /**
      * @var int
      */
-    public $group = null;
+    public $status = -1;
     /**
      * @var string
      */
-    public $username;
+    public $title;
     /**
      * @var string
      */
-    public $name;
+    public $description = null;
     /**
-     * @var string
+     * @var int
      */
-    public $location;
-    /**
-     * @var string
-     */
-    public $email;
-    /**
-     * @var Zend_Date
-     */
-    public $created;
-    /**
-     * @var CMS_ACL
-     */
-    public $permission;
-    /**
-     * @var array
-     */
-    public $settings;
-
+    public $user_count = 0;
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {

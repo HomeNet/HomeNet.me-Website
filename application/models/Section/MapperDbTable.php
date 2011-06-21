@@ -23,21 +23,21 @@
 
 /**
  * @package Core
- * @subpackage Content
+ * @subpackage Section
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Content_MapperDbTable implements Core_Model_Content_MapperInterface {
+class Core_Model_Section_MapperDbTable implements Core_Model_Section_MapperInterface {
 
     protected $_table = null;
 
     /**
      *
-     * @return Core_Model_DbTable_Content;
+     * @return Core_Model_DbTable_Section;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_Content();
+            $this->_table = new Core_Model_DbTable_Section();
         }
         return $this->_table;
     }
@@ -56,37 +56,15 @@ class Core_Model_Content_MapperDbTable implements Core_Model_Content_MapperInter
         return $this->getTable()->find($id)->current();
     }
 
-   public function fetchObjectsBySection($section){
-
-//       if(is_null($user)){
-//           $u = new Zend_Session_Namespace('User');
-//           $user = $u->id;
-//        }
-//
-//       $select = $this->getTable()->select()->where('user = ?',$user)
-//                                ->where('house = ?',$house);
-//
-//       return $this->getTable()->fetchAll($select);
-    }
 
 
-//     public function fetchObjectsByIdHouse($id,$house){
-//
-//       $select = $this->getTable()->select()->where('id = ?',$id)
-//                                ->where('house = ?',$house);
-//
-//       return $this->getTable()->fetchAll($select);
-//    }
+    public function save(Core_Model_Section_Interface $section) {
 
-
-
-    public function save(Core_Model_Content_Interface $content) {
-
-        if (($content instanceof Core_Model_DbTableRow_Content) && ($content->isConnected())) {
-            $content->save();
+        if (($section instanceof Core_Model_DbTableRow_Section) && ($section->isConnected())) {
+            $section->save();
             return;
-        } elseif (!is_null($content->id)) {
-            $row = $this->getTable()->find($content->id)->current();
+        } elseif (!is_null($section->id)) {
+            $row = $this->getTable()->find($section->id)->current();
             if(empty($row)){
                $row = $this->getTable()->createRow();
             }
@@ -95,23 +73,23 @@ class Core_Model_Content_MapperDbTable implements Core_Model_Content_MapperInter
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($content->toArray());
+        $row->fromArray($section->toArray());
        // die(debugArray($row));
         $row->save();
 
         return $row;
     }
 
-    public function delete(Core_Model_Content_Interface $content) {
+    public function delete(Core_Model_Section_Interface $section) {
 
-        if (($content instanceof Core_Model_DbTableRow_Content) && ($content->isConnected())) {
-            $content->delete();
+        if (($section instanceof Core_Model_DbTableRow_Section) && ($section->isConnected())) {
+            $section->delete();
             return true;
-        } elseif (!is_null($content->id)) {
-            $row = $this->getTable()->find($content->id)->current()->delete();
+        } elseif (!is_null($section->id)) {
+            $row = $this->getTable()->find($section->id)->current()->delete();
             return;
         }
 
-        throw new Exception('Invalid Content');
+        throw new Exception('Invalid Section Object');
     }
 }

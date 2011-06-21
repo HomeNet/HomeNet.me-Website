@@ -120,6 +120,7 @@
         </dbTableDirectory>
         <modelFile modelName="AuthInternal"/>
         <modelFile modelName="AuthFacebook"/>
+        <modelFile modelName="Category"/>
       </modelsDirectory>
       <modulesDirectory>
         <moduleDirectory moduleName="Users">
