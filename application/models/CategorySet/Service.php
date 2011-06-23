@@ -47,6 +47,20 @@ class Core_Model_CategorySet_Service {
     public function setMapper(Core_Model_CategorySet_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
+    
+    /**
+     * @param int $id
+     * @return Core_Model_CategorySet_Interface 
+     */
+    public function getObjects(){
+        $categorySets = $this->getMapper()->fetchObjects($id);
+
+        if (empty($categorySets)) {
+            throw new NotFoundException('Category Sets Not Found', 404);
+        }
+        return $categorySets;
+    }
+    
     /**
      * @param int $id
      * @return Core_Model_CategorySet_Interface 

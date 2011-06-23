@@ -41,7 +41,7 @@ class Core_Model_CategorySet implements Core_Model_CategorySet_Interface {
     /**
      * @var boolean
      */
-    public $visible = true;
+    public $hidden = true;
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {

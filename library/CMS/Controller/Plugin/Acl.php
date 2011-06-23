@@ -33,7 +33,7 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
         $acl->add(new Zend_Acl_Resource('homenet_subdevice-models'));
 
         $acl->add(new Zend_Acl_Resource('homenet_setup'));
-        
+        $acl->
         $acl->allow(null, array('default_index', 'default_error'));
         // a guest can only read content and login
         $acl->allow('guest',  array('default_login','default_user', 'default_register'), null);

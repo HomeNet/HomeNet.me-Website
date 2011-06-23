@@ -43,6 +43,11 @@ class Core_Model_Section_Field implements Core_Model_Section_Field_Interface {
     /**
      * @var string
      */
+    public $type;
+    
+    /**
+     * @var string
+     */
     public $name;
     /**
      * @var string

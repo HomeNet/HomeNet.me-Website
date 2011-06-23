@@ -10,11 +10,14 @@ class CategorySetController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        // action body
+        $cService = new Core_Model_CategorySet_Service();
+        $this->view->assign('object', $cService->getObjects());
     }
 
     public function newAction()
     {
+        $form = new Core_Form_CategorySet();
+        $this->view->assign('form',$form);
         // action body
     }
 
