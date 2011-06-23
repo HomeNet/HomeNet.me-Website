@@ -46,6 +46,7 @@ class Core_Model_DbTableRow_CategorySet extends Zend_Db_Table_Row_Abstract imple
     }
 
     public function init(){
+        $this->visible = (bool) $this->visible;
 //        $this->uncompress();
     }
     
@@ -59,7 +60,7 @@ class Core_Model_DbTableRow_CategorySet extends Zend_Db_Table_Row_Abstract imple
 //        }
 //    }
     
-    public function compress(){
+//    public function compress(){
 //        if(is_array($this->settings)){
 //            $this->settings = serialize($this->settings);
 //        }
@@ -67,7 +68,7 @@ class Core_Model_DbTableRow_CategorySet extends Zend_Db_Table_Row_Abstract imple
 //        if(is_array($this->permissions)){
 //            $this->permissions = serialize($this->permissions);
 //        }
-    }
+//    }
 
     public function save(){
 //      $this->compress();

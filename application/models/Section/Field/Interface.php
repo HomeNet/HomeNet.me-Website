@@ -20,11 +20,11 @@
 
 /**
  * @package Core
- * @subpackage SectionField
+ * @subpackage Content
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-interface Core_Model_SectionField_Interface {
+interface Core_Model_Section_Field_Interface {
 
     /**
      * @return array

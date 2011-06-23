@@ -28,5 +28,5 @@ class Core_Model_DbTable_Users extends Zend_Db_Table_Abstract
 {
 
     protected $_name = 'users';
-    protected $_rowClass = 'Core_Model_DbTableRow_Users';
+    protected $_rowClass = 'Core_Model_DbTableRow_User';
 }

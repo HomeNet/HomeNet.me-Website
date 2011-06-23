@@ -21,6 +21,8 @@
  * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
  */
 
+require "MapperInterface.php";
+
 /**
  * @package Core
  * @subpackage Category
@@ -37,7 +39,7 @@ class Core_Model_Category_MapperDbTable implements Core_Model_Category_MapperInt
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_Category();
+            $this->_table = new Core_Model_DbTable_Categories();
         }
         return $this->_table;
     }
@@ -50,9 +52,9 @@ class Core_Model_Category_MapperDbTable implements Core_Model_Category_MapperInt
         return $this->getTable()->find($id)->current();
     }
 
-   public function fetchObjectsByUrl($url){
+   public function fetchObjectByUrl($url){
        $select = $this->getTable()->select()->where('url = ?',$url);
-       return $this->getTable()->fetchAll($select);
+       return $this->getTable()->fetchRow($select);
     }
 
 
@@ -69,8 +71,7 @@ class Core_Model_Category_MapperDbTable implements Core_Model_Category_MapperInt
     public function save(Core_Model_Category_Interface $category) {
 
         if (($category instanceof Core_Model_DbTableRow_Category) && ($category->isConnected())) {
-            $category->save();
-            return;
+            return $category->save();
         } elseif (!is_null($category->id)) {
             $row = $this->getTable()->find($category->id)->current();
             if(empty($row)){
@@ -83,7 +84,17 @@ class Core_Model_Category_MapperDbTable implements Core_Model_Category_MapperInt
 
         $row->fromArray($category->toArray());
        // die(debugArray($row));
+        try {
         $row->save();
+        } catch(Exception $e){
+            if(strstr($e->getMessage(), '1062 Duplicate')) {
+               throw new DuplicateEntryException("URL Already Exists"); 
+            } elseif(strstr($e->getMessage(), '1048 Column')) {
+               throw new InvalidArgumentException("Invalid Column"); 
+            } else {
+                 throw new Exception($e->getMessage());
+            }
+        }
 
         return $row;
     }
@@ -99,5 +110,11 @@ class Core_Model_Category_MapperDbTable implements Core_Model_Category_MapperInt
         }
 
         throw new Exception('Invalid Category');
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV == 'testing'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 }

@@ -30,12 +30,16 @@ interface Core_Model_Category_MapperInterface {
 
     public function fetchObjectById($id);
 
-    public function fetchObjectsByUrl($url);
+    public function fetchObjectByUrl($url);
 
 //    public function fetchObjectsByIdHouse($id,$house);
 
     public function save(Core_Model_Category_Interface $category);
 
     public function delete(Core_Model_Category_Interface $category);
+    
+    public function deleteAll();
+    
+    
 
 }

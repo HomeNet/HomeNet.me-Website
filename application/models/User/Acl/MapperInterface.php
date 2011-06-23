@@ -40,5 +40,6 @@ interface Core_Model_User_Acl_MapperInterface {
     public function save(Core_Model_User_Acl_Interface $acl);
 
     public function delete(Core_Model_User_Acl_Interface $acl);
-
+public function deleteByUser($user);
+    public function deleteAll();
 }

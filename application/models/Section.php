@@ -24,28 +24,39 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Section {
+class Core_Model_Section implements Core_Model_Section_Interface {
 
     /**
      * @var int
      */
     public $id;
-    /**
-     * @var int
-     */
-    public $status;
+    
     /**
      * @var string
      */
-    public $title;
+    public $package;
+
     /**
      * @var string
      */
     public $url;
+    
+    /**
+     * @var string
+     */
+    public $title;
+    
+    public $title_label = null;
+    
     /**
      * @var string
      */
     public $description = null;
+    
+    /**
+     * @var int
+     */
+    public $visible;
   
 
     public function __construct(array $config = array()) {

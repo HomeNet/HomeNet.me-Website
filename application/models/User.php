@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_User {
+class Core_Model_User implements Core_Model_User_Interface {
     
     /**
      * @var int
@@ -37,7 +37,7 @@ class Core_Model_User {
     /**
      * @var int
      */
-    public $group = null;
+    public $primary_group = 5;
     /**
      * @var string
      */
@@ -57,15 +57,15 @@ class Core_Model_User {
     /**
      * @var Zend_Date
      */
-    public $created;
+    public $created = null;
     /**
      * @var CMS_ACL
      */
-    public $permission;
+    public $permissions;
     /**
      * @var array
      */
-    public $settings;
+    public $settings = array();
 
 
     public function __construct(array $config = array()) {
@@ -93,6 +93,27 @@ class Core_Model_User {
     public function toArray() {
 
         return get_object_vars($this);
+    }
+    
+    public function getSetting($setting){
+        if(isset($this->settings[$setting])){
+            return $this->settings[$setting];
+        }
+        return null;
+    }
+
+    public function setSetting($setting, $value){
+        if(is_null($this->settings)){
+            $this->settings = array($setting => $value);
+            return;
+        }
+        //die(debugArray($this->settings));
+
+        $this->settings = array_merge($this->settings,array($setting => $value));
+    }
+
+    public function clearSetting($setting){
+        unset($this->settings[$setting]);
     }
 
 }

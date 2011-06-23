@@ -39,5 +39,7 @@ interface Core_Model_Group_MapperInterface {
     public function save(Core_Model_Group_Interface $group);
 
     public function delete(Core_Model_Group_Interface $group);
+    
+    public function deleteAll();
 
 }

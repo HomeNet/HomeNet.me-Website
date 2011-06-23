@@ -47,6 +47,7 @@ class Core_Model_DbTableRow_Group extends Zend_Db_Table_Row_Abstract implements 
 
     public function init(){
         $this->uncompress();
+        $this->visible = (bool)$this->visible;
     }
     
     public function uncompress(){

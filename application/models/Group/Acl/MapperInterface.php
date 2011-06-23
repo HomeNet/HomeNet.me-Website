@@ -40,5 +40,8 @@ interface Core_Model_Group_Acl_MapperInterface {
     public function save(Core_Model_Group_Acl_Interface $acl);
 
     public function delete(Core_Model_Group_Acl_Interface $acl);
+    
+    public function deleteByGroup($group);
+    public function deleteAll();
 
 }

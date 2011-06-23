@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Group {
+class Core_Model_Group implements Core_Model_Group_Interface {
 /**
  * id 	int(10) 		UNSIGNED 	No 		auto_increment 	Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
 	parent 	int(10) 		UNSIGNED 	Yes 	NULL 		Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
@@ -44,7 +44,7 @@ class Core_Model_Group {
     /**
      * @var int
      */
-    public $status = -1;
+    public $type = -1;
     /**
      * @var string
      */
@@ -53,11 +53,21 @@ class Core_Model_Group {
      * @var string
      */
     public $description = null;
+    
+    /**
+     * @var bool
+     */
+    public $visible = true;
     /**
      * @var int
      */
     public $user_count = 0;
-
+    
+    /**
+     * @var array
+     */
+    public $settings = array();
+    
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {
             $this->fromArray($config['data']);
@@ -83,6 +93,26 @@ class Core_Model_Group {
     public function toArray() {
 
         return get_object_vars($this);
+    }
+    public function getSetting($setting){
+        if(isset($this->settings[$setting])){
+            return $this->settings[$setting];
+        }
+        return null;
+    }
+
+    public function setSetting($setting, $value){
+        if(is_null($this->settings)){
+            $this->settings = array($setting => $value);
+            return;
+        }
+        //die(debugArray($this->settings));
+
+        $this->settings = array_merge($this->settings,array($setting => $value));
+    }
+
+    public function clearSetting($setting){
+        unset($this->settings[$setting]);
     }
 
 }

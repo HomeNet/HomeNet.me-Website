@@ -50,13 +50,13 @@ class Core_Model_Group_Acl_Service {
 
     /**
      * @param int $id
-     * @return Core_Model_Group_Interface 
+     * @return Core_Model_Group_Acl_Interface 
      */
     public function getObjectById($id) {
         $content = $this->getMapper()->fetchObjectById($id);
 
         if (empty($content)) {
-            throw new Exception('User Acl not found', 404);
+            throw new NotFoundException('User Acl not found', 404);
         }
         return $content;
     }
@@ -128,6 +128,17 @@ class Core_Model_Group_Acl_Service {
         }
 
         return $this->getMapper()->delete($h);
+    }
+    
+    public function deleteByGroup($group) {
+        $this->getMapper()->deleteByGroup($group);
+    }
+    
+     public function deleteAll(){
+        if(APPLICATION_ENV != 'testing'){
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
     }
 
 }

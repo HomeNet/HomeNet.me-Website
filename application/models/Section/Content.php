@@ -71,19 +71,24 @@ class Core_Model_Content {
      * @var int
      */
     public $editor;
-    /**
-     * @var string
-     */
-    public $title;
+    
     /**
      * @var string
      */
     public $url;
     
     /**
+     * @var string
+     */
+    public $title;
+    
+    
+    /**
      * @var array
      */
     public $content;
+    
+    public $visible;
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {

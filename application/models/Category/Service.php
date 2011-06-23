@@ -55,7 +55,7 @@ class Core_Model_Category_Service {
         $category = $this->getMapper()->fetchObjectById($id);
 
         if (empty($category)) {
-            throw new Exception('Category not found', 404);
+            throw new NotFoundException('Category not found', 404);
         }
         return $category;
     }
@@ -66,10 +66,10 @@ class Core_Model_Category_Service {
      */
     public function getObjectByUrl($url){
         
-        $category = $this->getMapper()->fetchObjectByUrl($id);
+        $category = $this->getMapper()->fetchObjectByUrl($url);
 
         if (empty($category)) {
-            throw new Exception('Category not found', 404);
+            throw new NotFoundException('Category not found', 404);
         }
         return $category;
     }
@@ -120,5 +120,12 @@ class Core_Model_Category_Service {
         }
 
         return $this->getMapper()->delete($h);
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'testing'){
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
     }
 }

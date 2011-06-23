@@ -26,69 +26,255 @@ class Core_Model_Category_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        
+        $this->object->deleteAll();
     }
 
-    /**
-     * @todo Implement testGetMapper().
-     */
     public function testGetMapper() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+
+        $this->assertInstanceOf('Core_Model_Category_MapperInterface', $this->object->getMapper());
     }
 
     /**
      * @todo Implement testSetMapper().
      */
     public function testSetMapper() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        
+        $mapper = new Core_Model_Category_MapperDbTable();
+         $this->object->setMapper($mapper);
+        
+        $this->assertInstanceOf('Core_Model_Category_MapperInterface', $this->object->getMapper());
+        $this->assertEquals($mapper, $this->object->getMapper());
+        //$this->ass
     }
 
-    /**
-     * @todo Implement testGetObjectById().
-     */
+    private function createValidCategory() {
+        $category = new Core_Model_Category();
+        $category->set = 0;
+        $category->parent = 1;
+        $category->order = 2;
+        $category->url = 'testUrl';
+        $category->title = 'testTitle';
+        $category->description = 'testDescription';
+
+        $result = $this->object->create($category);
+
+        $this->assertInstanceOf('Core_Model_Category_Interface', $result);
+        return $result;
+    }
+    
+    public function testCreateInvalidCategory() {
+        $category = new Core_Model_Category();
+        $category->set = 0;
+        $category->parent = 1;
+        $category->order = 2;
+        //$category->url = 'testUrl';
+        $category->title = 'testTitle';
+        //$category->description = 'testDescription';
+        $this->setExpectedException('InvalidArgumentException');
+        $result = $this->object->create($category);
+    }
+//    
+    public function testDuplicateUrl() {
+
+        $category1 = $this->createValidCategory();
+        $this->setExpectedException('DuplicateEntryException');
+        $category2 = $this->createValidCategory();
+    }
+
+    public function testCreateValidFromObject() {
+
+        $result = $this->createValidCategory();
+
+        $this->assertNotNull($result->id);
+        $this->assertEquals(0, $result->set);
+        $this->assertEquals(1, $result->parent);
+        $this->assertEquals(2, $result->order);
+        $this->assertEquals('testUrl', $result->url);
+        $this->assertEquals('testTitle', $result->title);
+        $this->assertEquals('testDescription', $result->description);
+    }
+    
+    public function testCreateFromArray() {
+
+        $category = array(
+        'set' => 0,
+        'parent' => 1,
+        'order' => 2,
+        'url' => 'testUrl',
+        'title' => 'testTitle',
+        'description' => 'testDescription');
+
+        $result = $this->object->create($category);
+
+        $this->assertInstanceOf('Core_Model_Category_Interface', $result);
+
+        $this->assertNotNull($result->id);
+        $this->assertEquals(0, $result->set);
+        $this->assertEquals(1, $result->parent);
+        $this->assertEquals(2, $result->order);
+        $this->assertEquals('testUrl', $result->url);
+        $this->assertEquals('testTitle', $result->title);
+        $this->assertEquals('testDescription', $result->description);
+    }
+
+    public function testCreateException() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $badObject = new StdClass();
+        $create = $this->object->create($badObject);
+    }
+
     public function testGetObjectById() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+
+        //setup
+        $category = $this->createValidCategory();
+
+        //test getObject
+        $result = $this->object->getObjectById($category->id);
+        
+        $this->assertInstanceOf('Core_Model_Category_Interface', $result);
+
+        $this->assertEquals($category->id, $result->id);
+        $this->assertEquals(0, $result->set);
+        $this->assertEquals(1, $result->parent);
+        $this->assertEquals(2, $result->order);
+        $this->assertEquals('testUrl', $result->url);
+        $this->assertEquals('testTitle', $result->title);
+        $this->assertEquals('testDescription', $result->description);
+    }
+    
+    public function testGetObjectByUrl() {
+
+        //setup
+        $category = $this->createValidCategory();
+
+        //test getObject
+        $result = $this->object->getObjectByUrl($category->url);
+        
+        $this->assertInstanceOf('Core_Model_Category_Interface', $result);
+
+        $this->assertEquals($category->id, $result->id);
+        $this->assertEquals(0, $result->set);
+        $this->assertEquals(1, $result->parent);
+        $this->assertEquals(2, $result->order);
+        $this->assertEquals('testUrl', $result->url);
+        $this->assertEquals('testTitle', $result->title);
+        $this->assertEquals('testDescription', $result->description);
+    }
+    
+     public function testGetInvalidObjectByUrl() {
+
+        $this->setExpectedException('NotFoundException');
+        $result = $this->object->getObjectByUrl("testnotindatabase");
+
     }
 
-    /**
-     * @todo Implement testCreate().
-     */
-    public function testCreate() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testUpdateFromObject() {
+
+        //setup
+        $category = $this->createValidCategory();
+
+        //update values
+        $category->set = 1;
+        $category->parent = 2;
+        $category->order = 3;
+        $category->url = 'testUrl2';
+        $category->title = 'testTitle2';
+        $category->description = 'testDescription2';
+
+        $result = $this->object->update($category);
+
+        $this->assertInstanceOf('Core_Model_Category_Interface', $result);
+
+        $this->assertEquals($category->id, $result->id);
+        $this->assertEquals(1, $result->set);
+        $this->assertEquals(2, $result->parent);
+        $this->assertEquals(3, $result->order);
+        $this->assertEquals('testUrl2', $result->url);
+        $this->assertEquals('testTitle2', $result->title);
+        $this->assertEquals('testDescription2', $result->description);
+    }
+    
+    public function testUpdateFromArray() {
+
+        //setup
+        $category = $this->createValidCategory();
+
+        $array = $category->toArray();
+        
+        //update values
+        $array['set'] = 1;
+        $array['parent'] = 2;
+        $array['order'] = 3;
+        $array['url'] = 'testUrl2';
+        $array['title'] = 'testTitle2';
+        $array['description'] = 'testDescription2';
+
+        $result = $this->object->update($array);
+
+        $this->assertInstanceOf('Core_Model_Category_Interface', $result);
+
+        $this->assertEquals($category->id, $result->id);
+        $this->assertEquals(1, $result->set);
+        $this->assertEquals(2, $result->parent);
+        $this->assertEquals(3, $result->order);
+        $this->assertEquals('testUrl2', $result->url);
+        $this->assertEquals('testTitle2', $result->title);
+        $this->assertEquals('testDescription2', $result->description);
+    }
+    
+
+    public function testUpdateException() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $badObject = new StdClass();
+        $create = $this->object->update($badObject);
     }
 
-    /**
-     * @todo Implement testUpdate().
-     */
-    public function testUpdate() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testDeleteObject() {
+
+        //setup
+        $category = $this->createValidCategory();
+
+        //test delete
+        $this->object->delete($category);
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->object->getObjectById($category->id);
     }
 
-    /**
-     * @todo Implement testDelete().
-     */
-    public function testDelete() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testDeleteId() {
+
+        //setup
+        $category = $this->createValidCategory();
+       // $this->fail("id: ".$category->id);
+        $this->object->delete((int)$category->id);
+        
+        $this->setExpectedException('NotFoundException');
+        $result = $this->object->getObjectById($category->id); 
+    }
+    
+    public function testDeleteArray() {
+
+        //setup
+        $category = $this->createValidCategory();
+       // $this->fail("id: ".$category->id);
+        $this->object->delete($category->toArray());
+        
+        $this->setExpectedException('NotFoundException');
+        $result = $this->object->getObjectById($category->id); 
+    }
+
+    public function testDeleteException() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $badObject = new StdClass();
+        $create = $this->object->delete($badObject);
+    }
+
+    public function testDeleteAll() {
+//        $this->object->deleteAll();
     }
 
 }
-
-?>

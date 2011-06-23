@@ -21,6 +21,8 @@
  * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
  */
 
+require "MapperInterface.php";
+
 /**
  * @package Core
  * @subpackage Group
@@ -37,7 +39,7 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_Group();
+            $this->_table = new Core_Model_DbTable_Groups();
         }
         return $this->_table;
     }
@@ -83,8 +85,7 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
     public function save(Core_Model_Group_Interface $group) {
 
         if (($group instanceof Core_Model_DbTableRow_Group) && ($group->isConnected())) {
-            $group->save();
-            return;
+            return $group->save();
         } elseif (!is_null($group->id)) {
             $row = $this->getTable()->find($group->id)->current();
             if(empty($row)){
@@ -113,5 +114,11 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
         }
 
         throw new Exception('Invalid Group Object');
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV == 'testing'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 }

@@ -28,12 +28,12 @@
 class Core_Model_User_Membership_Service {
 
     /**
-     * @var Core_Model_Content_MapperInterface
+     * @var Core_Model_Membership_MapperInterface
      */
     protected $_mapper;
 
     /**
-     * @return Core_Model_Content_MapperInterface
+     * @return Core_Model_Membership_MapperInterface
      */
     public function getMapper() {
 
@@ -56,7 +56,7 @@ class Core_Model_User_Membership_Service {
         $content = $this->getMapper()->fetchObjectById($id);
 
         if (empty($content)) {
-            throw new Exception('Content not found', 404);
+            throw new NotFoundException('Membership not found', 404);
         }
         return $content;
     }
@@ -89,7 +89,7 @@ class Core_Model_User_Membership_Service {
         } elseif (is_array($membership)) {
             $h = new Core_Model_User_Membership(array('data' => $membership));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Membership');
         }
 
         return $this->getMapper()->save($h);
@@ -105,7 +105,7 @@ class Core_Model_User_Membership_Service {
         } elseif (is_array($membership)) {
             $h = new Core_Model_User_Membership(array('data' => $membership));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Membership');
         }
 
         return $this->getMapper()->save($h);
@@ -124,10 +124,26 @@ class Core_Model_User_Membership_Service {
         } elseif (is_array($membership)) {
             $h = new Core_Model_User_Membership(array('data' => $membership));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Membership');
         }
 
         return $this->getMapper()->delete($h);
+    }
+    
+    public function deleteByUser($user) {
+        $this->getMapper()->deleteByUser($user);
+    }
+    
+    public function deleteByGroup($group) {
+        $this->getMapper()->deleteByUser($group);
+    }
+    
+     public function deleteAll(){
+        if(APPLICATION_ENV == 'testing'){
+            $this->getMapper()->deleteAll();
+            return;
+        }
+        throw new Exception("Not Allowed");
     }
 
 }

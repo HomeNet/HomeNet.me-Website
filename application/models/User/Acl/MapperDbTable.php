@@ -21,6 +21,8 @@
  * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
  */
 
+require_once "MapperInterface.php";
+
 /**
  * @package Core
  * @subpackage User
@@ -37,7 +39,7 @@ class Core_Model_User_Acl_MapperDbTable implements Core_Model_User_Acl_MapperInt
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_UserAcl();
+            $this->_table = new Core_Model_DbTable_UserAcls();
         }
         return $this->_table;
     }
@@ -55,7 +57,7 @@ class Core_Model_User_Acl_MapperDbTable implements Core_Model_User_Acl_MapperInt
         return $this->getTable()->find($id)->current();
     }
     
-    public function fetchObjectByUser($user){
+    public function fetchObjectsByUser($user){
        $select = $this->getTable()->select()->where('user = ?',$user);
       return $this->getTable()->fetchAll($select);
     }
@@ -63,8 +65,7 @@ class Core_Model_User_Acl_MapperDbTable implements Core_Model_User_Acl_MapperInt
     public function save(Core_Model_User_Acl_Interface $acl) {
 
         if (($acl instanceof Core_Model_DbTableRow_UserAcl) && ($acl->isConnected())) {
-            $acl->save();
-            return;
+            return $acl->save();;
         } elseif (!is_null($acl->id)) {
             $row = $this->getTable()->find($acl->id)->current();
             if(empty($row)){
@@ -93,5 +94,16 @@ class Core_Model_User_Acl_MapperDbTable implements Core_Model_User_Acl_MapperInt
         }
 
         throw new Exception('Invalid User Object');
+    }
+    
+     public function deleteByUser($user){
+         $select = $this->getTable()->select()->where('user = ?',$user);
+         $this->getTable()->delete($select);
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV == 'testing'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 }

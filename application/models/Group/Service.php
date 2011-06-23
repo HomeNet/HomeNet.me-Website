@@ -25,26 +25,26 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Content_Service {
+class Core_Model_Group_Service {
 
     /**
-     * @var Core_Model_Content_MapperInterface
+     * @var Core_Model_Group_MapperInterface
      */
     protected $_mapper;
 
     /**
-     * @return Core_Model_Content_MapperInterface
+     * @return Core_Model_Group_MapperInterface
      */
     public function getMapper() {
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new Core_Model_Content_MapperDbTable();
+            $this->_mapper = new Core_Model_Group_MapperDbTable();
         }
 
         return $this->_mapper;
     }
 
-    public function setMapper(Core_Model_Content_MapperInterface $mapper) {
+    public function setMapper(Core_Model_Group_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
@@ -56,7 +56,7 @@ class Core_Model_Content_Service {
         $content = $this->getMapper()->fetchObjectById($id);
 
         if (empty($content)) {
-            throw new Exception('Content not found', 404);
+            throw new NotFoundException('Group not found', 404);
         }
         return $content;
     }
@@ -84,12 +84,12 @@ class Core_Model_Content_Service {
      * @throws InvalidArgumentException 
      */
     public function create($group) {
-        if ($group instanceof Core_Model_Content_Interface) {
+        if ($group instanceof Core_Model_Group_Interface) {
             $h = $group;
         } elseif (is_array($group)) {
-            $h = new Core_Model_Content(array('data' => $group));
+            $h = new Core_Model_Group(array('data' => $group));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new InvalidArgumentException('Invalid Group');
         }
 
         return $this->getMapper()->save($h);
@@ -100,12 +100,12 @@ class Core_Model_Content_Service {
      * @throws InvalidArgumentException 
      */
     public function update($group) {
-        if ($group instanceof Core_Model_Content_Interface) {
+        if ($group instanceof Core_Model_Group_Interface) {
             $h = $group;
         } elseif (is_array($group)) {
-            $h = new Core_Model_Content(array('data' => $group));
+            $h = new Core_Model_Group(array('data' => $group));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new InvalidArgumentException('Invalid Group');
         }
 
         return $this->getMapper()->save($h);
@@ -117,17 +117,24 @@ class Core_Model_Content_Service {
      */
     public function delete($group) {
         if (is_int($group)) {
-            $h = new Core_Model_Content();
+            $h = new Core_Model_Group();
             $h->id = $group;
-        } elseif ($group instanceof Core_Model_Content_Interface) {
+        } elseif ($group instanceof Core_Model_Group_Interface) {
             $h = $group;
         } elseif (is_array($group)) {
-            $h = new Core_Model_Content(array('data' => $group));
+            $h = new Core_Model_Group(array('data' => $group));
         } else {
-            throw new Core_Model_Exception('Invalid Content');
+            throw new InvalidArgumentException('Invalid Group');
         }
 
         return $this->getMapper()->delete($h);
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'testing'){
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
     }
 
 }

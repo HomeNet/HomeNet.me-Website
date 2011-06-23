@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Group_Acl {
+class Core_Model_Group_Acl implements Core_Model_Group_Acl_Interface {
     
     
     /**
@@ -38,7 +38,7 @@ class Core_Model_Group_Acl {
     /**
      * @var int
      */
-    public $module = null;
+    public $module = 'core';
     /**
      * @var string
      */

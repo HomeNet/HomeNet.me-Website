@@ -53,12 +53,12 @@ class Core_Model_User_Acl_Service {
      * @return Core_Model_Group_Interface 
      */
     public function getObjectById($id) {
-        $content = $this->getMapper()->fetchObjectById($id);
+        $acl = $this->getMapper()->fetchObjectById($id);
 
-        if (empty($content)) {
-            throw new Exception('User Acl not found', 404);
+        if (empty($acl)) {
+            throw new NotFoundException('User Acl not found', 404);
         }
-        return $content;
+        return $acl;
     }
 
 //    public function getObjectsBySection($section){
@@ -129,5 +129,14 @@ class Core_Model_User_Acl_Service {
 
         return $this->getMapper()->delete($h);
     }
-
+public function deleteByUser($user) {
+        $this->getMapper()->deleteByUser($user);
+    }
+    
+     public function deleteAll(){
+        if(APPLICATION_ENV != 'testing'){
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
+    }
 }

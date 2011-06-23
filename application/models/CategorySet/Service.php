@@ -55,7 +55,7 @@ class Core_Model_CategorySet_Service {
         $content = $this->getMapper()->fetchObjectById($id);
 
         if (empty($content)) {
-            throw new Exception('Category Set Not Found', 404);
+            throw new NotFoundException('Category Set Not Found', 404);
         }
         return $content;
     }
@@ -97,5 +97,12 @@ class Core_Model_CategorySet_Service {
         }
 
         return $this->getMapper()->delete($h);
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'testing'){
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
     }
 }

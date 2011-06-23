@@ -21,8 +21,8 @@
  */
 
 /**
- * @package HomeNet
- * @subpackage Apikey
+ * @package Core
+ * @subpackage Category
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
@@ -37,5 +37,7 @@ interface Core_Model_CategorySet_MapperInterface {
     public function save(Core_Model_CategorySet_Interface $categorySet);
 
     public function delete(Core_Model_CategorySet_Interface $categorySet);
+    
+    public function deleteAll();
 
 }

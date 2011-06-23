@@ -40,5 +40,7 @@ interface Core_Model_Section_MapperInterface {
     public function save(Core_Model_Section_Interface $section);
 
     public function delete(Core_Model_Section_Interface $section);
+    
+    public function deleteAll();
 
 }

@@ -21,6 +21,8 @@
  * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
  */
 
+require_once "MapperInterface.php";
+
 /**
  * @package Core
  * @subpackage User
@@ -37,7 +39,7 @@ class Core_Model_User_MapperDbTable implements Core_Model_User_MapperInterface {
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_User();
+            $this->_table = new Core_Model_DbTable_Users();
         }
         return $this->_table;
     }
@@ -55,12 +57,16 @@ class Core_Model_User_MapperDbTable implements Core_Model_User_MapperInterface {
     public function fetchObjectById($id){
         return $this->getTable()->find($id)->current();
     }
+    
+     public function fetchObjectsByPrimaryGroup($group){
+       $select = $this->getTable()->select()->where('primary_group = ?',$group);
+      return $this->getTable()->fetchAll($select);
+    }
 
     public function save(Core_Model_User_Interface $user) {
 
         if (($user instanceof Core_Model_DbTableRow_User) && ($user->isConnected())) {
-            $user->save();
-            return;
+            return $user->save();
         } elseif (!is_null($user->id)) {
             $row = $this->getTable()->find($user->id)->current();
             if(empty($row)){
@@ -89,5 +95,11 @@ class Core_Model_User_MapperDbTable implements Core_Model_User_MapperInterface {
         }
 
         throw new Exception('Invalid User Object');
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV == 'testing'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 }

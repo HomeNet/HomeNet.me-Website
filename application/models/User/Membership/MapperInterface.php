@@ -40,5 +40,11 @@ interface Core_Model_User_Membership_MapperInterface {
     public function save(Core_Model_User_Membership_Interface $membership);
 
     public function delete(Core_Model_User_Membership_Interface $membership);
+    
+    public function deleteByUser($user);
+    
+    public function deleteByGroup($group);
+    
+     public function deleteAll();
 
 }

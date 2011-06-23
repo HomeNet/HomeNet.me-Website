@@ -56,7 +56,7 @@ class Core_Model_Section_Service {
         $section = $this->getMapper()->fetchObjectById($id);
 
         if (empty($section)) {
-            throw new Exception('Section Not Found', 404);
+            throw new NotFoundException('Section Not Found', 404);
         }
         return $section;
     }
@@ -109,5 +109,12 @@ class Core_Model_Section_Service {
         }
 
         return $this->getMapper()->delete($h);
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'testing'){
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
     }
 }

@@ -26,24 +26,26 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-interface Core_Model_SectionField_MapperInterface {
+interface Core_Model_Section_Field_MapperInterface {
     /**
-     * @return Core_Model_SectionField_Interface
+     * @return Core_Model_Section_Field_Interface
      */
     public function fetchObjectById($id);
     /**
-     * @return Core_Model_SectionField_Interface
+     * @return Core_Model_Section_Field_Interface
      */
     public function fetchObjectsBySection($section);
     /**
-     * @return Core_Model_SectionField_Interface
+     * @return Core_Model_Section_Field_Interface
      */
     public function fetchObjectsByUrl($url);
 
 //    public function fetchObjectsByIdHouse($id,$house);
 
-    public function save(Core_Model_SectionField_Interface $content);
+    public function save(Core_Model_Section_Field_Interface $content);
 
-    public function delete(Core_Model_SectionField_Interface $content);
-
+    public function delete(Core_Model_Section_Field_Interface $content);
+public function deleteBySection($section);
+    
+    public function deleteAll();
 }

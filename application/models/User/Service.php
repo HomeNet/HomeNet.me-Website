@@ -53,17 +53,20 @@ class Core_Model_User_Service {
      * @return Core_Model_User_Interface
      */
     public function getObjectById($id){
-        $content = $this->getMapper()->fetchObjectById($id);
-        return $content;
+        $user = $this->getMapper()->fetchObjectById($id);
+        if (empty($user)) {
+            throw new NotFoundException('User not found', 404);
+        }
+        return $user;
     }
 
     /**
      * @param int $group
      * @return Core_Model_User_Interface[] 
      */
-    public function getObjectsByGroup($group){
-        $contents = $this->getMapper()->fetchObjectsByGroup($group);
-        return $contents;
+    public function getObjectsByPrimaryGroup($group){
+        $memberships = $this->getMapper()->fetchObjectsByPrimaryGroup($group);
+        return $memberships;
     }
     /**
      * @param mixed $user
@@ -112,5 +115,12 @@ class Core_Model_User_Service {
         }
 
         return $this->getMapper()->delete($h);
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'testing'){
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
     }
 }

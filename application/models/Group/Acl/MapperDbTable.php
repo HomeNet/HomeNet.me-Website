@@ -21,6 +21,8 @@
  * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
  */
 
+require "MapperInterface.php";
+
 /**
  * @package Core
  * @subpackage Group
@@ -37,7 +39,7 @@ class Core_Model_Group_Acl_MapperDbTable implements Core_Model_Group_Acl_MapperI
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_GroupAcl();
+            $this->_table = new Core_Model_DbTable_GroupAcls();
         }
         return $this->_table;
     }
@@ -56,7 +58,7 @@ class Core_Model_Group_Acl_MapperDbTable implements Core_Model_Group_Acl_MapperI
         return $this->getTable()->find($id)->current();
     }
     
-    public function fetchObjectByGroup($group){
+    public function fetchObjectsByGroup($group){
        $select = $this->getTable()->select()->where('group = ?',$group);
       return $this->getTable()->fetchAll($select);
     }
@@ -64,8 +66,8 @@ class Core_Model_Group_Acl_MapperDbTable implements Core_Model_Group_Acl_MapperI
     public function save(Core_Model_Group_Acl_Interface $membership) {
 
         if (($membership instanceof Core_Model_DbTableRow_GroupAcl) && ($membership->isConnected())) {
-            $membership->save();
-            return;
+            return $membership->save();
+
         } elseif (!is_null($membership->id)) {
             $row = $this->getTable()->find($membership->id)->current();
             if(empty($row)){
@@ -94,5 +96,15 @@ class Core_Model_Group_Acl_MapperDbTable implements Core_Model_Group_Acl_MapperI
         }
 
         throw new Exception('Invalid Group Object');
+    }
+    
+    public function deleteByGroup($group){
+         $select = $this->getTable()->select()->where('group = ?',$group);
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV == 'testing'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 }

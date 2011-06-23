@@ -32,6 +32,8 @@ interface Core_Model_User_MapperInterface {
      * @return Core_Model_User
      */
     public function fetchObjectById($id);
+    
+    public function fetchObjectsByPrimaryGroup($group);
 
 //    public function fetchObjectsBySection($section);
 
@@ -40,5 +42,7 @@ interface Core_Model_User_MapperInterface {
     public function save(Core_Model_User_Interface $user);
 
     public function delete(Core_Model_User_Interface $user);
+    
+    public function deleteAll();
 
 }

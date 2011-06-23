@@ -25,45 +25,45 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_SectionField_Service {
+class Core_Model_Section_Field_Service {
 
     /**
-     * @var Core_Model_SectionField_MapperInterface
+     * @var Core_Model_Section_Field_MapperInterface
      */
     protected $_mapper;
 
     /**
-     * @return Core_Model_SectionField_MapperInterface
+     * @return Core_Model_Section_Field_MapperInterface
      */
     public function getMapper() {
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new Core_Model_SectionField_MapperDbTable();
+            $this->_mapper = new Core_Model_Section_Field_MapperDbTable();
         }
 
         return $this->_mapper;
     }
 
-    public function setMapper(Core_Model_SectionField_MapperInterface $mapper) {
+    public function setMapper(Core_Model_Section_Field_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
     /**
      * @param int $id
-     * @return Core_Model_SectionField_Interface 
+     * @return Core_Model_Section_Field_Interface 
      */
     public function getObjectById($id) {
         $content = $this->getMapper()->fetchObjectById($id);
 
         if (empty($content)) {
-            throw new Exception('Content not found', 404);
+            throw new NotFoundException('Content not found', 404);
         }
         return $content;
     }
 
     /**
      * @param int $id
-     * @return Core_Model_SectionField_Interface[]
+     * @return Core_Model_Section_Field_Interface[]
      */
     public function getObjectsBySection($section) {
         $contents = $this->getMapper()->fetchObjectsBySection($section);
@@ -89,10 +89,10 @@ class Core_Model_SectionField_Service {
      * @throws InvalidArgumentException 
      */
     public function create($sectionField) {
-        if ($sectionField instanceof Core_Model_SectionField_Interface) {
+        if ($sectionField instanceof Core_Model_Section_Field_Interface) {
             $h = $sectionField;
         } elseif (is_array($sectionField)) {
-            $h = new Core_Model_SectionField(array('data' => $sectionField));
+            $h = new Core_Model_Section_Field(array('data' => $sectionField));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }
@@ -105,10 +105,10 @@ class Core_Model_SectionField_Service {
      * @throws InvalidArgumentException 
      */
     public function update($sectionField) {
-        if ($sectionField instanceof Core_Model_SectionField_Interface) {
+        if ($sectionField instanceof Core_Model_Section_Field_Interface) {
             $h = $sectionField;
         } elseif (is_array($sectionField)) {
-            $h = new Core_Model_SectionField(array('data' => $sectionField));
+            $h = new Core_Model_Section_Field(array('data' => $sectionField));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }
@@ -122,17 +122,29 @@ class Core_Model_SectionField_Service {
      */
     public function delete($sectionField) {
         if (is_int($sectionField)) {
-            $h = new Core_Model_SectionField();
+            $h = new Core_Model_Section_Field();
             $h->id = $sectionField;
-        } elseif ($sectionField instanceof Core_Model_SectionField_Interface) {
+        } elseif ($sectionField instanceof Core_Model_Section_Field_Interface) {
             $h = $sectionField;
         } elseif (is_array($sectionField)) {
-            $h = new Core_Model_SectionField(array('data' => $sectionField));
+            $h = new Core_Model_Section_Field(array('data' => $sectionField));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }
 
         return $this->getMapper()->delete($h);
+    }
+    
+    public function deleteBySection($section) {
+        $this->getMapper()->deleteBySection($section);
+    }
+    
+     public function deleteAll(){
+        if(APPLICATION_ENV == 'testing'){
+            $this->getMapper()->deleteAll();
+            return;
+        }
+        throw new Exception("Not Allowed");
     }
 
 }

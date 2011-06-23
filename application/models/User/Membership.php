@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_User_Membership {
+class Core_Model_User_Membership implements Core_Model_User_Membership_Interface {
     
     /**
      * @var int
@@ -37,7 +37,7 @@ class Core_Model_User_Membership {
     /**
      * @var int
      */
-    public $group = null;
+    public $group;
     /**
      * @var Zend_Date
      */

@@ -20,11 +20,11 @@
 
 /**
  * @package Core
- * @subpackage Section
+ * @subpackage Category
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_DbTable_SectionContent extends Zend_Db_Table_Abstract
+class Core_Model_DbTable_CategorySets extends Zend_Db_Table_Abstract
 {
 
     protected $_name = 'category_sets';

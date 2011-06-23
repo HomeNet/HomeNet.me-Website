@@ -135,3 +135,11 @@ function debugArray($array) {
     return '<pre>' . print_r($array, 1) . '</pre>';
 }
 
+class NotFoundException extends DomainException {
+    
+}
+
+class DuplicateEntryException extends DomainException {
+    
+}
+

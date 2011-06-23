@@ -46,33 +46,39 @@ class Core_Model_DbTableRow_SectionField extends Zend_Db_Table_Row_Abstract impl
     }
 
     public function init(){
-//        $this->uncompress();
+        
+        $this->locked = (bool)$this->locked;
+        $this->edit_name =  (bool)$this->edit_name;
+        $this->required = (bool)$this->required;
+        $this->visible = (bool)$this->visible;
+
+        $this->uncompress();
     }
     
-//    public function uncompress(){
-//        if(is_string($this->settings)){
-//            $this->settings = unserialize($this->settings);
-//        }
-//
-//        if(is_string($this->permissions)){
-//            $this->permissions = unserialize($this->permissions);
-//        }
-//    }
+    public function uncompress(){
+        if(is_string($this->filters)){
+            $this->filters = unserialize($this->filters);
+        }
+
+        if(is_string($this->validators)){
+            $this->validators = unserialize($this->validators);
+        }
+    }
     
     public function compress(){
-//        if(is_array($this->settings)){
-//            $this->settings = serialize($this->settings);
-//        }
-//
-//        if(is_array($this->permissions)){
-//            $this->permissions = serialize($this->permissions);
-//        }
+        if(is_array($this->filters)){
+            $this->filters = serialize($this->filters);
+        }
+
+        if(is_array($this->validators)){
+            $this->validators = serialize($this->validators);
+        }
     }
 
     public function save(){
-//      $this->compress();
+      $this->compress();
         if (parent::save()) {
-//            $this->uncompress();
+            $this->uncompress();
             return $this;
         }
     }

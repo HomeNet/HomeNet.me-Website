@@ -25,7 +25,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_DbTableRow_GroupAcl extends Zend_Db_Table_Row_Abstract implements Core_Model_GroupAcl_Interface {
+class Core_Model_DbTableRow_GroupAcl extends Zend_Db_Table_Row_Abstract implements Core_Model_Group_Acl_Interface {
 
 //    public $rooms;
 

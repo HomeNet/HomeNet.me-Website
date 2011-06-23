@@ -21,6 +21,8 @@
  * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
  */
 
+require_once "MapperInterface.php";
+
 /**
  * @package Core
  * @subpackage Section
@@ -37,7 +39,7 @@ class Core_Model_Section_MapperDbTable implements Core_Model_Section_MapperInter
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_Section();
+            $this->_table = new Core_Model_DbTable_Sections();
         }
         return $this->_table;
     }
@@ -61,8 +63,7 @@ class Core_Model_Section_MapperDbTable implements Core_Model_Section_MapperInter
     public function save(Core_Model_Section_Interface $section) {
 
         if (($section instanceof Core_Model_DbTableRow_Section) && ($section->isConnected())) {
-            $section->save();
-            return;
+            return $section->save();
         } elseif (!is_null($section->id)) {
             $row = $this->getTable()->find($section->id)->current();
             if(empty($row)){
@@ -75,7 +76,17 @@ class Core_Model_Section_MapperDbTable implements Core_Model_Section_MapperInter
 
         $row->fromArray($section->toArray());
        // die(debugArray($row));
+                try {
         $row->save();
+        } catch(Exception $e){
+            if(strstr($e->getMessage(), '1062 Duplicate')) {
+               throw new DuplicateEntryException("URL Already Exists"); 
+            } elseif(strstr($e->getMessage(), '1048 Column')) {
+               throw new InvalidArgumentException("Invalid Column"); 
+            } else {
+                 throw new Exception($e->getMessage());
+            }
+        };
 
         return $row;
     }
@@ -91,5 +102,10 @@ class Core_Model_Section_MapperDbTable implements Core_Model_Section_MapperInter
         }
 
         throw new Exception('Invalid Section Object');
+    }
+    public function deleteAll(){
+        if(APPLICATION_ENV == 'testing'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 }
