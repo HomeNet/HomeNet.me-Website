@@ -28,6 +28,8 @@
  */
 interface Core_Model_CategorySet_MapperInterface {
 
+    public function fetchObjects();
+    
     public function fetchObjectById($id);
 
 //    public function fetchObjectsBySection($section);

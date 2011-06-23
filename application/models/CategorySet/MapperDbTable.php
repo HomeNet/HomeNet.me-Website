@@ -51,7 +51,9 @@ class Core_Model_CategorySet_MapperDbTable implements Core_Model_CategorySet_Map
 
 
 
-
+    public function fetchObjects(){
+        return $this->getTable()->fetchAll();
+    }
 
 
 

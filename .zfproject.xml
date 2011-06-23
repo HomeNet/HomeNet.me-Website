@@ -104,6 +104,11 @@
         <formFile formName="Login"/>
         <formFile formName="User"/>
         <formFile formName="Test"/>
+        <formFile formName="CategorySet"/>
+        <formFile formName="Category"/>
+        <formFile formName="Section"/>
+        <formFile formName="Field"/>
+        <formFile formName="Content"/>
       </formsDirectory>
       <layoutsDirectory enabled="false"/>
       <modelsDirectory>
