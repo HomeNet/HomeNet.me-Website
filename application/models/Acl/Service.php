@@ -52,21 +52,6 @@ class Core_Model_Acl_Service {
             $array[$key] = $this->getResourcesByModule($key);
         }
         return $array;
-        
-        
-        
-       
-        
-        
-        //from stack overflow
-        $front = $this->getFrontController();
-        $acl = array();
-
-        
-
-        
-        
-        
     }
     
     public function getResourcesByModule($module){
@@ -119,40 +104,6 @@ class Core_Model_Acl_Service {
         }
 
         return $array;
-        
-        
-        
-        $front = $this->getFrontController();
-        $acl = array();
-        
-        foreach ($front->getControllerDirectory() as $module => $path) {
-
-                foreach (scandir($path) as $file) {
-
-                        if (strstr($file, "Controller.php") !== false) {
-
-                                include_once $path . DIRECTORY_SEPARATOR . $file;
-
-                                foreach (get_declared_classes() as $class) {
-
-                                        if (is_subclass_of($class, 'Zend_Controller_Action')) {
-
-                                                $controller = strtolower(substr($class, 0, strpos($class, "Controller")));
-                                                $actions = array();
-
-                                                foreach (get_class_methods($class) as $action) {
-
-                                                        if (strstr($action, "Action") !== false) {
-                                                                $actions[] = $action;
-                                                        }
-                                                }
-                                        }
-                                }
-
-                                $acl[$module][$controller] = $actions;
-                        }
-                }
-        }
         
     }
     
