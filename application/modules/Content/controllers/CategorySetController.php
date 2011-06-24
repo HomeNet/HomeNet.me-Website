@@ -10,7 +10,7 @@ class CategorySetController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        $cService = new Core_Model_CategorySet_Service();
+        $cService = new Content_Model_CategorySet_Service();
         $this->view->assign('object', $cService->getObjects());
     }
 

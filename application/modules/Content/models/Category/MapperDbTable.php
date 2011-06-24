@@ -24,22 +24,22 @@
 require "MapperInterface.php";
 
 /**
- * @package Core
+ * @package Content
  * @subpackage Category
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Category_MapperDbTable implements Core_Model_Category_MapperInterface {
+class Content_Model_Category_MapperDbTable implements Content_Model_Category_MapperInterface {
 
     protected $_table = null;
 
     /**
      *
-     * @return Core_Model_DbTable_Category;
+     * @return Content_Model_DbTable_Category;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_Categories();
+            $this->_table = new Content_Model_DbTable_Categories();
         }
         return $this->_table;
     }
@@ -68,9 +68,9 @@ class Core_Model_Category_MapperDbTable implements Core_Model_Category_MapperInt
 
 
 
-    public function save(Core_Model_Category_Interface $category) {
+    public function save(Content_Model_Category_Interface $category) {
 
-        if (($category instanceof Core_Model_DbTableRow_Category) && ($category->isConnected())) {
+        if (($category instanceof Content_Model_DbTableRow_Category) && ($category->isConnected())) {
             return $category->save();
         } elseif (!is_null($category->id)) {
             $row = $this->getTable()->find($category->id)->current();
@@ -99,9 +99,9 @@ class Core_Model_Category_MapperDbTable implements Core_Model_Category_MapperInt
         return $row;
     }
 
-    public function delete(Core_Model_Category_Interface $category) {
+    public function delete(Content_Model_Category_Interface $category) {
 
-        if (($category instanceof Core_Model_DbTableRow_Category) && ($category->isConnected())) {
+        if (($category instanceof Content_Model_DbTableRow_Category) && ($category->isConnected())) {
             $category->delete();
             return true;
         } elseif (!is_null($category->id)) {

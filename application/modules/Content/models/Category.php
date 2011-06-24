@@ -19,12 +19,12 @@
  */
 
 /**
- * @package Core
+ * @package Content
  * @subpackage Category
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Category implements Core_Model_Category_Interface {
+class Content_Model_Category implements Content_Model_Category_Interface {
 
     /**
      * @var int

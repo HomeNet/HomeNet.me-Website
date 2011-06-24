@@ -80,8 +80,11 @@ class Core_Model_User_Service {
         } else {
             throw new InvalidArgumentException('Invalid User Object');
         }
-
+        
         return $this->getMapper()->save($h);
+
+        
+        
     }
     /**
      * @param mixed $user

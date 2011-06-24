@@ -19,38 +19,38 @@
  */
 
 /**
- * @package Core
+ * @package Content
  * @subpackage Section
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 
-class Core_Model_Section_Service {
+class Content_Model_Section_Service {
     
     /**
-     * @var Core_Model_Section_MapperInterface
+     * @var Content_Model_Section_MapperInterface
      */
     protected $_mapper;
 
     /**
-     * @return Core_Model_Section_MapperInterface
+     * @return Content_Model_Section_MapperInterface
      */
     public function getMapper() {
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new Core_Model_Section_MapperDbTable();
+            $this->_mapper = new Content_Model_Section_MapperDbTable();
         }
 
         return $this->_mapper;
     }
 
-    public function setMapper(Core_Model_Section_MapperInterface $mapper) {
+    public function setMapper(Content_Model_Section_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
     
     /**
      * @param int $id
-     * @return Core_Model_Section_Interface 
+     * @return Content_Model_Section_Interface 
      */
     public function getObjectById($id){
         $section = $this->getMapper()->fetchObjectById($id);
@@ -66,10 +66,10 @@ class Core_Model_Section_Service {
     * @throws InvalidArgumentException 
     */
     public function create($section) {
-        if ($section instanceof Core_Model_Section_Interface) {
+        if ($section instanceof Content_Model_Section_Interface) {
             $h = $section;
         } elseif (is_array($section)) {
-            $h = new Core_Model_Section(array('data' => $section));
+            $h = new Content_Model_Section(array('data' => $section));
         } else {
             throw new InvalidArgumentException('Invalid Section');
         }
@@ -82,10 +82,10 @@ class Core_Model_Section_Service {
     * @throws InvalidArgumentException 
     */
     public function update($section) {
-        if ($section instanceof Core_Model_Section_Interface) {
+        if ($section instanceof Content_Model_Section_Interface) {
             $h = $section;
         } elseif (is_array($section)) {
-            $h = new Core_Model_Section(array('data' => $section));
+            $h = new Content_Model_Section(array('data' => $section));
         } else {
             throw new InvalidArgumentException('Invalid Section');
         }
@@ -98,12 +98,12 @@ class Core_Model_Section_Service {
     */
     public function delete($section) {
         if (is_int($section)) {
-            $h = new Core_Model_Section();
+            $h = new Content_Model_Section();
             $h->id = $section;
-        } elseif ($section instanceof Core_Model_Section_Interface) {
+        } elseif ($section instanceof Content_Model_Section_Interface) {
             $h = $section;
         } elseif (is_array($section)) {
-            $h = new Core_Model_Section(array('data' => $section));
+            $h = new Content_Model_Section(array('data' => $section));
         } else {
             throw new InvalidArgumentException('Invalid Section');
         }

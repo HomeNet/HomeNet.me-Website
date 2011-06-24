@@ -22,7 +22,7 @@
  */
 
 /**
- * @package Core
+ * @package Content
  * @subpackage Category
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
@@ -30,17 +30,17 @@
 
 require "MapperInterface.php";
 
-class Core_Model_CategorySet_MapperDbTable implements Core_Model_CategorySet_MapperInterface {
+class Content_Model_CategorySet_MapperDbTable implements Content_Model_CategorySet_MapperInterface {
 
     protected $_table = null;
 
     /**
      *
-     * @return Core_Model_DbTable_CategorySet;
+     * @return Content_Model_DbTable_CategorySet;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_CategorySets();
+            $this->_table = new Content_Model_DbTable_CategorySets();
         }
         return $this->_table;
     }
@@ -85,9 +85,9 @@ class Core_Model_CategorySet_MapperDbTable implements Core_Model_CategorySet_Map
 
 
 
-    public function save(Core_Model_CategorySet_Interface $content) {
+    public function save(Content_Model_CategorySet_Interface $content) {
 
-        if (($content instanceof Core_Model_DbTableRow_CategorySet) && ($content->isConnected())) {
+        if (($content instanceof Content_Model_DbTableRow_CategorySet) && ($content->isConnected())) {
             return $content->save();;
         } elseif (!is_null($content->id)) {
             $row = $this->getTable()->find($content->id)->current();
@@ -106,9 +106,9 @@ class Core_Model_CategorySet_MapperDbTable implements Core_Model_CategorySet_Map
         return $row;
     }
 
-    public function delete(Core_Model_CategorySet_Interface $content) {
+    public function delete(Content_Model_CategorySet_Interface $content) {
 
-        if (($content instanceof Core_Model_DbTableRow_CategorySet) && ($content->isConnected())) {
+        if (($content instanceof Content_Model_DbTableRow_CategorySet) && ($content->isConnected())) {
             $content->delete();
             return true;
         } elseif (!is_null($content->id)) {

@@ -19,38 +19,38 @@
  */
 
 /**
- * @package Core
+ * @package Content
  * @subpackage CategorySet
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 
-class Core_Model_CategorySet_Service {
+class Content_Model_CategorySet_Service {
     
     /**
-     * @var Core_Model_CategorySet_MapperInterface
+     * @var Content_Model_CategorySet_MapperInterface
      */
     protected $_mapper;
 
     /**
-     * @return Core_Model_CategorySet_MapperInterface
+     * @return Content_Model_CategorySet_MapperInterface
      */
     public function getMapper() {
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new Core_Model_CategorySet_MapperDbTable();
+            $this->_mapper = new Content_Model_CategorySet_MapperDbTable();
         }
 
         return $this->_mapper;
     }
 
-    public function setMapper(Core_Model_CategorySet_MapperInterface $mapper) {
+    public function setMapper(Content_Model_CategorySet_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
     
     /**
      * @param int $id
-     * @return Core_Model_CategorySet_Interface 
+     * @return Content_Model_CategorySet_Interface 
      */
     public function getObjects(){
         $categorySets = $this->getMapper()->fetchObjects($id);
@@ -63,7 +63,7 @@ class Core_Model_CategorySet_Service {
     
     /**
      * @param int $id
-     * @return Core_Model_CategorySet_Interface 
+     * @return Content_Model_CategorySet_Interface 
      */
     public function getObjectById($id){
         $content = $this->getMapper()->fetchObjectById($id);
@@ -75,10 +75,10 @@ class Core_Model_CategorySet_Service {
     }
 
     public function create($categorySet) {
-        if ($categorySet instanceof Core_Model_CategorySet_Interface) {
+        if ($categorySet instanceof Content_Model_CategorySet_Interface) {
             $h = $categorySet;
         } elseif (is_array($categorySet)) {
-            $h = new Core_Model_CategorySet(array('data' => $categorySet));
+            $h = new Content_Model_CategorySet(array('data' => $categorySet));
         } else {
             throw new InvalidArgumentException('Invalid Category Set');
         }
@@ -87,10 +87,10 @@ class Core_Model_CategorySet_Service {
     }
 
     public function update($categorySet) {
-        if ($categorySet instanceof Core_Model_CategorySet_Interface) {
+        if ($categorySet instanceof Content_Model_CategorySet_Interface) {
             $h = $categorySet;
         } elseif (is_array($categorySet)) {
-            $h = new Core_Model_CategorySet(array('data' => $categorySet));
+            $h = new Content_Model_CategorySet(array('data' => $categorySet));
         } else {
             throw new InvalidArgumentException('Invalid Category Set');
         }
@@ -100,12 +100,12 @@ class Core_Model_CategorySet_Service {
 
     public function delete($categorySet) {
         if (is_int($categorySet)) {
-            $h = new Core_Model_CategorySet();
+            $h = new Content_Model_CategorySet();
             $h->id = $categorySet;
-        } elseif ($categorySet instanceof Core_Model_CategorySet_Interface) {
+        } elseif ($categorySet instanceof Content_Model_CategorySet_Interface) {
             $h = $categorySet;
         } elseif (is_array($categorySet)) {
-            $h = new Core_Model_CategorySet(array('data' => $categorySet));
+            $h = new Content_Model_CategorySet(array('data' => $categorySet));
         } else {
             throw new InvalidArgumentException('Invalid Category Set');
         }

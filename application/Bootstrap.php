@@ -143,3 +143,7 @@ class DuplicateEntryException extends DomainException {
     
 }
 
+class RequiresFurtherActionException extends DomainException {
+    
+}
+

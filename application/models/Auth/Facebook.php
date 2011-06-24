@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_AuthInternal
+class Core_Model_Auth_Facebook extends Core_Model_Auth_Interface
 {
     /**
      * @param String Password
@@ -34,7 +34,7 @@ class Core_Model_AuthInternal
         return md5('saltisgood' . $password);
     }
 
-    public function add($id, $username, $password) {
+    public function add($credentials) {
 
         // create a new row
         $table = new Core_Model_DbTable_AuthInternal();
@@ -52,7 +52,7 @@ class Core_Model_AuthInternal
         }
     }
 
-    public function login($username, $password){
+    public function login($credentials){
         // get the default db adapter
         $db = Zend_Db_Table::getDefaultAdapter();
         //create the auth adapter
@@ -100,9 +100,9 @@ class Core_Model_AuthInternal
     }
 
     public function logout(){
-        $authAdapter = Zend_Auth::getInstance();
-        $authAdapter->clearIdentity();
-        $sessions = Zend_Session::destroy(true);
+        
+        
+
     }
 
 }

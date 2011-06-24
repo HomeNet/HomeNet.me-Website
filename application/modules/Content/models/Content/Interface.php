@@ -19,12 +19,12 @@
  */
 
 /**
- * @package Core
+ * @package Content
  * @subpackage Content
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-interface Core_Model_Section_Content_Interface {
+interface Content_Model_Content_Interface {
 
     /**
      * @return array

@@ -20,12 +20,12 @@
  */
 
 /**
- * @package Core
+ * @package Content
  * @subpackage Section
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_DbTableRow_SectionContent extends Zend_Db_Table_Row_Abstract implements Core_Model_Section_Content_Interface {
+class Content_Model_DbTableRow_Content extends Zend_Db_Table_Row_Abstract implements Content_Model_Content_Interface {
 
 //    public $rooms;
 

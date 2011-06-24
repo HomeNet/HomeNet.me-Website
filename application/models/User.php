@@ -115,5 +115,4 @@ class Core_Model_User implements Core_Model_User_Interface {
     public function clearSetting($setting){
         unset($this->settings[$setting]);
     }
-
 }

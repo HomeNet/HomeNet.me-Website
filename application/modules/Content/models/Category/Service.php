@@ -18,37 +18,37 @@
  * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * @package Core
+ * @package Content
  * @subpackage Category
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Category_Service {
+class Content_Model_Category_Service {
     
     /**
-     * @var Core_Model_Category_MapperInterface
+     * @var Content_Model_Category_MapperInterface
      */
     protected $_mapper;
 
     /**
-     * @return Core_Model_Category_MapperInterface
+     * @return Content_Model_Category_MapperInterface
      */
     public function getMapper() {
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new Core_Model_Category_MapperDbTable();
+            $this->_mapper = new Content_Model_Category_MapperDbTable();
         }
 
         return $this->_mapper;
     }
 
-    public function setMapper(Core_Model_Category_MapperInterface $mapper) {
+    public function setMapper(Content_Model_Category_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
         /**
      * @param int $id
-     * @return Core_Model_Category_Interface 
+     * @return Content_Model_Category_Interface 
      */
     public function getObjectById($id){
         
@@ -62,7 +62,7 @@ class Core_Model_Category_Service {
     
     /**
      * @param string $url
-     * @return Core_Model_Category_Interface 
+     * @return Content_Model_Category_Interface 
      */
     public function getObjectByUrl($url){
         
@@ -78,10 +78,10 @@ class Core_Model_Category_Service {
      * @throws InvalidArgumentException 
      */
     public function create($category) {
-        if ($category instanceof Core_Model_Category_Interface) {
+        if ($category instanceof Content_Model_Category_Interface) {
             $h = $category;
         } elseif (is_array($category)) {
-            $h = new Core_Model_Category(array('data' => $category));
+            $h = new Content_Model_Category(array('data' => $category));
         } else {
             throw new InvalidArgumentException('Invalid Category');
         }
@@ -93,10 +93,10 @@ class Core_Model_Category_Service {
      * @throws InvalidArgumentException 
      */
     public function update($category) {
-        if ($category instanceof Core_Model_Category_Interface) {
+        if ($category instanceof Content_Model_Category_Interface) {
             $h = $category;
         } elseif (is_array($category)) {
-            $h = new Core_Model_Category(array('data' => $category));
+            $h = new Content_Model_Category(array('data' => $category));
         } else {
             throw new InvalidArgumentException('Invalid Category');
         }
@@ -109,12 +109,12 @@ class Core_Model_Category_Service {
      */
     public function delete($category) {
         if (is_int($category)) {
-            $h = new Core_Model_Category();
+            $h = new Content_Model_Category();
             $h->id = $category;
-        } elseif ($category instanceof Core_Model_Category_Interface) {
+        } elseif ($category instanceof Content_Model_Category_Interface) {
             $h = $category;
         } elseif (is_array($category)) {
-            $h = new Core_Model_Category(array('data' => $category));
+            $h = new Content_Model_Category(array('data' => $category));
         } else {
             throw new InvalidArgumentException('Invalid Category');
         }

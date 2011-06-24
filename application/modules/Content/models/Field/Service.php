@@ -20,37 +20,37 @@
  */
 
 /**
- * @package Core
+ * @package Content
  * @subpackage Content
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Section_Field_Service {
+class Content_Model_Field_Service {
 
     /**
-     * @var Core_Model_Section_Field_MapperInterface
+     * @var Content_Model_Field_MapperInterface
      */
     protected $_mapper;
 
     /**
-     * @return Core_Model_Section_Field_MapperInterface
+     * @return Content_Model_Field_MapperInterface
      */
     public function getMapper() {
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new Core_Model_Section_Field_MapperDbTable();
+            $this->_mapper = new Content_Model_Field_MapperDbTable();
         }
 
         return $this->_mapper;
     }
 
-    public function setMapper(Core_Model_Section_Field_MapperInterface $mapper) {
+    public function setMapper(Content_Model_Field_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
     /**
      * @param int $id
-     * @return Core_Model_Section_Field_Interface 
+     * @return Content_Model_Field_Interface 
      */
     public function getObjectById($id) {
         $content = $this->getMapper()->fetchObjectById($id);
@@ -63,7 +63,7 @@ class Core_Model_Section_Field_Service {
 
     /**
      * @param int $id
-     * @return Core_Model_Section_Field_Interface[]
+     * @return Content_Model_Field_Interface[]
      */
     public function getObjectsBySection($section) {
         $contents = $this->getMapper()->fetchObjectsBySection($section);
@@ -79,7 +79,7 @@ class Core_Model_Section_Field_Service {
 //
 //        if (empty($apikeys)) {
 //            return array();
-//            //throw new Core_Model_Exception('Apikey not found', 404);
+//            //throw new Content_Model_Exception('Apikey not found', 404);
 //        }
 //        return $apikeys;
 //    }
@@ -89,10 +89,10 @@ class Core_Model_Section_Field_Service {
      * @throws InvalidArgumentException 
      */
     public function create($sectionField) {
-        if ($sectionField instanceof Core_Model_Section_Field_Interface) {
+        if ($sectionField instanceof Content_Model_Field_Interface) {
             $h = $sectionField;
         } elseif (is_array($sectionField)) {
-            $h = new Core_Model_Section_Field(array('data' => $sectionField));
+            $h = new Content_Model_Field(array('data' => $sectionField));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }
@@ -105,10 +105,10 @@ class Core_Model_Section_Field_Service {
      * @throws InvalidArgumentException 
      */
     public function update($sectionField) {
-        if ($sectionField instanceof Core_Model_Section_Field_Interface) {
+        if ($sectionField instanceof Content_Model_Field_Interface) {
             $h = $sectionField;
         } elseif (is_array($sectionField)) {
-            $h = new Core_Model_Section_Field(array('data' => $sectionField));
+            $h = new Content_Model_Field(array('data' => $sectionField));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }
@@ -122,12 +122,12 @@ class Core_Model_Section_Field_Service {
      */
     public function delete($sectionField) {
         if (is_int($sectionField)) {
-            $h = new Core_Model_Section_Field();
+            $h = new Content_Model_Field();
             $h->id = $sectionField;
-        } elseif ($sectionField instanceof Core_Model_Section_Field_Interface) {
+        } elseif ($sectionField instanceof Content_Model_Field_Interface) {
             $h = $sectionField;
         } elseif (is_array($sectionField)) {
-            $h = new Core_Model_Section_Field(array('data' => $sectionField));
+            $h = new Content_Model_Field(array('data' => $sectionField));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }

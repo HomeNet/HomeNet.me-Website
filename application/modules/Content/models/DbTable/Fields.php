@@ -19,14 +19,18 @@
  */
 
 /**
- * @package Core
- * @subpackage Auth
+ * @package Content
+ * @subpackage Section
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_AuthFacebook
+class Content_Model_DbTable_Fields extends Zend_Db_Table_Abstract
 {
 
+    protected $_name = 'content_fields';
+    
+    //protected $_rowClass = 'Content_Model_User';
+    protected $_rowClass = 'Content_Model_DbTableRow_Field';
+   
 
 }
-

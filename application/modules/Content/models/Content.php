@@ -19,12 +19,12 @@
  */
 
 /**
- * @package Core
+ * @package Content
  * @subpackage Content
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Content {
+class Content_Model_Content {
 /**
  * id 	int(10) 		UNSIGNED 	No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
 	revision 	int(10) 		UNSIGNED 	No 		auto_increment 	Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext

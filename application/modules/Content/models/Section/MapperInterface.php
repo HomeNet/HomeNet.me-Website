@@ -21,15 +21,15 @@
  */
 
 /**
- * @package Core
+ * @package Content
  * @subpackage Section
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-interface Core_Model_Section_MapperInterface {
+interface Content_Model_Section_MapperInterface {
 
     /**
-     * @return Core_Model_Section_Interface
+     * @return Content_Model_Section_Interface
      */
     public function fetchObjectById($id);
 
@@ -37,9 +37,9 @@ interface Core_Model_Section_MapperInterface {
 
 //    public function fetchObjectsByIdHouse($id,$house);
 
-    public function save(Core_Model_Section_Interface $section);
+    public function save(Content_Model_Section_Interface $section);
 
-    public function delete(Core_Model_Section_Interface $section);
+    public function delete(Content_Model_Section_Interface $section);
     
     public function deleteAll();
 

@@ -20,37 +20,37 @@
  */
 
 /**
- * @package Core
+ * @package Content
  * @subpackage Content
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Section_Content_Service {
+class Content_Model_Content_Service {
 
     /**
-     * @var Core_Model_Section_Content_MapperInterface
+     * @var Content_Model_Content_MapperInterface
      */
     protected $_mapper;
 
     /**
-     * @return Core_Model_Section_Content_MapperInterface
+     * @return Content_Model_Content_MapperInterface
      */
     public function getMapper() {
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new Core_Model_Section_Content_MapperDbTable();
+            $this->_mapper = new Content_Model_Content_MapperDbTable();
         }
 
         return $this->_mapper;
     }
 
-    public function setMapper(Core_Model_Section_Content_MapperInterface $mapper) {
+    public function setMapper(Content_Model_Content_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
     /**
      * @param int $id
-     * @return Core_Model_Section_Content_Interface 
+     * @return Content_Model_Content_Interface 
      */
     public function getObjectById($id) {
         $content = $this->getMapper()->fetchObjectById($id);
@@ -63,7 +63,7 @@ class Core_Model_Section_Content_Service {
 
     /**
      * @param int $id
-     * @return Core_Model_Section_Content_Interface[]
+     * @return Content_Model_Content_Interface[]
      */
     public function getObjectsBySection($section) {
         $contents = $this->getMapper()->fetchObjectsBySection($section);
@@ -79,7 +79,7 @@ class Core_Model_Section_Content_Service {
 //
 //        if (empty($apikeys)) {
 //            return array();
-//            //throw new Core_Model_Exception('Apikey not found', 404);
+//            //throw new Content_Model_Exception('Apikey not found', 404);
 //        }
 //        return $apikeys;
 //    }
@@ -89,10 +89,10 @@ class Core_Model_Section_Content_Service {
      * @throws InvalidArgumentException 
      */
     public function create($content) {
-        if ($content instanceof Core_Model_Section_Content_Interface) {
+        if ($content instanceof Content_Model_Content_Interface) {
             $h = $content;
         } elseif (is_array($content)) {
-            $h = new Core_Model_Section_Content(array('data' => $content));
+            $h = new Content_Model_Content(array('data' => $content));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }
@@ -105,10 +105,10 @@ class Core_Model_Section_Content_Service {
      * @throws InvalidArgumentException 
      */
     public function update($content) {
-        if ($content instanceof Core_Model_Section_Content_Interface) {
+        if ($content instanceof Content_Model_Content_Interface) {
             $h = $content;
         } elseif (is_array($content)) {
-            $h = new Core_Model_Section_Content(array('data' => $content));
+            $h = new Content_Model_Content(array('data' => $content));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }
@@ -122,12 +122,12 @@ class Core_Model_Section_Content_Service {
      */
     public function delete($content) {
         if (is_int($content)) {
-            $h = new Core_Model_Section_Content();
+            $h = new Content_Model_Content();
             $h->id = $content;
-        } elseif ($content instanceof Core_Model_Section_Content_Interface) {
+        } elseif ($content instanceof Content_Model_Content_Interface) {
             $h = $content;
         } elseif (is_array($content)) {
-            $h = new Core_Model_Section_Content(array('data' => $content));
+            $h = new Content_Model_Content(array('data' => $content));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }

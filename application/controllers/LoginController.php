@@ -48,13 +48,14 @@ class LoginController extends Zend_Controller_Action {
 
         // now try and authenticate....
         $values = $form->getValues();
-        $auth = new Core_Model_AuthInternal();
+        
+        $manager = new Core_Model_User_Manager();
 
         try {
-            $auth->login($values['username'], $values['password']);
+            $manager->login($values);
         } catch (CMS_Exception $e) {
 
-            if($e->getCode() == Core_Model_User::ERROR_NOT_ACTIVATED){
+            if($e->getCode() == Core_Model_User_Manager::ERROR_NOT_ACTIVATED){
                 $this->_setParam('user',$_SESSION['User']['id']);
                 $this->_forward('next-steps', 'User');
             }
@@ -86,7 +87,22 @@ class LoginController extends Zend_Controller_Action {
     }
 
     public function twitterAction() {
-        // action body
+        //show login button
+        
+        //submit for key
+        
+        //redirect user
+        
+        //validate key
+        
+        //store key
+        
+        //check account
+           
+        //if new redirect to setup account
+        
+        
+        
     }
 
     public function googleAction() {
@@ -119,8 +135,8 @@ class LoginController extends Zend_Controller_Action {
     }
 
     public function logoutAction() {
-        $user = new Core_Model_AuthInternal();
-        $user->logout();
+        $manager = new Core_Model_UserManager();
+        $manager->logout();
     }
 
 }

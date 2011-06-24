@@ -53,9 +53,32 @@ class UserController extends Zend_Controller_Action
         }
 
         $values = $form->getValues();
-        $table = new Core_Model_DbTable_Users();
-        $user = $table->createRow();
-        $user->add($values);
+        $uService = new Core_Model_Auth_Internal_Service();
+        $uService->add($values);
+        //die('user added');
+
+        //decide where to redirect based on whether it is new registration or a admin created one
+        $this->_redirect($this->view->url(array('user'=>$user->id,'action'=>'next-steps'),'core-user'));
+    }
+    
+     public function profileAction()
+    {
+        $form   = new Core_Form_User();
+        //$form->setAction('/user/new');
+        if (!$this->getRequest()->isPost()) {
+            $this->view->form = $form;
+            return;
+        }
+
+        if (!$form->isValid($_POST)) {
+            // Failed validation; redisplay form
+            $this->view->form = $form;
+            return;
+        }
+
+        $values = $form->getValues();
+        $uService = new Core_Model_Auth_Internal_Service();
+        $uService->add($values);
         //die('user added');
 
         //decide where to redirect based on whether it is new registration or a admin created one

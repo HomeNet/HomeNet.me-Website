@@ -24,22 +24,22 @@
 require_once "MapperInterface.php";
 
 /**
- * @package Core
+ * @package Content
  * @subpackage Content
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Section_Content_MapperDbTable implements Core_Model_Section_Content_MapperInterface {
+class Content_Model_Content_MapperDbTable implements Content_Model_Content_MapperInterface {
 
     protected $_table = null;
 
     /**
      *
-     * @return Core_Model_DbTable_Section_Content;
+     * @return Content_Model_DbTable_Content;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_SectionContent();
+            $this->_table = new Content_Model_DbTable_Content();
         }
         return $this->_table;
     }
@@ -55,7 +55,7 @@ class Core_Model_Section_Content_MapperDbTable implements Core_Model_Section_Con
      * Fetch Section Content Object by Id
      * 
      * @param int $id 
-     * @return Core_Model_DbTabeRow_SectionContent 
+     * @return Content_Model_DbTabeRow_SectionContent 
      */
     public function fetchObjectById($id){
         return $this->getTable()->find($id)->current();
@@ -65,7 +65,7 @@ class Core_Model_Section_Content_MapperDbTable implements Core_Model_Section_Con
      * Fetch Section Content Objects by Section
      * 
      * @param int $section 
-     * @return Core_Model_DbTabeRow_SectionContent 
+     * @return Content_Model_DbTabeRow_SectionContent 
      */
    public function fetchObjectsBySection($section){
 
@@ -76,7 +76,7 @@ class Core_Model_Section_Content_MapperDbTable implements Core_Model_Section_Con
     /**
      *
      * @param string $url
-     * @return Core_Model_DbTabeRow_SectionContent 
+     * @return Content_Model_DbTabeRow_SectionContent 
      */
     public function fetchObjectsByUrl($url){
 
@@ -95,9 +95,9 @@ class Core_Model_Section_Content_MapperDbTable implements Core_Model_Section_Con
 
 
 
-    public function save(Core_Model_Section_Content_Interface $content) {
+    public function save(Content_Model_Content_Interface $content) {
 
-        if (($content instanceof Core_Model_DbTableRow_Section_Content) && ($content->isConnected())) {
+        if (($content instanceof Content_Model_DbTableRow_Content) && ($content->isConnected())) {
             return $content->save();
         } elseif (!is_null($content->id)) {
             $row = $this->getTable()->find($content->id)->current();
@@ -116,9 +116,9 @@ class Core_Model_Section_Content_MapperDbTable implements Core_Model_Section_Con
         return $row;
     }
 
-    public function delete(Core_Model_Section_Content_Interface $content) {
+    public function delete(Content_Model_Content_Interface $content) {
 
-        if (($content instanceof Core_Model_DbTableRow_Section_Content) && ($content->isConnected())) {
+        if (($content instanceof Content_Model_DbTableRow_Content) && ($content->isConnected())) {
             $content->delete();
             return true;
         } elseif (!is_null($content->id)) {
