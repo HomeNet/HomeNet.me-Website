@@ -11,33 +11,20 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
         $acl->addRole(new Zend_Acl_Role('user'), 'guest');
         $acl->addRole(new Zend_Acl_Role('administrator'), 'user');
         // add the resources
-        $acl->add(new Zend_Acl_Resource('default_index'));
-        $acl->add(new Zend_Acl_Resource('default_register'));
-        $acl->add(new Zend_Acl_Resource('default_error'));
-        $acl->add(new Zend_Acl_Resource('default_login'));
-        $acl->add(new Zend_Acl_Resource('default_user'));
-        $acl->add(new Zend_Acl_Resource('default_contact'));
+        $acl->add(new Zend_Acl_Resource('m_core'));
+        $acl->add(new Zend_Acl_Resource('m_core_c_index'),'m_core');
+        $acl->add(new Zend_Acl_Resource('m_core_c_register'),'m_core');
+        $acl->add(new Zend_Acl_Resource('m_core_c_error'),'m_core');
+        $acl->add(new Zend_Acl_Resource('m_core_c_login'),'m_core');
+        $acl->add(new Zend_Acl_Resource('m_core_c_user'),'m_core');
+        $acl->add(new Zend_Acl_Resource('m_core_c_contact'),'m_core');
 
-        $acl->add(new Zend_Acl_Resource('homenet_'));
-        $acl->add(new Zend_Acl_Resource('homenet_index'));
-        $acl->add(new Zend_Acl_Resource('homenet_house'));
-        $acl->add(new Zend_Acl_Resource('homenet_room'));//
-        $acl->add(new Zend_Acl_Resource('homenet_node'));
-        $acl->add(new Zend_Acl_Resource('homenet_device'));
-        $acl->add(new Zend_Acl_Resource('homenet_subdevice'));//
-        $acl->add(new Zend_Acl_Resource('homenet_apikeys'));
-
-
-        $acl->add(new Zend_Acl_Resource('homenet_node-models'));
-        $acl->add(new Zend_Acl_Resource('homenet_device-models'));
-        $acl->add(new Zend_Acl_Resource('homenet_subdevice-models'));
-
-        $acl->add(new Zend_Acl_Resource('homenet_setup'));
-        $acl->
-        $acl->allow(null, array('default_index', 'default_error'));
+     
+     
+        $acl->allow(null, array('m_core_c_index', 'm_core_c_error'));
         // a guest can only read content and login
-        $acl->allow('guest',  array('default_login','default_user', 'default_register'), null);
-        $acl->allow('guest',  array('default_user'), array('next-steps'));
+        $acl->allow('guest',  array('m_core_c_login','m_core_c_user', 'm_core_c_register'), null);
+        $acl->allow('guest',  array('m_core_c_user'), array('next-steps'));
         // cms users can also work with content
        // $acl->allow('user', 'page', array('list', 'create', 'edit', 'delete'));
         // administrators can do anything
@@ -57,11 +44,26 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
         } else {
             $role = 'guest';
         }
-        $module = strtolower($request->module);
+        $module = '_'.strtolower($request->module);
         if(empty($module)){
-            $module = 'default';
+            $module = 'm_core';
         }
-        $controller = strtolower($request->controller);
+        
+        //test dynamicly building acl
+        
+        //add module resource
+        if(!$acl->has($module)){
+            $acl->add(new Zend_Acl_Resource($module));
+        }
+        
+        
+        $controller = 'c_'.strtolower($request->controller);
+        
+        if(!$acl->has($module.'_'.$controller)){
+            $acl->add(new Zend_Acl_Resource($module.'_'.$controller), $module);
+        }
+        
+        
         $action = strtolower($request->action);
         if (!$acl->isAllowed($role, $module.'_'.$controller, $action)) {
             if ($role == 'guest') {

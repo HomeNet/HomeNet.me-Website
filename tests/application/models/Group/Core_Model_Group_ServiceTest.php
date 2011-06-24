@@ -122,6 +122,28 @@ class Core_Model_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(2, $result->user_count);
         $this->assertArrayHasKey('system', $result->settings);
     }
+    
+     public function testCreateWithNullsFromArray() {
+
+        $group = array(
+            'type' => 1,
+            'title' => 'testTitle',
+            'description' => 'testDescription',
+            'visible' => false);
+
+        $result = $this->object->create($group);
+
+        $this->assertInstanceOf('Core_Model_Group_Interface', $result);
+
+        $this->assertNotNull($result->id);
+        $this->assertEquals(null, $result->parent);
+        $this->assertEquals(1, $result->type);
+        $this->assertEquals('testTitle', $result->title);
+        $this->assertEquals('testDescription', $result->description);
+        $this->assertEquals(false, $result->visible);
+        $this->assertEquals(0, $result->user_count);
+        $this->assertEquals(Array(), $result->settings);
+    }
 
     public function testCreateException() {
         $this->setExpectedException('InvalidArgumentException');
