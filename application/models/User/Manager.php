@@ -5,7 +5,7 @@
  *
  * @author mdoll
  */
-class Core_Model_User_Manager extends Core_Model_Auth_Interface {
+class Core_Model_User_Manager {
     
     const ERROR_BANNED = 2;
     const ERROR_NOT_ACTIVATED = 1;
@@ -99,6 +99,7 @@ class Core_Model_User_Manager extends Core_Model_Auth_Interface {
         }
 
         $this->sendActivationEmail();
+        return $user;
     }
     /**
      * @param string $oldpassword

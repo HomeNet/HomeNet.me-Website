@@ -46,23 +46,25 @@ class Content_Model_DbTableRow_Content extends Zend_Db_Table_Row_Abstract implem
     }
 
     public function init(){
-//        $this->uncompress();
+        $this->uncompress();
     }
     
-//    public function uncompress(){
-//        if(is_string($this->settings)){
-//            $this->settings = unserialize($this->settings);
-//        }
-//
+    public function uncompress(){
+        if(is_string($this->content)){
+            $this->content = unserialize($this->content);
+        }
+        $this->active = (bool) $this->active;
+        $this->visible = (bool) $this->visible;
+
 //        if(is_string($this->permissions)){
 //            $this->permissions = unserialize($this->permissions);
 //        }
-//    }
+    }
     
     public function compress(){
-//        if(is_array($this->settings)){
-//            $this->settings = serialize($this->settings);
-//        }
+        if(is_array($this->content)){
+            $this->content = serialize($this->content);
+        }
 //
 //        if(is_array($this->permissions)){
 //            $this->permissions = serialize($this->permissions);
@@ -70,9 +72,10 @@ class Content_Model_DbTableRow_Content extends Zend_Db_Table_Row_Abstract implem
     }
 
     public function save(){
-//      $this->compress();
+      $this->compress();
+      $this->revision = date('Y-m-d H:i:s');
         if (parent::save()) {
-//            $this->uncompress();
+            $this->uncompress();
             return $this;
         }
     }

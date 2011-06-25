@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../../../application/models/CategorySet/MapperDbTable.php';
+//require_once dirname(__FILE__) . '/../../../../../../application/modules/Content/models/CategorySet/MapperDbTable.php';
 
 /**
  * Test class for Content_Model_CategorySet_MapperDbTable.

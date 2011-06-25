@@ -52,11 +52,11 @@ class Content_Model_Content_Service {
      * @param int $id
      * @return Content_Model_Content_Interface 
      */
-    public function getObjectById($id) {
-        $content = $this->getMapper()->fetchObjectById($id);
+    public function getObjectByIdRevision($id,$revision) {
+        $content = $this->getMapper()->fetchObjectByIdRevision($id, $revision);
 
         if (empty($content)) {
-            throw new Exception('Content not found', 404);
+            throw new NotFoundException('Content not found', 404);
         }
         return $content;
     }

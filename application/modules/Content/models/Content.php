@@ -24,28 +24,22 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Content_Model_Content {
-/**
- * id 	int(10) 		UNSIGNED 	No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	revision 	int(10) 		UNSIGNED 	No 		auto_increment 	Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	section 	int(10) 		UNSIGNED 	No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	status 	tinyint(4) 			No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	date 	datetime 			No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	expires 	datetime 			No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	author 	int(10) 		UNSIGNED 	No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	editor 	int(10) 		UNSIGNED 	No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	title 	varchar(255) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	url 	varchar(255) 	utf8_general_ci 		No 			Browse distinct values 	Change 	Drop 	Primary 	Unique 	Index 	Fulltext
-	content
- */
+class Content_Model_Content implements Content_Model_Content_Interface {
+
     /**
      * @var int
      */
     public $id;
     /**
-     * @var int
+     * @var timestamp
      */
     public $revision;
+    
+     /**
+     * @var timestamp
+     */
+    public $active;
+    
     /**
      * @var int
      */
@@ -72,16 +66,16 @@ class Content_Model_Content {
      */
     public $editor;
     
-    /**
-     * @var string
-     */
-    public $url;
+    
     
     /**
      * @var string
      */
     public $title;
-    
+    /**
+     * @var string
+     */
+    public $url;
     
     /**
      * @var array

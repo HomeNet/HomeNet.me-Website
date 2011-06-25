@@ -20,11 +20,11 @@
 
 /**
  * @package Content
- * @subpackage Section
+ * @subpackage Content
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Content_Model_DbTable_SectionContent extends Zend_Db_Table_Abstract
+class Content_Model_DbTable_Content extends Zend_Db_Table_Abstract
 {
 
     protected $_name = 'content_content_temp';

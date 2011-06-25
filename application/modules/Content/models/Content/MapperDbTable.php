@@ -57,8 +57,8 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
      * @param int $id 
      * @return Content_Model_DbTabeRow_SectionContent 
      */
-    public function fetchObjectById($id){
-        return $this->getTable()->find($id)->current();
+    public function fetchObjectByIdRevision($id,$revision){
+        return $this->getTable()->find($id,$revision)->current();
     }
     
    /**
@@ -99,8 +99,8 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
 
         if (($content instanceof Content_Model_DbTableRow_Content) && ($content->isConnected())) {
             return $content->save();
-        } elseif (!is_null($content->id)) {
-            $row = $this->getTable()->find($content->id)->current();
+        } elseif (!is_null($content->id) && !is_null($content->revision)) {
+            $row = $this->getTable()->find($content->id,$content->revision)->current();
             if(empty($row)){
                $row = $this->getTable()->createRow();
             }
@@ -121,8 +121,8 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         if (($content instanceof Content_Model_DbTableRow_Content) && ($content->isConnected())) {
             $content->delete();
             return true;
-        } elseif (!is_null($content->id)) {
-            $row = $this->getTable()->find($content->id)->current()->delete();
+        } elseif (!is_null($content->id) && !is_null($content->revision)) {
+            $row = $this->getTable()->find($content->id,$content->revision)->current();
             return;
         }
 

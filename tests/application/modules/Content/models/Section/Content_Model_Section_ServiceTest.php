@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../../../application/models/Section/Service.php';
+require_once dirname(__FILE__) . '/../../../../../../application/modules/Content/models/Section/Service.php';
 
 /**
  * Test class for Content_Model_Section_Service.

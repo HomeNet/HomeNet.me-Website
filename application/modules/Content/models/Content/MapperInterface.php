@@ -30,7 +30,7 @@ interface Content_Model_Content_MapperInterface {
     /**
      * @return Content_Model_Content_Interface
      */
-    public function fetchObjectById($id);
+    public function fetchObjectByIdRevision($id,$revision);
     /**
      * @return Content_Model_Content_Interface
      */

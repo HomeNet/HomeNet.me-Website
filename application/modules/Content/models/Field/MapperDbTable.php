@@ -37,7 +37,7 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Content_Model_DbTable_SectionFields();
+            $this->_table = new Content_Model_DbTable_Fields();
         }
         return $this->_table;
     }
