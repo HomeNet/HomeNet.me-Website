@@ -61,6 +61,30 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
        $select = $this->getTable()->select()->where('user = ?',$user);
       return $this->getTable()->fetchAll($select);
     }
+    
+     public function fetchObjectsByUserModuleObject($user, $module, $object) {
+        $select = $this->getTable()->select()
+        ->where('user = ?', $user)
+        ->where('module = ?', $module)
+        ->where('object = ?', $object)
+        ->order(array('controller','object','action'));
+        
+        return $this->getTable()->fetchAll($select);
+    }
+    
+    
+    public function fetchObjectsByUserModuleControllerObjects($user, $module, $controller, $objects) {
+        $select = $this->getTable()->select()
+        ->where('user = ?', $user)
+        ->where('module = ?', $module)
+        ->where('controller = ?', $controller)
+        ->where('object in (?)', $objects)
+        ->order(array('controller','object','action'));
+        
+        return $this->getTable()->fetchAll($select);
+    }
+    
+    
 
     public function save(Core_Model_Acl_User_Interface $acl) {
 

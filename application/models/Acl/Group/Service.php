@@ -60,15 +60,37 @@ class Core_Model_Acl_Group_Service {
         }
         return $content;
     }
+    
+    
+    
 
-//    public function getObjectsBySection($section){
-//        $contents = $this->getMapper()->fetchObjectsBySection($section);
-//
-////        if (empty($contents)) {
-////            throw new Exception('Apikey not found', 404);
-////        }
-//        return $contents;
-//    }
+    public function getObjectsByGroupsModuleObject(array $groups, $module, $object = null){
+        $rows = $this->getMapper()->fetchObjectsByGroupsModuleObject($groups, $module, $object);
+        $array = array();
+        foreach($rows as $row){
+            $array[$row->group][] = $row;
+        }
+
+//        if (empty($contents)) {
+//            throw new Exception('Apikey not found', 404);
+//        }
+        return $array;
+    }
+    
+    public function getObjectsByGroupsModuleControllerObjects(array $groups, $module, $controllers, array $objects){
+        $rows = $this->getMapper()->fetchObjectsByGroupsModuleControllerObjects($groups, $module, $controllers, $objects);
+        $array = array();
+        foreach($rows as $row){
+            $array[$row->group][] = $row;
+        }
+
+//        if (empty($contents)) {
+//            throw new Exception('Apikey not found', 404);
+//        }
+        return $array;
+    }
+    
+    
 //    public function getObjectsByIdHouse($id,$house){
 //        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
 //

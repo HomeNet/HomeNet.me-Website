@@ -58,9 +58,28 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
         return $this->getTable()->find($id)->current();
     }
     
-    public function fetchObjectsByUser($user){
-       $select = $this->getTable()->select()->where('user = ?',$user);
-      return $this->getTable()->fetchAll($select);
+    public function fetchGroupsByUser($user){
+       $select = $this->getTable()->select('group')->where('user = ?',$user);
+      $result = $this->getTable()->fetchAll($select);
+      $array = array();
+      foreach($result as $row){
+          $array[] = $row->group;
+      }
+      
+      return $array;
+      
+      
+    }
+    
+    public function fetchUsersByGroup($group){
+       $select = $this->getTable()->select('user')->where('group = ?',$group);
+       $result = $this->getTable()->fetchAll($select);
+      $array = array();
+      foreach($result as $row){
+          $array[] = $row->user;
+      }
+      
+      return $array;
     }
 
     public function save(Core_Model_User_Membership_Interface $membership) {

@@ -27,6 +27,13 @@
  */
 class Core_Model_DbTableRow_User extends Zend_Db_Table_Row_Abstract implements Core_Model_User_Interface {
 
+    /**
+     * Array of Group Ids that the user is a member of
+     * 
+     * @var array 
+     */
+    public $memberships;
+
 //    public $rooms;
 
     public function fromArray(array $array){

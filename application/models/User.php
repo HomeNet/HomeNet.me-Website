@@ -66,6 +66,11 @@ class Core_Model_User implements Core_Model_User_Interface {
      * @var array
      */
     public $settings = array();
+    
+    /**
+     * @var array
+     */
+    public $memberships;
 
 
     public function __construct(array $config = array()) {

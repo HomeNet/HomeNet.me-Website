@@ -62,6 +62,29 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
        $select = $this->getTable()->select()->where('group = ?',$group);
       return $this->getTable()->fetchAll($select);
     }
+    
+    public function fetchObjectsByGroupsModuleObject($groups, $module, $object) {
+        $select = $this->getTable()->select()
+        ->where('group in (?)', $groups)
+        ->where('module = ?', $module)
+        ->where('object = ?', $object)
+        ->order(array('controller','object','action'));
+        
+        return $this->getTable()->fetchAll($select);
+    }
+    
+    
+    public function fetchObjectsByGroupsModuleControllerObjects($groups, $module, $controller, $objects) {
+        $select = $this->getTable()->select()
+        ->where('group in (?)', $groups)
+        ->where('module = ?', $module)
+        ->where('controller = ?', $controller)
+        ->where('object in (?)', $objects)
+        ->order(array('controller','object','action'));
+        
+        return $this->getTable()->fetchAll($select);
+    }
+
 
     public function save(Core_Model_Acl_Group_Interface $membership) {
 

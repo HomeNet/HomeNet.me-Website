@@ -33,7 +33,7 @@ interface Core_Model_User_Membership_MapperInterface {
      */
     public function fetchObjectById($id);
 
-    public function fetchObjectsByUser($user);
+//    public function fetchObjectsByUser($user);
 
 //    public function fetchObjectsByIdHouse($id,$house);
 

@@ -57,9 +57,13 @@ class Core_Model_User_Manager {
             $this->logout();
             throw new CMS_Exception("User Banned", self::ERROR_BANNED);
         }
+        
+        //get memberships
+        $mService = new Core_Model_User_Membership_Service();
+        $this->_user->memberships = $mService->getGroupsByUser($this->_user->id);
 
         
-        $_SESSION['User'] = $this->_user->toArray();
+        $_SESSION['User'] = $this->_user;
 
     }
 

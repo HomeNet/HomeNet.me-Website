@@ -61,14 +61,14 @@ class Core_Model_User_Membership_Service {
         return $content;
     }
 
-//    public function getObjectsBySection($section){
-//        $contents = $this->getMapper()->fetchObjectsBySection($section);
-//
-////        if (empty($contents)) {
-////            throw new Exception('Apikey not found', 404);
-////        }
-//        return $contents;
-//    }
+    public function getGroupsByUser($user){
+        $array = $this->getMapper()->fetchGroupsByUser($user);
+
+        if (empty($array)) {
+            throw new NotFOundException('No Memberships Found', 404);
+        }
+        return $array;
+    }
 //    public function getObjectsByIdHouse($id,$house){
 //        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
 //

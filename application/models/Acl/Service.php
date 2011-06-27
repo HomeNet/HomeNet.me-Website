@@ -12,6 +12,24 @@ class Core_Model_Acl_Service {
     private static $_resourceCache = null;
     private static $_modules = null;
     
+    private static $_acl = array();
+    
+    private $_user = null;
+    
+    
+    public function __construct(Core_Model_User $user = null) {
+        if(!is_null($user)){
+            $this->_user = $user;
+        } else {
+            $this->_user = $_SESSION['User'];
+        }
+    }
+    
+    public function setUser(Core_Model_User $user) {
+         $this->_user = $user;
+    }
+    
+    
     private function _getCache(){
         
             if(self::$_resourceCache == null){
@@ -36,21 +54,20 @@ class Core_Model_Acl_Service {
             return self::$_modules;
     }
     
-    private function _getAcl(){
+    /**
+     * @return Zend_Acl
+     */
+    private function _getAcl($module){
         
-            if(self::$_acl == null){
-               $acl = new Zend_Acl();
-                self::$_acl = $acl;
+            if(  empty(self::$_acl[$module])){
+                self::$_acl[$module] = new Zend_Acl();
             }
             
-            return self::$_acl;
+            return self::$_acl[$module];
     }
     
-    
-    public function getUserAcl($user){
-        
-        
-        
+     private function _setAcl($module, Zend_Acl $acl){
+                self::$_acl[$module] = $acl;
     }
     
     public function getResources(){
@@ -117,36 +134,149 @@ class Core_Model_Acl_Service {
         
     }
     
-    public function getUserAcl($user,$module){
+//    private function _buildAcl(Zend_Acl $acl, array $objects){
+//         foreach($objects as $acl){
+//             
+//             
+//             
+//             
+//                $acl->addResource()
+//            }
+//    }
+    
+    
+    public function getUserAcl($module){
+        
+        //if User acl been cached
+        
+            //no
+            $acl = $this->getGroupAcl($module);
+
+
+            //prepare user's parents
+            $parents = array();
+            foreach($this->_user->memberships as $group){
+                $parents[] = 'g_'.$group;
+            }
+
+
+            if(!$acl->hasRole('u_'.$this->_user->id)){
+
+                $acl->addRole('u_'.$this->_user->id, $parents);
+
+                $service = new Core_Model_Acl_User();
+                $objects = $service->getObjectsByUserModule($this->_user->id, $module);
+
+                //assumes to have the most nulls at the top
+                foreach($objects as $a){
+
+                    if(!is_null($a->controller)){
+                        if(!$acl->hasResource('c_'.$a->controller)){
+                            $acl->addResource('c_'.$a->controller);
+                        }
+                    }
+                    
+                    if($a->permission == 1){
+                        $acl->allow('u_'.$this->_user->id, 'c_'.$a->controller, $a->action);
+                    } else {
+                        $acl->deny('u_'.$this->_user->id, 'c_'.$a->controller, $a->action);
+                    }
+                } 
+            }
+            
+            //save to cache
+         //else   
+            //load from cache
+            
+            
+         //endif   
+            
+            
+        $this->_setAcl($module, $acl);
+        return $acl;     
+        
         //get cache 'u_'.$user.'_'.$module
     }
     
-    public function getGroupAcl($group, $module){
+    public function getGroupAcl($module){
+        
+        //get group list
+        $memberships = $this->_user->memberships;
+        
+        $hash = serialize($memberships);
+        
+        //get from cache
+            $acl = new Zend_Acl();
+            $parents = array();
+            
+            $service = new Core_Model_Acl_Group();
+            $objects = $service->getObjectsByGroupsModuleObject($memberships, $module);
+            
+            foreach($objects as $id->$group){
+                
+                $acl->addRole('g_'.$id);
+                $parents[] = 'g_'.$id;
+            
+                foreach($group as $g){
+
+                    if(!is_null($g->controller)){
+                        if(!$acl->hasResource('c_'.$g->controller)){
+                            $acl->addResource('c_'.$g->controller);
+                        }
+                    }
+
+                    if($g->permission == 1){
+                        $acl->allow('g_'.$this->group, 'c_'.$g->controller, $g->action);
+                    } else {
+                        $acl->deny('u_'.$this->_user->id, 'c_'.$g->controller, $g->action);
+                    }
+                } 
+            }
+        
+        
+        
         //get cache $group.'_'.$module
+            
+        
+        $this->_setAcl($module,$acl);
+        return $acl;
     }
     
-    public function getGroupAclObject($user, $module,$controller,$object){
+    
+    public function getGroupAclObjects($module,$controller,$objects){
         //get cache $user.'_'.md5(serilize($objects))
+        
+        //get base acl
+        $acl = $this->getUserAcl($module);
+        
+        $service = new Core_Model_Acl_Group();
+        $objects = $service->getObjectsByGroupsModuleControllerObjects($memberships, $module, $contorller, $objects);
+ 
+            if(!$acl->hasResource('c_'.$controller)){
+                $acl->addResource('c_'.$ontroller);
+            }
+           
+            foreach($objects as $id->$group){
+                
+ 
+                $acl->addResource('c_'.$controler.'_'.$object, 'c_'.$controler);
+            
+                foreach($group as $g){
+
+                    if($g->permission == 1){
+                        $acl->allow('g_'.$this->group, 'c_'.$g->controller, $g->action);
+                    } else {
+                        $acl->deny('u_'.$this->_user->id, 'c_'.$g->controller, $g->action);
+                    }
+                } 
+            }
+
     }
     
-    public function getUserAclObject($user, $module,$controller,$object){
+    public function getUserAclObject($module,$controller,$objects){
         //check local static object
         
         //
         
     }
-    
-    public function getGroupAclObjects($user, $module,$controller,$objects){
-        //get cache $user.'_'.md5(serilize($objects))
-    }
-    
-    public function getUserAclObjects($user, $module,$controller,$objects){
-        //check local static object
-        
-        //
-        
-    }
-    
-    
-    
 }

@@ -60,6 +60,36 @@ class Core_Model_Acl_User_Service {
         }
         return $acl;
     }
+    
+     public function getObjectsByUserModuleObject($user, $module, $object = null){
+        $rows = $this->getMapper()->fetchObjectsByUserModuleObject($user, $module, $object);
+        $array = array();
+        foreach($rows as $row){
+            $array[$row->group][] = $row;
+        }
+
+//        if (empty($contents)) {
+//            throw new Exception('Apikey not found', 404);
+//        }
+        return $array;
+    }
+    
+    public function getObjectsByGroupsModuleControllerObjects($user, $module, $controller, array $objects){
+        $rows = $this->getMapper()->fetchObjectsByUserModuleControllerObjects($user, $module, $controller, $objects);
+        $array = array();
+        foreach($rows as $row){
+            $array[$row->object][] = $row;
+        }
+
+//        if (empty($contents)) {
+//            throw new Exception('Apikey not found', 404);
+//        }
+        return $array;
+    }
+    
+    
+    
+    
 
 //    public function getObjectsBySection($section){
 //        $contents = $this->getMapper()->fetchObjectsBySection($section);
