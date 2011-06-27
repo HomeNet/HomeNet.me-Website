@@ -20,11 +20,11 @@
 
 /**
  * @package Core
- * @subpackage Group
+ * @subpackage User
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-interface Core_Model_Group_Acl_Interface {
+interface Core_Model_Acl_User_Interface {
 
     /**
      * @return array

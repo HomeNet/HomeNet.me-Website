@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Group_Acl implements Core_Model_Group_Acl_Interface {
+class Core_Model_Acl_Group implements Core_Model_Acl_Group_Interface {
     
     
     /**
@@ -47,8 +47,16 @@ class Core_Model_Group_Acl implements Core_Model_Group_Acl_Interface {
      * @var string
      */
     public $action;
+    
     /**
-     * allow = 1, deny = -1;
+     * id of specific object to control
+     * 
+     * @var int
+     */
+    public $object;
+    
+    /**
+     * allow = 1, deny = 0;
      * 
      * @var int
      */

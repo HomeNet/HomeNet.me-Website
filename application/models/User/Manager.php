@@ -90,7 +90,7 @@ class Core_Model_User_Manager {
         $user = $this->_service->create($values); //throws exception if username exsists
 
         $auth = new Core_Model_Auth_Internal();
-        $auth->add(array('id'=>$this->id, 'username'=>$this->username, 'password'=>$values['password']));
+        $auth->add(array('id'=>$user->id, 'username'=>$user->username, 'password'=>$values['password']));
         
         //
         if(!empty($_SESSION['Core_Auth']['credentials'])){
@@ -130,7 +130,7 @@ class Core_Model_User_Manager {
      */
     public function sendActivationEmail() {
 
-        if (!$this->isConnected() || empty($this->id)) {
+        if (empty($this->id)) {
             throw new Zend_Exception("User Not Loaded");
         }
 

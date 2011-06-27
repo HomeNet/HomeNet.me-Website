@@ -33,7 +33,7 @@ class Core_Model_User implements Core_Model_User_Interface {
     /**
      * @var int
      */
-    public $status;
+    public $status = 0;
     /**
      * @var int
      */

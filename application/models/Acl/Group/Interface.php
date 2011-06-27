@@ -1,47 +1,36 @@
 <?php
-/* 
- * RoomMapperInterface.php
- * 
+/*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
- * 
+ *
  * This file is part of HomeNet.
- * 
+ *
  * HomeNet is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * HomeNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
+ * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
  * @package Core
- * @subpackage User
+ * @subpackage Group
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-interface Core_Model_Group_Acl_MapperInterface {
+interface Core_Model_Acl_Group_Interface {
 
     /**
-     * @return Core_Model_Group_Acl
+     * @return array
      */
-    public function fetchObjectById($id);
+    public function toArray();
 
-    public function fetchObjectsByGroup($group);
-
-//    public function fetchObjectsByIdHouse($id,$house);
-
-    public function save(Core_Model_Group_Acl_Interface $acl);
-
-    public function delete(Core_Model_Group_Acl_Interface $acl);
-    
-    public function deleteByGroup($group);
-    public function deleteAll();
+    public function fromArray(array $array);
 
 }

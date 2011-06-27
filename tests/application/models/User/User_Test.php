@@ -73,11 +73,11 @@ class User_Test extends PHPUnit_Framework_TestCase {
         
         $this->assertTrue(true);
         
-        $front = Zend_Controller_Front::getInstance();
-$cd = $front->getControllerDirectory();
-
-$moduleNames = array_keys($cd);
-print_r($moduleNames);
+//        $front = Zend_Controller_Front::getInstance();
+//$cd = $front->getControllerDirectory();
+//
+//$moduleNames = array_keys($cd);
+//print_r($moduleNames);
 //array (
 //  [0] => default
 //  [1] => mo_admin

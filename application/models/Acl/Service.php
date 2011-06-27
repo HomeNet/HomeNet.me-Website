@@ -36,6 +36,16 @@ class Core_Model_Acl_Service {
             return self::$_modules;
     }
     
+    private function _getAcl(){
+        
+            if(self::$_acl == null){
+               $acl = new Zend_Acl();
+                self::$_acl = $acl;
+            }
+            
+            return self::$_acl;
+    }
+    
     
     public function getUserAcl($user){
         
@@ -104,6 +114,36 @@ class Core_Model_Acl_Service {
         }
 
         return $array;
+        
+    }
+    
+    public function getUserAcl($user,$module){
+        //get cache 'u_'.$user.'_'.$module
+    }
+    
+    public function getGroupAcl($group, $module){
+        //get cache $group.'_'.$module
+    }
+    
+    public function getGroupAclObject($user, $module,$controller,$object){
+        //get cache $user.'_'.md5(serilize($objects))
+    }
+    
+    public function getUserAclObject($user, $module,$controller,$object){
+        //check local static object
+        
+        //
+        
+    }
+    
+    public function getGroupAclObjects($user, $module,$controller,$objects){
+        //get cache $user.'_'.md5(serilize($objects))
+    }
+    
+    public function getUserAclObjects($user, $module,$controller,$objects){
+        //check local static object
+        
+        //
         
     }
     

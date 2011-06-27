@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Auth_Internal extends Core_Model_Auth_Interface
+class Core_Model_Auth_Internal implements Core_Model_Auth_Interface
 {
     /**
      * @param String Password
@@ -35,15 +35,27 @@ class Core_Model_Auth_Internal extends Core_Model_Auth_Interface
     }
 
     public function add($credentials) {
+        
+         if(empty($credentials['username'])){
+            throw new InvalidArgumentException('Username Required');
+        }
+        
+        if(empty($credentials['password'])){
+            throw new InvalidArgumentException('Password Required');
+        }
+        
+        if(empty($credentials['id'])){
+            throw new InvalidArgumentException('User Id Required');
+        }
 
         // create a new row
         $table = new Core_Model_DbTable_AuthInternal();
         $row = $table->createRow();
-        echo $username;
+   //     echo $username;
         if ($row) {
-            $row->id = $id;
-            $row->username = $username;
-            $row->password = $this->hashPassword($password);
+            $row->id = $credentials['id'];
+            $row->username = $credentials['username'];
+            $row->password = $this->hashPassword($credentials['password']);
             $row->save();
             //return the new user
             return true;
@@ -54,7 +66,7 @@ class Core_Model_Auth_Internal extends Core_Model_Auth_Interface
 
     public function login($credentials){
         
-        if(empty($credentials['usename'])){
+        if(empty($credentials['username'])){
             throw new InvalidArgumentException('Username Required');
         }
         
@@ -68,7 +80,7 @@ class Core_Model_Auth_Internal extends Core_Model_Auth_Interface
         //create the auth adapter
         $authAdapter = new Zend_Auth_Adapter_DbTable($db, 'auth_internal', 'username', 'password');
         //set the username and password
-        $authAdapter->setIdentity($credentials['usename']);
+        $authAdapter->setIdentity($credentials['username']);
         $authAdapter->setCredential($this->hashPassword($credentials['password'])); 
         //authenticate
         $result = $authAdapter->authenticate();

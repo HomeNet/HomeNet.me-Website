@@ -26,10 +26,10 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-interface Core_Model_User_Acl_MapperInterface {
+interface Core_Model_Acl_User_MapperInterface {
 
     /**
-     * @return Core_Model_User_Acl
+     * @return Core_Model_Acl_User
      */
     public function fetchObjectById($id);
 
@@ -37,9 +37,9 @@ interface Core_Model_User_Acl_MapperInterface {
 
 //    public function fetchObjectsByIdHouse($id,$house);
 
-    public function save(Core_Model_User_Acl_Interface $acl);
+    public function save(Core_Model_Acl_User_Interface $acl);
 
-    public function delete(Core_Model_User_Acl_Interface $acl);
+    public function delete(Core_Model_Acl_User_Interface $acl);
 public function deleteByUser($user);
     public function deleteAll();
 }

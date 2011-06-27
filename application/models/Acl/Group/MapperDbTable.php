@@ -21,25 +21,25 @@
  * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
  */
 
-require_once "MapperInterface.php";
+require "MapperInterface.php";
 
 /**
  * @package Core
- * @subpackage User
+ * @subpackage Group
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_User_Acl_MapperDbTable implements Core_Model_User_Acl_MapperInterface {
+class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperInterface {
 
     protected $_table = null;
 
     /**
      *
-     * @return Core_Model_DbTable_User_Acl;
+     * @return Core_Model_DbTable_Acl_Group;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_UserAcls();
+            $this->_table = new Core_Model_DbTable_GroupAcls();
         }
         return $this->_table;
     }
@@ -49,25 +49,27 @@ class Core_Model_User_Acl_MapperDbTable implements Core_Model_User_Acl_MapperInt
     }
 
 
-    /*
-     * 
-     */
+
+
+
+
 
     public function fetchObjectById($id){
         return $this->getTable()->find($id)->current();
     }
     
-    public function fetchObjectsByUser($user){
-       $select = $this->getTable()->select()->where('user = ?',$user);
+    public function fetchObjectsByGroup($group){
+       $select = $this->getTable()->select()->where('group = ?',$group);
       return $this->getTable()->fetchAll($select);
     }
 
-    public function save(Core_Model_User_Acl_Interface $acl) {
+    public function save(Core_Model_Acl_Group_Interface $membership) {
 
-        if (($acl instanceof Core_Model_DbTableRow_UserAcl) && ($acl->isConnected())) {
-            return $acl->save();;
-        } elseif (!is_null($acl->id)) {
-            $row = $this->getTable()->find($acl->id)->current();
+        if (($membership instanceof Core_Model_DbTableRow_GroupAcl) && ($membership->isConnected())) {
+            return $membership->save();
+
+        } elseif (!is_null($membership->id)) {
+            $row = $this->getTable()->find($membership->id)->current();
             if(empty($row)){
                $row = $this->getTable()->createRow();
             }
@@ -76,29 +78,28 @@ class Core_Model_User_Acl_MapperDbTable implements Core_Model_User_Acl_MapperInt
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($acl->toArray());
+        $row->fromArray($membership->toArray());
        // die(debugArray($row));
         $row->save();
 
         return $row;
     }
 
-    public function delete(Core_Model_User_Acl_Interface $acl) {
+    public function delete(Core_Model_Acl_Group_Interface $membership) {
 
-        if (($acl instanceof Core_Model_DbTableRow_UserAcl) && ($acl->isConnected())) {
-            $acl->delete();
+        if (($membership instanceof Core_Model_DbTableRow_GroupAcl) && ($membership->isConnected())) {
+            $membership->delete();
             return true;
-        } elseif (!is_null($acl->id)) {
-            $row = $this->getTable()->find($acl->id)->current()->delete();
+        } elseif (!is_null($membership->id)) {
+            $row = $this->getTable()->find($membership->id)->current()->delete();
             return;
         }
 
-        throw new Exception('Invalid User Object');
+        throw new Exception('Invalid Group Object');
     }
     
-     public function deleteByUser($user){
-         $select = $this->getTable()->select()->where('user = ?',$user);
-         $this->getTable()->delete($select);
+    public function deleteByGroup($group){
+         $select = $this->getTable()->select()->where('group = ?',$group);
     }
     
     public function deleteAll(){

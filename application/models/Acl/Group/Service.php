@@ -25,32 +25,32 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Group_Acl_Service {
+class Core_Model_Acl_Group_Service {
 
     /**
-     * @var Core_Model_Group_Acl_MapperInterface
+     * @var Core_Model_Acl_Group_MapperInterface
      */
     protected $_mapper;
 
     /**
-     * @return Core_Model_Group_Acl_MapperInterface
+     * @return Core_Model_Acl_Group_MapperInterface
      */
     public function getMapper() {
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new Core_Model_Group_Acl_MapperDbTable();
+            $this->_mapper = new Core_Model_Acl_Group_MapperDbTable();
         }
 
         return $this->_mapper;
     }
 
-    public function setMapper(Core_Model_Group_Acl_MapperInterface $mapper) {
+    public function setMapper(Core_Model_Acl_Group_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
     /**
      * @param int $id
-     * @return Core_Model_Group_Acl_Interface 
+     * @return Core_Model_Acl_Group_Interface 
      */
     public function getObjectById($id) {
         $content = $this->getMapper()->fetchObjectById($id);
@@ -84,10 +84,10 @@ class Core_Model_Group_Acl_Service {
      * @throws InvalidArgumentException 
      */
     public function create($acl) {
-        if ($acl instanceof Core_Model_Group_Acl_Interface) {
+        if ($acl instanceof Core_Model_Acl_Group_Interface) {
             $h = $acl;
         } elseif (is_array($acl)) {
-            $h = new Core_Model_Group_Acl(array('data' => $acl));
+            $h = new Core_Model_Acl_Group(array('data' => $acl));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }
@@ -100,10 +100,10 @@ class Core_Model_Group_Acl_Service {
      * @throws InvalidArgumentException 
      */
     public function update($acl) {
-        if ($acl instanceof Core_Model_Group_Acl_Interface) {
+        if ($acl instanceof Core_Model_Acl_Group_Interface) {
             $h = $acl;
         } elseif (is_array($acl)) {
-            $h = new Core_Model_Group_Acl(array('data' => $acl));
+            $h = new Core_Model_Acl_Group(array('data' => $acl));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }
@@ -117,12 +117,12 @@ class Core_Model_Group_Acl_Service {
      */
     public function delete($acl) {
         if (is_int($acl)) {
-            $h = new Core_Model_Group_Acl();
+            $h = new Core_Model_Acl_Group();
             $h->id = $acl;
-        } elseif ($acl instanceof Core_Model_Group_Acl_Interface) {
+        } elseif ($acl instanceof Core_Model_Acl_Group_Interface) {
             $h = $acl;
         } elseif (is_array($acl)) {
-            $h = new Core_Model_Group_Acl(array('data' => $acl));
+            $h = new Core_Model_Acl_Group(array('data' => $acl));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }
