@@ -48,57 +48,48 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
         $this->_table = $table;
     }
 
-
-
-
-
-
-
-    public function fetchObjectById($id){
+    public function fetchObjectById($id) {
         return $this->getTable()->find($id)->current();
     }
-    
-    public function fetchGroupsByUser($user){
-       $select = $this->getTable()->select('group')->where('user = ?',$user);
-      $result = $this->getTable()->fetchAll($select);
-      $array = array();
-      foreach($result as $row){
-          $array[] = $row->group;
-      }
-      
-      return $array;
-      
-      
+
+    public function fetchGroupsByUser($user) {
+        $select = $this->getTable()->select('group')->where('user = ?', $user);
+        $result = $this->getTable()->fetchAll($select);
+        $array = array();
+        foreach ($result as $row) {
+            $array[] = $row->group;
+        }
+
+        return $array;
     }
-    
-    public function fetchUsersByGroup($group){
-       $select = $this->getTable()->select('user')->where('group = ?',$group);
-       $result = $this->getTable()->fetchAll($select);
-      $array = array();
-      foreach($result as $row){
-          $array[] = $row->user;
-      }
-      
-      return $array;
+
+    public function fetchUsersByGroup($group) {
+        $select = $this->getTable()->select('user')->where('group = ?', $group);
+        $result = $this->getTable()->fetchAll($select);
+        $array = array();
+        foreach ($result as $row) {
+            $array[] = $row->user;
+        }
+
+        return $array;
     }
 
     public function save(Core_Model_User_Membership_Interface $membership) {
 
         if (($membership instanceof Core_Model_DbTableRow_UserMembership) && ($membership->isConnected())) {
-            
+
             return $membership->save();
         } elseif (!is_null($membership->id)) {
             $row = $this->getTable()->find($membership->id)->current();
-            if(empty($row)){
-               $row = $this->getTable()->createRow();
+            if (empty($row)) {
+                $row = $this->getTable()->createRow();
             }
-
         } else {
             $row = $this->getTable()->createRow();
         }
 
         $row->fromArray($membership->toArray());
-       // die(debugArray($row));
+        // die(debugArray($row));
         $row->save();
 
         return $row;
@@ -116,20 +107,21 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
 
         throw new Exception('Invalid User Object');
     }
-    
-     public function deleteByUser($user){
-         $select = $this->getTable()->select()->where('user = ?',$user);
-         $this->getTable()->delete($select);
+
+    public function deleteByUser($user) {
+        $where = $this->getTable()->getAdapter()->quoteInto('user = ?', $user);
+        return $this->getTable()->delete($where);
     }
-    
-     public function deleteByGroup($group){
-         $select = $this->getTable()->select()->where('group = ?',$group);
-         $this->getTable()->delete($select);
+
+    public function deleteByGroup($group) {
+        $where = $this->getTable()->getAdapter()->quoteInto('group = ?', $group);
+        return $this->getTable()->delete($where);
     }
-    
-    public function deleteAll(){
-        if(APPLICATION_ENV == 'testing'){
-            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'testing') {
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `' . $this->getTable()->info('name') . '`');
         }
     }
+
 }

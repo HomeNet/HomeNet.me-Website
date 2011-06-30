@@ -53,21 +53,21 @@ class Core_Model_User_Membership_Service {
      * @return Core_Model_Group_Interface 
      */
     public function getObjectById($id) {
-        $content = $this->getMapper()->fetchObjectById($id);
+        $result = $this->getMapper()->fetchObjectById($id);
 
-        if (empty($content)) {
+        if (empty($result)) {
             throw new NotFoundException('Membership not found', 404);
         }
-        return $content;
+        return $result;
     }
 
     public function getGroupsByUser($user){
-        $array = $this->getMapper()->fetchGroupsByUser($user);
+        $result = $this->getMapper()->fetchGroupsByUser($user);
 
-        if (empty($array)) {
+        if (empty($result)) {
             throw new NotFOundException('No Memberships Found', 404);
         }
-        return $array;
+        return $result;
     }
 //    public function getObjectsByIdHouse($id,$house){
 //        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
@@ -92,24 +92,29 @@ class Core_Model_User_Membership_Service {
             throw new InvalidArgumentException('Invalid Membership');
         }
 
-        return $this->getMapper()->save($h);
+        $result = $this->getMapper()->save($h);
+        
+        $gService = new Core_Model_Group_Service();
+        $gService->updateGroupCount($membership->group,1);
+        
+        return $result;
     }
 
-    /**
-     * @param mixed $membership
-     * @throws InvalidArgumentException 
-     */
-    public function update($membership) {
-        if ($membership instanceof Core_Model_User_Membership_Interface) {
-            $h = $membership;
-        } elseif (is_array($membership)) {
-            $h = new Core_Model_User_Membership(array('data' => $membership));
-        } else {
-            throw new InvalidArgumentException('Invalid Membership');
-        }
-
-        return $this->getMapper()->save($h);
-    }
+//    /**
+//     * @param mixed $membership
+//     * @throws InvalidArgumentException 
+//     */
+//    public function update($membership) {
+//        if ($membership instanceof Core_Model_User_Membership_Interface) {
+//            $h = $membership;
+//        } elseif (is_array($membership)) {
+//            $h = new Core_Model_User_Membership(array('data' => $membership));
+//        } else {
+//            throw new InvalidArgumentException('Invalid Membership');
+//        }
+//
+//        return $this->getMapper()->save($h);
+//    }
 
     /**
      * @param mixed $membership
@@ -126,16 +131,32 @@ class Core_Model_User_Membership_Service {
         } else {
             throw new InvalidArgumentException('Invalid Membership');
         }
-
-        return $this->getMapper()->delete($h);
+        
+        $result = $this->getMapper()->delete($h);
+        
+        $gService = new Core_Model_Group_Service();
+        $gService->incrementGroupCount($membership->group,1);
+        
+        return $result;
     }
     
     public function deleteByUser($user) {
-        $this->getMapper()->deleteByUser($user);
+        $affectedRows = $this->getMapper()->deleteByUser($user);
+        
+        $gService = new Core_Model_Group_Service();
+        $gService->decrementGroupCount($membership->group,$affectedRows);
+        
+        return $affectedRows;
     }
     
     public function deleteByGroup($group) {
-        $this->getMapper()->deleteByUser($group);
+        $affectedRows = $this->getMapper()->deleteByGroup($group);
+        
+        $gService = new Core_Model_Group_Service();
+        $gService->updateGroupCount($membership->group,0);
+        
+        return $affectedRows;
+        
     }
     
      public function deleteAll(){

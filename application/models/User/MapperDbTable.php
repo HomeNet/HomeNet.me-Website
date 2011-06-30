@@ -62,6 +62,10 @@ class Core_Model_User_MapperDbTable implements Core_Model_User_MapperInterface {
        $select = $this->getTable()->select()->where('primary_group = ?',$group);
       return $this->getTable()->fetchAll($select);
     }
+   
+    
+    
+    
 
     public function save(Core_Model_User_Interface $user) {
 

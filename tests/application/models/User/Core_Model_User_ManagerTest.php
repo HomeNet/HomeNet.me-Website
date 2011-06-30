@@ -18,6 +18,7 @@ class Core_Model_User_ManagerTest extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        Core_Model_Installer::install();
         $this->object = new Core_Model_User_Manager;
     }
 
@@ -26,7 +27,7 @@ class Core_Model_User_ManagerTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        
+        Core_Model_Installer::uninstall();
     }
     
     private function createValidUser(){
@@ -36,9 +37,9 @@ class Core_Model_User_ManagerTest extends PHPUnit_Framework_TestCase {
             'name' => 'testName',
             'location' => 'testLocation',
             'email' => 'test@test.com',
-             'password' => 'test');
+             'password' => 'Test123!');
          $result = $this->object->register($register);
-         
+         $this->object->setUser($result);
         return $result;
     }
 
@@ -52,27 +53,22 @@ class Core_Model_User_ManagerTest extends PHPUnit_Framework_TestCase {
         );
     }
 
-    /**
-     * @todo Implement testLogin().
-     */
+
     public function testLogin() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+       $this->createValidUser();
+       $this->object->login(array('username'=> 'testUsername', 'password' => 'Test123!'));
+       
+       $this->assertNotEmpty($_SESSION['User']);
+       //validate that it is the right group and such
+       
     }
 
-    /**
-     * @todo Implement testLogout().
-     */
+
     public function testLogout() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+       
     }
 
-    public function testRegister() {
+    public function testRegisterValid() {
         $result = $this->createValidUser();
         
         $this->assertInstanceOf('Core_Model_User_Interface', $result);
@@ -85,6 +81,20 @@ class Core_Model_User_ManagerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('testLocation', $result->location);
         $this->assertEquals('test@test.com', $result->email);
     }
+    
+    public function testRegisterInvalid() {
+        $result = $this->createValidUser();
+        $register = array(
+            
+             'username' => 'testUsername',
+            'name' => 'testName',
+            'location' => 'testLocation',
+            'email' => 'test@test.com',
+             'password' => 'test');
+        
+        //$this->setExpectedException('Exception');
+         $result = $this->object->register($register);
+    }
 
     /**
      * @todo Implement testChangePassword().
@@ -96,28 +106,22 @@ class Core_Model_User_ManagerTest extends PHPUnit_Framework_TestCase {
         );
     }
 
-    /**
-     * @todo Implement testSendActivationEmail().
-     */
     public function testSendActivationEmail() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+
+       $result = $this->createValidUser();
+       $this->object->sendActivationEmail();
+       
+       $this->assertNotNull($result->getSetting('activationKey'));
+       
+       //check file where email should end up
+         
     }
 
 
-    public function testActivate() {
-        
-        
-        
-        
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testActivateCorrectKey() {
+        $user = $this->createValidUser();
+        $result = $this->object->activate($user->getSetting('activationKey'));
+        $this->assertTrue($result);
     }
 
 }
-
-?>

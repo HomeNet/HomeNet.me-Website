@@ -53,12 +53,40 @@ class Core_Model_Group_Service {
      * @return Core_Model_Group_Interface 
      */
     public function getObjectById($id) {
-        $content = $this->getMapper()->fetchObjectById($id);
+        $result = $this->getMapper()->fetchObjectById($id);
 
-        if (empty($content)) {
+        if (empty($result)) {
             throw new NotFoundException('Group not found', 404);
         }
-        return $content;
+        return $result;
+    }
+    
+     public function incrementGroupCount($id, $amount = 1) {
+        $affectedRows = $this->getMapper()->incrementUserCount($id, $amount);
+
+        if ($affectedRows == 0) {
+            throw new NotFoundException('Group not found', 404);
+        }
+        return $affectedRows;
+    }
+    
+     public function decrementGroupCount($id, $amount = 1 ) {
+        $affectedRows = $this->getMapper()->incrementUserCount($id, $amount * -1);
+
+        if ($affectedRows == 0) {
+            throw new NotFoundException('Group not found', 404);
+        }
+        return $affectedRows;
+    }
+    
+    public function updateGroupCount($id, $amount) {
+        $affectedRows = $this->getMapper()->updateUserCount($id, $amount);
+
+        if ($affectedRows == 0) {
+            throw new NotFoundException('Group not found', 404);
+        }
+        
+        return $affectedRows;
     }
 
 //    public function getObjectsBySection($section){

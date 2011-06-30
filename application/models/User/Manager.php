@@ -20,6 +20,10 @@ class Core_Model_User_Manager {
         $this->_service = new Core_Model_User_Service();
     }
     
+    public function setUser(Core_Model_User_Interface $user){
+        $this->_user = $user;
+    }
+    
     public function setAuthClass($class){
         
         if(!class_exists($class)){
@@ -29,7 +33,12 @@ class Core_Model_User_Manager {
         $this->_authClass = $class;
     }
     
+    
+    
    public function login(array $credentials) {
+       
+       //validate that the user isn't already logged in
+       
        
        if(!is_null($this->_user)){
             throw new Exception("User already loaded");
@@ -182,12 +191,12 @@ class Core_Model_User_Manager {
             throw new CMS_Exception("User Already Activated");
         }
 
-        $userkey = $this->getSetting('activationKey');
+        $userkey = $this->_user->getSetting('activationKey');
 
         if($userkey === $key){
             $this->status = 1;
             $this->save();
-            return;
+            return true;
         }
 
         throw new CMS_Exception("Invalid Activation Key");

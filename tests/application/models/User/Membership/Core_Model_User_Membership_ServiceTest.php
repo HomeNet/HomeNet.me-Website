@@ -154,53 +154,54 @@ class Core_Model_User_Membership_ServiceTest extends PHPUnit_Framework_TestCase 
 //
 //    }
 
-    public function testUpdateFromObject() {
-
-        //setup
-        $userMembership = $this->createValidUserMembership();
-
-        //update values
-        $userMembership->user = 1;
-        $userMembership->group = 3;
-
-        $result = $this->object->update($userMembership);
-
-        $this->assertInstanceOf('Core_Model_User_Membership_Interface', $result);
-
-        $this->assertEquals($userMembership->id,$result->id);
-        $this->assertEquals(1, $result->user);
-        $this->assertEquals(3, $result->group);
-        $this->assertNotNull($result->created);
-    }
-    
-    public function testUpdateFromArray() {
-
-        //setup
-        $userMembership = $this->createValidUserMembership();
-
-        $array = $userMembership->toArray();
-        
-        //update values
-        $array['user'] = 1;
-        $array['group'] = 3;
-
-        $result = $this->object->update($array);
-
-        $this->assertInstanceOf('Core_Model_User_Membership_Interface', $result);
-
-        $this->assertEquals($userMembership->id,$result->id);
-        $this->assertEquals(1, $result->user);
-        $this->assertEquals(3, $result->group);
-        $this->assertNotNull($result->created);
-    }
-    
-
-    public function testUpdateException() {
-        $this->setExpectedException('InvalidArgumentException');
-
-        $badObject = new StdClass();
-        $create = $this->object->update($badObject);
-    }
+    //membership doesn't need update, just add and remove
+//    public function testUpdateFromObject() {
+//
+//        //setup
+//        $userMembership = $this->createValidUserMembership();
+//
+//        //update values
+//        $userMembership->user = 1;
+//        $userMembership->group = 3;
+//
+//        $result = $this->object->update($userMembership);
+//
+//        $this->assertInstanceOf('Core_Model_User_Membership_Interface', $result);
+//
+//        $this->assertEquals($userMembership->id,$result->id);
+//        $this->assertEquals(1, $result->user);
+//        $this->assertEquals(3, $result->group);
+//        $this->assertNotNull($result->created);
+//    }
+//    
+//    public function testUpdateFromArray() {
+//
+//        //setup
+//        $userMembership = $this->createValidUserMembership();
+//
+//        $array = $userMembership->toArray();
+//        
+//        //update values
+//        $array['user'] = 1;
+//        $array['group'] = 3;
+//
+//        $result = $this->object->update($array);
+//
+//        $this->assertInstanceOf('Core_Model_User_Membership_Interface', $result);
+//
+//        $this->assertEquals($userMembership->id,$result->id);
+//        $this->assertEquals(1, $result->user);
+//        $this->assertEquals(3, $result->group);
+//        $this->assertNotNull($result->created);
+//    }
+//    
+//
+//    public function testUpdateException() {
+//        $this->setExpectedException('InvalidArgumentException');
+//
+//        $badObject = new StdClass();
+//        $create = $this->object->update($badObject);
+//    }
 
     public function testDeleteObject() {
 

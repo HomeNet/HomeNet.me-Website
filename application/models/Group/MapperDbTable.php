@@ -79,6 +79,22 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
 //
 //       return $this->getTable()->fetchAll($select);
 //    }
+    
+     public function incrementUserCount($id, $amount){
+        
+      $data = $this->getTable()->getAdapter()->quoteInto('user_count = user_count + ?', $user_count);  
+      $where = $this->getTable()->getAdapter()->quoteInto('id = ?', $group);  
+
+      return $this->getTable()->update($data, $where);
+    }
+
+    public function updateUserCount($id, $user_count){
+        
+      $data = $this->getTable()->getAdapter()->quoteInto('user_count = ?', $user_count);  
+      $where = $this->getTable()->getAdapter()->quoteInto('id = ?', $group);  
+
+      return $this->getTable()->update($data, $where);
+    }
 
 
 

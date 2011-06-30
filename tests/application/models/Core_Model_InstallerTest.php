@@ -25,23 +25,14 @@ class Core_Model_InstallerTest extends PHPUnit_Framework_TestCase {
         
     }
 
-    /**
-     * @todo Implement testInstall().
-     */
+
     public function testInstall() {
        Core_Model_Installer::install();
     }
 
-    /**
-     * @todo Implement testUninstall().
-     */
+
     public function testUninstall() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        Core_Model_Installer::uninstall();
     }
 
 }
-
-?>
