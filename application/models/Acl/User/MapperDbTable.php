@@ -65,7 +65,7 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
      public function fetchObjectsByUserModuleObject($user, $module, $object) {
         $select = $this->getTable()->select()
         ->where('user = ?', $user)
-        ->where('module = ?', $module)
+        ->where('module = ?', $module)->orWhere('module = NULL')
         ->where('object = ?', $object)
         ->order(array('controller','object','action'));
         
