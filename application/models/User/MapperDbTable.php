@@ -83,7 +83,17 @@ class Core_Model_User_MapperDbTable implements Core_Model_User_MapperInterface {
 
         $row->fromArray($user->toArray());
        // die(debugArray($row));
+                try {
         $row->save();
+        } catch(Exception $e){
+            if(strstr($e->getMessage(), '1062 Duplicate')) {
+               throw new DuplicateEntryException("URL Already Exists"); 
+            } elseif(strstr($e->getMessage(), '1048 Column')) {
+               throw new InvalidArgumentException("Invalid Column"); 
+            } else {
+                 throw new Exception($e->getMessage());
+            }
+        };
 
         return $row;
     }

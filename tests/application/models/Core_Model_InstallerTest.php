@@ -27,12 +27,12 @@ class Core_Model_InstallerTest extends PHPUnit_Framework_TestCase {
 
 
     public function testInstall() {
-       Core_Model_Installer::install();
+      Core_Model_Installer::install();
     }
 
 
     public function testUninstall() {
-        Core_Model_Installer::uninstall();
+     //   Core_Model_Installer::uninstall();
     }
 
 }

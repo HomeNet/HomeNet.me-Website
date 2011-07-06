@@ -6,6 +6,7 @@
  */
 class Core_Model_Installer {
 
+    public static $groupOwner;
     public static $groupGuest;
     public static $groupMember;
     public static $groupAdmin;
@@ -21,7 +22,7 @@ class Core_Model_Installer {
         $group_acls = array();
         $gService = new Core_Model_Group_Service();
             
-        $guest = array(
+        $owner = array(
             'parent' => null,
             'type' => 0,
             'title' => 'Owner',
@@ -30,8 +31,8 @@ class Core_Model_Installer {
             'user_count' => 0,
             'settings' => array());
 
-        $result = $gService->create($guest);
-        self::$groupGuest = $result->id;
+        $result = $gService->create($owner);
+        self::$groupOwner = $result->id;
         
         $group_acls[] = array('group' => $result->id, 'module' => null, 'controller' => null, 'action' => 'edit', 'permission' => 1);
         $group_acls[] = array('group' => $result->id, 'module' => null, 'controller' => null, 'action' => 'delete', 'permission' => 1);
@@ -106,7 +107,7 @@ class Core_Model_Installer {
             'settings' => array());
 
         $result = $uService->create($guest);
-        self::$groupContentAdmin = $result->id;
+        self::$userGuest = $result->id;
 
         $user = array(
             'status' => 1,
@@ -181,6 +182,10 @@ class Core_Model_Installer {
 
         $umService = new Core_Model_User_Membership_Service();
         $umService->deleteAll();
+        
+        $authInternal = new Core_Model_Auth_Internal();
+        $authInternal->deleteAll();
+        
     }
 
 }

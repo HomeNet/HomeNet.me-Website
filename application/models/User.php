@@ -37,7 +37,7 @@ class Core_Model_User implements Core_Model_User_Interface {
     /**
      * @var int
      */
-    public $primary_group = 5;
+    public $primary_group = null;
     /**
      * @var string
      */

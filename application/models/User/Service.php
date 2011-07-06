@@ -74,15 +74,6 @@ class Core_Model_User_Service {
      */
     public function create($user) {
         
-       $gService = new Core_Model_Group_Service();
-        
-       try {
-           $group = $gService->getObjectById($user->primary_group);
-        } catch (NotFoundException $e){
-           throw new InvalidArgumentException('Invalid Primary Group'); 
-        }
-        
-        
         if ($user instanceof Core_Model_User_Interface) {
             $h = $user;
         } elseif (is_array($user)) {
@@ -91,9 +82,17 @@ class Core_Model_User_Service {
             throw new InvalidArgumentException('Invalid User Object');
         }
         
+        $gService = new Core_Model_Group_Service();
+        
+        try {
+           $group = $gService->getObjectById($h->primary_group);
+        } catch (NotFoundException $e){
+           throw new InvalidArgumentException('Invalid Primary Group'); 
+        }
+        
         $user = $this->getMapper()->save($h);
-        $mService = new Core_Model_User_Membership();
-        $result = $this->object->create( array(
+        $mService = new Core_Model_User_Membership_Service();
+        $result = $mService->create( array(
             'user' => $user->id,
             'group' => $user->primary_group));
         

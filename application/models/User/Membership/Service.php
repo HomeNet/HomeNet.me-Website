@@ -95,7 +95,7 @@ class Core_Model_User_Membership_Service {
         $result = $this->getMapper()->save($h);
         
         $gService = new Core_Model_Group_Service();
-        $gService->updateGroupCount($membership->group,1);
+        $gService->updateGroupCount($result->group,1);
         
         return $result;
     }

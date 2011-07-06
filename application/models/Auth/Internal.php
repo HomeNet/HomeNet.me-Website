@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -24,64 +25,73 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Auth_Internal implements Core_Model_Auth_Interface
-{
+class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
+
     /**
      * @param String Password
      * @return String
      */
     public function hashPassword($password) {
-        return md5('saltisgood' . $password);
+        return sha1('saltisgood' . $password);
     }
 
     public function add($credentials) {
-        
-         if(empty($credentials['username'])){
+
+        if (empty($credentials['username'])) {
             throw new InvalidArgumentException('Username Required');
         }
-        
-        if(empty($credentials['password'])){
+
+        if (empty($credentials['password'])) {
             throw new InvalidArgumentException('Password Required');
         }
-        
-        if(empty($credentials['id'])){
+
+        if (empty($credentials['id'])) {
             throw new InvalidArgumentException('User Id Required');
         }
 
         // create a new row
         $table = new Core_Model_DbTable_AuthInternal();
         $row = $table->createRow();
-   //     echo $username;
-        if ($row) {
-            $row->id = $credentials['id'];
-            $row->username = $credentials['username'];
-            $row->password = $this->hashPassword($credentials['password']);
+        //     echo $username;
+
+        $row->id = $credentials['id'];
+        $row->username = $credentials['username'];
+        $row->password = $this->hashPassword($credentials['password']);
+        try {
             $row->save();
-            //return the new user
-            return true;
-        } else {
-            throw new DuplicateEntryException("Could not create user!");
-        }
+        } catch (Exception $e) {
+            if (strstr($e->getMessage(), '1062 Duplicate')) {
+                throw new DuplicateEntryException("URL Already Exists");
+            } elseif (strstr($e->getMessage(), '1048 Column')) {
+                throw new InvalidArgumentException("Invalid Column");
+            } else {
+                throw new Exception($e->getMessage());
+            }
+        };
     }
 
-    public function login($credentials){
-        
-        if(empty($credentials['username'])){
+    /**
+     *
+     * @param array Credentials: Username and Password
+     * @return int User Id
+     */
+    public function login($credentials) {
+
+        if (empty($credentials['username'])) {
             throw new InvalidArgumentException('Username Required');
         }
-        
-        if(empty($credentials['password'])){
+
+        if (empty($credentials['password'])) {
             throw new InvalidArgumentException('Password Required');
         }
-        
-        
+
         // get the default db adapter
         $db = Zend_Db_Table::getDefaultAdapter();
         //create the auth adapter
         $authAdapter = new Zend_Auth_Adapter_DbTable($db, 'auth_internal', 'username', 'password');
         //set the username and password
         $authAdapter->setIdentity($credentials['username']);
-        $authAdapter->setCredential($this->hashPassword($credentials['password'])); 
+        $authAdapter->setCredential($this->hashPassword($credentials['password']));
         //authenticate
         $result = $authAdapter->authenticate();
 
@@ -89,7 +99,7 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface
 
         if (!$result->isValid()) {
 
-          switch ($result->getCode()) {
+            switch ($result->getCode()) {
 
                 case Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND:
                     throw new NotFoundException("Username not found");
@@ -108,26 +118,33 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface
         // store the username, first and last names of the user
         $auth = Zend_Auth::getInstance();
         $storage = $auth->getStorage();
-        $storage->write($authAdapter->getResultRowObject(array('id','username')));
+        $storage->write($authAdapter->getResultRowObject(array('id', 'username')));
         $u = $storage->read();
 
-        $uService = new Core_Model_DbTable_Users();
-        $user = $uService->getObjectById($u->id);
-        $user->login();
+        //$uService = new Core_Model_User_Service();
+        //$user = $uService->getObjectById($u->id);
+        //$user->login();
 
-
-
-        return true;
-        
+        return $u->id;
     }
-    
+
     public function delete($id) {
-
+        $table = new Core_Model_DbTable_AuthInternal();
+        $table->find($id)->current()->delete();
     }
-    public function logout(){
+
+    public function logout() {
         $authAdapter = Zend_Auth::getInstance();
         $authAdapter->clearIdentity();
         $sessions = Zend_Session::destroy(true);
+    }
+
+    public function deleteAll() {
+
+        if (APPLICATION_ENV == 'testing') {
+            $table = new Core_Model_DbTable_AuthInternal();
+            $table->getAdapter()->query('TRUNCATE TABLE `' . $table->info('name') . '`');
+        }
     }
 
 }
