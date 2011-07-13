@@ -161,7 +161,7 @@ class Core_Model_Installer {
 
 
 
-        $agService = new Core_Model_Acl_User_Service();
+        $auService = new Core_Model_Acl_User_Service();
         foreach ($user_acls as $acl) {
             $auService->create($acl);
         }

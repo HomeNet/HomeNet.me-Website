@@ -24,6 +24,10 @@ class Core_Model_User_Manager {
         $this->_user = $user;
     }
     
+    public function clearUser(){
+        $this->_user = null;
+    }
+    
     public function setAuthClass($class){
         
         if(!class_exists($class)){
@@ -40,9 +44,9 @@ class Core_Model_User_Manager {
        //validate that the user isn't already logged in
        
        
-       if(!is_null($this->_user)){
-            throw new Exception("User already loaded");
-        }
+     //  if(!is_null($this->_user)){
+     //       throw new Exception("User already loaded");
+     //   }
        
        /* @var $auth Core_Model_Auth_Interface */
         $auth = new $this->_authClass(); 
@@ -82,12 +86,11 @@ class Core_Model_User_Manager {
         if(!empty($_SESSION['Core_Auth']['class'])){
             $auth = new $_SESSION['Core_Auth']['class']();
             $auth->logout();
-        } else {
-            //Zend_Session::destroy(true);
-
-                $authAdapter = Zend_Auth::getInstance();
-                $authAdapter->clearIdentity();
-        }
+        } //else {
+            $authAdapter = Zend_Auth::getInstance();
+        $authAdapter->clearIdentity();
+        $sessions = Zend_Session::destroy(true);
+       // }
     }
 
     /**
@@ -100,10 +103,10 @@ class Core_Model_User_Manager {
             throw new Zend_Exception("User Already Loaded");
         }   
    
-        $user = $this->_service->create($values); //throws exception if username exsists
+        $this->_user = $this->_service->create($values); //throws exception if username exsists
 
         $auth = new Core_Model_Auth_Internal();
-        $auth->add(array('id'=>$user->id, 'username'=>$user->username, 'password'=>$values['password']));
+        $auth->add(array('id'=>$this->_user->id, 'username'=>$this->_user->username, 'password'=>$values['password']));
         
         //
         if(!empty($_SESSION['Core_Auth']['credentials'])){
@@ -111,8 +114,11 @@ class Core_Model_User_Manager {
             $auth->add($_SESSION['Core_Auth']['credentials']);
         }
 
-        $this->sendActivationEmail();
-        return $user;
+      //  $this->sendActivationEmail();
+        
+        
+        
+        return $this->_user;
     }
     /**
      * @param string $oldpassword
@@ -143,30 +149,32 @@ class Core_Model_User_Manager {
      */
     public function sendActivationEmail() {
 
-        if (empty($this->id)) {
+        if (empty($this->_user->id)) {
             throw new Zend_Exception("User Not Loaded");
         }
 
-        if ($this->status > 0) {
+        if ($this->_user->status > 0) {
             // throw new CMS_Exception("User Already Activated");
         }
 
         $key = uniqid('', true);
 
-        $this->setSetting('activationKey', $key);
-        $this->save();
+        $this->_user->setSetting('activationKey', $key);
+        
+        $uService = new Core_Model_User_Service();
+        $uService->update($this->_user);
 
         //send email
         $mail = new CMS_HtmlEmail();
         $mail->setSubject('Activate your HomeNet.me Account');
-        $mail->addTo($this->email, $this->name);
+        $mail->addTo($this->_user->email, $this->_user->name);
 
-        $mail->setViewParam('id', $this->id);
-        $mail->setViewParam('name', $this->name);
-        $mail->setViewParam('email', $this->email);
-        $mail->setViewParam('username', $this->username);
+        $mail->setViewParam('id', $this->_user->id);
+        $mail->setViewParam('name', $this->_user->name);
+        $mail->setViewParam('email', $this->_user->email);
+        $mail->setViewParam('username', $this->_user->username);
 
-        $url = Zend_Layout::getMvcInstance()->getView()->url(array('user' => $this->id, 'action'=>'activate', 'key' => $key), 'core-user');
+        $url = Zend_Layout::getMvcInstance()->getView()->url(array('user' => $this->_user->id, 'action'=>'activate', 'key' => $key), 'core-user');
 
         $mail->setViewParam('activationUrl', $url);
 
@@ -183,19 +191,20 @@ class Core_Model_User_Manager {
      */
     public function activate($key) {
 
-        if(empty($this->id)){
+        if(empty($this->_user->id)){
             throw new CMS_Exception("User Not Loaded");
         }
 
-        if($this->status > 0){
+        if($this->_user->status > 0){
             throw new CMS_Exception("User Already Activated");
         }
 
         $userkey = $this->_user->getSetting('activationKey');
 
         if($userkey === $key){
-            $this->status = 1;
-            $this->save();
+            $this->_user->status = 1;
+            $uService = new Core_Model_User_Service();
+        $uService->update($this->_user);
             return true;
         }
 

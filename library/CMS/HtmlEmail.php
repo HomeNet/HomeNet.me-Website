@@ -57,8 +57,17 @@ class CMS_HtmlEmail extends Zend_Mail {
         $this->module = $module;
 
         //get application config
-        $bootstrap = Zend_Controller_Front::getInstance()->getParam('bootstrap');
-        $options = $bootstrap->getOptions();
+       // $bootstrap = Zend_Controller_Front::getInstance()->getParam('bootstrap');
+       // $options = $bootstrap->getOptions();
+         
+        if(APPLICATION_ENV == 'testing'){
+
+        $options = new Zend_Config_Ini(APPLICATION_PATH.'/configs/application.ini', APPLICATION_ENV);
+        } else {
+            $bootstrap = Zend_Controller_Front::getInstance()->getParam('bootstrap');
+       $options = $bootstrap->getOptions();
+        }
+        $options = $options->toArray();
 
 //die(debugArray($options));
 

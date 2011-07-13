@@ -17,6 +17,7 @@ class Core_Model_User_Membership_ServiceTest extends PHPUnit_Framework_TestCase 
      */
     protected function setUp() {
         $this->object = new Core_Model_User_Membership_Service();
+        Core_Model_Installer::install();
     }
 
     /**
@@ -25,6 +26,7 @@ class Core_Model_User_Membership_ServiceTest extends PHPUnit_Framework_TestCase 
      */
     protected function tearDown() {
        $this->object->deleteAll();
+       Core_Model_Installer::uninstall();
     }
 
     public function testGetMapper() {
@@ -51,6 +53,7 @@ class Core_Model_User_Membership_ServiceTest extends PHPUnit_Framework_TestCase 
     
 
     private function createValidUserMembership() {
+        
         $userMembership = new Core_Model_User_Membership();
         $userMembership->user = 1;
         $userMembership->group = 2;
@@ -222,7 +225,7 @@ class Core_Model_User_Membership_ServiceTest extends PHPUnit_Framework_TestCase 
         $this->object->delete((int)$userMembership->id);
         
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($userMembership->id); 
+        $result = $this->object->getObjectById($userMembership->id);  
     }
     
     public function testDeleteArray() {

@@ -61,7 +61,7 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
             $row->save();
         } catch (Exception $e) {
             if (strstr($e->getMessage(), '1062 Duplicate')) {
-                throw new DuplicateEntryException("URL Already Exists");
+                throw new DuplicateEntryException("Username Already Exists");
             } elseif (strstr($e->getMessage(), '1048 Column')) {
                 throw new InvalidArgumentException("Invalid Column");
             } else {
@@ -102,11 +102,11 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
             switch ($result->getCode()) {
 
                 case Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND:
-                    throw new NotFoundException("Username not found");
+                    throw new NotFoundException("Username not found",Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND);
                     break;
 
                 case Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID:
-                    throw new CMS_Exception("Invalid Password");
+                    throw new CMS_Exception("Invalid Password",Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID);
                     break;
 
                 default:
@@ -134,9 +134,9 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
     }
 
     public function logout() {
-        $authAdapter = Zend_Auth::getInstance();
-        $authAdapter->clearIdentity();
-        $sessions = Zend_Session::destroy(true);
+//        $authAdapter = Zend_Auth::getInstance();
+//        $authAdapter->clearIdentity();
+//        $sessions = Zend_Session::destroy(true);
     }
 
     public function deleteAll() {

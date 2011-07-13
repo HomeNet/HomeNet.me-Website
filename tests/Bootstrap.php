@@ -19,6 +19,8 @@
 
 echo "loading bootstrap\n";
 
+
+
 ini_set("memory_limit", "256M");
 error_reporting(E_ALL);
 date_default_timezone_set('America/New_York');
@@ -41,6 +43,11 @@ set_include_path(implode(PATH_SEPARATOR, array(
             realpath(APPLICATION_PATH . '/../application/modules'),
             get_include_path(),
         )));
+
+function getEmailTempFile($transport = null)
+{
+    return $transport->recipients . '.txt';
+}
 
 require_once 'Zend/Loader/Autoloader.php';
 $autoloader = Zend_Loader_Autoloader::getInstance();

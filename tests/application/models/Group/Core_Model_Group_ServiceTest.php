@@ -172,6 +172,78 @@ class Core_Model_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertArrayHasKey('system', $result->settings);
     }
     
+  
+    public function testIncrementGroupCount() {
+        //setup
+        $group = $this->createValidGroup();
+        
+        $this->object->incrementGroupCount($group->id);
+        
+        $result = $this->object->getObjectById($group->id);
+        $this->assertEquals(3, $result->user_count);
+    }
+
+    public function testDecrementGroupCount() {
+        //setup
+        $group = $this->createValidGroup();
+        
+        $this->object->decrementGroupCount($group->id);
+        
+        $result = $this->object->getObjectById($group->id);
+        $this->assertEquals(1, $result->user_count);
+    }
+
+    public function testUpdateGroupCount() {
+        //setup
+        $group = $this->createValidGroup();
+        
+         $this->object->updateGroupCount($group->id, 0);
+        
+        $result = $this->object->getObjectById($group->id);
+        $this->assertEquals(0, $result->user_count);
+    }
+    
+    public function testMultipleIncrementGroupCount() {
+        //setup
+        $group = $this->createValidGroup();
+        
+        $this->object->incrementGroupCount($group->id,100);
+        
+        $result = $this->object->getObjectById($group->id);
+        $this->assertEquals(102, $result->user_count);
+    }
+
+    public function testMultipleDecrementGroupCount() {
+        //setup
+        $group = $this->createValidGroup();
+        
+        $this->object->decrementGroupCount($group->id,2);
+        
+        $result = $this->object->getObjectById($group->id);
+        $this->assertEquals(0, $result->user_count);
+    }
+    
+    
+    
+        public function testIncrementInvalidGroupCount() {
+        $this->setExpectedException('NotFoundException'); 
+        $this->object->incrementGroupCount(99);
+    }
+
+    public function testDecrementInvalidGroupCount() {
+        $this->setExpectedException('NotFoundException');        
+        $this->object->decrementGroupCount(99);
+
+    }
+
+    public function testUpdateInvalidGroupCount() {
+ 
+        $this->setExpectedException('NotFoundException');
+        $this->object->updateGroupCount(99, 0);
+    }
+    
+    
+    
 //    public function testGetObjectByUrl() {
 //
 //        //setup

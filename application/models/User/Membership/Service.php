@@ -95,7 +95,7 @@ class Core_Model_User_Membership_Service {
         $result = $this->getMapper()->save($h);
         
         $gService = new Core_Model_Group_Service();
-        $gService->updateGroupCount($result->group,1);
+        $gService->incrementGroupCount($result->group,1);
         
         return $result;
     }
@@ -122,8 +122,7 @@ class Core_Model_User_Membership_Service {
      */
     public function delete($membership) {
         if (is_int($membership)) {
-            $h = new Core_Model_User_Membership();
-            $h->id = $membership;
+            $h = $this->getObjectById($membership);
         } elseif ($membership instanceof Core_Model_User_Membership_Interface) {
             $h = $membership;
         } elseif (is_array($membership)) {
@@ -132,10 +131,16 @@ class Core_Model_User_Membership_Service {
             throw new InvalidArgumentException('Invalid Membership');
         }
         
+        if(empty($h->group)){
+            throw new InvalidArgumentException('Missing Group ID');
+        }
+        
+        $group = $h->group;
+        
         $result = $this->getMapper()->delete($h);
         
         $gService = new Core_Model_Group_Service();
-        $gService->incrementGroupCount($membership->group,1);
+        $gService->decrementGroupCount($group,1);
         
         return $result;
     }

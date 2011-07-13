@@ -82,7 +82,7 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
     
      public function incrementUserCount($id, $amount){
         
-      $data = array('user_count' => new Zend_Db_Expr($this->getTable()->getAdapter()->quoteInto('user_count + ?', $user_count)));  
+      $data = array('user_count' => new Zend_Db_Expr($this->getTable()->getAdapter()->quoteInto('user_count + ?', $amount)));  
       $where = $this->getTable()->getAdapter()->quoteInto('id = ?', $id);  
 
       

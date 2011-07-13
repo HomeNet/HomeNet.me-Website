@@ -29,17 +29,17 @@ class Core_Model_User_ManagerTest extends PHPUnit_Framework_TestCase {
     protected function tearDown() {
         Core_Model_Installer::uninstall();
     }
-    
-    private function createValidUser(){
-         $register = array(
-            
-             'username' => 'testUsername',
+
+    private function createValidUser() {
+        $register = array(
+            'primary_group' => Core_Model_Installer::$groupMember,
+            'username' => 'testUsername',
             'name' => 'testName',
             'location' => 'testLocation',
             'email' => 'test@test.com',
-             'password' => 'Test123!');
-         $result = $this->object->register($register);
-         $this->object->setUser($result);
+            'password' => 'Test123!');
+        $result = $this->object->register($register);
+        $this->object->setUser($result);
         return $result;
     }
 
@@ -53,47 +53,46 @@ class Core_Model_User_ManagerTest extends PHPUnit_Framework_TestCase {
         );
     }
 
-
     public function testLogin() {
-       $this->createValidUser();
-       $this->object->login(array('username'=> 'testUsername', 'password' => 'Test123!'));
-       
-       $this->assertNotEmpty($_SESSION['User']);
-       //validate that it is the right group and such
-       
+        $this->createValidUser();
+        $this->object->login(array('username' => 'testUsername', 'password' => 'Test123!'));
+
+        $this->assertNotEmpty($_SESSION['User']);
+        //validate that it is the right group and such
     }
 
-
-    public function testLogout() {
-       
-    }
+    
 
     public function testRegisterValid() {
         $result = $this->createValidUser();
-        
+
         $this->assertInstanceOf('Core_Model_User_Interface', $result);
-        
+
         $this->assertNotNull($result->id);
         $this->assertEquals(0, $result->status);
-        $this->assertEquals(1, $result->primary_group);
+        $this->assertEquals(Core_Model_Installer::$groupMember, $result->primary_group);
         $this->assertEquals('testUsername', $result->username);
         $this->assertEquals('testName', $result->name);
         $this->assertEquals('testLocation', $result->location);
         $this->assertEquals('test@test.com', $result->email);
     }
-    
+
     public function testRegisterInvalid() {
         $result = $this->createValidUser();
-        $register = array(
-            
-             'username' => 'testUsername',
-            'name' => 'testName',
-            'location' => 'testLocation',
-            'email' => 'test@test.com',
-             'password' => 'test');
-        
-        //$this->setExpectedException('Exception');
-         $result = $this->object->register($register);
+        $this->object->clearUser();
+        $this->setExpectedException('DuplicateEntryException');
+        $result = $this->createValidUser();
+
+//        $register = array(
+//            
+//             'username' => 'testUsername',
+//            'name' => 'testName',
+//            'location' => 'testLocation',
+//            'email' => 'test@test.com',
+//             'password' => 'test');
+//        
+//        //
+//         $result = $this->object->register($register);
     }
 
     /**
@@ -108,20 +107,36 @@ class Core_Model_User_ManagerTest extends PHPUnit_Framework_TestCase {
 
     public function testSendActivationEmail() {
 
-       $result = $this->createValidUser();
-       $this->object->sendActivationEmail();
-       
-       $this->assertNotNull($result->getSetting('activationKey'));
-       
-       //check file where email should end up
-         
-    }
+        $result = $this->createValidUser();
+        $this->object->sendActivationEmail();
 
+        $this->assertNotNull($result->getSetting('activationKey'));
+
+
+        $this->assertFileExists(sys_get_temp_dir() . '/test@test.com.txt');
+        unlink(sys_get_temp_dir() . '/test@test.com.txt');
+        //sys_get_temp_dir();
+        //check file where email should end up
+    }
 
     public function testActivateCorrectKey() {
         $user = $this->createValidUser();
         $result = $this->object->activate($user->getSetting('activationKey'));
         $this->assertTrue($result);
+    }
+
+    public function testActivateInvaildKey() {
+        $user = $this->createValidUser();
+        $this->setExpectedException('Exception');
+        $result = $this->object->activate('8738278ab5');
+    }
+    
+    public function testLogout() {
+        $this->createValidUser();
+        $this->object->login(array('username' => 'testUsername', 'password' => 'Test123!'));
+      //  $this->object->logout();
+       // echo debugArray($_SESSION['User']);
+      //  $this->assertEmpty($_SESSION['User']);
     }
 
 }

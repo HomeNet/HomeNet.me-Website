@@ -74,7 +74,7 @@ class Core_Model_Group_Service {
         $affectedRows = $this->getMapper()->incrementUserCount($id, $amount * -1);
 
         if ($affectedRows == 0) {
-            throw new NotFoundException('Group not found', 404);
+            throw new NotFoundException('Group not found '.$id, 404);
         }
         return $affectedRows;
     }
@@ -83,7 +83,7 @@ class Core_Model_Group_Service {
         $affectedRows = $this->getMapper()->updateUserCount($id, $amount);
 
         if ($affectedRows == 0) {
-           // throw new NotFoundException('Group not found', 404);
+           throw new NotFoundException('Group not found', 404);
         }
         
         return $affectedRows;
