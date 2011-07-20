@@ -47,23 +47,32 @@ class Core_Model_Acl_Group_Service {
     public function setMapper(Core_Model_Acl_Group_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
-
-    /**
+    
+      /**
      * @param int $id
      * @return Core_Model_Acl_Group_Interface 
      */
     public function getObjectById($id) {
-        $content = $this->getMapper()->fetchObjectById($id);
+        $result = $this->getMapper()->fetchObjectById($id);
 
-        if (empty($content)) {
+        if (empty($result)) {
             throw new NotFoundException('User Acl not found', 404);
         }
-        return $content;
+        return $result;
     }
     
+    public function getObjectsByGroup($group){
+         return $this->getMapper()->fetchObjectsByGroup($group); 
+    }
     
+    public function getObjectsByGroups(array $groups){
+      return $this->getMapper()->fetchObjectsByGroups($groups); 
+    }
     
-
+    public function getObjectsByGroupsModule(array $groups, $module) {
+        return $this->getMapper()->fetchObjectsByGroupsModule($groups, $module); 
+    }
+    
     public function getObjectsByGroupsModuleObject(array $groups, $module, $object = null){
         $rows = $this->getMapper()->fetchObjectsByGroupsModuleObject($groups, $module, $object);
         $array = array();

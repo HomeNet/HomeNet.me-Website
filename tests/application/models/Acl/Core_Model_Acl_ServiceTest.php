@@ -18,8 +18,14 @@ class Core_Model_Acl_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new Core_Model_Acl_Service;
+        
         Core_Model_Installer::install();
+
+        $uService = new Core_Model_User_Service();
+        $user = $uService->getObjectById(Core_Model_Installer::$userMember);
+        
+        $this->object = new Core_Model_Acl_Service($user);
+        
     }
 
     /**
@@ -30,9 +36,7 @@ class Core_Model_Acl_ServiceTest extends PHPUnit_Framework_TestCase {
         Core_Model_Installer::uninstall();
     }
 
-    /**
-     * @todo Implement testSetUser().
-     */
+
     public function testSetUser() {
         $user = new Core_Model_User();
         $this->object->setUser($user);
@@ -71,31 +75,20 @@ class Core_Model_Acl_ServiceTest extends PHPUnit_Framework_TestCase {
     
     
     public function testGetUserAcl() {
-        $result = $this->object->getGroupAcl('core');
-         $this->assertInstanceOf('Zend_Acl', $result);
+        $result = $this->object->getUserAcl('core');
+        $this->assertInstanceOf('Zend_Acl', $result);
     }
 
 
-    
-
-    /**
-     * @todo Implement testGetGroupAclObjects().
-     */
     public function testGetGroupAclObjects() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $result = $this->object->getGroupAclObjects('core','test',array(1,2,3));
+        $this->assertInstanceOf('Zend_Acl', $result);
     }
 
-    /**
-     * @todo Implement testGetUserAclObject().
-     */
-    public function testGetUserAclObject() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+
+    public function testGetUserAclObjects() {
+       $result = $this->object->getUserAclObjects('core','test',array(1,2,3));
+       $this->assertInstanceOf('Zend_Acl', $result);
     }
 
 }

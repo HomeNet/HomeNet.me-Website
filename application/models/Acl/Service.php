@@ -17,7 +17,7 @@ class Core_Model_Acl_Service {
     private $_user = null;
     
     
-    public function __construct(Core_Model_User $user = null) {
+    public function __construct(Core_Model_User_Interface $user = null) {
         if(!is_null($user)){
             $this->_user = $user;
         } else {
@@ -209,7 +209,7 @@ class Core_Model_Acl_Service {
             $acl = new Zend_Acl();
             $parents = array();
             
-            $service = new Core_Model_Acl_Group();
+            $service = new Core_Model_Acl_Group_Service();
             $objects = $service->getObjectsByGroupsModuleObject($memberships, $module);
             
             foreach($objects as $id->$group){
@@ -247,16 +247,16 @@ class Core_Model_Acl_Service {
         //get cache $user.'_'.md5(serilize($objects))
         
         //get base acl
-        $acl = $this->getUserAcl($module);
+        $acl = $this->getGroupAcl($module);
         
-        $service = new Core_Model_Acl_Group();
-        $objects = $service->getObjectsByGroupsModuleControllerObjects($memberships, $module, $contorller, $objects);
+        $service = new Core_Model_Acl_Group_Service();
+        $result = $service->getObjectsByGroupsModuleControllerObjects($memberships, $module, $controller, $objects);
  
             if(!$acl->hasResource('c_'.$controller)){
                 $acl->addResource('c_'.$ontroller);
             }
            
-            foreach($objects as $id->$group){
+            foreach($result as $id->$group){
                 
  
                 $acl->addResource('c_'.$controler.'_'.$object, 'c_'.$controler);
@@ -273,10 +273,33 @@ class Core_Model_Acl_Service {
 
     }
     
-    public function getUserAclObject($module,$controller,$objects){
-        //check local static object
+    public function getUserAclObjects($module,$controller,$objects){
+        //get cache $user.'_'.md5(serilize($objects))
         
-        //
+        //get base acl
+        $acl = $this->getUserAcl($module);
+        
+        $service = new Core_Model_Acl_User_Service();
+        $result = $service->getObjectsByGroupsModuleControllerObjects($memberships, $module, $controller, $objects);
+ 
+            if(!$acl->hasResource('c_'.$controller)){
+                $acl->addResource('c_'.$ontroller);
+            }
+           
+            foreach($result as $id->$group){
+                
+ 
+                $acl->addResource('c_'.$controler.'_'.$object, 'c_'.$controler);
+            
+                foreach($group as $g){
+
+                    if($g->permission == 1){
+                        $acl->allow('g_'.$this->group, 'c_'.$g->controller, $g->action);
+                    } else {
+                        $acl->deny('u_'.$this->_user->id, 'c_'.$g->controller, $g->action);
+                    }
+                } 
+            }
         
     }
 }

@@ -79,6 +79,59 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
 //        $this->setExpectedException('DuplicateEntryException');
 //        $groupAcl2 = $this->createValidGroupAcl();
 //    }
+    
+     /**
+     * @todo Implement testGetObjectsByGroup().
+     */
+    public function testGetObjectsByGroup() {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+                'This test has not been implemented yet.'
+        );
+    }
+
+    /**
+     * @todo Implement testGetObjectsByGroups().
+     */
+    public function testGetObjectsByGroups() {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+                'This test has not been implemented yet.'
+        );
+    }
+
+    /**
+     * @todo Implement testGetObjectsByGroupsModule().
+     */
+    public function testGetObjectsByGroupsModule() {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+                'This test has not been implemented yet.'
+        );
+    }
+
+    /**
+     * @todo Implement testGetObjectsByGroupsModuleObject().
+     */
+    public function testGetObjectsByGroupsModuleObject() {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+                'This test has not been implemented yet.'
+        );
+    }
+
+    /**
+     * @todo Implement testGetObjectsByGroupsModuleControllerObjects().
+     */
+    public function testGetObjectsByGroupsModuleControllerObjects() {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+                'This test has not been implemented yet.'
+        );
+    }
+    
+    
+    
 
     public function testCreateValidFromObject() {
 
