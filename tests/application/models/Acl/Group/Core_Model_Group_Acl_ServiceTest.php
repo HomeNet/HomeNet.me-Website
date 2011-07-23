@@ -8,7 +8,7 @@
  */
 class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
 
-   /**
+    /**
      * @var Core_Model_Acl_Group_Service
      */
     protected $object;
@@ -26,7 +26,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-       $this->object->deleteAll();
+        $this->object->deleteAll();
     }
 
     public function testGetMapper() {
@@ -34,18 +34,15 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Core_Model_Acl_Group_MapperInterface', $this->object->getMapper());
     }
 
-    /**
-     * @todo Implement testSetMapper().
-     */
     public function testSetMapper() {
-        
+
         $mapper = new Core_Model_Acl_Group_MapperDbTable();
-         $this->object->setMapper($mapper);
-        
+        $this->object->setMapper($mapper);
+
         $this->assertInstanceOf('Core_Model_Acl_Group_MapperInterface', $this->object->getMapper());
         $this->assertEquals($mapper, $this->object->getMapper());
         //$this->ass
-    }    
+    }
 
     private function createValidGroupAcl() {
         $groupAcl = new Core_Model_Acl_Group();
@@ -61,7 +58,58 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Core_Model_Acl_Group_Interface', $result);
         return $result;
     }
-    
+
+    private function createTestGroupAcls() {
+        // $this->createValidGroupAcl();
+        $acls = array();
+
+        for ($i = 1; $i <= 3; $i++) {
+
+            $base = array(
+                'group' => $i,
+                'module' => 'core',
+                'controller' => 'test',
+                'action' => 'new',
+                'object' => null,
+                'permission' => 1);
+
+            $acls[] = $base;
+            //core
+            $acl = $base;
+
+            $acl['action'] = 'edit';
+            $acls[] = $acl;
+
+            $acl['action'] = 'delete';
+            $acls[] = $acl;
+
+            //test
+            $acl = $base;
+            $acl['module'] = 'test';
+            $acls[] = $acl;
+
+            $acl['action'] = 'edit';
+            $acls[] = $acl;
+
+            $acl['action'] = 'delete';
+            $acls[] = $acl;
+
+            //specfic objects
+            $acl['action'] = 'view';
+            $acl['object'] = 1;
+            $acls[] = $acl;
+
+            $acl['object'] = 2;
+            $acls[] = $acl;
+
+            $acl['object'] = 3;
+            $acls[] = $acl;
+        }
+        foreach ($acls as $acl) {
+            $this->object->create($acl);
+        }
+    }
+
     public function testCreateInvalidGroupAcl() {
         $groupAcl = new Core_Model_Acl_Group();
         $groupAcl->group = 1;
@@ -72,6 +120,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('Exception');
         $result = $this->object->create($groupAcl);
     }
+
 //    
 //    public function testDuplicateUrl() {
 //
@@ -79,63 +128,106 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
 //        $this->setExpectedException('DuplicateEntryException');
 //        $groupAcl2 = $this->createValidGroupAcl();
 //    }
-    
-     /**
-     * @todo Implement testGetObjectsByGroup().
-     */
+
     public function testGetObjectsByGroup() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+
+        $this->createTestGroupAcls();
+        $result = $this->object->getObjectsByGroup(2);
+
+        $this->assertEquals(6, count($result));
+
+        foreach ($result as $acl) {
+            $this->assertNotNull($acl->id);
+            $this->assertEquals(2, $acl->group);
+            $this->assertEquals(null, $acl->object);
+            $this->assertEquals(1, $acl->permission);
+        }
     }
 
-    /**
-     * @todo Implement testGetObjectsByGroups().
-     */
     public function testGetObjectsByGroups() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->createTestGroupAcls();
+        $result = $this->object->getObjectsByGroups(array(1, 2));
+
+        $this->assertEquals(2, count($result));
+        foreach ($result as $result2) {
+
+            $this->assertEquals(6, count($result2));
+
+            foreach ($result2 as $acl) {
+                $this->assertNotNull($acl->id);
+                $this->assertTrue(in_array($acl->group, array(1, 2)));
+                $this->assertEquals(null, $acl->object);
+                $this->assertEquals(1, $acl->permission);
+            }
+        }
     }
 
-    /**
-     * @todo Implement testGetObjectsByGroupsModule().
-     */
     public function testGetObjectsByGroupsModule() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->createTestGroupAcls();
+        $result = $this->object->getObjectsByGroupsModule(array(1, 2), 'core');
+
+        $this->assertEquals(2, count($result));
+        foreach ($result as $result2) {
+
+            $this->assertEquals(3, count($result2));
+
+            foreach ($result2 as $acl) {
+
+                $this->assertNotNull($acl->id);
+                $this->assertTrue(in_array($acl->group, array(1, 2)));
+                $this->assertEquals('core', $acl->module);
+                $this->assertEquals(null, $acl->object);
+                $this->assertEquals(1, $acl->permission);
+            }
+        }
     }
 
-    /**
-     * @todo Implement testGetObjectsByGroupsModuleObject().
-     */
-    public function testGetObjectsByGroupsModuleObject() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testGetObjectsByGroupsModuleControllerObject() {
+        $this->createTestGroupAcls();
+        $result = $this->object->getObjectsByGroupsModuleControllerObject(array(1, 2), 'test', 'test', 1);
+
+        $this->assertEquals(2, count($result));
+
+        foreach ($result as $result2) {
+
+            $this->assertEquals(1, count($result2));
+
+            foreach ($result2 as $acl) {
+                $this->assertNotNull($acl->id);
+                $this->assertTrue(in_array($acl->group, array(1, 2)));
+                $this->assertEquals('test', $acl->module);
+                $this->assertEquals('test', $acl->controller);
+                $this->assertEquals(1, $acl->object);
+                $this->assertEquals(1, $acl->permission);
+            }
+        }
     }
 
-    /**
-     * @todo Implement testGetObjectsByGroupsModuleControllerObjects().
-     */
     public function testGetObjectsByGroupsModuleControllerObjects() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->createTestGroupAcls();
+        $result = $this->object->getObjectsByGroupsModuleControllerObjects(array(1, 2), 'test', 'test', array(1, 2));
+
+        $this->assertEquals(2, count($result));
+
+        foreach ($result as $result2) {
+
+            $this->assertEquals(2, count($result2));
+
+            foreach ($result2 as $acl) {
+
+                $this->assertNotNull($acl->id);
+                $this->assertTrue(in_array($acl->group, array(1, 2)));
+                $this->assertEquals('test', $acl->module);
+                $this->assertEquals('test', $acl->controller);
+                $this->assertTrue(in_array($acl->object, array(1, 2)));
+                $this->assertEquals(1, $acl->permission);
+            }
+        }
     }
-    
-    
-    
 
     public function testCreateValidFromObject() {
 
-        $result = $this->createValidGroupAcl();       
+        $result = $this->createValidGroupAcl();
 
         $this->assertNotNull($result->id);
         $this->assertEquals(1, $result->group);
@@ -145,7 +237,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(2, $result->object);
         $this->assertEquals(1, $result->permission);
     }
-    
+
     public function testCreateFromArray() {
 
         $groupAcl = array(
@@ -183,9 +275,9 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
 
         //test getObject
         $result = $this->object->getObjectById($groupAcl->id);
-        
+
         $this->assertInstanceOf('Core_Model_Acl_Group_Interface', $result);
-        
+
         $this->assertNotNull($result->id);
         $this->assertEquals(1, $result->group);
         $this->assertEquals('core', $result->module);
@@ -194,7 +286,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(2, $result->object);
         $this->assertEquals(1, $result->permission);
     }
-    
+
 //    public function testGetObjectByUrl() {
 //
 //        //setup
@@ -238,7 +330,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertInstanceOf('Core_Model_Acl_Group_Interface', $result);
 
-        $this->assertEquals($groupAcl->id,$result->id);
+        $this->assertEquals($groupAcl->id, $result->id);
         $this->assertEquals(2, $result->group);
         $this->assertEquals('blog', $result->module);
         $this->assertEquals('admin', $result->controller);
@@ -246,14 +338,14 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(3, $result->object);
         $this->assertEquals(0, $result->permission);
     }
-    
+
     public function testUpdateFromArray() {
 
         //setup
         $groupAcl = $this->createValidGroupAcl();
 
         $array = $groupAcl->toArray();
-        
+
         //update values
         $array['group'] = 2;
         $array['module'] = 'blog';
@@ -267,7 +359,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertInstanceOf('Core_Model_Acl_Group_Interface', $result);
 
-        $this->assertEquals($groupAcl->id,$result->id);
+        $this->assertEquals($groupAcl->id, $result->id);
         $this->assertEquals(2, $result->group);
         $this->assertEquals('blog', $result->module);
         $this->assertEquals('admin', $result->controller);
@@ -275,7 +367,6 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(3, $result->object);
         $this->assertEquals(0, $result->permission);
     }
-    
 
     public function testUpdateException() {
         $this->setExpectedException('InvalidArgumentException');
@@ -301,22 +392,22 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
 
         //setup
         $groupAcl = $this->createValidGroupAcl();
-       // $this->fail("id: ".$groupAcl->id);
-        $this->object->delete((int)$groupAcl->id);
-        
+        // $this->fail("id: ".$groupAcl->id);
+        $this->object->delete((int) $groupAcl->id);
+
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($groupAcl->id); 
+        $result = $this->object->getObjectById($groupAcl->id);
     }
-    
+
     public function testDeleteArray() {
 
         //setup
         $groupAcl = $this->createValidGroupAcl();
-       // $this->fail("id: ".$groupAcl->id);
+        // $this->fail("id: ".$groupAcl->id);
         $this->object->delete($groupAcl->toArray());
-        
+
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($groupAcl->id); 
+        $result = $this->object->getObjectById($groupAcl->id);
     }
 
     public function testDeleteException() {
@@ -331,5 +422,3 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
     }
 
 }
-
-?>

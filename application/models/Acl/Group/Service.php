@@ -66,15 +66,28 @@ class Core_Model_Acl_Group_Service {
     }
     
     public function getObjectsByGroups(array $groups){
-      return $this->getMapper()->fetchObjectsByGroups($groups); 
+      $rows = $this->getMapper()->fetchObjectsByGroups($groups); 
+      $array = array();
+        foreach($rows as $row){
+            $array[$row->group][] = $row;
+        }
+
+        return $array;
     }
     
     public function getObjectsByGroupsModule(array $groups, $module) {
-        return $this->getMapper()->fetchObjectsByGroupsModule($groups, $module); 
+        $rows = $this->getMapper()->fetchObjectsByGroupsModule($groups, $module); 
+        
+        $array = array();
+        foreach($rows as $row){
+            $array[$row->group][] = $row;
+        }
+
+        return $array; 
     }
     
-    public function getObjectsByGroupsModuleObject(array $groups, $module, $object = null){
-        $rows = $this->getMapper()->fetchObjectsByGroupsModuleObject($groups, $module, $object);
+    public function getObjectsByGroupsModuleControllerObject(array $groups, $module,$controller, $object = null){
+        $rows = $this->getMapper()->fetchObjectsByGroupsModuleControllerObject($groups, $module,$controller, $object);
         $array = array();
         foreach($rows as $row){
             $array[$row->group][] = $row;
@@ -86,16 +99,13 @@ class Core_Model_Acl_Group_Service {
         return $array;
     }
     
-    public function getObjectsByGroupsModuleControllerObjects(array $groups, $module, $controllers, array $objects){
-        $rows = $this->getMapper()->fetchObjectsByGroupsModuleControllerObjects($groups, $module, $controllers, $objects);
+    public function getObjectsByGroupsModuleControllerObjects(array $groups, $module, $controller, array $objects){
+        $rows = $this->getMapper()->fetchObjectsByGroupsModuleControllerObjects($groups, $module, $controller, $objects);
         $array = array();
         foreach($rows as $row){
             $array[$row->group][] = $row;
         }
 
-//        if (empty($contents)) {
-//            throw new Exception('Apikey not found', 404);
-//        }
         return $array;
     }
     

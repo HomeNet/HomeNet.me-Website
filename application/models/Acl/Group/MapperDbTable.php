@@ -48,29 +48,27 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
         $this->_table = $table;
     }
 
-
-
-
-
-
-
     public function fetchObjectById($id){
         return $this->getTable()->find($id)->current();
     }
     
     public function fetchObjectsByGroup($group){
-       $select = $this->getTable()->select()->where('group = ?',$group);
+       $select = $this->getTable()->select()
+               ->where('`group` = ?',$group)
+               ->where('object is NULL');
       return $this->getTable()->fetchAll($select);
     }
     
     public function fetchObjectsByGroups(array $groups){
-       $select = $this->getTable()->select()->where('group in (?)',$groups);
+       $select = $this->getTable()->select()
+               ->where('`group` in (?)',$groups)
+                ->where('object is NULL');
       return $this->getTable()->fetchAll($select);
     }
     
     public function fetchObjectsByGroupsModule(array $groups, $module) {
         $select = $this->getTable()->select()
-        ->where('group in (?)', $groups)
+        ->where('`group` in (?)', $groups)
         ->where('module = ?', $module)
         ->order(array('controller','action'));
         
@@ -79,18 +77,29 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
     
     public function fetchObjectsByGroupsModuleController($groups, $module, $controller) {
         $select = $this->getTable()->select()
-        ->where('group in (?)', $groups)
+        ->where('`group` in (?)', $groups)
         ->where('module = ?', $module)
         ->where('controller = ?', $controller)
+        ->where('object = ?', null)
         ->order(array('controller','action'));
         
         return $this->getTable()->fetchAll($select);
     }
     
+    public function fetchObjectsByGroupsModuleControllerObject($groups, $module, $controller, $object) {
+        $select = $this->getTable()->select()
+        ->where('`group` in (?)', $groups)
+        ->where('module = ?', $module)
+        ->where('controller = ?', $controller)
+        ->where('object = ?', $object)
+        ->order(array('controller','object','action'));
+        
+        return $this->getTable()->fetchAll($select);
+    }
     
     public function fetchObjectsByGroupsModuleControllerObjects($groups, $module, $controller, $objects) {
         $select = $this->getTable()->select()
-        ->where('group in (?)', $groups)
+        ->where('`group` in (?)', $groups)
         ->where('module = ?', $module)
         ->where('controller = ?', $controller)
         ->where('object in (?)', $objects)
@@ -98,7 +107,6 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
         
         return $this->getTable()->fetchAll($select);
     }
-
 
     public function save(Core_Model_Acl_Group_Interface $membership) {
 

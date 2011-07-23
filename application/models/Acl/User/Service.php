@@ -61,8 +61,33 @@ class Core_Model_Acl_User_Service {
         return $acl;
     }
     
-     public function getObjectsByUserModuleObject($user, $module, $object = null){
-        $rows = $this->getMapper()->fetchObjectsByUserModuleObject($user, $module, $object);
+    public function getObjectsByGroup($group){
+         return $this->getMapper()->fetchObjectsByGroup($group); 
+    }
+    
+    public function getObjectsByGroups(array $groups){
+      $rows = $this->getMapper()->fetchObjectsByGroups($groups); 
+      $array = array();
+        foreach($rows as $row){
+            $array[$row->group][] = $row;
+        }
+
+        return $array;
+    }
+    
+    public function getObjectsByGroupsModule(array $groups, $module) {
+        $rows = $this->getMapper()->fetchObjectsByGroupsModule($groups, $module); 
+        
+        $array = array();
+        foreach($rows as $row){
+            $array[$row->group][] = $row;
+        }
+
+        return $array; 
+    }
+    
+    public function getObjectsByGroupsModuleControllerObject(array $groups, $module,$controller, $object = null){
+        $rows = $this->getMapper()->fetchObjectsByGroupsModuleControllerObject($groups, $module,$controller, $object);
         $array = array();
         foreach($rows as $row){
             $array[$row->group][] = $row;
@@ -74,21 +99,15 @@ class Core_Model_Acl_User_Service {
         return $array;
     }
     
-    public function getObjectsByGroupsModuleControllerObjects($user, $module, $controller, array $objects){
-        $rows = $this->getMapper()->fetchObjectsByUserModuleControllerObjects($user, $module, $controller, $objects);
+    public function getObjectsByGroupsModuleControllerObjects(array $groups, $module, $controller, array $objects){
+        $rows = $this->getMapper()->fetchObjectsByGroupsModuleControllerObjects($groups, $module, $controller, $objects);
         $array = array();
         foreach($rows as $row){
-            $array[$row->object][] = $row;
+            $array[$row->group][] = $row;
         }
 
-//        if (empty($contents)) {
-//            throw new Exception('Apikey not found', 404);
-//        }
         return $array;
     }
-    
-    
-    
     
 
 //    public function getObjectsBySection($section){
