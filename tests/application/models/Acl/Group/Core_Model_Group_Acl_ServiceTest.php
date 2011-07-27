@@ -190,14 +190,14 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
 
         foreach ($result as $result2) {
 
-            $this->assertEquals(1, count($result2));
+            $this->assertEquals(4, count($result2));
 
             foreach ($result2 as $acl) {
                 $this->assertNotNull($acl->id);
                 $this->assertTrue(in_array($acl->group, array(1, 2)));
-                $this->assertEquals('test', $acl->module);
-                $this->assertEquals('test', $acl->controller);
-                $this->assertEquals(1, $acl->object);
+                $this->assertTrue(in_array($acl->module, array('test',null)));
+            $this->assertTrue(in_array($acl->controller, array('test',null)));
+            $this->assertTrue(in_array($acl->object, array(1,null)));
                 $this->assertEquals(1, $acl->permission);
             }
         }
@@ -211,15 +211,16 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
 
         foreach ($result as $result2) {
 
-            $this->assertEquals(2, count($result2));
+            $this->assertEquals(5, count($result2));
 
             foreach ($result2 as $acl) {
 
                 $this->assertNotNull($acl->id);
                 $this->assertTrue(in_array($acl->group, array(1, 2)));
                 $this->assertEquals('test', $acl->module);
-                $this->assertEquals('test', $acl->controller);
-                $this->assertTrue(in_array($acl->object, array(1, 2)));
+                $this->assertTrue(in_array($acl->module, array('test',null)));
+            $this->assertTrue(in_array($acl->controller, array('test',null)));
+            $this->assertTrue(in_array($acl->object, array(1,2,null)));
                 $this->assertEquals(1, $acl->permission);
             }
         }

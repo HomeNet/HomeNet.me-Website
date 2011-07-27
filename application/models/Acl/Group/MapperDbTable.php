@@ -69,7 +69,7 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
     public function fetchObjectsByGroupsModule(array $groups, $module) {
         $select = $this->getTable()->select()
         ->where('`group` in (?)', $groups)
-        ->where('module = ?', $module)
+        ->where('(module = ? OR module is NULL)', $module)
         ->order(array('controller','action'));
         
         return $this->getTable()->fetchAll($select);
@@ -78,8 +78,8 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
     public function fetchObjectsByGroupsModuleController($groups, $module, $controller) {
         $select = $this->getTable()->select()
         ->where('`group` in (?)', $groups)
-        ->where('module = ?', $module)
-        ->where('controller = ?', $controller)
+        ->where('(module = ? OR module is NULL)', $module)
+        ->where('(controller = ? or controller is NULL)', $controller)           
         ->where('object = ?', null)
         ->order(array('controller','action'));
         
@@ -89,9 +89,9 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
     public function fetchObjectsByGroupsModuleControllerObject($groups, $module, $controller, $object) {
         $select = $this->getTable()->select()
         ->where('`group` in (?)', $groups)
-        ->where('module = ?', $module)
-        ->where('controller = ?', $controller)
-        ->where('object = ?', $object)
+        ->where('(module = ? OR module is NULL)', $module)
+        ->where('(controller = ? or controller is NULL)', $controller)    
+        ->where('(object = ? or object is NULL)', $object)
         ->order(array('controller','object','action'));
         
         return $this->getTable()->fetchAll($select);
@@ -100,9 +100,9 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
     public function fetchObjectsByGroupsModuleControllerObjects($groups, $module, $controller, $objects) {
         $select = $this->getTable()->select()
         ->where('`group` in (?)', $groups)
-        ->where('module = ?', $module)
-        ->where('controller = ?', $controller)
-        ->where('object in (?)', $objects)
+        ->where('(module = ? OR module is NULL)', $module)
+        ->where('(controller = ? or controller is NULL)', $controller)    
+        ->where('(object in (?) or object is NULL)', $objects)
         ->order(array('controller','object','action'));
         
         return $this->getTable()->fetchAll($select);

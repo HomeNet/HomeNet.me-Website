@@ -58,15 +58,24 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
     }
     
     public function fetchObjectsByUser($user){
-       $select = $this->getTable()->select()->where('user = ?',$user);
+       $select = $this->getTable()->select()->where('user = ?',$user)->where('object is NULL');
       return $this->getTable()->fetchAll($select);
     }
     
-     public function fetchObjectsByUserModuleObject($user, $module, $object) {
+    public function fetchObjectsByUserModule($user, $module) {
         $select = $this->getTable()->select()
         ->where('user = ?', $user)
-        ->where('module = ?', $module)->orWhere('module = NULL')
-        ->where('object = ?', $object)
+        ->where('(module = ? OR module is NULL)', $module) //->orWhere('module is NULL')
+        ->order(array('controller','action'));
+        
+        return $this->getTable()->fetchAll($select);
+    }
+     public function fetchObjectsByUserModuleControllerObject($user, $module, $controller, $object) {
+        $select = $this->getTable()->select()
+        ->where('user = ?', $user)
+        ->where('(module = ? OR module is NULL)', $module)
+        ->where('(controller = ? or controller is NULL)', $controller)        
+        ->where('(object = ? or object is NULL)', $object)
         ->order(array('controller','object','action'));
         
         return $this->getTable()->fetchAll($select);
@@ -76,9 +85,9 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
     public function fetchObjectsByUserModuleControllerObjects($user, $module, $controller, $objects) {
         $select = $this->getTable()->select()
         ->where('user = ?', $user)
-        ->where('module = ?', $module)
-        ->where('controller = ?', $controller)
-        ->where('object in (?)', $objects)
+        ->where('(module = ? OR module is NULL)', $module)
+        ->where('(controller = ? or controller is NULL)', $controller)            
+        ->where('(object in (?) or object is NULL)', $objects)
         ->order(array('controller','object','action'));
         
         return $this->getTable()->fetchAll($select);
