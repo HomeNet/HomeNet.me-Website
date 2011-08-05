@@ -6,7 +6,7 @@
  *
  * @author mdoll
  */
-class Core_Model_Acl_Service {
+class Core_Model_Acl_Manager {
     
     
     private static $_resourceCache = null;
@@ -25,7 +25,7 @@ class Core_Model_Acl_Service {
         }
     }
     
-    public function setUser(Core_Model_User $user) {
+    public function setUser(Core_Model_User_Interface $user) {
          $this->_user = $user;
     }
     
@@ -134,7 +134,7 @@ class Core_Model_Acl_Service {
         
     }
     
-//    private function _buildAcl(Zend_Acl $acl, array $objects){
+    private function _buildAcl(Zend_Acl $acl, array $objects){
 //         foreach($objects as $acl){
 //             
 //             
@@ -142,7 +142,7 @@ class Core_Model_Acl_Service {
 //             
 //                $acl->addResource()
 //            }
-//    }
+   }
     
     
     public function getUserAcl($module){
