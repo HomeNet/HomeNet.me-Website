@@ -40,11 +40,11 @@ class Core_Model_Acl_ManagerTest extends PHPUnit_Framework_TestCase {
     public function testSetUser() {
         $user = new Core_Model_User();
         $this->object->setUser($user);
+        
+        $this->assertInstanceOf('Core_Model_User', $this->object->getUser());
+        
     }
 
-    /**
-     * @todo Implement testGetResources().
-     */
     public function testGetResources() {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -52,9 +52,6 @@ class Core_Model_Acl_ManagerTest extends PHPUnit_Framework_TestCase {
         );
     }
 
-    /**
-     * @todo Implement testGetResourcesByModule().
-     */
     public function testGetResourcesByModule() {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -68,7 +65,7 @@ class Core_Model_Acl_ManagerTest extends PHPUnit_Framework_TestCase {
         
         $result = $this->object->getGroupAcl('core');
         $this->assertInstanceOf('Zend_Acl', $result);
-        $this->assertTrue($result->isAllowed('g_'.Core_Model_Installer::$groupGuest, 'index', null));
+        $this->assertTrue($result->isAllowed('g'.Core_Model_Installer::$groupGuest, 'index', null));
          
          
     }

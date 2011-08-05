@@ -29,6 +29,9 @@ class Core_Model_Acl_Manager {
          $this->_user = $user;
     }
     
+    public function getUser(){
+        return $this->_user;
+    }
     
     private function _getCache(){
         
@@ -156,13 +159,13 @@ class Core_Model_Acl_Manager {
             //prepare user's parents
             $parents = array();
             foreach($this->_user->memberships as $group){
-                $parents[] = 'g_'.$group;
+                $parents[] = 'g'.$group;
             }
 
 
-            if(!$acl->hasRole('u_'.$this->_user->id)){
+            if(!$acl->hasRole('u'.$this->_user->id)){
 
-                $acl->addRole('u_'.$this->_user->id, $parents);
+                $acl->addRole('u'.$this->_user->id, $parents);
 
                 $service = new Core_Model_Acl_User();
                 $objects = $service->getObjectsByUserModule($this->_user->id, $module);
@@ -171,15 +174,15 @@ class Core_Model_Acl_Manager {
                 foreach($objects as $a){
 
                     if(!is_null($a->controller)){
-                        if(!$acl->hasResource('c_'.$a->controller)){
-                            $acl->addResource('c_'.$a->controller);
+                        if(!$acl->hasResource('c'.$a->controller)){
+                            $acl->addResource('c'.$a->controller);
                         }
                     }
                     
                     if($a->permission == 1){
-                        $acl->allow('u_'.$this->_user->id, 'c_'.$a->controller, $a->action);
+                        $acl->allow('u'.$this->_user->id, 'c'.$a->controller, $a->action);
                     } else {
-                        $acl->deny('u_'.$this->_user->id, 'c_'.$a->controller, $a->action);
+                        $acl->deny('u'.$this->_user->id, 'c'.$a->controller, $a->action);
                     }
                 } 
             }
@@ -214,21 +217,21 @@ class Core_Model_Acl_Manager {
             
             foreach($objects as $id->$group){
                 
-                $acl->addRole('g_'.$id);
-                $parents[] = 'g_'.$id;
+                $acl->addRole('g'.$id);
+                $parents[] = 'g'.$id;
             
                 foreach($group as $g){
 
                     if(!is_null($g->controller)){
-                        if(!$acl->hasResource('c_'.$g->controller)){
-                            $acl->addResource('c_'.$g->controller);
+                        if(!$acl->hasResource('c'.$g->controller)){
+                            $acl->addResource('c'.$g->controller);
                         }
                     }
 
                     if($g->permission == 1){
-                        $acl->allow('g_'.$this->group, 'c_'.$g->controller, $g->action);
+                        $acl->allow('g'.$this->group, 'c'.$g->controller, $g->action);
                     } else {
-                        $acl->deny('u_'.$this->_user->id, 'c_'.$g->controller, $g->action);
+                        $acl->deny('u'.$this->_user->id, 'c'.$g->controller, $g->action);
                     }
                 } 
             }
@@ -252,21 +255,21 @@ class Core_Model_Acl_Manager {
         $service = new Core_Model_Acl_Group_Service();
         $result = $service->getObjectsByGroupsModuleControllerObjects($memberships, $module, $controller, $objects);
  
-            if(!$acl->hasResource('c_'.$controller)){
-                $acl->addResource('c_'.$ontroller);
+            if(!$acl->hasResource('c'.$controller)){
+                $acl->addResource('c'.$ontroller);
             }
            
             foreach($result as $id->$group){
                 
  
-                $acl->addResource('c_'.$controler.'_'.$object, 'c_'.$controler);
+                $acl->addResource('c'.$controler.'_'.$object, 'c'.$controler);
             
                 foreach($group as $g){
 
                     if($g->permission == 1){
-                        $acl->allow('g_'.$this->group, 'c_'.$g->controller, $g->action);
+                        $acl->allow('g'.$this->group, 'c'.$g->controller, $g->action);
                     } else {
-                        $acl->deny('u_'.$this->_user->id, 'c_'.$g->controller, $g->action);
+                        $acl->deny('u'.$this->_user->id, 'c'.$g->controller, $g->action);
                     }
                 } 
             }
@@ -282,21 +285,21 @@ class Core_Model_Acl_Manager {
         $service = new Core_Model_Acl_User_Service();
         $result = $service->getObjectsByGroupsModuleControllerObjects($memberships, $module, $controller, $objects);
  
-            if(!$acl->hasResource('c_'.$controller)){
-                $acl->addResource('c_'.$ontroller);
+            if(!$acl->hasResource('c'.$controller)){
+                $acl->addResource('c'.$ontroller);
             }
            
             foreach($result as $id->$group){
                 
  
-                $acl->addResource('c_'.$controler.'_'.$object, 'c_'.$controler);
+                $acl->addResource('c'.$controler.'_'.$object, 'c'.$controler);
             
                 foreach($group as $g){
 
                     if($g->permission == 1){
-                        $acl->allow('g_'.$this->group, 'c_'.$g->controller, $g->action);
+                        $acl->allow('g'.$this->group, 'c'.$g->controller, $g->action);
                     } else {
-                        $acl->deny('u_'.$this->_user->id, 'c_'.$g->controller, $g->action);
+                        $acl->deny('u'.$this->_user->id, 'c'.$g->controller, $g->action);
                     }
                 } 
             }
