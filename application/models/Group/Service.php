@@ -89,14 +89,14 @@ class Core_Model_Group_Service {
         return $affectedRows;
     }
 
-//    public function getObjectsBySection($section){
-//        $contents = $this->getMapper()->fetchObjectsBySection($section);
-//
-////        if (empty($contents)) {
-////            throw new Exception('Apikey not found', 404);
-////        }
-//        return $contents;
-//    }
+    public function getObjectsByType($type){
+        $results = $this->getMapper()->fetchObjectsByType($type);
+
+//        if (empty($contents)) {
+//            throw new Exception('Apikey not found', 404);
+//        }
+        return $results;
+    }
 //    public function getObjectsByIdHouse($id,$house){
 //        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
 //

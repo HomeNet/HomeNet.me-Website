@@ -73,9 +73,9 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
      public function fetchObjectsByUserModuleControllerObject($user, $module, $controller, $object) {
         $select = $this->getTable()->select()
         ->where('user = ?', $user)
-        ->where('(module = ? OR module is NULL)', $module)
-        ->where('(controller = ? or controller is NULL)', $controller)        
-        ->where('(object = ? or object is NULL)', $object)
+        ->where('module = ?', $module)
+        ->where('controller = ?', $controller)        
+        ->where('object = ?', $object)
         ->order(array('controller','object','action'));
         
         return $this->getTable()->fetchAll($select);
@@ -85,9 +85,9 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
     public function fetchObjectsByUserModuleControllerObjects($user, $module, $controller, $objects) {
         $select = $this->getTable()->select()
         ->where('user = ?', $user)
-        ->where('(module = ? OR module is NULL)', $module)
-        ->where('(controller = ? or controller is NULL)', $controller)            
-        ->where('(object in (?) or object is NULL)', $objects)
+        ->where('module = ?', $module)
+        ->where('controller = ?', $controller)            
+        ->where('object in (?) ', $objects)
         ->order(array('controller','object','action'));
         
         return $this->getTable()->fetchAll($select);

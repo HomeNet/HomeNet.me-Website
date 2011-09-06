@@ -52,7 +52,7 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
         return $this->getTable()->find($id)->current();
     }
 
-    public function fetchGroupsByUser($user) {
+    public function fetchGroupIdsByUser($user) {
         $select = $this->getTable()->select('group')->where('user = ?', $user);
         $result = $this->getTable()->fetchAll($select);
         $array = array();
@@ -63,7 +63,7 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
         return $array;
     }
 
-    public function fetchUsersByGroup($group) {
+    public function fetchUserIdsByGroup($group) {
         $select = $this->getTable()->select('user')->where('group = ?', $group);
         $result = $this->getTable()->fetchAll($select);
         $array = array();

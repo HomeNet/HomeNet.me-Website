@@ -1,7 +1,7 @@
 <?php
 
 /*
- * RoomMapperInterface.php
+ * Interface.php
  * 
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * 
@@ -22,25 +22,9 @@
  */
 
 /**
- * @package Core
- * @subpackage Group
- * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
- * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
+ *
+ * @author Matthew Doll <mdoll at homenet.me>
  */
-interface Core_Model_Group_MapperInterface {
-
-    /**
-     * @return Core_Model_Group_Interface
-     */
-    public function fetchObjectById($id);
-
-    public function fetchObjectsByType($type);
-
-//    public function fetchObjectsByIdHouse($id,$house);
-
-    public function save(Core_Model_Group_Interface $group);
-
-    public function delete(Core_Model_Group_Interface $group);
-
-    public function deleteAll();
+interface CMS_Acl_Parent_Interface {
+    public function getParent();
 }

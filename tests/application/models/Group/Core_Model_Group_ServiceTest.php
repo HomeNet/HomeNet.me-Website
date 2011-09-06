@@ -242,6 +242,24 @@ class Core_Model_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->object->updateGroupCount(99, 0);
     }
     
+    public function testGetObjectsByType(){
+        //setup
+        $group = $this->createValidGroup();
+        $results = $this->object->getObjectsByType(1);
+        $this->assertEquals(1, count($results));
+        
+        $result = $results[0];
+        
+        $this->assertNotNull($result->id);
+        $this->assertEquals(0, $result->parent);
+        $this->assertEquals(1, $result->type);
+        $this->assertEquals('testTitle', $result->title);
+        $this->assertEquals('testDescription', $result->description);
+        $this->assertEquals(true, $result->visible);
+        $this->assertEquals(2, $result->user_count);
+        $this->assertArrayHasKey('system', $result->settings);
+    }
+    
     
     
 //    public function testGetObjectByUrl() {

@@ -104,6 +104,14 @@ class Core_Model_DbTableRow_User extends Zend_Db_Table_Row_Abstract implements C
     public function clearSetting($setting){
         unset($this->settings[$setting]);
     }
+    
+    public function getMemberships(){
+        if(is_null($this->memberships)){
+            $mService = new Core_Model_User_Membership_Service();
+        $this->memberships = $mService->getGroupIdsByUser($this->id);
+        }
+        return $this->memberships;
+    }
 
 }
 

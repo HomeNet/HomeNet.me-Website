@@ -128,6 +128,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         //$front->setParam('prefixDefaultModule', false);
         $front->setParam('noViewRender',true);
     }
+    
+    
+    
 
 }
 

@@ -72,8 +72,8 @@ class Core_Model_User_Manager {
         }
         
         //get memberships
-        $mService = new Core_Model_User_Membership_Service();
-        $this->_user->memberships = $mService->getGroupsByUser($this->_user->id);
+       // $mService = new Core_Model_User_Membership_Service();
+        // $this->_user->memberships = $mService->getGroupsByUser($this->_user->id);
 
         
         $_SESSION['User'] = $this->_user;

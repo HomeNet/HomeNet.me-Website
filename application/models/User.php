@@ -120,4 +120,12 @@ class Core_Model_User implements Core_Model_User_Interface {
     public function clearSetting($setting){
         unset($this->settings[$setting]);
     }
+    
+    public function getMemberships(){
+        if(is_null($this->memberships)){
+            $mService = new Core_Model_User_Membership_Service();
+        $this->memberships = $mService->getGroupIdsByUser($this->id);
+        }
+        return $this->memberships;
+    }
 }

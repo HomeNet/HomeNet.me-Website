@@ -58,18 +58,11 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
         return $this->getTable()->find($id)->current();
     }
 
-//   public function fetchObjectsBySection($section){
-//
-////       if(is_null($user)){
-////           $u = new Zend_Session_Namespace('User');
-////           $user = $u->id;
-////        }
-////
-////       $select = $this->getTable()->select()->where('user = ?',$user)
-////                                ->where('house = ?',$house);
-////
-////       return $this->getTable()->fetchAll($select);
-//    }
+   public function fetchObjectsByType($type){
+        $select = $this->getTable()->select()->where('type = ?',$type);
+
+       return $this->getTable()->fetchAll($select);
+    }
 
 
 //     public function fetchObjectsByIdHouse($id,$house){

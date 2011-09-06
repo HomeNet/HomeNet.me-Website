@@ -28,28 +28,36 @@
  */
 class CMS_Acl extends Zend_Acl {
     
-    private $_module;private $_userId;
     
-    public function __construct($module = null, $userId = null) {
-        $this->_module = $module;
-        $this->_userId = 'u_'.$userId;
+     public function isAllowed($role  = null, $resource = null, $privilege = null) {
+        
+         if(!$this->hasResource($resource)){
+             $this->addResource($resource);
+         }
+         
+         return parent::isAllowed($role, $resource, $privilege);
     }
     
-     public function isAllowed($controller = null, $action = null, $object = null, $resource = null) {
+    public function addResource($resource, $parent = null) {
         
-         if(!is_null($controller)){
-             $controller = 'c_'.$controller;
-         }
-         if(!is_null($object)){
-             $controller = $controller.'_'.$object;
-         }
-         
-         if(!is_null($resource)){
-             $resource = $this->_user;
-         }
-         
-         
-         return parent::isAllowed($resource,$controller,$action);
+        if($resource instanceof CMS_Acl_Parent_Interface){
+            $parent = $resource->getParent();
+            if(!$this->hasResource($parent)){
+                $this->addResource($parent);
+            }
+        } 
+        
+        parent::addResource($resource, $parent);
+    }
+    
+    /**
+     * I was annyoed that hasResource was not defined in Zend Acl
+     * 
+     * @param Zend_Acl_Resource $resource
+     * @return Boolean 
+     */
+    public function hasResource($resource){
+        return $this->has($resource);
     }
     
     

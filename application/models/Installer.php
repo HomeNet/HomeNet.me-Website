@@ -63,7 +63,16 @@ class Core_Model_Installer {
 
         $result = $gService->create($member);
         self::$groupMember = $result->id;
+        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'index', 'action' => null, 'permission' => 1);
         $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'user', 'action' => null, 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'login', 'action' => null, 'permission' => 0);
+        
+        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'gTest', 'action' => 'index', 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'gTest', 'action' => 'add', 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'gTest', 'action' => 'edit', 'permission' => 0);
+        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'gTest', 'action' => 'edit', 'object' => 1, 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'gTest', 'action' => 'edit', 'object' => 2, 'permission' => 0);    
+        
 
         $contentAdmin = array(
             'parent' => null,
@@ -120,6 +129,12 @@ class Core_Model_Installer {
 
         $result = $uService->create($user);
         self::$userMember = $result->id;
+        
+        $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'uTest', 'action' => 'index', 'permission' => 1);
+        $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'uTest', 'action' => 'add', 'permission' => 1);
+        $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'uTest', 'action' => 'edit', 'permission' => 0);
+        $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'uTest', 'action' => 'edit', 'object' => 1, 'permission' => 1);
+        $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'uTest', 'action' => 'edit', 'object' => 2, 'permission' => 0);    
 
         $user = array(
             'status' => 1,

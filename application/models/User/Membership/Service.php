@@ -61,8 +61,8 @@ class Core_Model_User_Membership_Service {
         return $result;
     }
 
-    public function getGroupsByUser($user){
-        $result = $this->getMapper()->fetchGroupsByUser($user);
+    public function getGroupIdsByUser($user){
+        $result = $this->getMapper()->fetchGroupIdsByUser($user);
 
         if (empty($result)) {
             throw new NotFOundException('No Memberships Found', 404);
