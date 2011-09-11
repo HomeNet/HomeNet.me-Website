@@ -148,7 +148,7 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
     }
     
     public function deleteAll(){
-        if(APPLICATION_ENV == 'testing'){
+        if(APPLICATION_ENV != 'production'){
             $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
         }
     }

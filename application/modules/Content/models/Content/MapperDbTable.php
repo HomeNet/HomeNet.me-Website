@@ -123,7 +123,8 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
             return true;
         } elseif (!is_null($content->id) && !is_null($content->revision)) {
             $row = $this->getTable()->find($content->id,$content->revision)->current();
-            return;
+            $row->delete();
+            return true;
         }
 
         throw new Exception('Invalid Content');
@@ -135,7 +136,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
     }
     
     public function deleteAll(){
-        if(APPLICATION_ENV == 'testing'){
+        if (APPLICATION_ENV != 'production') {
             $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
         }
     }

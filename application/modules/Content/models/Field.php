@@ -43,7 +43,7 @@ class Content_Model_Field implements Content_Model_Field_Interface {
     /**
      * @var string
      */
-    public $type;
+    public $type = 0;
     
     /**
      * @var string
@@ -57,6 +57,12 @@ class Content_Model_Field implements Content_Model_Field_Interface {
      * @var string
      */
     public $default_value;
+    
+    /**
+     * @var array
+     */
+    public $attributes;
+    
     /**
      * @var array
      */
@@ -70,11 +76,14 @@ class Content_Model_Field implements Content_Model_Field_Interface {
      */
     public $locked = false;
     
-    public $edit_name = true;
+    public $element;
     
     public $required = false;
     
     public $visible = true;
+    
+    const SYSTEM = 0;
+    const USER = 1;
   
 
     public function __construct(array $config = array()) {

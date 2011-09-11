@@ -31,8 +31,10 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
      * @param String Password
      * @return String
      */
-    public function hashPassword($password) {
-        return sha1('saltisgood' . $password);
+    public function hashPassword($username, $password) {
+        $config = Zend_Registry::get('config');
+        $salt = $config->site->salt;
+        return sha1($salt . $username . $salt. $username. $password . $salt. $password. $password . $salt . $password . $salt. $salt);
     }
 
     public function add($credentials) {
@@ -56,7 +58,7 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
 
         $row->id = $credentials['id'];
         $row->username = $credentials['username'];
-        $row->password = $this->hashPassword($credentials['password']);
+        $row->password = $this->hashPassword($credentials['username'], $credentials['password']);
         try {
             $row->save();
         } catch (Exception $e) {
@@ -91,7 +93,7 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
         $authAdapter = new Zend_Auth_Adapter_DbTable($db, 'auth_internal', 'username', 'password');
         //set the username and password
         $authAdapter->setIdentity($credentials['username']);
-        $authAdapter->setCredential($this->hashPassword($credentials['password']));
+        $authAdapter->setCredential($this->hashPassword($credentials['username'], $credentials['password']));
         //authenticate
         $result = $authAdapter->authenticate();
 

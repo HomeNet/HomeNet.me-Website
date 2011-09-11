@@ -29,6 +29,8 @@
 interface Content_Model_Category_MapperInterface {
 
     public function fetchObjectById($id);
+    
+    public function fetchObjectsBySet($id);
 
     public function fetchObjectByUrl($url);
 

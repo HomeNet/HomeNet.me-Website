@@ -135,7 +135,7 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
     }
     
     public function deleteAll(){
-        if(APPLICATION_ENV == 'testing'){
+        if(APPLICATION_ENV != 'production'){
             $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
         }
     }

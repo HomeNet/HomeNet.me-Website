@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -25,53 +26,61 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 class Core_Model_User implements Core_Model_User_Interface {
-    
+
     /**
      * @var int
      */
     public $id;
+
     /**
      * @var int
      */
     public $status = 0;
+
     /**
      * @var int
      */
     public $primary_group = null;
+
     /**
      * @var string
      */
     public $username;
+
     /**
      * @var string
      */
     public $name;
+
     /**
      * @var string
      */
     public $location;
+
     /**
      * @var string
      */
     public $email;
+
     /**
      * @var Zend_Date
      */
     public $created = null;
+
     /**
      * @var CMS_ACL
      */
     public $permissions;
+
     /**
      * @var array
      */
     public $settings = array();
-    
+
     /**
      * @var array
      */
     public $memberships;
-
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {
@@ -99,33 +108,38 @@ class Core_Model_User implements Core_Model_User_Interface {
 
         return get_object_vars($this);
     }
-    
-    public function getSetting($setting){
-        if(isset($this->settings[$setting])){
+
+    public function getSetting($setting) {
+        if (isset($this->settings[$setting])) {
             return $this->settings[$setting];
         }
         return null;
     }
 
-    public function setSetting($setting, $value){
-        if(is_null($this->settings)){
+    public function setSetting($setting, $value) {
+        if (is_null($this->settings)) {
             $this->settings = array($setting => $value);
             return;
         }
         //die(debugArray($this->settings));
 
-        $this->settings = array_merge($this->settings,array($setting => $value));
+        $this->settings = array_merge($this->settings, array($setting => $value));
     }
 
-    public function clearSetting($setting){
+    public function clearSetting($setting) {
         unset($this->settings[$setting]);
     }
-    
-    public function getMemberships(){
-        if(is_null($this->memberships)){
+
+    public function getMemberships() {
+        if (is_null($this->memberships)) {
             $mService = new Core_Model_User_Membership_Service();
-        $this->memberships = $mService->getGroupIdsByUser($this->id);
+            $this->memberships = $mService->getGroupIdsByUser($this->id);
+
+            //add 'everyone' group to the membership list
+            $config = Zend_Registry::get('config');
+            array_unshift($this->memberships, $config->site->group->everyone);
         }
         return $this->memberships;
     }
+
 }

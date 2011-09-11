@@ -1,19 +1,22 @@
 <h1>Category Sets</h1>
-<table>
-<?php
-foreach($objects as $object){
-    /*@var $object Content_Model_Category */
- ?>
-    <tr>
-     <td><a href="/category-set/<?php echo $object->id ?>"><?php echo $object->title ?></a></td>
-     <td><a href="/category-set/edit/<?php echo $object->id ?>">Edit</a></td>
-     <td><a href="/category-set/delete/<?php echo $object->id ?>">Delete</a></td>
-    </tr><?php
-
-}
-?>
- </table>
-<a href="/category-set/new">New</a>
+<table class="ui-widget" width="100%">
+    <thead class="ui-widget-header">
+        <tr><th>Name</th><th width="150">Edit/Delete</th></tr>
+    </thead>
+    <tbody class="ui-widget-content">
+        <?php
+        foreach ($this->objects as $object) {
+            /* @var $object Content_Model_Category */
+            ?>
+            <tr  class="<?php echo $this->cycle(array("", "ui-state-highlight"))->next() ?>" >
+                <td><a href="<?php echo $this->url(array('controller' => 'category', 'id' => $object->id), 'content-id'); ?>"><?php echo $object->title ?></a></td>
+                <td><a href="<?php echo $this->url(array('controller' => 'category-set', 'id' => $object->id, 'action' => 'edit'), 'content-id'); ?>">Edit</a> <a href="<?php echo $this->url(array('controller' => 'category-set', 'id' => $object->id, 'action' => 'delete'), 'content-id'); ?>">Delete</a></td>
+            </tr><?php
+        }
+        ?>
+    </tbody>
+</table>
+<a class="button"  href="<?php echo $this->url(array('controller' => 'category-set', 'action' => 'new'), 'content'); ?>">New</a>
 
 <?php /*
  * <h1>Node List</h1>

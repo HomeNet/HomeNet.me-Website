@@ -135,7 +135,7 @@ class LoginController extends Zend_Controller_Action {
     }
 
     public function logoutAction() {
-        $manager = new Core_Model_UserManager();
+        $manager = new Core_Model_User_Manager();
         $manager->logout();
     }
 

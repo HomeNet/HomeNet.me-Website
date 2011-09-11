@@ -56,6 +56,11 @@ class Content_Model_Category_MapperDbTable implements Content_Model_Category_Map
        $select = $this->getTable()->select()->where('url = ?',$url);
        return $this->getTable()->fetchRow($select);
     }
+    
+    public function fetchObjectsBySet($set){
+       $select = $this->getTable()->select()->where('`set` = ?',$set);
+       return $this->getTable()->fetchAll($select);
+    }
 
 
 //     public function fetchObjectsByIdHouse($id,$house){
@@ -89,8 +94,8 @@ class Content_Model_Category_MapperDbTable implements Content_Model_Category_Map
         } catch(Exception $e){
             if(strstr($e->getMessage(), '1062 Duplicate')) {
                throw new DuplicateEntryException("URL Already Exists"); 
-            } elseif(strstr($e->getMessage(), '1048 Column')) {
-               throw new InvalidArgumentException("Invalid Column"); 
+           // } elseif(strstr($e->getMessage(), '1048 Column')) {
+           //    throw new InvalidArgumentException("Invalid Column"); 
             } else {
                  throw new Exception($e->getMessage());
             }
@@ -113,8 +118,8 @@ class Content_Model_Category_MapperDbTable implements Content_Model_Category_Map
     }
     
     public function deleteAll(){
-        if(APPLICATION_ENV == 'testing'){
+        if(APPLICATION_ENV != 'production'){
             $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
-        }
+        } //if (APPLICATION_ENV != 'production') {
     }
 }

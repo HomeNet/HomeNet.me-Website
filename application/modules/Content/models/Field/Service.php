@@ -136,11 +136,11 @@ class Content_Model_Field_Service {
     }
     
     public function deleteBySection($section) {
-        $this->getMapper()->deleteBySection($section);
+        return $this->getMapper()->deleteBySection($section);
     }
     
      public function deleteAll(){
-        if(APPLICATION_ENV == 'testing'){
+        if(APPLICATION_ENV != 'production'){
             $this->getMapper()->deleteAll();
             return;
         }

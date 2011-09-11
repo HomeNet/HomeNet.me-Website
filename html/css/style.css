@@ -81,6 +81,12 @@ button {  width: auto; overflow: visible; }
 .clearfix:after { clear: both; }
 .clearfix { zoom: 1; }
 
+.left {
+    text-align: left;
+}
+.right {
+    text-align: right;
+}
 
 .ui-widget {
     font-size: 11px;

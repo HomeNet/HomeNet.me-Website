@@ -60,6 +60,20 @@ class Content_Model_Category_Service {
         return $category;
     }
     
+        /**
+     * @param int $id
+     * @return Content_Model_Category_Interface 
+     */
+    public function getObjectsBySet($id){
+        
+        $objects = $this->getMapper()->fetchObjectsBySet($id);
+
+        if (empty($objects)) {
+            throw new NotFoundException('Set not found', 404);
+        }
+        return $objects;
+    }
+    
     /**
      * @param string $url
      * @return Content_Model_Category_Interface 

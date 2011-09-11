@@ -49,7 +49,7 @@ class CMS_Acl_Resource_Controller implements Zend_Acl_Resource_Interface
      */
     public function __construct($resourceId)
     {
-        $this->_resourceId = 'c'.(string) $resourceId;
+        $this->_resourceId = 'c'.strtolower((string) $resourceId);
     }
 
     /**

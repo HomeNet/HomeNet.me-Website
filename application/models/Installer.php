@@ -6,6 +6,7 @@
  */
 class Core_Model_Installer {
 
+    public static $groupEveryone;
     public static $groupOwner;
     public static $groupGuest;
     public static $groupMember;
@@ -22,25 +23,39 @@ class Core_Model_Installer {
         $group_acls = array();
         $gService = new Core_Model_Group_Service();
             
+        
+        $everyone = array(
+            'parent' => null,
+            'type' => 0,
+            'title' => 'Everyone',
+            'description' => 'Privileges granted to every user',
+            'visible' => false,
+            'user_count' => 0,
+            'settings' => array());
+
+        $result = $gService->create($everyone);
+        self::$groupEveryone = $result->id;
+        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'error', 'action' => null, 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'login', 'action' => 'logout', 'permission' => 1);
+        
         $owner = array(
             'parent' => null,
             'type' => 0,
             'title' => 'Owner',
-            'description' => 'Privileges given to the creator of a content item',
+            'description' => 'Privileges granted to the creator of a content item',
             'visible' => false,
             'user_count' => 0,
             'settings' => array());
 
         $result = $gService->create($owner);
         self::$groupOwner = $result->id;
-        
         $group_acls[] = array('group' => $result->id, 'module' => null, 'controller' => null, 'action' => 'edit', 'permission' => 1);
         $group_acls[] = array('group' => $result->id, 'module' => null, 'controller' => null, 'action' => 'delete', 'permission' => 1);
 
         $guest = array(
             'parent' => null,
             'type' => 1,
-            'title' => 'Guest',
+            'title' => 'Guests',
             'description' => 'Users that have not been Authenticated',
             'visible' => false,
             'user_count' => 0,
@@ -48,16 +63,20 @@ class Core_Model_Installer {
 
         $result = $gService->create($guest);
         self::$groupGuest = $result->id;
-        $group_acls = array();
         $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'index', 'action' => null, 'permission' => 1);
         $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'login', 'action' => null, 'permission' => 1);
         $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'index', 'action' => null, 'permission' => 1);
+        
+        
+        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'user', 'action' => 'new', 'permission' => 1);
         $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'user', 'action' => 'next-steps', 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'user', 'action' => 'send-activation', 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'user', 'action' => 'activate', 'permission' => 1);
 
         $member = array(
             'parent' => null,
             'type' => 1,
-            'title' => 'Member',
+            'title' => 'Members',
             'description' => 'Authenticated Users',
             'visible' => true);
 
@@ -65,7 +84,7 @@ class Core_Model_Installer {
         self::$groupMember = $result->id;
         $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'index', 'action' => null, 'permission' => 1);
         $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'user', 'action' => null, 'permission' => 1);
-        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'login', 'action' => null, 'permission' => 0);
+      //  $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'login', 'action' => null, 'permission' => 0);
         
         $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'gTest', 'action' => 'index', 'permission' => 1);
         $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'gTest', 'action' => 'add', 'permission' => 1);
@@ -77,7 +96,7 @@ class Core_Model_Installer {
         $contentAdmin = array(
             'parent' => null,
             'type' => 1,
-            'title' => 'Admin',
+            'title' => 'Admins',
             'description' => 'Admin Site Content',
             'visible' => true);
 
@@ -86,7 +105,7 @@ class Core_Model_Installer {
         $siteAdmin = array(
             'parent' => null,
             'type' => 1,
-            'title' => 'Site Admin',
+            'title' => 'Site Admins',
             'description' => 'Full access to Site',
             'visible' => false);
 
@@ -102,6 +121,8 @@ class Core_Model_Installer {
 
         //create user
         $user_acls = array();
+        
+        $user_auth_internal = array();
 
 
         $uService = new Core_Model_User_Service();
@@ -130,6 +151,8 @@ class Core_Model_Installer {
         $result = $uService->create($user);
         self::$userMember = $result->id;
         
+        $user_auth_internal[] = array('id' => $result->id, 'username' => 'TestUser1', 'password' => 'password');
+        
         $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'uTest', 'action' => 'index', 'permission' => 1);
         $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'uTest', 'action' => 'add', 'permission' => 1);
         $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'uTest', 'action' => 'edit', 'permission' => 0);
@@ -148,6 +171,8 @@ class Core_Model_Installer {
         $result = $uService->create($user);
         self::$userSpecialMember = $result->id;
         
+        $user_auth_internal[] = array('id' => $result->id, 'username' => 'TestUser2', 'password' => 'password');
+        
         $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'test', 'action' => 'special', 'permission' => 1);
 
         $admin = array(
@@ -161,6 +186,8 @@ class Core_Model_Installer {
 
         $result = $uService->create($admin);
         self::$userAdmin = $result->id;
+        
+        $user_auth_internal[] = array('id' => $result->id, 'username' => 'TestAdmin', 'password' => 'password');
 
         $superAdmin = array(
             'status' => 1,
@@ -174,11 +201,17 @@ class Core_Model_Installer {
         $result = $uService->create($superAdmin);
         self::$userSuperAdmin = $result->id;
 
+        $user_auth_internal[] = array('id' => $result->id, 'username' => 'TestSuperAdmin', 'password' => 'password');
 
 
         $auService = new Core_Model_Acl_User_Service();
         foreach ($user_acls as $acl) {
             $auService->create($acl);
+        }
+        
+        $aiService = new Core_Model_Auth_Internal();
+        foreach ($user_auth_internal as $auth) {
+            $aiService->add($auth);
         }
     }
 
@@ -189,8 +222,8 @@ class Core_Model_Installer {
         $agService = new Core_Model_Acl_Group_Service();
         $agService->deleteAll();
 
-        $ugaService = new Core_Model_Acl_User_Service();
-        $agService->deleteAll();
+        $uaService = new Core_Model_Acl_User_Service();
+        $uaService->deleteAll();
 
         $uService = new Core_Model_User_Service();
         $uService->deleteAll();

@@ -120,7 +120,7 @@ class Content_Model_CategorySet_MapperDbTable implements Content_Model_CategoryS
     }
     
     public function deleteAll(){
-        if(APPLICATION_ENV == 'testing'){
+        if(APPLICATION_ENV != 'production'){
        //     $this->getTable()->delete("id < 10000");
             $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
         }

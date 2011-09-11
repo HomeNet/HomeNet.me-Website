@@ -32,7 +32,7 @@ class Core_Model_Auth_InternalTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testHashPassword() {
-        $result = $this->object->hashPassword('testPassword');
+        $result = $this->object->hashPassword('testUsername','testPassword');
         $this->assertEquals(40, strlen($result));
     }
 
@@ -44,7 +44,7 @@ class Core_Model_Auth_InternalTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals(1, $result->id);
         $this->assertEquals('testUser', $result->username);
-        $this->assertEquals($this->object->hashPassword('testPassword'), $result->password);
+        $this->assertEquals($this->object->hashPassword('testUser','testPassword'), $result->password);
     }
     
     public function testAddMissingCredentialsId() {

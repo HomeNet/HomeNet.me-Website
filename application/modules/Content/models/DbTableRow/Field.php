@@ -48,7 +48,7 @@ class Content_Model_DbTableRow_Field extends Zend_Db_Table_Row_Abstract implemen
     public function init(){
         
         $this->locked = (bool)$this->locked;
-        $this->edit_name =  (bool)$this->edit_name;
+       // $this->edit_name =  (bool)$this->edit_name;
         $this->required = (bool)$this->required;
         $this->visible = (bool)$this->visible;
 
@@ -63,6 +63,9 @@ class Content_Model_DbTableRow_Field extends Zend_Db_Table_Row_Abstract implemen
         if(is_string($this->validators)){
             $this->validators = unserialize($this->validators);
         }
+        if(is_string($this->attributes)){
+            $this->attributes = unserialize($this->attributes);
+        }
     }
     
     public function compress(){
@@ -72,6 +75,10 @@ class Content_Model_DbTableRow_Field extends Zend_Db_Table_Row_Abstract implemen
 
         if(is_array($this->validators)){
             $this->validators = serialize($this->validators);
+        }
+        
+        if(is_array($this->attributes)){
+            $this->attributes = serialize($this->attributes);
         }
     }
 

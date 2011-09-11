@@ -165,7 +165,7 @@ class Core_Model_User_Membership_Service {
     }
     
      public function deleteAll(){
-        if(APPLICATION_ENV == 'testing'){
+        if(APPLICATION_ENV != 'production'){
             $this->getMapper()->deleteAll();
             return;
         }

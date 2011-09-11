@@ -66,7 +66,7 @@ class Content_Model_Content_Service {
      * @return Content_Model_Content_Interface[]
      */
     public function getObjectsBySection($section) {
-        $contents = $this->getMapper()->fetchObjectsBySection($section);
+        $contents = $this->getMapper()->fetchObjectsBySectionId($section);
 
 //        if (empty($contents)) {
 //            throw new Exception('Apikey not found', 404);
@@ -140,7 +140,7 @@ class Content_Model_Content_Service {
     }
     
      public function deleteAll(){
-        if(APPLICATION_ENV == 'testing'){
+        if(APPLICATION_ENV != 'production'){
             $this->getMapper()->deleteAll();
             return;
         }

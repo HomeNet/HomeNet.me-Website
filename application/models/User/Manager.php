@@ -76,7 +76,7 @@ class Core_Model_User_Manager {
         // $this->_user->memberships = $mService->getGroupsByUser($this->_user->id);
 
         
-        $_SESSION['User'] = $this->_user;
+        $_SESSION['User'] = $this->_user->toArray();
 
     }
 
@@ -102,7 +102,13 @@ class Core_Model_User_Manager {
         if(!is_null($this->_user)){
             throw new Zend_Exception("User Already Loaded");
         }   
-   
+        
+        //set primary_group
+        if(empty($values['primary_group'])){
+            $config = Zend_Registry::get('config');
+            $values['primary_group'] = $config->site->group->default;      
+        }
+        
         $this->_user = $this->_service->create($values); //throws exception if username exsists
 
         $auth = new Core_Model_Auth_Internal();

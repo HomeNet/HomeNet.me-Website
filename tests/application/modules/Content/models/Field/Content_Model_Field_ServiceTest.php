@@ -51,13 +51,15 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $field = new Content_Model_Field();
         $field->section = 1;
         $field->order = 2;
+        $field->element = 'text';
         $field->name = 'testName';
         $field->name_label = 'testLabel';
         $field->default_value = 'testValue';
-        $field->validators = array('test'=>'value');
-        $field->filters = array('test'=>'value');
+        $field->attributes = array('testA'=>'valueA');
+        $field->validators = array('testB'=>'valueB');
+        $field->filters = array('testC'=>'valueC');
         $field->locked = false;
-        $field->edit_name = true;
+        $field->type = 0;
         $field->required = false;
         $field->visible = true;
 
@@ -72,12 +74,14 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $field->section = 1;
         $field->order = 2;
         //$field->name = 'testName';
+        $field->element = 'text';
         $field->name_label = 'testLabel';
         $field->default_value = 'testValue';
-        $field->validators = array('test'=>'value');
-        $field->filters = array('test'=>'value');
+        $field->attributes = array('testA'=>'valueA');
+        $field->validators = array('testB'=>'valueB');
+        $field->filters = array('testC'=>'valueC');
         $field->locked = false;
-        $field->edit_name = true;
+        $field->type = 0;
         $field->required = false;
         $field->visible = true;
         $this->setExpectedException('Exception');
@@ -98,13 +102,15 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertNotNull($result->id);
         $this->assertEquals(1, $result->section);
         $this->assertEquals(2, $result->order);
+        $this->assertEquals('text', $result->element);
         $this->assertEquals('testName', $result->name);
         $this->assertEquals('testLabel', $result->name_label);
         $this->assertEquals('testValue', $result->default_value);
-        $this->assertEquals('value', $result->validators['test']);
-        $this->assertEquals('value', $result->filters['test']);
+        $this->assertEquals('valueA', $result->attributes['testA']);
+        $this->assertEquals('valueB', $result->validators['testB']);
+        $this->assertEquals('valueC', $result->filters['testC']);
         $this->assertEquals(false, $result->locked);
-        $this->assertEquals(true, $result->edit_name);
+        $this->assertEquals(0, $result->type);
         $this->assertEquals(false, $result->required);
         $this->assertEquals(true, $result->visible);
     }
@@ -114,13 +120,15 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $field = array(
             'section' => 1,
             'order' => 2,
+            'element' => 'text',
             'name' => 'testName',
             'name_label' => 'testLabel',
             'default_value' => 'testValue',
-            'validators' => array('test' => 'value'),
-            'filters' => array('test' => 'value'),
+            'attributes' => array('testA' => 'valueA'),
+            'validators' => array('testB' => 'valueB'),
+            'filters' => array('testC' => 'valueC'),
             'locked' => false,
-            'edit_name' => true,
+            'type' => 0,
             'required' => false,
             'visible' => true);
 
@@ -131,13 +139,15 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
          $this->assertNotNull($result->id);
         $this->assertEquals(1, $result->section);
         $this->assertEquals(2, $result->order);
+        $this->assertEquals('text', $result->element);
         $this->assertEquals('testName', $result->name);
         $this->assertEquals('testLabel', $result->name_label);
         $this->assertEquals('testValue', $result->default_value);
-        $this->assertEquals('value', $result->validators['test']);
-        $this->assertEquals('value', $result->filters['test']);
+        $this->assertEquals('valueA', $result->attributes['testA']);
+        $this->assertEquals('valueB', $result->validators['testB']);
+        $this->assertEquals('valueC', $result->filters['testC']);
         $this->assertEquals(false, $result->locked);
-        $this->assertEquals(true, $result->edit_name);
+        $this->assertEquals(0, $result->type);
         $this->assertEquals(false, $result->required);
         $this->assertEquals(true, $result->visible);
     }
@@ -162,13 +172,15 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($field->id, $result->id);
         $this->assertEquals(1, $result->section);
         $this->assertEquals(2, $result->order);
+        $this->assertEquals('text', $result->element);
         $this->assertEquals('testName', $result->name);
         $this->assertEquals('testLabel', $result->name_label);
         $this->assertEquals('testValue', $result->default_value);
-        $this->assertEquals('value', $result->validators['test']);
-        $this->assertEquals('value', $result->filters['test']);
+        $this->assertEquals('valueA', $result->attributes['testA']);
+        $this->assertEquals('valueB', $result->validators['testB']);
+        $this->assertEquals('valueC', $result->filters['testC']);
         $this->assertEquals(false, $result->locked);
-        $this->assertEquals(true, $result->edit_name);
+        $this->assertEquals(0, $result->type);
         $this->assertEquals(false, $result->required);
         $this->assertEquals(true, $result->visible);
     }
@@ -207,13 +219,15 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         //update values
         $field->section = 2;
         $field->order = 3;
+        $field->element = 'textarea';
         $field->name = 'testName2';
         $field->name_label = 'testLabel2';
         $field->default_value = 'testValue2';
-        $field->validators = array('test'=>'value2');
-        $field->filters = array('test'=>'value2');
+        $field->attributes = array('testA'=>'valueA2');
+        $field->validators = array('testB'=>'valueB2');
+        $field->filters = array('testC'=>'valueC2');
         $field->locked = true;
-        $field->edit_name = false;
+        $field->type = 0;
         $field->required = true;
         $field->visible = false;
 
@@ -223,13 +237,15 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($field->id, $result->id);
         $this->assertEquals(2, $result->section);
         $this->assertEquals(3, $result->order);
+        $this->assertEquals('textarea', $result->element);
         $this->assertEquals('testName2', $result->name);
         $this->assertEquals('testLabel2', $result->name_label);
         $this->assertEquals('testValue2', $result->default_value);
-        $this->assertEquals('value2', $result->validators['test']);
-        $this->assertEquals('value2', $result->filters['test']);
+        $this->assertEquals('valueA2', $result->attributes['testA']);
+        $this->assertEquals('valueB2', $result->validators['testB']);
+        $this->assertEquals('valueC2', $result->filters['testC']);
         $this->assertEquals(true, $result->locked);
-        $this->assertEquals(false, $result->edit_name);
+        $this->assertEquals(0, $result->type);
         $this->assertEquals(true, $result->required);
         $this->assertEquals(false, $result->visible);
     }
@@ -244,13 +260,15 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         //update values
         $array['section'] = 2;
         $array['order'] = 3;
+        $array['element'] = 'textarea';
         $array['name'] = 'testName2';
         $array['name_label'] = 'testLabel2';
         $array['default_value'] = 'testValue2';
-        $array['validators'] = array('test'=>'value2');
-        $array['filters'] = array('test'=>'value2');
+        $array['attributes'] = array('testA'=>'valueA2');
+        $array['validators'] = array('testB'=>'valueB2');
+        $array['filters'] = array('testC'=>'valueC2');
         $array['locked'] = true;
-        $array['edit_name'] = false;
+        $array['type'] = 0;
         $array['required'] = true;
         $array['visible'] = false;
 
@@ -261,13 +279,15 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($field->id, $result->id);
         $this->assertEquals(2, $result->section);
         $this->assertEquals(3, $result->order);
+        $this->assertEquals('textarea', $result->element);
         $this->assertEquals('testName2', $result->name);
         $this->assertEquals('testLabel2', $result->name_label);
         $this->assertEquals('testValue2', $result->default_value);
-        $this->assertEquals('value2', $result->validators['test']);
-        $this->assertEquals('value2', $result->filters['test']);
+        $this->assertEquals('valueA2', $result->attributes['testA']);
+        $this->assertEquals('valueB2', $result->validators['testB']);
+        $this->assertEquals('valueC2', $result->filters['testC']);
         $this->assertEquals(true, $result->locked);
-        $this->assertEquals(false, $result->edit_name);
+        $this->assertEquals(0, $result->type);
         $this->assertEquals(true, $result->required);
         $this->assertEquals(false, $result->visible);
     }
@@ -327,5 +347,3 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
     }
 
 }
-
-?>

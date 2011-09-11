@@ -19,6 +19,15 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
           ->addResourceType('model', 'models/', 'Model');
          */
     }
+    
+    protected function _initConfig()
+    {
+        $config = new Zend_Config($this->getOptions(), true);
+        Zend_Registry::set('config', $config);
+        return $config;
+    }
+
+    
 
     protected function _initView() {
         $options = $this->getOptions();
@@ -102,6 +111,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
         $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
         $viewRenderer->setView($view);
+        $viewRenderer->setViewScriptPathNoControllerSpec('generic/:action.:suffix');
 
        // die(debugArray($view->getScriptPaths()));
 

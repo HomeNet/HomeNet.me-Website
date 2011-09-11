@@ -56,7 +56,7 @@ class Content_Model_Section implements Content_Model_Section_Interface {
     /**
      * @var int
      */
-    public $visible;
+    public $visible = false;
   
 
     public function __construct(array $config = array()) {

@@ -351,9 +351,9 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
        // $this->fail("id: ".$content->id);
         $this->object->delete($content->toArray());
         
-       // $this->setExpectedException('NotFoundException');
+        $this->setExpectedException('NotFoundException');
         $result = $this->object->getObjectByIdRevision($content->id,$content->revision); 
-        $this->fail(debugArray($result));
+//        $this->fail(debugArray($result));
     }
 
     public function testDeleteException() {
@@ -368,5 +368,3 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
     }
 
 }
-
-?>

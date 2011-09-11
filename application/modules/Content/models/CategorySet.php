@@ -41,7 +41,7 @@ class Content_Model_CategorySet implements Content_Model_CategorySet_Interface {
     /**
      * @var boolean
      */
-    public $hidden = true;
+    public $visible = true;
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {

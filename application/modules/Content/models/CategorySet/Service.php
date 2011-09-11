@@ -53,11 +53,11 @@ class Content_Model_CategorySet_Service {
      * @return Content_Model_CategorySet_Interface 
      */
     public function getObjects(){
-        $categorySets = $this->getMapper()->fetchObjects($id);
+        $categorySets = $this->getMapper()->fetchObjects();
 
-        if (empty($categorySets)) {
-            throw new NotFoundException('Category Sets Not Found', 404);
-        }
+       // if (empty($categorySets)) {
+       //     throw new NotFoundException('Category Sets Not Found', 404);
+       // }
         return $categorySets;
     }
     

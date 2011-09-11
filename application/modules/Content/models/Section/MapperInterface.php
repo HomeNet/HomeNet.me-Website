@@ -29,6 +29,11 @@
 interface Content_Model_Section_MapperInterface {
 
     /**
+     * @return Content_Model_Section_Interface[]
+     */
+    public function fetchObjects();
+    
+    /**
      * @return Content_Model_Section_Interface
      */
     public function fetchObjectById($id);

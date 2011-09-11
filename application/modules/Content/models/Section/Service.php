@@ -52,6 +52,16 @@ class Content_Model_Section_Service {
      * @param int $id
      * @return Content_Model_Section_Interface 
      */
+    public function getObjects(){
+        $objects = $this->getMapper()->fetchObjects();
+
+        return $objects;
+    }
+    
+    /**
+     * @param int $id
+     * @return Content_Model_Section_Interface 
+     */
     public function getObjectById($id){
         $section = $this->getMapper()->fetchObjectById($id);
 
@@ -107,6 +117,24 @@ class Content_Model_Section_Service {
         } else {
             throw new InvalidArgumentException('Invalid Section');
         }
+        
+        //delete content
+        $cService = new Content_Model_Content_Service();
+        $cService->deleteBySection($h->id);
+        
+        //delete fields
+        $fService = new Content_Model_Field_Service();
+        $fService->deleteBySection($h->id);
+        
+        //delete fieldSets
+        $fsService = new Content_Model_FieldSet_Service();
+        $fsService->deleteBySection($h->id);
+        
+        //delete content categories
+        
+        
+        
+        
 
         return $this->getMapper()->delete($h);
     }

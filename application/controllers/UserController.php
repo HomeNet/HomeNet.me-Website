@@ -53,8 +53,9 @@ class UserController extends Zend_Controller_Action
         }
 
         $values = $form->getValues();
-        $uService = new Core_Model_Auth_Internal_Service();
-        $uService->add($values);
+        
+        $uManager = new Core_Model_User_Manager();
+        $user = $uManager->register($values);
         //die('user added');
 
         //decide where to redirect based on whether it is new registration or a admin created one
@@ -86,22 +87,28 @@ class UserController extends Zend_Controller_Action
     }
 
     public function nextStepsAction(){
- 
+        //displays static page
     }
 
     public function sendActivationAction(){
-        $table = new Core_Model_DbTable_Users();
-        $user = $table->fetchUserById($this->view->user);
-        $user->sendActivationEmail();
+        
+        $uService = new Core_Model_User_Service();
+        $user = $uService->getObjectById($this->view->user);
+        
+        $uManager = new Core_Model_User_Manager($user);
+        $uManager->sendActivationEmail();
+        
         $this->_forward('next-steps');
     }
 
     public function activateAction(){
-        $table = new Core_Model_DbTable_Users();
-        $user = $table->fetchUserById($this->view->user);
+        $uService = new Core_Model_User_Service();
+        $user = $uService->getObjectById($this->view->user);
+        
+        $uManager = new Core_Model_User_Manager($user);
 
         try{
-            $user->activate($this->_getParam('key'));
+            $uManager->activate($this->_getParam('key'));
         } catch(CMS_Exception $e){
             return;
         }

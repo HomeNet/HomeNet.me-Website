@@ -48,17 +48,13 @@ class Content_Model_Section_MapperDbTable implements Content_Model_Section_Mappe
         $this->_table = $table;
     }
 
-
-
-
-
-
-
-    public function fetchObjectById($id){
-        return $this->getTable()->find($id)->current();
+    public function fetchObjects() {
+        return $this->getTable()->fetchAll();
     }
 
-
+    public function fetchObjectById($id) {
+        return $this->getTable()->find($id)->current();
+    }
 
     public function save(Content_Model_Section_Interface $section) {
 
@@ -66,25 +62,24 @@ class Content_Model_Section_MapperDbTable implements Content_Model_Section_Mappe
             return $section->save();
         } elseif (!is_null($section->id)) {
             $row = $this->getTable()->find($section->id)->current();
-            if(empty($row)){
-               $row = $this->getTable()->createRow();
+            if (empty($row)) {
+                $row = $this->getTable()->createRow();
             }
-
         } else {
             $row = $this->getTable()->createRow();
         }
 
         $row->fromArray($section->toArray());
-       // die(debugArray($row));
-                try {
-        $row->save();
-        } catch(Exception $e){
-            if(strstr($e->getMessage(), '1062 Duplicate')) {
-               throw new DuplicateEntryException("URL Already Exists"); 
-            } elseif(strstr($e->getMessage(), '1048 Column')) {
-               throw new InvalidArgumentException("Invalid Column"); 
+        // die(debugArray($row));
+        try {
+            $row->save();
+        } catch (Exception $e) {
+            if (strstr($e->getMessage(), '1062 Duplicate')) {
+                throw new DuplicateEntryException("URL Already Exists");
+           // } elseif (strstr($e->getMessage(), '1048 Column')) {
+           //     throw new InvalidArgumentException("Invalid Column");
             } else {
-                 throw new Exception($e->getMessage());
+                throw new Exception($e->getMessage());
             }
         };
 
@@ -103,9 +98,11 @@ class Content_Model_Section_MapperDbTable implements Content_Model_Section_Mappe
 
         throw new Exception('Invalid Section Object');
     }
-    public function deleteAll(){
-        if(APPLICATION_ENV == 'testing'){
-            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+
+    public function deleteAll() {
+        if (APPLICATION_ENV != 'production') {
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `' . $this->getTable()->info('name') . '`');
         }
     }
+
 }

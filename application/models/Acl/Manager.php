@@ -18,7 +18,7 @@ class Core_Model_Acl_Manager {
         if (!is_null($user)) {
             $this->_user = $user;
         } else {
-            $this->_user = $_SESSION['User'];
+            $this->_user = new Core_Model_User(array('data' => $_SESSION['User']));
         }
     }
 
@@ -119,7 +119,7 @@ class Core_Model_Acl_Manager {
         $this->_aclTags[$identifier] = $tags;
 
 
-        //return false;
+        return false;
         return self::$_acl[$identifier];
     }
 
@@ -150,54 +150,54 @@ class Core_Model_Acl_Manager {
 
     public function getResourcesByModule($module) {
 
-        $modules = $this->_getModules();
-        if (empty($modules[$module])) {
-            throw new NotFoundException('Module ' . $module . ' was not found');
-        }
-
-        $cache = $this->_getCache();
-
-        $array = array();
-
-
-        if (!$cache->test($module)) {
-
-            $path = $modules[$module];
-
-            foreach (scandir($path) as $file) {
-
-                if (strstr($file, "Controller.php") !== false) {
-
-                    include_once $path . DIRECTORY_SEPARATOR . $file;
-
-                    foreach (get_declared_classes() as $class) {
-
-                        if (is_subclass_of($class, 'Zend_Controller_Action')) {
-
-                            $controller = strtolower(substr($class, 0, strpos($class, "Controller")));
-                            $actions = array();
-
-                            foreach (get_class_methods($class) as $action) {
-
-                                if (strstr($action, "Action") !== false) {
-                                    $actions[] = $action;
-                                }
-                            }
-                        }
-                    }
-
-                    $array[$controller] = $actions;
-                }
-            }
-
-
-
-            $cache->save($array, $module);
-        } else {
-            $array = $cache->load($module);
-        }
-
-        return $array;
+//        $modules = $this->_getModules();
+//        if (empty($modules[$module])) {
+//            throw new NotFoundException('Module ' . $module . ' was not found');
+//        }
+//
+//        $cache = $this->_getCache();
+//
+//        $array = array();
+//
+//
+//        if (!$cache->test($module)) {
+//
+//            $path = $modules[$module];
+//
+//            foreach (scandir($path) as $file) {
+//
+//                if (strstr($file, "Controller.php") !== false) {
+//
+//                    include_once $path . DIRECTORY_SEPARATOR . $file;
+//
+//                    foreach (get_declared_classes() as $class) {
+//
+//                        if (is_subclass_of($class, 'Zend_Controller_Action')) {
+//
+//                            $controller = strtolower(substr($class, 0, strpos($class, "Controller")));
+//                            $actions = array();
+//
+//                            foreach (get_class_methods($class) as $action) {
+//
+//                                if (strstr($action, "Action") !== false) {
+//                                    $actions[] = $action;
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    $array[$controller] = $actions;
+//                }
+//            }
+//
+//
+//
+//            $cache->save($array, $module);
+//        } else {
+//            $array = $cache->load($module);
+//        }
+//
+//        return $array;
     }
 
     private function _buildAcl(Zend_Acl $acl, array $objects) {
@@ -218,6 +218,8 @@ class Core_Model_Acl_Manager {
 
     public function getBaseAcl($module) {
 
+        $module = strtolower($module);
+        
         $acl = $this->_getAcl($module, 'base');
         if ($acl === false) { //cache call failed
             //this save some duplicate processing
@@ -245,7 +247,7 @@ class Core_Model_Acl_Manager {
 
                 foreach ($rules as $rule) {
 
-                    $controller = null;
+                    $cResource = null;
 
                     if (!is_null($rule->controller)) {
 
@@ -271,12 +273,15 @@ class Core_Model_Acl_Manager {
 
     public function getGroupAcl($module) {
 
+        $module = strtolower($module);
+        
         //get group list
         $memberships = $this->_user->getMemberships();
-
         $gRoles = array();
         foreach ($memberships as $groupId) {
             $gRoles[$groupId] = new CMS_Acl_Role_Group($groupId);
+            
+            
         }
 
 
@@ -290,19 +295,25 @@ class Core_Model_Acl_Manager {
             $acl = $this->getBaseAcl($module);
 
             $service = new Core_Model_Acl_Group_Service();
+            
+            
+            //add group roles
+            foreach($gRoles as $role){
+                if (!$acl->hasRole($role)) {
+                    $acl->addRole($role);
+                }
+            }
+
+            
+            
             $objects = $service->getObjectsByGroupsModule($memberships, $module);
 
             foreach ($objects as $group => $rules) {
 
-                $gRole = $gRoles[$group];
-
-                if (!$acl->hasRole($gRole)) {
-                    $acl->addRole($gRole);
-                }
-
+                
                 foreach ($rules as $rule) {
 
-                    $controller = null;
+                    $cResource = null;
 
                     if (!is_null($rule->controller)) {
 
@@ -314,9 +325,9 @@ class Core_Model_Acl_Manager {
                     }
 
                     if ($rule->permission == 1) {
-                        $acl->allow($gRole, $cResource, $rule->action);
+                        $acl->allow($gRoles[$rule->group], $cResource, $rule->action);
                     } else {
-                        $acl->deny($gRole, $cResource, $rule->action);
+                        $acl->deny($gRoles[$rule->group], $cResource, $rule->action);
                     }
                 }
             }
@@ -329,7 +340,9 @@ class Core_Model_Acl_Manager {
     }
 
     public function getUserAcl($module) {
-
+        
+        $module = strtolower($module);
+//die(debugArray($this->_user->getMemberships()));
         $uRole = new CMS_Acl_Role_User($this->_user->id);
 
         $acl = $this->_getAcl($module, $uRole);
@@ -341,9 +354,14 @@ class Core_Model_Acl_Manager {
             $acl = $this->getGroupAcl($module);
 
             if (!$acl->hasRole($uRole)) {
-
+                
+                $memberships = $this->_user->getMemberships();
                 $parents = array();
-                foreach ($this->_user->memberships as $groupId) {
+                
+                foreach ($memberships as $groupId) {
+                    //$parent
+                    
+                    
                     $parents[] = new CMS_Acl_Role_Group($groupId);
                 }
 
@@ -382,6 +400,8 @@ class Core_Model_Acl_Manager {
     }
 
     public function getGroupAclObjects($module, $controller, $objects) {
+        
+        $module = strtolower($module);
 
         //get group list
         $memberships = $this->_user->getMemberships();
@@ -460,6 +480,8 @@ class Core_Model_Acl_Manager {
     }
 
     public function getUserAclObjects($module, $controller, $objects) {
+        
+        $module = strtolower($module);
 
         $uRole = new CMS_Acl_Role_User($this->_user->id);
         $cResource = new CMS_Acl_Resource_Controller($controller);

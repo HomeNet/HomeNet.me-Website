@@ -59,3 +59,8 @@ $autoloader->setDefaultAutoloader(create_function('$class', "include str_replace
 $application = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini'); //
 $application->bootstrap();
 Zend_Registry::set('cachemanager', $application->getBootstrap()->getResource('cachemanager'));
+
+
+Zend_Session::start();
+
+
