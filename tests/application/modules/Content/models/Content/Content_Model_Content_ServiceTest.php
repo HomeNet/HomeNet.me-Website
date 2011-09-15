@@ -26,7 +26,7 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-//      $this->object->deleteAll();
+        $this->object->deleteAll();
     }
 
     public function testGetMapper() {
@@ -38,10 +38,10 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
      * @todo Implement testSetMapper().
      */
     public function testSetMapper() {
-        
+
         $mapper = new Content_Model_Content_MapperDbTable();
-         $this->object->setMapper($mapper);
-        
+        $this->object->setMapper($mapper);
+
         $this->assertInstanceOf('Content_Model_Content_MapperInterface', $this->object->getMapper());
         $this->assertEquals($mapper, $this->object->getMapper());
         //$this->ass
@@ -49,45 +49,48 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
 
     private function createValidContent() {
         $content = new Content_Model_Content();
-        
+
         //$content->id = 1;
-       // $content->revision = 2;
+        // $content->revision = 2;
         $content->section = 3;
-        $content->active = true;
+        $content->owner = 5;
+        $content->autosave = true;
         $content->status = 4;
-        $content->date = date('Y-m-d H:i:s', strtotime('+1 week'));
-        $content->expires = date('Y-m-d H:i:s', strtotime('+2 week'));
-        $content->author = 5;
-        $content->editor = 6;
+        // $content->date = date('Y-m-d H:i:s', strtotime('+1 week'));
+        // $content->expires = date('Y-m-d H:i:s', strtotime('+2 week'));
+//        $content->author = 5;
+//        $content->editor = 6;
         $content->title = 'testTitle';
         $content->url = 'testUrl';
         $content->visible = true;
-        $content->content = array('body' => 'value');
-      
+//        $content->content = array('body' => 'value');
+
         $result = $this->object->create($content);
 
         $this->assertInstanceOf('Content_Model_Content_Interface', $result);
         return $result;
     }
-    
+
     public function testCreateInvalidContent() {
-        
+
         $content = new Content_Model_Content();
-       // $content->revision = 2;
+        // $content->revision = 2;
+        $content->owner = 5;
         $content->section = 3;
-        $content->active = true;
+        $content->autosave = true;
         $content->status = 4;
-        $content->date = null ;
-        $content->expires = date('Y-m-d H:i:s', strtotime('+1 week'));
-      //  $content->author = 5;
-        $content->editor = 6;
-        $content->url = 'testUrl';
+        //  $content->date = null ;
+        //  $content->expires = date('Y-m-d H:i:s', strtotime('+1 week'));
+        //  $content->author = 5;
+        // $content->editor = 6;
+        // $content->url = 'testUrl';
         $content->title = 'testTitle';
         $content->visible = true;
-        $content->content = array('body' => 'value');
+        // $content->content = array('body' => 'value');
         $this->setExpectedException('Exception');
         $result = $this->object->create($content);
     }
+
 //    
 //    public function testDuplicateUrl() {
 //
@@ -103,19 +106,20 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertNotNull($result->id);
         $this->assertNotNull($result->revision);
         $this->assertEquals(3, $result->section);
-        $this->assertEquals(true, $result->active);
+        $this->assertEquals(true, $result->autosave);
         $this->assertEquals(4, $result->status);
-        $this->assertNotNull($result->date);
-        $this->assertNotNull($result->expires);
-        $this->assertEquals(5, $result->author);
-        $this->assertEquals(6, $result->editor);
+        $this->assertEquals(5, $result->owner);
+//        $this->assertNotNull($result->date);
+//        $this->assertNotNull($result->expires);
+//        $this->assertEquals(5, $result->author);
+//        $this->assertEquals(6, $result->editor);
         $this->assertEquals('testUrl', $result->url);
         $this->assertEquals('testTitle', $result->title);
-        $this->assertArrayHasKey('body', $result->content);
+//        $this->assertArrayHasKey('body', $result->content);
         $this->assertEquals(true, $result->visible);
-        $this->assertEquals('value', $result->content['body']);
+//        $this->assertEquals('value', $result->content['body']);
     }
-    
+
 //     public function testToArray() {
 //
 //        $content = new Content_Model_Content();
@@ -134,25 +138,27 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
 //        $this->assertArrayHasKey('primary_group', $array);
 //        $this->assertEquals(1, $array['primary_group']);
 //    }
-    
+
     public function testCreateFromArray() {
 
         $content = array(
 //            'id' => 1,
 //            'revision' => 2,
             'section' => 3,
-            'active' => true,
+            'autosave' => true,
             'status' => 4,
-            'created' => null,
-            'expires' => null,
-            'author' => 5,
-            'editor' => 6,
+            'owner' => 5,
+//            'created' => null,
+//            'expires' => null,
+//            'author' => 5,
+//            'editor' => 6,
             'url' => 'testUrl',
             'title' => 'testTitle',
             'visible' => true,
-            'content' => array('body' => 'value'));
-        
-        
+//            'content' => array('body' => 'value')
+        );
+
+
 
         $result = $this->object->create($content);
 
@@ -161,17 +167,18 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertNotNull($result->id);
         $this->assertNotNull($result->revision);
         $this->assertEquals(3, $result->section);
-        $this->assertEquals(true, $result->active);
+        $this->assertEquals(true, $result->autosave);
         $this->assertEquals(4, $result->status);
-        $this->assertNull($result->date);
-        $this->assertNull($result->expires);
-        $this->assertEquals(5, $result->author);
-        $this->assertEquals(6, $result->editor);
+        $this->assertEquals(5, $result->owner);
+//        $this->assertNotNull($result->date);
+//        $this->assertNotNull($result->expires);
+//        $this->assertEquals(5, $result->author);
+//        $this->assertEquals(6, $result->editor);
         $this->assertEquals('testUrl', $result->url);
         $this->assertEquals('testTitle', $result->title);
-        $this->assertEquals(true, $result->active);
-        $this->assertArrayHasKey('body', $result->content);
-        $this->assertEquals('value', $result->content['body']);
+//        $this->assertArrayHasKey('body', $result->content);
+        $this->assertEquals(true, $result->visible);
+//        $this->assertEquals('value', $result->content['body']);
     }
 
     public function testCreateException() {
@@ -187,26 +194,27 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $content = $this->createValidContent();
 
         //test getObject
-        $result = $this->object->getObjectByIdRevision($content->id,$content->revision);
-        
+        $result = $this->object->getObjectByIdRevision($content->id, $content->revision);
+
         $this->assertInstanceOf('Content_Model_Content_Interface', $result);
 
         $this->assertNotNull($result->id);
         $this->assertNotNull($result->revision);
         $this->assertEquals(3, $result->section);
-        $this->assertEquals(true, $result->active);
+        $this->assertEquals(true, $result->autosave);
         $this->assertEquals(4, $result->status);
-        $this->assertNotNull($result->date);
-        $this->assertNotNull($result->expires);
-        $this->assertEquals(5, $result->author);
-        $this->assertEquals(6, $result->editor);
+        $this->assertEquals(5, $result->owner);
+//        $this->assertNotNull($result->date);
+//        $this->assertNotNull($result->expires);
+//        $this->assertEquals(5, $result->author);
+//        $this->assertEquals(6, $result->editor);
         $this->assertEquals('testUrl', $result->url);
         $this->assertEquals('testTitle', $result->title);
-        $this->assertEquals(true, $result->active);
-        $this->assertArrayHasKey('body', $result->content);
-        $this->assertEquals('value', $result->content['body']);
+//        $this->assertArrayHasKey('body', $result->content);
+        $this->assertEquals(true, $result->visible);
+//        $this->assertEquals('value', $result->content['body']);
     }
-    
+
 //    public function testGetObjectByUrl() {
 //
 //        //setup
@@ -240,16 +248,17 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
 
         //update values
         $content->section = 4;
-        $content->active = false;
+        $content->autosave = false;
         $content->status = 5;
-        $content->date = new Zend_Date(strtotime('+1 week')) ;
-        $content->expires = new Zend_Date(strtotime('+2 week'));
-        $content->author = 6;
-        $content->editor = 7;
+        $content->owner = 6;
+//        $content->date = new Zend_Date(strtotime('+1 week')) ;
+//        $content->expires = new Zend_Date(strtotime('+2 week'));
+//        $content->author = 6;
+//        $content->editor = 7;
         $content->url = 'testUrl2';
         $content->title = 'testTitle2';
         $content->visible = false;
-        $content->content = array('body' => 'value2');
+//        $content->content = array('body' => 'value2');
 
         $result = $this->object->update($content);
 
@@ -258,38 +267,37 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertNotNull($result->id);
         $this->assertNotNull($result->revision);
         $this->assertEquals(4, $result->section);
-        $this->assertEquals(false, $result->active);
+        $this->assertEquals(false, $result->autosave);
         $this->assertEquals(5, $result->status);
-        $this->assertNotNull($result->date);
-        $this->assertNotNull($result->expires);
-        $this->assertEquals(6, $result->author);
-        $this->assertEquals(7, $result->editor);
+//        $this->assertNotNull($result->date);
+//        $this->assertNotNull($result->expires);
+        $this->assertEquals(6, $result->owner);
+//        $this->assertEquals(7, $result->editor);
         $this->assertEquals('testUrl2', $result->url);
         $this->assertEquals('testTitle2', $result->title);
-        $this->assertEquals(false, $result->active);
-        $this->assertArrayHasKey('body', $result->content);
-        $this->assertEquals('value2', $result->content['body']);
+//        $this->assertArrayHasKey('body', $result->content);
+//        $this->assertEquals('value2', $result->content['body']);
     }
-    
+
     public function testUpdateFromArray() {
 
         //setup
         $content = $this->createValidContent();
 
         $array = $content->toArray();
-        
+
         //update values          
         $array['section'] = 4;
-        $array['active'] = false;
+        $array['autosave'] = false;
         $array['status'] = 5;
-        $array['created'] = new Zend_Date(strtotime('+1 week')) ;
-        $array['expires'] = new Zend_Date(strtotime('+2 week'));
-        $array['author'] = 6;
-        $array['editor'] = 7;
+//        $array['created'] = new Zend_Date(strtotime('+1 week')) ;
+//        $array['expires'] = new Zend_Date(strtotime('+2 week'));
+        $array['owner'] = 6;
+//        $array['editor'] = 7;
         $array['url'] = 'testUrl2';
         $array['title'] = 'testTitle2';
-        $array['visible'] = false;
-        $array['content'] = array('body' => 'value2');
+//        $array['visible'] = false;
+//        $array['content'] = array('body' => 'value2');
 
 
         $result = $this->object->update($array);
@@ -299,19 +307,17 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertNotNull($result->id);
         $this->assertNotNull($result->revision);
         $this->assertEquals(4, $result->section);
-        $this->assertEquals(false, $result->active);
+        $this->assertEquals(false, $result->autosave);
         $this->assertEquals(5, $result->status);
-        $this->assertNotNull($result->date);
-        $this->assertNotNull($result->expires);
-        $this->assertEquals(6, $result->author);
-        $this->assertEquals(7, $result->editor);
+//        $this->assertNotNull($result->date);
+//        $this->assertNotNull($result->expires);
+        $this->assertEquals(6, $result->owner);
+//        $this->assertEquals(7, $result->editor);
         $this->assertEquals('testUrl2', $result->url);
         $this->assertEquals('testTitle2', $result->title);
-        $this->assertEquals(false, $result->visible);
-        $this->assertArrayHasKey('body', $result->content);
-        $this->assertEquals('value2', $result->content['body']);
+//        $this->assertArrayHasKey('body', $result->content);
+//        $this->assertEquals('value2', $result->content['body']);
     }
-    
 
     public function testUpdateException() {
         $this->setExpectedException('InvalidArgumentException');
@@ -330,7 +336,20 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
 
         //verify that it was deleted
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectByIdRevision($content->id,$content->revision);
+        $result = $this->object->getObjectByIdRevision($content->id, $content->revision);
+    }
+
+    public function testDeleteBySection() {
+
+        //setup
+        $content = $this->createValidContent();
+
+        //test delete
+        $this->object->deleteBySection($content->section);
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->object->getObjectByIdRevision($content->id, $content->revision);
     }
 
 //    public function testDeleteId() {
@@ -343,16 +362,16 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
 //        $this->setExpectedException('NotFoundException');
 //        $result = $this->object->getObjectByIdRevision($content->id,$content->revision); 
 //    }
-    
+
     public function testDeleteArray() {
 
         //setup
         $content = $this->createValidContent();
-       // $this->fail("id: ".$content->id);
+        // $this->fail("id: ".$content->id);
         $this->object->delete($content->toArray());
-        
+
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectByIdRevision($content->id,$content->revision); 
+        $result = $this->object->getObjectByIdRevision($content->id, $content->revision);
 //        $this->fail(debugArray($result));
     }
 
@@ -367,4 +386,44 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
 //        $this->object->deleteAll();
     }
 
+    ////test custom columns
+
+    public function testAddCustomTable() {
+        //$this->markTestIncomplete();
+        $section = 5;
+        $this->object->addCustomTable($section);
+    }
+
+    public function testAddCustomField() {
+
+        $field = new Content_Model_Field();
+        $field->section = 5;
+        $field->element = 'Text';
+        $field->name = 'testName';
+
+
+        $this->object->addCustomField($field);
+
+
+        $field = new Content_Model_Field();
+        $field->section = 5;
+        $field->element = 'Textarea';
+        $field->name = 'textarea';
+        $this->object->addCustomField($field);
+    }
+
+    public function testRemoveCustomField() {
+
+        $field = new Content_Model_Field();
+        $field->section = 5;
+        $field->element = 'Text';
+        $field->name = 'testName';
+
+        $this->object->removeCustomField($field);
+    }
+
+    public function testRemoveCustomTable() {
+        $section = 5;
+        $this->object->removeCustomTable($section);
+    }
 }

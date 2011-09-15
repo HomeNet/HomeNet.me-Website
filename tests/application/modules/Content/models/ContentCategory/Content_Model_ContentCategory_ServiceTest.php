@@ -47,7 +47,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
         //$this->ass
     }
 
-    private function createValidContentCategory() {
+    private function createValidObject() {
         $contentCategory = new Content_Model_ContentCategory();
         $contentCategory->section = 1;
         $contentCategory->content = 2;
@@ -77,7 +77,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
 
     public function testCreateValidFromObject() {
 
-        $result = $this->createValidContentCategory();     
+        $result = $this->createValidObject();     
 
         $this->assertNotNull($result->id);
         $this->assertEquals(1, $result->section);
@@ -113,7 +113,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
     public function testGetObjectById() {
 
         //setup
-        $contentCategory = $this->createValidContentCategory();
+        $contentCategory = $this->createValidObject();
 
         //test getObject
         $result = $this->object->getObjectById($contentCategory->id);
@@ -130,7 +130,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
     public function testUpdateFromObject() {
 
         //setup
-        $contentCategory = $this->createValidContentCategory();
+        $contentCategory = $this->createValidObject();
 
         //update values
         $contentCategory->section = 4;
@@ -150,7 +150,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
     public function testUpdateFromArray() {
 
         //setup
-        $contentCategory = $this->createValidContentCategory();
+        $contentCategory = $this->createValidObject();
 
         $array = $contentCategory->toArray();
         
@@ -180,7 +180,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
     public function testDeleteObject() {
 
         //setup
-        $contentCategory = $this->createValidContentCategory();
+        $contentCategory = $this->createValidObject();
 
         //test delete
         $this->object->delete($contentCategory);
@@ -193,7 +193,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
     public function testDeleteId() {
 
         //setup
-        $contentCategory = $this->createValidContentCategory();
+        $contentCategory = $this->createValidObject();
        // $this->fail("id: ".$contentCategory->id);
         $this->object->delete((int)$contentCategory->id);
         
@@ -204,12 +204,25 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
     public function testDeleteArray() {
 
         //setup
-        $contentCategory = $this->createValidContentCategory();
+        $contentCategory = $this->createValidObject();
        // $this->fail("id: ".$contentCategory->id);
         $this->object->delete($contentCategory->toArray());
         
         $this->setExpectedException('NotFoundException');
         $result = $this->object->getObjectById($contentCategory->id); 
+    }
+    
+    public function testDeleteBySection() {
+
+        //setup
+        $object = $this->createValidObject();
+
+        //test delete
+        $this->object->deleteBySection($object->section);
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->object->getObjectById($object->id);
     }
 
     public function testDeleteException() {

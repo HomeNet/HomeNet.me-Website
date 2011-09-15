@@ -47,7 +47,7 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
         //$this->ass
     }
 
-    private function createValidFieldSet() {
+    private function createValidObject() {
         $fieldSet = new Content_Model_FieldSet();
         $fieldSet->section = 1;
         $fieldSet->title = 'testTitle';
@@ -80,7 +80,7 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
     
     public function testCreateValidFromObject() {
 
-        $result = $this->createValidFieldSet();
+        $result = $this->createValidObject();
 
         $this->assertNotNull($result->id);
         $this->assertEquals(1, $result->section);
@@ -90,12 +90,12 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
     
     public function testCreateFromArray() {
 
-        $fieldSet = array(
+        $object = array(
         'section' => 1,
         'title' => 'testTitle',
         'visible' => false);
 
-        $result = $this->object->create($fieldSet);
+        $result = $this->object->create($object);
 
         $this->assertInstanceOf('Content_Model_FieldSet_Interface', $result);
 
@@ -115,14 +115,14 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testGetObjectById() {
 
         //setup
-        $fieldSet = $this->createValidFieldSet();
+        $object = $this->createValidObject();
 
         //test getObject
-        $result = $this->object->getObjectById($fieldSet->id);
+        $result = $this->object->getObjectById($object->id);
         
         $this->assertInstanceOf('Content_Model_FieldSet_Interface', $result);
 
-        $this->assertEquals($fieldSet->id, $result->id);
+        $this->assertEquals($object->id, $result->id);
         $this->assertEquals(1, $result->section);
         $this->assertEquals('testTitle', $result->title);
         $this->assertEquals(true, $result->visible);
@@ -131,18 +131,18 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testUpdateFromObject() {
 
         //setup
-        $fieldSet = $this->createValidFieldSet();
+        $object = $this->createValidObject();
 
         //update values
-        $fieldSet->section = 2;
-        $fieldSet->title = 'testTitle2';
-        $fieldSet->visible = false;
+        $object->section = 2;
+        $object->title = 'testTitle2';
+        $object->visible = false;
 
-        $result = $this->object->update($fieldSet);
+        $result = $this->object->update($object);
 
         $this->assertInstanceOf('Content_Model_FieldSet_Interface', $result);
 
-        $this->assertEquals($fieldSet->id, $result->id);
+        $this->assertEquals($object->id, $result->id);
         $this->assertEquals(2, $result->section);
         $this->assertEquals('testTitle2', $result->title);
         $this->assertEquals(false, $result->visible);
@@ -151,9 +151,9 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testUpdateFromArray() {
 
         //setup
-        $fieldSet = $this->createValidFieldSet();
+        $object = $this->createValidObject();
 
-        $array = $fieldSet->toArray();
+        $array = $object->toArray();
         
         //update values
         $array['section'] = 2;
@@ -164,7 +164,7 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertInstanceOf('Content_Model_FieldSet_Interface', $result);
 
-        $this->assertEquals($fieldSet->id, $result->id);
+        $this->assertEquals($object->id, $result->id);
         $this->assertEquals(2, $result->section);
         $this->assertEquals('testTitle2', $result->title);
         $this->assertEquals(false, $result->visible);
@@ -181,7 +181,7 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testDeleteObject() {
 
         //setup
-        $fieldSet = $this->createValidFieldSet();
+        $fieldSet = $this->createValidObject();
 
         //test delete
         $this->object->delete($fieldSet);
@@ -194,7 +194,7 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testDeleteId() {
 
         //setup
-        $fieldSet = $this->createValidFieldSet();
+        $fieldSet = $this->createValidObject();
        // $this->fail("id: ".$fieldSet->id);
         $this->object->delete((int)$fieldSet->id);
         
@@ -205,12 +205,25 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testDeleteArray() {
 
         //setup
-        $fieldSet = $this->createValidFieldSet();
+        $object = $this->createValidObject();
        // $this->fail("id: ".$fieldSet->id);
-        $this->object->delete($fieldSet->toArray());
+        $this->object->delete($object->toArray());
         
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($fieldSet->id); 
+        $result = $this->object->getObjectById($object->id); 
+    }
+    
+  public function testDeleteBySection() {
+
+        //setup
+        $object = $this->createValidObject();
+
+        //test delete
+        $this->object->deleteBySection($object->section);
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->object->getObjectById($object->id);
     }
 
     public function testDeleteException() {

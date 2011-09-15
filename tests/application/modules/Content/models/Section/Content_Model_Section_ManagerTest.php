@@ -59,12 +59,25 @@ class Content_Model_Section_ManagerTest extends PHPUnit_Framework_TestCase {
         $section->url = 'test_section';
         $section->visible = false;
         
-        
-        $result = $this->object->createByTemplate($section,'Base');
+        $result = $this->object->createByTemplate($section,'Pages');
         
         $this->assertInstanceOf('Content_Model_Section_Interface', $result);
     }
     
-    
+    /**
+     * @todo Implement testCreateBasedOnTemplate().
+     */
+    public function testDelete() {
+        
+//        $section = new Content_Model_Section();
+//        $section->title = 'Test Section';
+//        $section->url = 'test_section';
+//        $section->visible = false;
+//        
+//        
+//        $result = $this->object->createByTemplate($section,'Base');
+//        
+//        $this->assertInstanceOf('Content_Model_Section_Interface', $result);
+    }
 
 }

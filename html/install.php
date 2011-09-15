@@ -27,7 +27,7 @@ defined('APPLICATION_PATH')
 
 // Define application environment
 defined('APPLICATION_ENV')
-    || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'testing')); //
+    || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'development')); //
 
 defined('APPLICATION_ROOT')
     || define('APPLICATION_ROOT', realpath(dirname(__FILE__) . '/..'));

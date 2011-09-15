@@ -47,14 +47,15 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         //$this->ass
     }
     
-    private function createValidSectionField() {
+    private function createValidObject() {
         $field = new Content_Model_Field();
         $field->section = 1;
         $field->order = 2;
         $field->element = 'text';
         $field->name = 'testName';
-        $field->name_label = 'testLabel';
-        $field->default_value = 'testValue';
+        $field->label = 'testLabel';
+        $field->value = 'testValue';
+        $field->description = 'testDescription';
         $field->attributes = array('testA'=>'valueA');
         $field->validators = array('testB'=>'valueB');
         $field->filters = array('testC'=>'valueC');
@@ -75,8 +76,8 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $field->order = 2;
         //$field->name = 'testName';
         $field->element = 'text';
-        $field->name_label = 'testLabel';
-        $field->default_value = 'testValue';
+        $field->label = 'testLabel';
+        $field->value = 'testValue';
         $field->attributes = array('testA'=>'valueA');
         $field->validators = array('testB'=>'valueB');
         $field->filters = array('testC'=>'valueC');
@@ -86,6 +87,19 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $field->visible = true;
         $this->setExpectedException('Exception');
         $result = $this->object->create($field);
+    }
+    
+    public function testCreateValidObjectFromMinimum() {
+        $field = new Content_Model_Field();
+        $field->section = 1;
+        $field->element = 'text';
+        $field->name = 'testName';
+        $field->label = 'testLabel';
+
+        $result = $this->object->create($field);
+
+        $this->assertInstanceOf('Content_Model_Field_Interface', $result);
+        return $result;
     }
 //    
 //    public function testDuplicateUrl() {
@@ -97,15 +111,16 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testCreateValidFromObject() {
 
-        $result = $this->createValidSectionField();       
+        $result = $this->createValidObject();       
 
         $this->assertNotNull($result->id);
         $this->assertEquals(1, $result->section);
         $this->assertEquals(2, $result->order);
         $this->assertEquals('text', $result->element);
         $this->assertEquals('testName', $result->name);
-        $this->assertEquals('testLabel', $result->name_label);
-        $this->assertEquals('testValue', $result->default_value);
+        $this->assertEquals('testLabel', $result->label);
+        $this->assertEquals('testValue', $result->value);
+        $this->assertEquals('testDescription', $result->description);
         $this->assertEquals('valueA', $result->attributes['testA']);
         $this->assertEquals('valueB', $result->validators['testB']);
         $this->assertEquals('valueC', $result->filters['testC']);
@@ -122,8 +137,9 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
             'order' => 2,
             'element' => 'text',
             'name' => 'testName',
-            'name_label' => 'testLabel',
-            'default_value' => 'testValue',
+            'label' => 'testLabel',
+            'value' => 'testValue',
+            'description' => 'testDescription',
             'attributes' => array('testA' => 'valueA'),
             'validators' => array('testB' => 'valueB'),
             'filters' => array('testC' => 'valueC'),
@@ -141,8 +157,9 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(2, $result->order);
         $this->assertEquals('text', $result->element);
         $this->assertEquals('testName', $result->name);
-        $this->assertEquals('testLabel', $result->name_label);
-        $this->assertEquals('testValue', $result->default_value);
+        $this->assertEquals('testLabel', $result->label);
+        $this->assertEquals('testValue', $result->value);
+        $this->assertEquals('testDescription', $result->description);
         $this->assertEquals('valueA', $result->attributes['testA']);
         $this->assertEquals('valueB', $result->validators['testB']);
         $this->assertEquals('valueC', $result->filters['testC']);
@@ -162,7 +179,7 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testGetObjectById() {
 
         //setup
-        $field = $this->createValidSectionField();
+        $field = $this->createValidObject();
 
         //test getObject
         $result = $this->object->getObjectById($field->id);
@@ -174,8 +191,9 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(2, $result->order);
         $this->assertEquals('text', $result->element);
         $this->assertEquals('testName', $result->name);
-        $this->assertEquals('testLabel', $result->name_label);
-        $this->assertEquals('testValue', $result->default_value);
+        $this->assertEquals('testLabel', $result->label);
+        $this->assertEquals('testValue', $result->value);
+        $this->assertEquals('testDescription', $result->description);
         $this->assertEquals('valueA', $result->attributes['testA']);
         $this->assertEquals('valueB', $result->validators['testB']);
         $this->assertEquals('valueC', $result->filters['testC']);
@@ -214,15 +232,16 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testUpdateFromObject() {
 
         //setup
-        $field = $this->createValidSectionField();
+        $field = $this->createValidObject();
 
         //update values
         $field->section = 2;
         $field->order = 3;
         $field->element = 'textarea';
         $field->name = 'testName2';
-        $field->name_label = 'testLabel2';
-        $field->default_value = 'testValue2';
+        $field->label = 'testLabel2';
+        $field->value = 'testValue2';
+        $field->description = 'testDescription2';
         $field->attributes = array('testA'=>'valueA2');
         $field->validators = array('testB'=>'valueB2');
         $field->filters = array('testC'=>'valueC2');
@@ -239,8 +258,9 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(3, $result->order);
         $this->assertEquals('textarea', $result->element);
         $this->assertEquals('testName2', $result->name);
-        $this->assertEquals('testLabel2', $result->name_label);
-        $this->assertEquals('testValue2', $result->default_value);
+        $this->assertEquals('testLabel2', $result->label);
+        $this->assertEquals('testValue2', $result->value);
+        $this->assertEquals('testDescription2', $result->description);
         $this->assertEquals('valueA2', $result->attributes['testA']);
         $this->assertEquals('valueB2', $result->validators['testB']);
         $this->assertEquals('valueC2', $result->filters['testC']);
@@ -253,7 +273,7 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testUpdateFromArray() {
 
         //setup
-        $field = $this->createValidSectionField();
+        $field = $this->createValidObject();
 
         $array = $field->toArray();
         
@@ -262,8 +282,9 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $array['order'] = 3;
         $array['element'] = 'textarea';
         $array['name'] = 'testName2';
-        $array['name_label'] = 'testLabel2';
-        $array['default_value'] = 'testValue2';
+        $array['label'] = 'testLabel2';
+        $array['value'] = 'testValue2';
+        $array['description'] = 'testDescription2';
         $array['attributes'] = array('testA'=>'valueA2');
         $array['validators'] = array('testB'=>'valueB2');
         $array['filters'] = array('testC'=>'valueC2');
@@ -281,8 +302,9 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(3, $result->order);
         $this->assertEquals('textarea', $result->element);
         $this->assertEquals('testName2', $result->name);
-        $this->assertEquals('testLabel2', $result->name_label);
-        $this->assertEquals('testValue2', $result->default_value);
+        $this->assertEquals('testLabel2', $result->label);
+        $this->assertEquals('testValue2', $result->value);
+        $this->assertEquals('testDescription2', $result->description);
         $this->assertEquals('valueA2', $result->attributes['testA']);
         $this->assertEquals('valueB2', $result->validators['testB']);
         $this->assertEquals('valueC2', $result->filters['testC']);
@@ -303,7 +325,7 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testDeleteObject() {
 
         //setup
-        $field = $this->createValidSectionField();
+        $field = $this->createValidObject();
 
         //test delete
         $this->object->delete($field);
@@ -316,7 +338,7 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testDeleteId() {
 
         //setup
-        $field = $this->createValidSectionField();
+        $field = $this->createValidObject();
        // $this->fail("id: ".$field->id);
         $this->object->delete((int)$field->id);
         
@@ -327,12 +349,25 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testDeleteArray() {
 
         //setup
-        $field = $this->createValidSectionField();
+        $field = $this->createValidObject();
        // $this->fail("id: ".$field->id);
         $this->object->delete($field->toArray());
         
         $this->setExpectedException('NotFoundException');
         $result = $this->object->getObjectById($field->id); 
+    }
+    
+     public function testDeleteBySection() {
+
+        //setup
+        $object = $this->createValidObject();
+
+        //test delete
+        $this->object->deleteBySection($object->section);
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->object->getObjectById($object->id);
     }
 
     public function testDeleteException() {
