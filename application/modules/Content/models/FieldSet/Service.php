@@ -73,6 +73,19 @@ class Content_Model_FieldSet_Service {
         }
         return $content;
     }
+    
+    /**
+     * @param int $id
+     * @return Content_Model_FieldSet_Interface 
+     */
+    public function getObjectsBySection($id){
+        $results = $this->getMapper()->fetchObjectsBySection($id);
+
+        if (empty($results)) {
+            throw new NotFoundException('Field Set Not Found', 404);
+        }
+        return $results;
+    }
 
     public function create($fieldSet) {
         if ($fieldSet instanceof Content_Model_FieldSet_Interface) {
@@ -109,6 +122,8 @@ class Content_Model_FieldSet_Service {
         } else {
             throw new InvalidArgumentException('Invalid Field Set');
         }
+        
+        //if last fieldset don't delete
 
         return $this->getMapper()->delete($h);
     }
@@ -118,7 +133,7 @@ class Content_Model_FieldSet_Service {
     }
     
     public function deleteAll(){
-        if(APPLICATION_ENV != 'testing'){
+        if(APPLICATION_ENV == 'production'){
             throw new Exception("Not Allowed");
         }
         $this->getMapper()->deleteAll();

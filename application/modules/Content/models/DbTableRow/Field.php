@@ -80,6 +80,10 @@ class Content_Model_DbTableRow_Field extends Zend_Db_Table_Row_Abstract implemen
         if(is_array($this->attributes)){
             $this->attributes = serialize($this->attributes);
         }
+        
+        if(empty($this->value)){
+            $this->value = '';
+        }
     }
 
     public function save(){

@@ -2,76 +2,52 @@
 
 class Content_Form_Field extends Zend_Form
 {
-
-    public function init()
-    {
-//        /* F /**
-//     * @var int
-//     */
-//    public $id;
-//    /**
-//     * @var int
-//     */
-//    public $section;
-//    
-//    /**
-//     * @var order
-//     */
-//    public $order;
-//    
-//    /**
-//     * @var string
-//     */
-//    public $name;
-//    /**
-//     * @var string
-//     */
-//    public $name_label;
-//    /**
-//     * @var string
-//     */
-//    public $default_value;
-//    /**
-//     * @var array
-//     */
-//    public $validators;
-//    /**
-//     * @var array
-//     */
-//    public $filters;
-//    /**
-//     * @var boolean
-//     */
-//    public $locked = false;
-//    
-//    public $edit_name = true;
-//    
-//    public $required = false;
-//    
-//    public $visible = true;*/
+    private $_section;
+    public function __construct($section) {
+        $this->_section = $section;
+        parent::__construct();
+    }
     
+    public function init()
+    {  
      
     //controller will load parent items
         
-        $type = $this->createElement('select','type');
+        $type = $this->createElement('select','element');
 
-        $type->setMultiOptions(array('text' => 'Text Field',
-                                     'textarea' => 'Text Area',
-                                     'select' => 'Select',
-                                     'checkboxs' => 'CheckBoxes',
-                                     'radios' => 'N/A'));
+        $type->setMultiOptions(array('Text' => 'Text Field',
+                                     'Textarea' => 'Text Area',
+                                     'Select' => 'Select',
+                                     'MultiCheckboxes' => 'CheckBoxes',
+                                     'Radio' => 'Radio List'));
         $type->setLabel('Type: ');
         $type->setRequired('true');
         $this->addElement($type);
         
         
+        $set = $this->createElement('select','set');
         
-        $name_label = $this->createElement('text','name_label');
-        $name_label->setLabel('Label: ');
-        $name_label->setDescription('This is the label that will show up in the form interface');
-        $name_label->setRequired('true');
-        $name_label->addFilter('StripTags');
-        $this->addElement($name_label);
+        $service = new Content_Model_FieldSet_Service();
+        $results = $service->getObjectsBySection($this->_section);
+        
+        $array = array();
+        foreach($results as $set2){
+            $array[$set2->id] = $set2->title;
+        }
+
+        $set->setMultiOptions($array);
+        $set->setLabel('Field Set: ');
+        $set->setRequired('true');
+        $this->addElement($set);
+        
+        
+        
+        $label = $this->createElement('text','label');
+        $label->setLabel('Label: ');
+        $label->setDescription('This is the label that will show up in the form interface');
+        $label->setRequired('true');
+        $label->addFilter('StripTags');
+        $this->addElement($label);
         
         //use url fiedl type to format nice system name
         $name = $this->createElement('text','name');
@@ -83,14 +59,14 @@ class Content_Form_Field extends Zend_Form
         
         $value = $this->createElement('text','value');
         $value->setLabel('Value: ');
-        $value->setRequired('true');
+        //$value->setRequired('true');
         $value->addFilter('StripTags');
-        $this->addElement($name_label);
+        $this->addElement($value);
         
 
         
         
-        $instructions = $this->createElement('textarea','instructions');
+        $instructions = $this->createElement('textarea','description');
         $instructions->setLabel('Instructions: ');
         $instructions->addFilter('StripTags');
         $instructions->setAttrib('rows','3');
@@ -102,12 +78,12 @@ class Content_Form_Field extends Zend_Form
       //   $required->addMultiOption('1','required');
       //  $this->addElement($required);
         
-        $required = $this->createElement('checkbox', 'confirm',array('uncheckedValue' => ""));
+        $required = $this->createElement('checkbox', 'required',array('uncheckedValue' => ""));
         $required->setLabel('Required: ');
         $this->addElement($required);
         
         
-        $order = $this->createElement('text','Order');
+        $order = $this->createElement('text','order');
         $order->setLabel('Order: ');
         $order->setRequired('true');
         $order->addFilter('StripTags');

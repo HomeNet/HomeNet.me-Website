@@ -26,7 +26,7 @@
  *
  * @author Matthew Doll <mdoll at homenet.me>
  */   
-class Content_Plugin_Template_Pages_Installer {
+class Content_Plugin_Template_Pages_Installer extends Content_Model_Plugin_Template {
     
     function getDependencies(){
         $dependencies = array(
@@ -37,15 +37,15 @@ class Content_Plugin_Template_Pages_Installer {
     
     
     function getFields($fieldSets){
-         $fields = parent::installFields($fieldSets);
+         $fields = parent::getFields($fieldSets);
          $fields[] = array(
             'set' => $fieldSets['publish'],
             'order' => 2,
-            'type' => Content_Model_Field::USER,
+            'type' => Content_Model_Field::TEMPLATE,
             'element' => 'textarea',
             'name' => 'content',
-            'name_label' => 'Content',
-            'default_value' => '',
+            'label' => 'Content',
+            'value' => '',
             'validators' => array(),
             'filters' => array(),
             'locked' => false,

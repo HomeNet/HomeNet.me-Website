@@ -50,10 +50,10 @@ class Content_Model_DbTableRow_Content extends Zend_Db_Table_Row_Abstract implem
     }
     
     public function uncompress(){
-        if(is_string($this->content)){
-            $this->content = unserialize($this->content);
-        }
-        $this->active = (bool) $this->active;
+//        if(is_string($this->content)){
+//            $this->content = unserialize($this->content);
+//        }
+        $this->autosave = (bool) $this->autosave;
         $this->visible = (bool) $this->visible;
 
 //        if(is_string($this->permissions)){
@@ -62,9 +62,9 @@ class Content_Model_DbTableRow_Content extends Zend_Db_Table_Row_Abstract implem
     }
     
     public function compress(){
-        if(is_array($this->content)){
-            $this->content = serialize($this->content);
-        }
+//        if(is_array($this->content)){
+//            $this->content = serialize($this->content);
+//        }
 //
 //        if(is_array($this->permissions)){
 //            $this->permissions = serialize($this->permissions);

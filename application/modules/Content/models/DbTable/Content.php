@@ -27,7 +27,7 @@
 class Content_Model_DbTable_Content extends Zend_Db_Table_Abstract
 {
 
-    protected $_name = 'content_content_temp';
+    protected $_name = 'content_content';
     
     //protected $_rowClass = 'Content_Model_User';
     protected $_rowClass = 'Content_Model_DbTableRow_Content';

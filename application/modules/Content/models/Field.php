@@ -38,12 +38,12 @@ class Content_Model_Field implements Content_Model_Field_Interface {
     /**
      * @var order
      */
-    public $order;
+    public $order = 0;
     
     /**
      * @var string
      */
-    public $type = 0;
+    public $type = 2;
     
     /**
      * @var string
@@ -52,25 +52,29 @@ class Content_Model_Field implements Content_Model_Field_Interface {
     /**
      * @var string
      */
-    public $name_label;
+    public $label;
+     /**
+     * @var string
+     */
+    public $description ='';
     /**
      * @var string
      */
-    public $default_value;
+    public $value = '';
     
     /**
      * @var array
      */
-    public $attributes;
+    public $attributes = array();
     
     /**
      * @var array
      */
-    public $validators;
+    public $validators = array();
     /**
      * @var array
      */
-    public $filters;
+    public $filters = array();
     /**
      * @var boolean
      */
@@ -83,8 +87,8 @@ class Content_Model_Field implements Content_Model_Field_Interface {
     public $visible = true;
     
     const SYSTEM = 0;
-    const USER = 1;
-  
+    const TEMPLATE = 1;
+  const USER = 2;
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {

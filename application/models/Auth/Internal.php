@@ -32,6 +32,7 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
      * @return String
      */
     public function hashPassword($username, $password) {
+        $username = strtolower($username);
         $config = Zend_Registry::get('config');
         $salt = $config->site->salt;
         return sha1($salt . $username . $salt. $username. $password . $salt. $password. $password . $salt . $password . $salt. $salt);
@@ -57,7 +58,7 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
         //     echo $username;
 
         $row->id = $credentials['id'];
-        $row->username = $credentials['username'];
+        $row->username = strtolower($credentials['username']);
         $row->password = $this->hashPassword($credentials['username'], $credentials['password']);
         try {
             $row->save();
@@ -86,6 +87,8 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
         if (empty($credentials['password'])) {
             throw new InvalidArgumentException('Password Required');
         }
+        
+        $credentials['username'] = strtolower($credentials['username']);
 
         // get the default db adapter
         $db = Zend_Db_Table::getDefaultAdapter();
@@ -143,10 +146,12 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
 
     public function deleteAll() {
 
-        if (APPLICATION_ENV == 'testing') {
+         if(APPLICATION_ENV == 'production'){
+            throw new Exception("Not Allowed");
+        }
             $table = new Core_Model_DbTable_AuthInternal();
             $table->getAdapter()->query('TRUNCATE TABLE `' . $table->info('name') . '`');
-        }
+        
     }
 
 }

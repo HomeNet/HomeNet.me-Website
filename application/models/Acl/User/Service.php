@@ -151,7 +151,7 @@ public function deleteByUser($user) {
     }
     
      public function deleteAll(){
-        if(APPLICATION_ENV != 'testing'){
+        if(APPLICATION_ENV == 'production'){
             throw new Exception("Not Allowed");
         }
         $this->getMapper()->deleteAll();

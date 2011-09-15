@@ -37,8 +37,8 @@ class Content_SectionController extends Zend_Controller_Action
         //save
         $values = $form->getValues();
 
-        $service = new Content_Model_Section_Service();
-        $service->create($values);
+        $service = new Content_Model_Section_Manager();
+        $service->createByTemplate($values);
         
         return $this->_redirect($this->view->url(array('controller'=>'section', 'action'=>'index'),'content').'?message=Successfully added new Set');//
     }

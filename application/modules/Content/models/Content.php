@@ -26,6 +26,11 @@
  */
 class Content_Model_Content implements Content_Model_Content_Interface {
 
+    private $_fields = array();
+    
+    private $_values = array('autosave' => false, 'status' => -1, 'visible'=>false);
+    
+    
     /**
      * @var int
      */
@@ -36,9 +41,14 @@ class Content_Model_Content implements Content_Model_Content_Interface {
     public $revision;
     
      /**
-     * @var timestamp
+     * @var int
      */
-    public $active;
+    public $owner;
+    
+     /**
+     * @var int
+     */
+    public $autosave = false;
     
     /**
      * @var int
@@ -48,23 +58,23 @@ class Content_Model_Content implements Content_Model_Content_Interface {
      * @var int
      */
     public $status = -1;
-    /**
-     * @var Zend_Date
-     */
-    public $created;
-    
-    /**
-     * @var Zend_Date
-     */
-    public $expires;
-    /**
-     * @var int
-     */
-    public $author;
-     /**
-     * @var int
-     */
-    public $editor;
+//    /**
+//     * @var Zend_Date
+//     */
+//    public $created;
+//    
+//    /**
+//     * @var Zend_Date
+//     */
+//    public $expires;
+//    /**
+//     * @var int
+//     */
+//    public $author;
+//     /**
+//     * @var int
+//     */
+//    public $editor;
     
     
     
@@ -77,12 +87,12 @@ class Content_Model_Content implements Content_Model_Content_Interface {
      */
     public $url;
     
-    /**
-     * @var array
-     */
-    public $content;
+//    /**
+//     * @var array
+//     */
+//    public $content;
     
-    public $visible;
+    public $visible = true;
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {

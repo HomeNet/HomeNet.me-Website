@@ -21,7 +21,7 @@
 
 /**
  * @package Content
- * @subpackage Content
+ * @subpackage Field
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
@@ -53,12 +53,25 @@ class Content_Model_Field_Service {
      * @return Content_Model_Field_Interface 
      */
     public function getObjectById($id) {
-        $content = $this->getMapper()->fetchObjectById($id);
+        $result = $this->getMapper()->fetchObjectById($id);
 
-        if (empty($content)) {
-            throw new NotFoundException('Content not found', 404);
+        if (empty($result)) {
+            throw new NotFoundException('Object not found', 404);
         }
-        return $content;
+        return $result;
+    }
+    
+    /**
+     * @param int $id
+     * @return Content_Model_Field_Interface 
+     */
+    public function getObjectBySectionName($section,$name) {
+        $result = $this->getMapper()->fetchObjectBySectionName($section,$name);
+
+        if (empty($result)) {
+            throw new NotFoundException('Object not found', 404);
+        }
+        return $result;
     }
 
     /**
@@ -85,35 +98,63 @@ class Content_Model_Field_Service {
 //    }
 
     /**
-     * @param mixed $sectionField
+     * @param mixed $object
      * @throws InvalidArgumentException 
      */
-    public function create($sectionField) {
-        if ($sectionField instanceof Content_Model_Field_Interface) {
-            $h = $sectionField;
-        } elseif (is_array($sectionField)) {
-            $h = new Content_Model_Field(array('data' => $sectionField));
+    public function create($object) {
+        if ($object instanceof Content_Model_Field_Interface) {
+            $h = $object;
+        } elseif (is_array($object)) {
+            $h = new Content_Model_Field(array('data' => $object));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }
+        $field = $this->getMapper()->save($h);
+        
+        if($field->type != Content_Model_Field::SYSTEM){
+            $service = new Content_Model_Content_Service();
+            $service->addCustomField($field);
+        }
 
-        return $this->getMapper()->save($h);
+        return $field;
     }
 
     /**
-     * @param mixed $sectionField
+     * @param mixed $object
      * @throws InvalidArgumentException 
      */
-    public function update($sectionField) {
-        if ($sectionField instanceof Content_Model_Field_Interface) {
-            $h = $sectionField;
-        } elseif (is_array($sectionField)) {
-            $h = new Content_Model_Field(array('data' => $sectionField));
+    public function update($object) {
+        if ($object instanceof Content_Model_Field_Interface) {
+            $h = $object;
+        } elseif (is_array($object)) {
+            $h = new Content_Model_Field(array('data' => $object));
         } else {
             throw new InvalidArgumentException('Invalid Content');
         }
+        
+        $found = null;
+        
+        try {
+            $found = $this->getObjectBySectionName($h->section,$h->name);
+        } catch(NotFoundException $e){
+            
+        }
+        
+        if(!is_null($found)){
+            throw new DuplicateEntryException('Name already exists ');
+        }
+        
+        $old = $this->getObjectById($h->id);
+        
+        
+        $field = $this->getMapper()->save($h);
+        
+        if($field->type != Content_Model_Field::SYSTEM){
+            $service = new Content_Model_Content_Service();
+            $service->renameCustomField($old, $field);
+        }
 
-        return $this->getMapper()->save($h);
+        return $field;
     }
 
     /**
@@ -122,14 +163,22 @@ class Content_Model_Field_Service {
      */
     public function delete($sectionField) {
         if (is_int($sectionField)) {
-            $h = new Content_Model_Field();
-            $h->id = $sectionField;
+            
+            $h = $this->getObjectById($sectionField);
+            //$h = new Content_Model_Field();
+            //$h->id = $sectionField;
         } elseif ($sectionField instanceof Content_Model_Field_Interface) {
             $h = $sectionField;
         } elseif (is_array($sectionField)) {
             $h = new Content_Model_Field(array('data' => $sectionField));
         } else {
             throw new InvalidArgumentException('Invalid Content');
+        }
+        
+        if($h->type != Content_Model_Field::SYSTEM){
+            $service = new Content_Model_Content_Service();
+            //die('remove field');
+            $service->removeCustomField($h);
         }
 
         return $this->getMapper()->delete($h);

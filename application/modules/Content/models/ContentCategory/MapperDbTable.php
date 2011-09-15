@@ -116,6 +116,11 @@ class Content_Model_ContentCategory_MapperDbTable implements Content_Model_Conte
         throw new Exception('Invalid Category');
     }
     
+    public function deleteBySection($section){
+         $where = $this->getTable()->getAdapter()->quoteInto('section = ?',$section);
+         $this->getTable()->delete($where);
+    }
+    
     public function deleteAll(){
         if(APPLICATION_ENV != 'production'){
             $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');

@@ -68,10 +68,9 @@ class Content_Model_FieldSet_MapperDbTable implements Content_Model_FieldSet_Map
 //           $user = $u->id;
 //        }
 //
-//       $select = $this->getTable()->select()->where('user = ?',$user)
-//                                ->where('house = ?',$house);
-//
-//       return $this->getTable()->fetchAll($select);
+       $select = $this->getTable()->select()->where('section = ?',$section);
+
+       return $this->getTable()->fetchAll($select);
     }
 
 
@@ -119,9 +118,9 @@ class Content_Model_FieldSet_MapperDbTable implements Content_Model_FieldSet_Map
         throw new Exception('Invalid Content');
     }
     
-     public function deleteBySection($section){
-         $select = $this->getTable()->select()->where('section = ?',$section);
-         $this->getTable()->delete($select);
+   public function deleteBySection($section){
+         $where = $this->getTable()->getAdapter()->quoteInto('section = ?',$section);
+         $this->getTable()->delete($where);
     }
     
     public function deleteAll(){

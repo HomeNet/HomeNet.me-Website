@@ -48,6 +48,61 @@ class Content_Model_Content_Service {
         $this->_mapper = $mapper;
     }
 
+    //
+    
+    public function addCustomTable($section, $fields = array()){
+        
+        return $this->getMapper()->addCustomTable($section);
+        
+        
+        //check if table exisits
+            //false
+                //create table with columns
+            
+            //true
+               //check to see
+               ////throw Exception 
+        
+        /*CREATE TABLE IF NOT EXISTS `content_section_5` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `revision` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`,`revision`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+*/
+        
+    }
+    
+    public function addCustomField(Content_Model_Field_Interface $field){
+        //alter table
+        //ALTER TABLE `content_section_5` ADD `content` LONGTEXT NOT NULL 
+        return $this->getMapper()->addCustomField($field);
+    }
+    
+     public function renameCustomField(Content_Model_Field_Interface $old, Content_Model_Field_Interface $new){
+        //alter table
+        //ALTER TABLE `content_section_5` ADD `content` LONGTEXT NOT NULL 
+        return $this->getMapper()->renameCustomField($old, $new);
+    }
+    
+     public function removeCustomField(Content_Model_Field_Interface $field){
+        //alter table
+        //ALTER TABLE `content_section_5` DROP `content`
+        return $this->getMapper()->removeCustomField($field); 
+    }
+    
+      public function removeCustomTable($section){
+        //drop table
+        //DROP TABLE `content_section_5`
+        return $this->getMapper()->removeCustomTable($section); 
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * @param int $id
      * @return Content_Model_Content_Interface 
@@ -62,17 +117,33 @@ class Content_Model_Content_Service {
     }
 
     /**
-     * @param int $id
+     * @param int $section
      * @return Content_Model_Content_Interface[]
      */
-    public function getObjectsBySection($section) {
-        $contents = $this->getMapper()->fetchObjectsBySectionId($section);
+    public function getNewestObjectsBySection($section) {
+        $contents = $this->getMapper()->fetchNewestObjectsBySection($section);
 
 //        if (empty($contents)) {
 //            throw new Exception('Apikey not found', 404);
 //        }
         return $contents;
     }
+    
+    /**
+     * @param int $id
+     * @return Content_Model_Content_Interface[]
+     */
+    public function getNewestObjectById($id) {
+        $contents = $this->getMapper()->fetchNewestObjectById($id);
+
+if (empty($content)) {
+            throw new NotFoundException('Content not found', 404);
+        }
+        return $contents;
+    }
+    
+    
+    
 
 //    public function getObjectsByIdHouse($id,$house){
 //        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);

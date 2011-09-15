@@ -45,6 +45,9 @@ class Content_Installer extends CMS_Installer_Abstract
         $service = new Content_Model_FieldSet_Service();
         $service->deleteAll();
         
+        $service = new Content_Model_Template_Service();
+        $service->deleteAll();
+        
         $service = new Content_Model_Section_Service();
         $service->deleteAll();
         

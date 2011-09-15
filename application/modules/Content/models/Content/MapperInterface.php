@@ -31,14 +31,14 @@ interface Content_Model_Content_MapperInterface {
      * @return Content_Model_Content_Interface
      */
     public function fetchObjectByIdRevision($id,$revision);
+      /**
+     * @return Content_Model_Content_Interface
+     */
+    public function fetchNewestObjectsBySection($section);
     /**
      * @return Content_Model_Content_Interface
      */
-    public function fetchObjectsBySection($section);
-    /**
-     * @return Content_Model_Content_Interface
-     */
-    public function fetchObjectsByUrl($url);
+    public function fetchNewestObjectBySectionUrl($section, $url);
 
 //    public function fetchObjectsByIdHouse($id,$house);
 

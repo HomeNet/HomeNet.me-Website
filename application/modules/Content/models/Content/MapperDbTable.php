@@ -67,9 +67,9 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
      * @param int $section 
      * @return Content_Model_DbTabeRow_SectionContent 
      */
-   public function fetchObjectsBySection($section){
+   public function fetchNewestObjectsBySection($section){
 
-       $select = $this->getTable()->select()->where('section = ?',$section);
+       $select = $this->getTable()->select()->from($this->getTable(),array(new Zend_Db_Expr('*'),new Zend_Db_Expr('MAX(revision)')))->where('section = ?',$section)->group('id');
        return $this->getTable()->fetchAll($select);
     }  
     
@@ -78,10 +78,20 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
      * @param string $url
      * @return Content_Model_DbTabeRow_SectionContent 
      */
-    public function fetchObjectsByUrl($url){
+    public function fetchNewestObjectBySectionUrl($section, $url){
 
-       $select = $this->getTable()->select()->where('section = ?',$section);
-       return $this->getTable()->fetchAll($select);
+       $select = $this->getTable()->select()->where('section = ?',$section)->where('url = ?',$url)->order('revision DESC')->limit(1);
+       return $this->getTable()->fetchRow($select);
+    }
+    /**
+     *
+     * @param string $id
+     * @return Content_Model_DbTabeRow_SectionContent 
+     */
+    public function fetchNewestObjectById($id){
+
+       $select = $this->getTable()->select()->where('id = ?',$id)->order('revision DESC')->limit(1);
+       return $this->getTable()->fetchRow($select);
     }
 
 
@@ -92,6 +102,88 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
 //
 //       return $this->getTable()->fetchAll($select);
 //    }
+    
+    public function addCustomTable($section){
+        
+        //@todo security issue validate $section
+        
+       // return $this->getMapper()->prepareTable($section, $fields);
+        $this->getTable()->getAdapter()->query('CREATE TABLE IF NOT EXISTS `content_custom_'.mysql_real_escape_string($section).'` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `revision` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`,`revision`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;');
+        
+        //check if table exisits
+            //false
+                //create table with columns
+            
+            //true
+               //check to see
+               ////throw Exception 
+        
+        /*CREATE TABLE IF NOT EXISTS `content_section_5` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `revision` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`,`revision`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+*/
+        
+    }
+    
+    public function addCustomField(Content_Model_Field_Interface $field){
+        //@todo check to make sure section is valid
+        //check to make sure column doesn't exist yet
+        
+        //load plugin
+        
+        $class = 'Content_Plugin_Element_'.$field->element.'_Installer';
+        
+        if(!class_exists($class, true)){
+            throw new Exception('Element not found: '.$field->element);
+        }
+        
+        $element = new $class();
+        
+        return $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_'.mysql_real_escape_string($field->section).'` ADD `'.mysql_real_escape_string($field->name).'` '.$element->getMysqlColumn().' ');
+    }
+    
+    public function renameCustomField(Content_Model_Field_Interface $old, Content_Model_Field_Interface $field){
+        //@todo check to make sure section is valid
+        //check to make sure column doesn't exist yet
+        
+        if($old->id != $field->id){
+            throw new InvalidArgumentException('Object Id\'s Do not match');
+        }
+        
+        
+        //load plugin
+        
+        $class = 'Content_Plugin_Element_'.$field->element.'_Installer';
+        
+        if(!class_exists($class, true)){
+            throw new Exception('Element not found: '.$field->element);
+        }
+        
+        $element = new $class();
+        
+        return $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_'.mysql_real_escape_string($field->section).'` CHANGE `'.mysql_real_escape_string($old->name).'` `'.mysql_real_escape_string($field->name).'` '.$element->getMysqlColumn().' ');
+    }
+    
+     public function removeCustomField(Content_Model_Field_Interface $field){
+        //alter table
+        return $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_'.mysql_real_escape_string($field->section).'` DROP `'.mysql_real_escape_string($field->name).'`');
+       // $this->getMapper()->removeField($field); 
+    }
+    
+      public function removeCustomTable($section){
+        //drop table
+        //DROP TABLE `content_section_5`
+        return $this->getTable()->getAdapter()->query('DROP TABLE `content_custom_'.mysql_real_escape_string($section));
+    }
+    
+    
+    
 
 
 
@@ -131,8 +223,9 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
     }
     
     public function deleteBySection($section){
-         $select = $this->getTable()->select()->where('section = ?',$section);
-         $this->getTable()->delete($select);
+ 
+         $where = $this->getTable()->getAdapter()->quoteInto('section = ?',$section);
+         $this->getTable()->delete($where);
     }
     
     public function deleteAll(){

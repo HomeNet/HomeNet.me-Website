@@ -6,19 +6,20 @@ class Content_ContentController extends Zend_Controller_Action
     public function init()
     {
         $this->view->controllerTitle = 'Content'; //for generic templates
+        $this->view->id = $this->_getParam('id');
     }
 
     public function indexAction()
     {
         $service = new Content_Model_Content_Service();
-        $this->view->assign('objects', $service->getObjects());
+        $this->view->assign('objects', $service->getNewestObjectsBySection($this->_getParam('id')));
     }
 
     public function newAction()
     {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        
-        $form = new Content_Form_Content();
+        $manager = new Content_Model_Section_Manager();
+        $form = $manager->getForm($this->_getParam('id'));
         $form->addElement('submit', 'submit', array('label' => 'Create'));
         $this->view->assign('form',$form);
         

@@ -40,8 +40,8 @@ interface Content_Model_ContentCategory_MapperInterface {
 
     public function delete(Content_Model_ContentCategory_Interface $category);
     
+    public function deleteBySection($section);
+    
     public function deleteAll();
     
-    
-
 }

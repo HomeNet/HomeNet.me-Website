@@ -38,7 +38,7 @@ interface Content_Model_Field_MapperInterface {
     /**
      * @return Content_Model_Field_Interface
      */
-    public function fetchObjectsByUrl($url);
+    public function fetchObjectBySectionName($section,$name);
 
 //    public function fetchObjectsByIdHouse($id,$house);
 

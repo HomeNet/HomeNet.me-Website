@@ -1,4 +1,26 @@
-<br /><br />
-<div id="view-content">
-	<p>View script for controller <b>Content</b> and script/action name <b>index</b></p>
-</div>
+<h1><?php echo $this->controllerTitle ?></h1>
+
+
+
+<p><a class="button"  href="<?php echo $this->url(array('controller' => 'section', 'action' => 'index'), 'content'); ?>">Back to Section</a></p>
+
+<table class="ui-widget" width="100%">
+    <thead class="ui-widget-header">
+        <tr><th>Id</th><th>Revision</th><th>Title</th> <th width="150">Edit/Delete</th></tr>
+    </thead>
+    <tbody class="ui-widget-content">
+        <?php
+        foreach ($this->objects as $object) {
+            /* @var $object Content_Model_Category */
+            ?>
+            <tr  class="<?php echo $this->cycle(array("", "ui-state-highlight"))->next() ?>" >
+                <td class="left"><?php echo $object->id ?></td>
+                <td class="left"><?php echo $object->Revision ?></td>
+                <td class="left"><?php echo $object->title ?></td>
+                <td><a href="<?php echo $this->url(array('controller' => 'content', 'id' => $object->id, 'action' => 'edit'), 'content-id'); ?>">Edit</a> <a href="<?php echo $this->url(array('controller' => 'content', 'id' => $object->id, 'action' => 'delete'), 'content-id'); ?>">Delete</a></td>
+            </tr><?php
+        }
+        ?>
+    </tbody>
+</table>
+<a class="button"  href="<?php echo $this->url(array('controller' => 'content', 'id' => $this->id, 'action' => 'new'), 'content-id'); ?>">New</a>

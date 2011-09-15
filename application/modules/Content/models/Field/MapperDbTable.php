@@ -46,12 +46,6 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
         $this->_table = $table;
     }
 
-
-
-
-
-
-
     public function fetchObjectById($id){
         return $this->getTable()->find($id)->current();
     }
@@ -67,10 +61,10 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
      * @param string $url
      * @return 
      */
-    public function fetchObjectsByUrl($url){
+    public function fetchObjectBySectionName($section,$name){
 
-       $select = $this->getTable()->select()->where('section = ?',$section);
-       return $this->getTable()->fetchAll($select);
+       $select = $this->getTable()->select()->where('section = ?',$section)->where('name = ?',$name);
+       return $this->getTable()->fetchRow($select);
     }
 
 
@@ -81,8 +75,6 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
 //
 //       return $this->getTable()->fetchAll($select);
 //    }
-
-
 
     public function save(Content_Model_Field_Interface $content) {
 
@@ -119,8 +111,9 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
     }
     
      public function deleteBySection($section){
-         $select = $this->getTable()->select()->where('section = ?',$section);
-         $this->getTable()->delete($select);
+ 
+         $where = $this->getTable()->getAdapter()->quoteInto('section = ?',$section);
+         $this->getTable()->delete($where);
     }
     
     public function deleteAll(){

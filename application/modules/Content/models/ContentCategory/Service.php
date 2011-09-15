@@ -136,8 +136,12 @@ class Content_Model_ContentCategory_Service {
         return $this->getMapper()->delete($h);
     }
     
+    public function deleteBySection($section) {
+        return $this->getMapper()->deleteBySection($section);
+    }
+    
     public function deleteAll(){
-        if(APPLICATION_ENV != 'testing'){
+        if(APPLICATION_ENV == 'production'){
             throw new Exception("Not Allowed");
         }
         $this->getMapper()->deleteAll();

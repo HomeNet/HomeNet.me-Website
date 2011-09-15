@@ -83,8 +83,14 @@ class Content_Model_Section_Service {
         } else {
             throw new InvalidArgumentException('Invalid Section');
         }
+        $result = $this->getMapper()->save($h);
+        
+        //create table for custom fields
+        $service = new Content_Model_Content_Service();
+        $service->addCustomTable($result->id);
 
-        return $this->getMapper()->save($h);
+
+        return $result;
     }
     
   /**
@@ -140,7 +146,7 @@ class Content_Model_Section_Service {
     }
     
     public function deleteAll(){
-        if(APPLICATION_ENV != 'testing'){
+        if(APPLICATION_ENV == 'production'){
             throw new Exception("Not Allowed");
         }
         $this->getMapper()->deleteAll();
