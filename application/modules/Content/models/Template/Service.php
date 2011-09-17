@@ -65,8 +65,8 @@ class Content_Model_Template_Service {
      * @param int $id
      * @return Content_Model_Template_Interface[]
      */
-    public function getNewestObjectsBySection($section) {
-        $results = $this->getMapper()->fetchNewestObjectsBySection($section);
+    public function getObjectsBySection($section) {
+        $results = $this->getMapper()->fetchObjectsBySection($section);
 
 //        if (empty($contents)) {
 //            throw new Exception('Apikey not found', 404);
@@ -77,8 +77,8 @@ class Content_Model_Template_Service {
      * @param int $id
      * @return Content_Model_Template_Interface 
      */
-    public function getNewestObjectById($id) {
-        $result = $this->getMapper()->fetchNewestObjectById($id);
+    public function getObjectById($id) {
+        $result = $this->getMapper()->fetchObjectById($id);
 
         if (empty($result)) {
             throw new NotFoundException('Template not found', 404);
@@ -90,8 +90,8 @@ class Content_Model_Template_Service {
      * @param int $url
      * @return Content_Model_Template_Interface 
      */
-    public function getNewestObjectByUrl($url) {
-        $result = $this->getMapper()->fetchNewestObjectByUrl($url);
+    public function getObjectByUrl($url) {
+        $result = $this->getMapper()->fetchObjectByUrl($url);
 
         if (empty($result)) {
             throw new NotFoundException('Template not found', 404);
@@ -122,9 +122,9 @@ class Content_Model_Template_Service {
             throw new InvalidArgumentException('Invalid Content');
         }
         //create cache
-        
+        $h->active = true;
         //@todo test to see if url aleady exists
-
+        //die(debugArray($h));
         return $this->getMapper()->save($h);
     }
 

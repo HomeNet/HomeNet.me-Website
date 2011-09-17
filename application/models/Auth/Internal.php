@@ -53,7 +53,7 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
         }
 
         // create a new row
-        $table = new Core_Model_DbTable_AuthInternal();
+        $table = new Core_Model_Auth_Internal_DbTable();
         $row = $table->createRow();
         //     echo $username;
 
@@ -134,7 +134,7 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
     }
 
     public function delete($id) {
-        $table = new Core_Model_DbTable_AuthInternal();
+        $table = new Core_Model_Auth_Internal_DbTable();
         $table->find($id)->current()->delete();
     }
 
@@ -149,7 +149,7 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
          if(APPLICATION_ENV == 'production'){
             throw new Exception("Not Allowed");
         }
-            $table = new Core_Model_DbTable_AuthInternal();
+            $table = new Core_Model_Auth_Internal_DbTable();
             $table->getAdapter()->query('TRUNCATE TABLE `' . $table->info('name') . '`');
         
     }

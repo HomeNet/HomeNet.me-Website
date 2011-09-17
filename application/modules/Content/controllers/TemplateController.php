@@ -12,7 +12,7 @@ class Content_TemplateController extends Zend_Controller_Action
     public function indexAction()
     {
         $service = new Content_Model_Template_Service();
-        $this->view->objects = $service->getNewestObjectsBySection($this->view->id);
+        $this->view->objects = $service->getObjectsBySection($this->view->id);
     }
 
     public function newAction()
@@ -63,7 +63,7 @@ class Content_TemplateController extends Zend_Controller_Action
         
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
-            $object = $service->getNewestObjectById($this->_getParam('id'));
+            $object = $service->getObjectById($this->_getParam('id'));
             
             $values = $object->toArray();
 
@@ -94,7 +94,7 @@ class Content_TemplateController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         
         $service = new Content_Model_Template_Service();
-        $object = $service->getNewestObjectById($this->_getParam('id'));
+        $object = $service->getObjectById($this->_getParam('id'));
         $form = new Core_Form_Confirm();
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {

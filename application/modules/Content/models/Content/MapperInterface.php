@@ -34,11 +34,11 @@ interface Content_Model_Content_MapperInterface {
       /**
      * @return Content_Model_Content_Interface
      */
-    public function fetchNewestObjectsBySection($section);
+    public function fetchObjectsBySection($section);
     /**
      * @return Content_Model_Content_Interface
      */
-    public function fetchNewestObjectBySectionUrl($section, $url);
+    public function fetchObjectByUrl($url);
 
 //    public function fetchObjectsByIdHouse($id,$house);
 

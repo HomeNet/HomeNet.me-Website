@@ -39,7 +39,8 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_Groups();
+            $this->_table = new Zend_Db_Table('groups');
+            $this->_table->setRowClass('Core_Model_Group_DbTableRow');
         }
         return $this->_table;
     }

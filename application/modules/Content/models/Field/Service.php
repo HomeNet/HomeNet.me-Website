@@ -111,10 +111,10 @@ class Content_Model_Field_Service {
         }
         $field = $this->getMapper()->save($h);
         
-        if($field->type != Content_Model_Field::SYSTEM){
+       // if($field->type != Content_Model_Field::SYSTEM){
             $service = new Content_Model_Content_Service();
             $service->addCustomField($field);
-        }
+      //  }
 
         return $field;
     }

@@ -12,7 +12,7 @@ class Content_ContentController extends Zend_Controller_Action
     public function indexAction()
     {
         $service = new Content_Model_Content_Service();
-        $this->view->assign('objects', $service->getNewestObjectsBySection($this->_getParam('id')));
+        $this->view->assign('objects', $service->getObjectsBySection($this->_getParam('id')));
     }
 
     public function newAction()
@@ -39,9 +39,10 @@ class Content_ContentController extends Zend_Controller_Action
         $values = $form->getValues();
 
         $service = new Content_Model_Content_Service();
+        $values['section'] = $this->view->id;
         $service->create($values);
         
-        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index'),'content').'?message=Successfully added');//
+        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$this->view->id),'content-id').'?message=Successfully added');//
     }
 
     public function editAction()
@@ -49,9 +50,10 @@ class Content_ContentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         
         $service = new Content_Model_Content_Service();
-        $form = new Content_Form_Content();
+        $manager = new Content_Model_Section_Manager();
+        $form = $manager->getForm($this->_getParam('id'));
         $form->addElement('submit', 'submit', array('label' => 'Update'));
-        
+        $form->addElement('hidden', 'section');
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
             $object = $service->getObjectById($this->_getParam('id'));
@@ -76,7 +78,7 @@ class Content_ContentController extends Zend_Controller_Action
          $object->fromArray($values);
         $service->update($object);
 
-        return $this->_redirect($this->view->url(array('controller'=>'content'),'content').'?message=Updated');//
+        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$values['section']),'content-id').'?message=Updated');//
     }
 
     public function deleteAction()
@@ -94,6 +96,7 @@ class Content_ContentController extends Zend_Controller_Action
             $this->view->form = $form;
             return;
         }
+        $section = $object->section;
 
         $values = $form->getValues();
 
@@ -101,9 +104,9 @@ class Content_ContentController extends Zend_Controller_Action
         if(!empty($_POST['delete'])){
             
             $service->delete($object);
-            return $this->_redirect($this->view->url(array('controller'=>'content'),'content').'?message=Deleted');
+            return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$section),'content-id').'?message=Deleted');
         }
-        return $this->_redirect($this->view->url(array('controller'=>'content'),'content').'?message=Canceled');
+        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$section),'content-id').'?message=Canceled');
     }
 
     public function hideAction()

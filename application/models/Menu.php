@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_Menu extends Core_Model_Menu_Interface {
+class Core_Model_Menu implements Core_Model_Menu_Interface {
 
     /**
      * @var int
@@ -33,23 +33,26 @@ class Core_Model_Menu extends Core_Model_Menu_Interface {
     /**
      * @var int
      */
-    public $set;
+    public $type;
+    
     /**
-     * @var int
+     * @var string
      */
-    public $parent = null;
-    /**
-     * @var int
-     */
-    public $order = 0;
+    public $package;
+    
     /**
      * @var string
      */
     public $title;
     /**
-     * @var string
+     * @var boolean
      */
-    public $description = null;
+    public $visible = true;
+    
+    const SYSTEM   = 0;
+    const MODULE   = 1;
+    const TEMPLATE = 2;      
+    const USER     = 3;        
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {

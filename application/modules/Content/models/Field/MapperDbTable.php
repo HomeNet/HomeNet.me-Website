@@ -37,7 +37,8 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Content_Model_DbTable_Fields();
+            $this->_table = new Zend_Db_Table('content_fields');
+            $this->_table->setRowClass('Content_Model_Field_DbTableRow');
         }
         return $this->_table;
     }

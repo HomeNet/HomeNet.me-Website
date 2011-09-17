@@ -18,6 +18,7 @@ class Core_Model_User_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        Core_Model_Installer::install();
         $this->object = new Core_Model_User_Service;
     }
 
@@ -27,6 +28,7 @@ class Core_Model_User_ServiceTest extends PHPUnit_Framework_TestCase {
      */
     protected function tearDown() {
        $this->object->deleteAll();
+       Core_Model_Installer::uninstall();
     }
 
     public function testGetMapper() {
@@ -51,7 +53,7 @@ class Core_Model_User_ServiceTest extends PHPUnit_Framework_TestCase {
         $user = new Core_Model_User();
         
         $user->status = 0;
-        $user->primary_group = 1;
+        $user->primary_group = Core_Model_Installer::$groupMember;
         $user->username = 'testUsername';
         $user->name = 'testName';
         $user->location = 'testLocation';
@@ -68,7 +70,7 @@ class Core_Model_User_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testCreateInvalidUser() {
         $user = new Core_Model_User();
         $user->status = 0;
-        $user->primary_group = 1;
+        $user->primary_group = Core_Model_Installer::$groupMember;
        // $user->username = 'testUsername';
         $user->name = 'testName';
         $user->location = 'testLocation';
@@ -92,7 +94,7 @@ class Core_Model_User_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertNotNull($result->id);
         $this->assertEquals(0, $result->status);
-        $this->assertEquals(1, $result->primary_group);
+        $this->assertEquals(Core_Model_Installer::$groupMember, $result->primary_group);
         $this->assertEquals('testUsername', $result->username);
         $this->assertEquals('testName', $result->name);
         $this->assertEquals('testLocation', $result->location);
@@ -124,7 +126,7 @@ class Core_Model_User_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $user = array(
             'status' => 0,
-            'primary_group' => 1,
+            'primary_group' => Core_Model_Installer::$groupMember,
             'username' => 'testUsername',
             'name' => 'testName',
             'location' => 'testLocation',
@@ -138,7 +140,7 @@ class Core_Model_User_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertNotNull($result->id);
         $this->assertEquals(0, $result->status);
-        $this->assertEquals(1, $result->primary_group);
+        $this->assertEquals(Core_Model_Installer::$groupMember, $result->primary_group);
         $this->assertEquals('testUsername', $result->username);
         $this->assertEquals('testName', $result->name);
         $this->assertEquals('testLocation', $result->location);
@@ -166,7 +168,7 @@ class Core_Model_User_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertNotNull($result->id);
         $this->assertEquals(0, $result->status);
-        $this->assertEquals(1, $result->primary_group);
+        $this->assertEquals(Core_Model_Installer::$groupMember, $result->primary_group);
         $this->assertEquals('testUsername', $result->username);
         $this->assertEquals('testName', $result->name);
         $this->assertEquals('testLocation', $result->location);
@@ -208,7 +210,7 @@ class Core_Model_User_ServiceTest extends PHPUnit_Framework_TestCase {
 
         //update values
         $user->status = 1;
-        $user->primary_group = 3;
+        $user->primary_group = Core_Model_Installer::$groupAdmin;
         $user->username = 'testUsername2';
         $user->name = 'testName2';
         $user->location = 'testLocation2';
@@ -222,7 +224,7 @@ class Core_Model_User_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals($user->id,$result->id);
         $this->assertEquals(1, $result->status);
-        $this->assertEquals(3, $result->primary_group);
+        $this->assertEquals(Core_Model_Installer::$groupAdmin, $result->primary_group);
         $this->assertEquals('testUsername2', $result->username);
         $this->assertEquals('testName2', $result->name);
         $this->assertEquals('testLocation2', $result->location);
@@ -241,7 +243,7 @@ class Core_Model_User_ServiceTest extends PHPUnit_Framework_TestCase {
         
         //update values      
         $array['status'] = 1;
-        $array['primary_group'] = 3;
+        $array['primary_group'] = Core_Model_Installer::$groupAdmin;
         $array['username'] = 'testUsername2';
         $array['name'] = 'testName2';
         $array['location'] = 'testLocation2';
@@ -256,7 +258,7 @@ class Core_Model_User_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals($user->id,$result->id);
         $this->assertEquals(1, $result->status);
-        $this->assertEquals(3, $result->primary_group);
+        $this->assertEquals(Core_Model_Installer::$groupAdmin, $result->primary_group);
         $this->assertEquals('testUsername2', $result->username);
         $this->assertEquals('testName2', $result->name);
         $this->assertEquals('testLocation2', $result->location);
@@ -321,5 +323,3 @@ class Core_Model_User_ServiceTest extends PHPUnit_Framework_TestCase {
     }
 
 }
-
-?>

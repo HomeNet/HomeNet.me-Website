@@ -21,14 +21,15 @@
  * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
  */
 
-require_once "MapperInterface.php";
-
 /**
  * @package Core
  * @subpackage Menu
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
+
+require "MapperInterface.php";
+
 class Core_Model_Menu_MapperDbTable implements Core_Model_Menu_MapperInterface {
 
     protected $_table = null;
@@ -39,7 +40,8 @@ class Core_Model_Menu_MapperDbTable implements Core_Model_Menu_MapperInterface {
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_Menu();
+            $this->_table = new Zend_Db_Table('menus');
+            $this->_table->setRowClass('Core_Model_Menu_DbTableRow');
         }
         return $this->_table;
     }
@@ -50,7 +52,9 @@ class Core_Model_Menu_MapperDbTable implements Core_Model_Menu_MapperInterface {
 
 
 
-
+    public function fetchObjects(){
+        return $this->getTable()->fetchAll();
+    }
 
 
 
@@ -58,18 +62,18 @@ class Core_Model_Menu_MapperDbTable implements Core_Model_Menu_MapperInterface {
         return $this->getTable()->find($id)->current();
     }
 
-//   public function fetchObjectsBySection($section){
+   public function fetchObjectsBySection($section){
+
+//       if(is_null($user)){
+//           $u = new Zend_Session_Namespace('User');
+//           $user = $u->id;
+//        }
 //
-////       if(is_null($user)){
-////           $u = new Zend_Session_Namespace('User');
-////           $user = $u->id;
-////        }
-////
-////       $select = $this->getTable()->select()->where('user = ?',$user)
-////                                ->where('house = ?',$house);
-////
-////       return $this->getTable()->fetchAll($select);
-//    }
+//       $select = $this->getTable()->select()->where('user = ?',$user)
+//                                ->where('house = ?',$house);
+//
+//       return $this->getTable()->fetchAll($select);
+    }
 
 
 //     public function fetchObjectsByIdHouse($id,$house){
@@ -82,13 +86,12 @@ class Core_Model_Menu_MapperDbTable implements Core_Model_Menu_MapperInterface {
 
 
 
-    public function save(Core_Model_Menu_Interface $menu) {
+    public function save(Core_Model_Menu_Interface $content) {
 
-        if (($menu instanceof Core_Model_DbTableRow_Menu) && ($menu->isConnected())) {
-            $menu->save();
-            return;
-        } elseif (!is_null($menu->id)) {
-            $row = $this->getTable()->find($menu->id)->current();
+        if (($content instanceof Core_Model_DbTableRow_Menu) && ($content->isConnected())) {
+            return $content->save();;
+        } elseif (!is_null($content->id)) {
+            $row = $this->getTable()->find($content->id)->current();
             if(empty($row)){
                $row = $this->getTable()->createRow();
             }
@@ -97,23 +100,30 @@ class Core_Model_Menu_MapperDbTable implements Core_Model_Menu_MapperInterface {
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($menu->toArray());
+        $row->fromArray($content->toArray());
        // die(debugArray($row));
         $row->save();
 
         return $row;
     }
 
-    public function delete(Core_Model_Menu_Interface $menu) {
+    public function delete(Core_Model_Menu_Interface $content) {
 
-        if (($menu instanceof Core_Model_DbTableRow_Menu) && ($menu->isConnected())) {
-            $menu->delete();
+        if (($content instanceof Core_Model_DbTableRow_Menu) && ($content->isConnected())) {
+            $content->delete();
             return true;
-        } elseif (!is_null($menu->id)) {
-            $row = $this->getTable()->find($menu->id)->current()->delete();
+        } elseif (!is_null($content->id)) {
+            $row = $this->getTable()->find($content->id)->current()->delete();
             return;
         }
 
-        throw new Exception('Invalid Menu');
+        throw new Exception('Invalid Content');
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'production'){
+       //     $this->getTable()->delete("id < 10000");
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 }

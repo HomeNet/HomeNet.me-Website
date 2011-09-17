@@ -39,7 +39,8 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_UserAcls();
+            $this->_table = new Zend_Db_Table('user_acls');
+            $this->_table->setRowClass('Core_Model_Acl_User_DbTableRow');
         }
         return $this->_table;
     }

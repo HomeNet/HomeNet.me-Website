@@ -6,7 +6,7 @@
 
 <table class="ui-widget" width="100%">
     <thead class="ui-widget-header">
-        <tr><th>Id</th><th>Revision</th><th>Title</th> <th width="150">Edit/Delete</th></tr>
+        <tr><th width="50">Id</th><th width="200">Revision</th><th>Title</th> <th width="150">Edit/Delete</th></tr>
     </thead>
     <tbody class="ui-widget-content">
         <?php
@@ -15,7 +15,7 @@
             ?>
             <tr  class="<?php echo $this->cycle(array("", "ui-state-highlight"))->next() ?>" >
                 <td class="left"><?php echo $object->id ?></td>
-                <td class="left"><?php echo $object->Revision ?></td>
+                <td><?php echo $object->revision ?></td>
                 <td class="left"><?php echo $object->title ?></td>
                 <td><a href="<?php echo $this->url(array('controller' => 'content', 'id' => $object->id, 'action' => 'edit'), 'content-id'); ?>">Edit</a> <a href="<?php echo $this->url(array('controller' => 'content', 'id' => $object->id, 'action' => 'delete'), 'content-id'); ?>">Delete</a></td>
             </tr><?php

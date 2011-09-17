@@ -55,6 +55,11 @@ class Content_Model_Template implements Content_Model_Template_Interface {
      */
     public $url;
     
+     /**
+     * @var string
+     */
+    public $active;
+    
     /**
      * @var array
      */

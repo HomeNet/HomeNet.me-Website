@@ -39,11 +39,11 @@ class Core_Model_Auth_InternalTest extends PHPUnit_Framework_TestCase {
     public function testAdd() {
         $this->object->add(array('id' => 1, 'username' => 'testUser', 'password' => 'testPassword'));
 
-        $table = new Core_Model_DbTable_AuthInternal();
+        $table = new Core_Model_Auth_Internal_DbTable();
         $result = $table->find(1)->current();
 
         $this->assertEquals(1, $result->id);
-        $this->assertEquals('testUser', $result->username);
+        $this->assertEquals('testuser', $result->username);
         $this->assertEquals($this->object->hashPassword('testUser','testPassword'), $result->password);
     }
     
@@ -107,7 +107,7 @@ class Core_Model_Auth_InternalTest extends PHPUnit_Framework_TestCase {
         $this->object->add(array('id' => 1, 'username' => 'testUser', 'password' => 'testPassword'));
         $this->object->delete(1);
 
-        $table = new Core_Model_DbTable_AuthInternal();
+        $table = new Core_Model_Auth_Internal_DbTable();
         $result = $table->find(1)->current();
 
         $this->assertEmpty($result);

@@ -22,19 +22,24 @@
 
 /**
  * @package Core
- * @subpackage Menu
+ * @subpackage Category
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 interface Core_Model_Menu_MapperInterface {
 
-     /**
-     * @return Core_Model_Menu_Interface
-     */
+    public function fetchObjects();
+    
     public function fetchObjectById($id);
 
-    public function save(Core_Model_Menu_Interface $menu);
+//    public function fetchObjectsBySection($section);
 
-    public function delete(Core_Model_Menu_Interface $menu);
+//    public function fetchObjectsByIdHouse($id,$house);
+
+    public function save(Core_Model_Menu_Interface $categorySet);
+
+    public function delete(Core_Model_Menu_Interface $categorySet);
+    
+    public function deleteAll();
 
 }

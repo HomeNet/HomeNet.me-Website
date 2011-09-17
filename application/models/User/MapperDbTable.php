@@ -39,7 +39,8 @@ class Core_Model_User_MapperDbTable implements Core_Model_User_MapperInterface {
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_Users();
+            $this->_table = new Zend_Db_Table('users');
+            $this->_table->setRowClass('Core_Model_User_DbTableRow');
         }
         return $this->_table;
     }

@@ -39,7 +39,8 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_GroupAcls();
+            $this->_table = new Zend_Db_Table('group_acls');
+            $this->_table->setRowClass('Core_Model_Acl_Group_DbTableRow');
         }
         return $this->_table;
     }

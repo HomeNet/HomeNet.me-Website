@@ -1,7 +1,7 @@
 <h1>Category Sets</h1>
 <table class="ui-widget" width="100%">
     <thead class="ui-widget-header">
-        <tr><th>Name</th><th width="150">Edit/Delete</th></tr>
+        <tr><th width="50">ID</th><th>Name</th><th width="150">Edit/Delete</th></tr>
     </thead>
     <tbody class="ui-widget-content">
         <?php
@@ -9,6 +9,7 @@
             /* @var $object Content_Model_Category */
             ?>
             <tr  class="<?php echo $this->cycle(array("", "ui-state-highlight"))->next() ?>" >
+                <td><?php echo $object->id ?></td>
                 <td><a href="<?php echo $this->url(array('controller' => 'category', 'id' => $object->id), 'content-id'); ?>"><?php echo $object->title ?></a></td>
                 <td><a href="<?php echo $this->url(array('controller' => 'category-set', 'id' => $object->id, 'action' => 'edit'), 'content-id'); ?>">Edit</a> <a href="<?php echo $this->url(array('controller' => 'category-set', 'id' => $object->id, 'action' => 'delete'), 'content-id'); ?>">Delete</a></td>
             </tr><?php

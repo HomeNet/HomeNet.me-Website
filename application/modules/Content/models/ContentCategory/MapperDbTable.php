@@ -38,8 +38,9 @@ class Content_Model_ContentCategory_MapperDbTable implements Content_Model_Conte
      * @return Content_Model_DbTable_ContentCategory;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
-            $this->_table = new Content_Model_DbTable_ContentCategories();
+        if (is_null($this->_table)) {           
+            $this->_table = new Zend_Db_Table('content_content_categories');
+            $this->_table->setRowClass('Content_Model_ContentCategory_DbTableRow');
         }
         return $this->_table;
     }

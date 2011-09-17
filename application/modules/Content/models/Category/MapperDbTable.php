@@ -39,7 +39,8 @@ class Content_Model_Category_MapperDbTable implements Content_Model_Category_Map
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Content_Model_DbTable_Categories();
+            $this->_table = new Zend_Db_Table('content_categories');
+            $this->_table->setRowClass('Content_Model_Category_DbTableRow');
         }
         return $this->_table;
     }
@@ -94,8 +95,8 @@ class Content_Model_Category_MapperDbTable implements Content_Model_Category_Map
         } catch(Exception $e){
             if(strstr($e->getMessage(), '1062 Duplicate')) {
                throw new DuplicateEntryException("URL Already Exists"); 
-           // } elseif(strstr($e->getMessage(), '1048 Column')) {
-           //    throw new InvalidArgumentException("Invalid Column"); 
+            } elseif(strstr($e->getMessage(), '1048 Column')) {
+               throw new InvalidArgumentException("Invalid Column"); 
             } else {
                  throw new Exception($e->getMessage());
             }

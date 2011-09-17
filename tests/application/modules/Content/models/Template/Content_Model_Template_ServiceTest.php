@@ -57,6 +57,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $object->autosave = false;
         $object->url = 'testUrl';
         $object->visible = true;
+        $object->active = true;
         $object->content = 'testContent';
    
         $result = $this->object->create($object);
@@ -72,6 +73,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $object->section = 2;
         $object->autosave = false;
         $object->visible = true;
+        $object->active = true;
         $object->content = '';
         $this->setExpectedException('Exception');
         $result = $this->object->create($content);
@@ -95,6 +97,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(false, $result->autosave);
         $this->assertEquals('testUrl', $result->url);
         $this->assertEquals(true, $result->visible);
+        $this->assertEquals(true, $result->active);
         $this->assertEquals('testContent', $result->content);
     }
     
@@ -138,6 +141,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
             'autosave' => false,
             'url' => 'testUrl',
             'visible' => true,
+            'active' => true,
             'content' => 'testContent');
         
         
@@ -153,6 +157,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(false, $result->autosave);
         $this->assertEquals('testUrl', $result->url);
         $this->assertEquals(true, $result->visible);
+        $this->assertEquals(true, $result->active);
         $this->assertEquals('testContent', $result->content);
     }
 
@@ -180,6 +185,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(false, $result->autosave);
         $this->assertEquals('testUrl', $result->url);
         $this->assertEquals(true, $result->visible);
+        $this->assertEquals(true, $result->active);
         $this->assertEquals('testContent', $result->content);
     }
     
@@ -220,6 +226,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $object->autosave = true;
         $object->url = 'testUrl2';
         $object->visible = false;
+         $object->active = false;
         $object->content = 'testContent2';
 
 
@@ -234,6 +241,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(true, $result->autosave);
         $this->assertEquals('testUrl2', $result->url);
         $this->assertEquals(false, $result->visible);
+        $this->assertEquals(false, $result->active);
         $this->assertEquals('testContent2', $result->content);
     }
     
@@ -249,7 +257,8 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $array['section'] = 4;
         $array['autosave'] = true;
         $array['url'] = 'testUrl2';
-        $array['visible'] = false;       
+        $array['visible'] = false;  
+        $array['active'] = false;   
         $array['content'] = 'testContent2';
 
         $result = $this->object->update($array);
@@ -263,6 +272,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(true, $result->autosave);
         $this->assertEquals('testUrl2', $result->url);
         $this->assertEquals(false, $result->visible);
+        $this->assertEquals(false, $result->active);
         $this->assertEquals('testContent2', $result->content);
     }
     

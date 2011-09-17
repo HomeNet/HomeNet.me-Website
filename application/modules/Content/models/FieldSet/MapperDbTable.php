@@ -40,7 +40,8 @@ class Content_Model_FieldSet_MapperDbTable implements Content_Model_FieldSet_Map
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Content_Model_DbTable_FieldSets();
+            $this->_table = new Zend_Db_Table('content_field_sets');
+            $this->_table->setRowClass('Content_Model_FieldSet_DbTableRow');
         }
         return $this->_table;
     }

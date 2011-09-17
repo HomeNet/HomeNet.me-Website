@@ -39,7 +39,8 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Core_Model_DbTable_UserMemberships();
+            $this->_table = new Zend_Db_Table('user_memberships');
+            $this->_table->setRowClass('Core_Model_User_Membership_DbTableRow');
         }
         return $this->_table;
     }

@@ -19,6 +19,10 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
      */
     protected function setUp() {
         $this->object = new Content_Model_Content_Service;
+
+        Zend_Loader::loadClass('Content_Installer');
+        $installer = new Content_Installer();
+        $installer->installTest();
     }
 
     /**
@@ -26,7 +30,11 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        $this->object->deleteAll();
+        // $this->object->deleteAll();
+        // Zend_Loader::loadClass('Content_Installer');
+        $installer = new Content_Installer();
+        $installer->uninstallTest();
+        
     }
 
     public function testGetMapper() {
@@ -47,22 +55,24 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         //$this->ass
     }
 
-    private function createValidContent() {
+    private function createValidObject() {
         $content = new Content_Model_Content();
 
         //$content->id = 1;
         // $content->revision = 2;
-        $content->section = 3;
-        $content->owner = 5;
-        $content->autosave = true;
-        $content->status = 4;
+        $content->section = Content_Installer::$testSection;
+        $content->url = 'test-url';
+        $content->visible = true;
+
         // $content->date = date('Y-m-d H:i:s', strtotime('+1 week'));
         // $content->expires = date('Y-m-d H:i:s', strtotime('+2 week'));
 //        $content->author = 5;
 //        $content->editor = 6;
+        $content->owner = 5;
         $content->title = 'testTitle';
-        $content->url = 'testUrl';
-        $content->visible = true;
+        $content->autosave = true;
+
+        // $content->status = 4;
 //        $content->content = array('body' => 'value');
 
         $result = $this->object->create($content);
@@ -71,25 +81,30 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         return $result;
     }
 
-    public function testCreateInvalidContent() {
-
-        $content = new Content_Model_Content();
-        // $content->revision = 2;
-        $content->owner = 5;
-        $content->section = 3;
-        $content->autosave = true;
-        $content->status = 4;
-        //  $content->date = null ;
-        //  $content->expires = date('Y-m-d H:i:s', strtotime('+1 week'));
-        //  $content->author = 5;
-        // $content->editor = 6;
-        // $content->url = 'testUrl';
-        $content->title = 'testTitle';
-        $content->visible = true;
-        // $content->content = array('body' => 'value');
-        $this->setExpectedException('Exception');
-        $result = $this->object->create($content);
-    }
+//    public function testCreateInvalidContent() {
+//
+//        $content = new Content_Model_Content();
+//        // $content->revision = 2;
+//
+//        $content->section = Content_Installer::$testSection;
+//        // $content->url = 'test-url'; //it's reqiured
+//        $content->visible = true;
+//
+//        //  $content->date = null ;
+//        //  $content->expires = date('Y-m-d H:i:s', strtotime('+1 week'));
+//        //  $content->author = 5;
+//        // $content->editor = 6;
+//
+//        $content->owner = 5;
+//        $content->autosave = true;
+//        $content->title = 'testTitle5';
+//        
+//        // $content->status = 4;
+//        // $content->content = array('body' => 'value');
+//        $this->setExpectedException('Exception');
+//        
+//        $result = $this->object->create($content);
+//    }
 
 //    
 //    public function testDuplicateUrl() {
@@ -101,22 +116,28 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testCreateValidFromObject() {
 
-        $result = $this->createValidContent();
+        $result = $this->createValidObject();
 
         $this->assertNotNull($result->id);
-        $this->assertNotNull($result->revision);
-        $this->assertEquals(3, $result->section);
-        $this->assertEquals(true, $result->autosave);
-        $this->assertEquals(4, $result->status);
-        $this->assertEquals(5, $result->owner);
+        $this->assertEquals(Content_Installer::$testSection, $result->section);
+        $this->assertEquals('test-url', $result->url);
+        $this->assertEquals(true, (bool) $result->visible);
+        $this->assertNotNull($result->active_revision);
+        $this->assertEquals($result->revision, $result->active_revision);
+        
 //        $this->assertNotNull($result->date);
 //        $this->assertNotNull($result->expires);
 //        $this->assertEquals(5, $result->author);
 //        $this->assertEquals(6, $result->editor);
-        $this->assertEquals('testUrl', $result->url);
+
+        $this->assertNotNull($result->revision);
+        $this->assertEquals(5, $result->owner);
+        $this->assertEquals(true, (bool) $result->autosave);
+
         $this->assertEquals('testTitle', $result->title);
+
+//        $this->assertEquals(4, $result->status);
 //        $this->assertArrayHasKey('body', $result->content);
-        $this->assertEquals(true, $result->visible);
 //        $this->assertEquals('value', $result->content['body']);
     }
 
@@ -144,17 +165,20 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $content = array(
 //            'id' => 1,
 //            'revision' => 2,
-            'section' => 3,
-            'autosave' => true,
-            'status' => 4,
+            'url' => 'test-url',
+            'section' => Content_Installer::$testSection,
+            'visible' => true,
+ 
             'owner' => 5,
+            'autosave' => true,
+            
+            'title' => 'testTitle',
+            
+//            'status' => 4,
 //            'created' => null,
 //            'expires' => null,
 //            'author' => 5,
 //            'editor' => 6,
-            'url' => 'testUrl',
-            'title' => 'testTitle',
-            'visible' => true,
 //            'content' => array('body' => 'value')
         );
 
@@ -165,19 +189,24 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Content_Model_Content_Interface', $result);
 
         $this->assertNotNull($result->id);
+        $this->assertEquals(Content_Installer::$testSection, $result->section);
+        $this->assertEquals('test-url', $result->url);
+        $this->assertEquals(true, (bool) $result->visible);
+        $this->assertEquals($result->active_revision, $result->revision);
+        
         $this->assertNotNull($result->revision);
-        $this->assertEquals(3, $result->section);
-        $this->assertEquals(true, $result->autosave);
-        $this->assertEquals(4, $result->status);
         $this->assertEquals(5, $result->owner);
+        $this->assertEquals(true, (bool) $result->autosave);
+        
+        $this->assertEquals('testTitle', $result->title);
+        
+//        $this->assertEquals(4, $result->status);
 //        $this->assertNotNull($result->date);
 //        $this->assertNotNull($result->expires);
 //        $this->assertEquals(5, $result->author);
 //        $this->assertEquals(6, $result->editor);
-        $this->assertEquals('testUrl', $result->url);
-        $this->assertEquals('testTitle', $result->title);
 //        $this->assertArrayHasKey('body', $result->content);
-        $this->assertEquals(true, $result->visible);
+        
 //        $this->assertEquals('value', $result->content['body']);
     }
 
@@ -191,7 +220,7 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testGetObjectById() {
 
         //setup
-        $content = $this->createValidContent();
+        $content = $this->createValidObject();
 
         //test getObject
         $result = $this->object->getObjectByIdRevision($content->id, $content->revision);
@@ -199,40 +228,58 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Content_Model_Content_Interface', $result);
 
         $this->assertNotNull($result->id);
+        $this->assertEquals(Content_Installer::$testSection, $result->section);
+        $this->assertEquals('test-url', $result->url);
+        $this->assertEquals(true, (bool) $result->visible);
+        $this->assertEquals($result->active_revision, $result->revision);
+        
         $this->assertNotNull($result->revision);
-        $this->assertEquals(3, $result->section);
-        $this->assertEquals(true, $result->autosave);
-        $this->assertEquals(4, $result->status);
         $this->assertEquals(5, $result->owner);
+        $this->assertEquals(true, (bool) $result->autosave);
+        
+        $this->assertEquals('testTitle', $result->title);
+        
+//        $this->assertEquals(4, $result->status);
 //        $this->assertNotNull($result->date);
 //        $this->assertNotNull($result->expires);
 //        $this->assertEquals(5, $result->author);
 //        $this->assertEquals(6, $result->editor);
-        $this->assertEquals('testUrl', $result->url);
-        $this->assertEquals('testTitle', $result->title);
 //        $this->assertArrayHasKey('body', $result->content);
-        $this->assertEquals(true, $result->visible);
+        
 //        $this->assertEquals('value', $result->content['body']);
     }
 
-//    public function testGetObjectByUrl() {
-//
-//        //setup
-//        $content = $this->createValidContent();
-//
-//        //test getObject
-//        $result = $this->object->getObjectByUrl($content->url);
-//        
-//        $this->assertInstanceOf('Content_Model_Content_Interface', $result);
-//
-//        $this->assertEquals($content->id, $result->id);
-//        $this->assertEquals(0, $result->set);
-//        $this->assertEquals(1, $result->parent);
-//        $this->assertEquals(2, $result->order);
-//        $this->assertEquals('testUrl', $result->url);
-//        $this->assertEquals('testTitle', $result->title);
-//        $this->assertEquals('testDescription', $result->description);
-//    }
+    public function testGetObjectByUrl() {
+
+        //setup
+        $content = $this->createValidObject();
+
+        //test getObject
+        $result = $this->object->getObjectByUrl($content->url);
+        
+        $this->assertInstanceOf('Content_Model_Content_Interface', $result);
+
+        $this->assertNotNull($result->id);
+        $this->assertEquals(Content_Installer::$testSection, $result->section);
+        $this->assertEquals('test-url', $result->url);
+        $this->assertEquals(true, (bool) $result->visible);
+        $this->assertEquals($result->active_revision, $result->revision);
+        
+        $this->assertNotNull($result->revision);
+        $this->assertEquals(5, $result->owner);
+        $this->assertEquals(true, (bool) $result->autosave);
+        
+        $this->assertEquals('testTitle', $result->title);
+        
+//        $this->assertEquals(4, $result->status);
+//        $this->assertNotNull($result->date);
+//        $this->assertNotNull($result->expires);
+//        $this->assertEquals(5, $result->author);
+//        $this->assertEquals(6, $result->editor);
+//        $this->assertArrayHasKey('body', $result->content);
+        
+//        $this->assertEquals('value', $result->content['body']);
+    }
 //    
 //     public function testGetInvalidObjectByUrl() {
 //
@@ -244,20 +291,23 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testUpdateFromObject() {
 
         //setup
-        $content = $this->createValidContent();
-
+        $content = $this->createValidObject();
+sleep(1);
         //update values
-        $content->section = 4;
-        $content->autosave = false;
-        $content->status = 5;
+       // $content->section = 4;
+        $content->url = 'test-url2';
+        $content->visible = false;
+
         $content->owner = 6;
+        $content->autosave = false;
+        
+        $content->title = 'testTitle2';
+        
 //        $content->date = new Zend_Date(strtotime('+1 week')) ;
 //        $content->expires = new Zend_Date(strtotime('+2 week'));
 //        $content->author = 6;
 //        $content->editor = 7;
-        $content->url = 'testUrl2';
-        $content->title = 'testTitle2';
-        $content->visible = false;
+//        $content->status = 5;
 //        $content->content = array('body' => 'value2');
 
         $result = $this->object->update($content);
@@ -265,16 +315,21 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Content_Model_Content_Interface', $result);
 
         $this->assertNotNull($result->id);
+        $this->assertEquals(Content_Installer::$testSection, $result->section);
+        $this->assertEquals('test-url2', $result->url);
+        $this->assertEquals(false, (bool) $result->visible);
+        $this->assertNotNull($result->active_revision);
+        
         $this->assertNotNull($result->revision);
-        $this->assertEquals(4, $result->section);
-        $this->assertEquals(false, $result->autosave);
-        $this->assertEquals(5, $result->status);
-//        $this->assertNotNull($result->date);
-//        $this->assertNotNull($result->expires);
         $this->assertEquals(6, $result->owner);
-//        $this->assertEquals(7, $result->editor);
-        $this->assertEquals('testUrl2', $result->url);
+        $this->assertEquals(false, (bool) $result->autosave);
+        
         $this->assertEquals('testTitle2', $result->title);
+        
+//        $this->assertEquals(5, $result->status);
+//        $this->assertNotNull($result->date);
+//        $this->assertEquals(7, $result->editor);
+//        $this->assertNotNull($result->expires);       
 //        $this->assertArrayHasKey('body', $result->content);
 //        $this->assertEquals('value2', $result->content['body']);
     }
@@ -282,21 +337,23 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testUpdateFromArray() {
 
         //setup
-        $content = $this->createValidContent();
-
+        $content = $this->createValidObject();
+sleep(1);
         $array = $content->toArray();
 
         //update values          
-        $array['section'] = 4;
+        $array['url'] = 'test-url2';
+        $array['visible'] = false;
+        
+        $array['owner'] = 6;
         $array['autosave'] = false;
-        $array['status'] = 5;
+        
+        $array['title'] = 'testTitle2';
+        
+//        $array['status'] = 5;
+//        $array['editor'] = 7;
 //        $array['created'] = new Zend_Date(strtotime('+1 week')) ;
 //        $array['expires'] = new Zend_Date(strtotime('+2 week'));
-        $array['owner'] = 6;
-//        $array['editor'] = 7;
-        $array['url'] = 'testUrl2';
-        $array['title'] = 'testTitle2';
-//        $array['visible'] = false;
 //        $array['content'] = array('body' => 'value2');
 
 
@@ -305,16 +362,19 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Content_Model_Content_Interface', $result);
 
         $this->assertNotNull($result->id);
+        $this->assertEquals(Content_Installer::$testSection, $result->section);
+        $this->assertEquals('test-url2', $result->url);
+//        $this->assertNotEquals($result->active_revision, $result->revision);
+
         $this->assertNotNull($result->revision);
-        $this->assertEquals(4, $result->section);
-        $this->assertEquals(false, $result->autosave);
-        $this->assertEquals(5, $result->status);
+        $this->assertEquals(6, $result->owner);
+        $this->assertEquals(false, (bool) $result->autosave);
+        $this->assertEquals('testTitle2', $result->title);
+        
+//        $this->assertEquals(5, $result->status);
+//        $this->assertEquals(7, $result->editor);
 //        $this->assertNotNull($result->date);
 //        $this->assertNotNull($result->expires);
-        $this->assertEquals(6, $result->owner);
-//        $this->assertEquals(7, $result->editor);
-        $this->assertEquals('testUrl2', $result->url);
-        $this->assertEquals('testTitle2', $result->title);
 //        $this->assertArrayHasKey('body', $result->content);
 //        $this->assertEquals('value2', $result->content['body']);
     }
@@ -329,7 +389,7 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testDeleteObject() {
 
         //setup
-        $content = $this->createValidContent();
+        $content = $this->createValidObject();
 
         //test delete
         $this->object->delete($content);
@@ -342,7 +402,7 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testDeleteBySection() {
 
         //setup
-        $content = $this->createValidContent();
+        $content = $this->createValidObject();
 
         //test delete
         $this->object->deleteBySection($content->section);
@@ -366,7 +426,7 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testDeleteArray() {
 
         //setup
-        $content = $this->createValidContent();
+        $content = $this->createValidObject();
         // $this->fail("id: ".$content->id);
         $this->object->delete($content->toArray());
 
@@ -405,11 +465,11 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->object->addCustomField($field);
 
 
-        $field = new Content_Model_Field();
-        $field->section = 5;
-        $field->element = 'Textarea';
-        $field->name = 'textarea';
-        $this->object->addCustomField($field);
+//        $field = new Content_Model_Field();
+//        $field->section = 5;
+//        $field->element = 'Textarea';
+//        $field->name = 'textarea';
+//        $this->object->addCustomField($field);
     }
 
     public function testRemoveCustomField() {
@@ -426,4 +486,5 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $section = 5;
         $this->object->removeCustomTable($section);
     }
+
 }

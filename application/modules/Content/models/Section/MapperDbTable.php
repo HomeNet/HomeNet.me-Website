@@ -39,7 +39,8 @@ class Content_Model_Section_MapperDbTable implements Content_Model_Section_Mappe
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Content_Model_DbTable_Sections();
+            $this->_table = new Zend_Db_Table('content_sections');
+            $this->_table->setRowClass('Content_Model_Section_DbTableRow');
         }
         return $this->_table;
     }

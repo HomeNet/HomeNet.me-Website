@@ -186,11 +186,11 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->createTestGroupAcls();
         $result = $this->object->getObjectsByGroupsModuleControllerObject(array(1, 2), 'test', 'test', 1);
 
-        $this->assertEquals(2, count($result));
+        $this->assertEquals(1, count($result));
 
         foreach ($result as $result2) {
 
-            $this->assertEquals(4, count($result2));
+            $this->assertEquals(2, count($result2));
 
             foreach ($result2 as $acl) {
                 $this->assertNotNull($acl->id);

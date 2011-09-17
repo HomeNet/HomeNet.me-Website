@@ -40,7 +40,8 @@ class Content_Model_CategorySet_MapperDbTable implements Content_Model_CategoryS
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Content_Model_DbTable_CategorySets();
+            $this->_table = new Zend_Db_Table('content_category_sets');
+            $this->_table->setRowClass('Content_Model_CategorySet_DbTableRow');
         }
         return $this->_table;
     }

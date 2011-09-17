@@ -61,19 +61,19 @@ abstract class Content_Model_Plugin_Template {
             'locked' => false,
             'required' => true,
             'visible' => true);
-         $fields[] = array(
-            'set' => $fieldSets['publish'],
-            'order' => 2,
-            'type' => Content_Model_Field::SYSTEM,
-            'element' => 'status',
-            'name' => 'status',
-            'label' => 'Status',
-            'value' => '1',
-            'validators' => array(),
-            'filters' => array(),
-            'locked' => false,
-            'required' => true,
-            'visible' => true);
+//         $fields[] = array(
+//            'set' => $fieldSets['publish'],
+//            'order' => 2,
+//            'type' => Content_Model_Field::SYSTEM,
+//            'element' => 'status',
+//            'name' => 'status',
+//            'label' => 'Status',
+//            'value' => '1',
+//            'validators' => array(),
+//            'filters' => array(),
+//            'locked' => false,
+//            'required' => true,
+//            'visible' => true);
          return $fields;
     }
     

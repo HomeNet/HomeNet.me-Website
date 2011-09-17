@@ -1,17 +1,17 @@
 <?php
 
-class Content_FieldController extends Zend_Controller_Action
+class Content_FieldSetController extends Zend_Controller_Action
 {
 
     public function init()
     {
-        $this->view->controllerTitle = 'Field'; //for generic templates
+        $this->view->controllerTitle = 'FieldSet'; //for generic templates
         $this->view->id = $this->_getParam('id');
     }
 
     public function indexAction()
     {
-        $service = new Content_Model_Field_Service();
+        $service = new Content_Model_FieldSet_Service();
         $this->view->objects = $service->getObjectsBySection($this->view->id);
     }
 
@@ -19,7 +19,7 @@ class Content_FieldController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         
-        $form = new Content_Form_Field();
+        $form = new Content_Form_FieldSet();
         $form->addElement('submit', 'submit', array('label' => 'Create'));
         $this->view->assign('form',$form);
         
@@ -43,20 +43,21 @@ class Content_FieldController extends Zend_Controller_Action
         //$nodeService = new HomeNet_Model_NodesService();
 
         $values = $form->getValues();
-        $values['section'] = $this->_getParam('id');
-        $service = new Content_Model_Field_Service();
+        $values['section'] = $this->view->id;
+        $service = new Content_Model_FieldSet_Service();
         $service->create($values);
         
-        return $this->_redirect($this->view->url(array('controller'=>'field', 'action'=>'index'),'content').'?message=Successfully added new Set');//
+        return $this->_redirect($this->view->url(array('controller'=>'field-set', 'action'=>'index', 'id'=>$this->view->id),'content-id').'?message=Successfully added new Set');//
     }
 
     public function editAction()
     {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         
-        $service = new Content_Model_Field_Service();
-        $form = new Content_Form_Field();
+        $service = new Content_Model_FieldSet_Service();
+        $form = new Content_Form_FieldSet();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
+        $form->addElement('hidden', 'section');
         
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
@@ -82,14 +83,14 @@ class Content_FieldController extends Zend_Controller_Action
          $object->fromArray($values);
         $service->update($object);
 
-        return $this->_redirect($this->view->url(array('controller'=>'field'),'content').'?message=Updated');//
+        return $this->_redirect($this->view->url(array('controller'=>'field-set', 'action'=>'index', 'id'=>$object->section),'content-id').'?message=Updated');//
     }
 
     public function deleteAction()
     {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         
-        $service = new Content_Model_Field_Service();
+        $service = new Content_Model_FieldSet_Service();
         $object = $service->getObjectById($this->_getParam('id'));
         $form = new Core_Form_Confirm();
 
@@ -102,14 +103,14 @@ class Content_FieldController extends Zend_Controller_Action
         }
 
         $values = $form->getValues();
-
+        $section = $object->section;
         //need to figure out why this isn't in values
         if(!empty($_POST['delete'])){
             
             $service->delete($object);
-            return $this->_redirect($this->view->url(array('controller'=>'field'),'content').'?message=Deleted');
+            return $this->_redirect($this->view->url(array('controller'=>'field-set', 'action'=>'index', 'id'=>$section),'content-id').'?message=Deleted');
         }
-        return $this->_redirect($this->view->url(array('controller'=>'field'),'content').'?message=Canceled');
+        return $this->_redirect($this->view->url(array('controller'=>'field-set', 'action'=>'index', 'id'=>$section),'content-id').'?message=Canceled');
     }
 
     public function hideAction()

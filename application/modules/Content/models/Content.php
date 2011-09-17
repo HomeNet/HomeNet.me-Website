@@ -30,87 +30,51 @@ class Content_Model_Content implements Content_Model_Content_Interface {
     
     private $_values = array('autosave' => false, 'status' => -1, 'visible'=>false);
     
-    
-    /**
-     * @var int
-     */
-    public $id;
-    /**
-     * @var timestamp
-     */
-    public $revision;
-    
-     /**
-     * @var int
-     */
-    public $owner;
-    
-     /**
-     * @var int
-     */
-    public $autosave = false;
-    
-    /**
-     * @var int
-     */
-    public $section;
-    /**
-     * @var int
-     */
-    public $status = -1;
-//    /**
-//     * @var Zend_Date
-//     */
-//    public $created;
-//    
-//    /**
-//     * @var Zend_Date
-//     */
-//    public $expires;
-//    /**
-//     * @var int
-//     */
-//    public $author;
-//     /**
-//     * @var int
-//     */
-//    public $editor;
-    
-    
-    
-    /**
-     * @var string
-     */
-    public $title;
-    /**
-     * @var string
-     */
-    public $url;
-    
-//    /**
-//     * @var array
-//     */
-//    public $content;
-    
-    public $visible = true;
+   
+   // public $id, $revision, $owner, $autosave = false, $section, $status = -1, $created, $expires, $author, $editor, $title, $url, $content, $visible = true;
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {
             $this->fromArray($config['data']);
         }
     }
+    
+    public function __get($name) {
+        if(!isset($this->_values[$name])){
+            return null;
+        } else {
+            return $this->_values[$name];
+        }
+    }
+
+    public function __set($name, $value) {
+        $this->_values[$name] = $value;
+    }
+    
+    public function __unset($name) {
+        unset($this->_values[$name]);
+    }
+    
+    public function __isset($name) {
+        return isset($this->_values[$name]);
+    }
+
+
+
 
     public function fromArray(array $array) {
 
-        $vars = get_object_vars($this);
+      //  $vars = get_object_vars($this);
 
         // die(debugArray($vars));
 
-        foreach ($array as $key => $value) {
-            if (array_key_exists($key, $vars)) {
-                $this->$key = $value;
-            }
-        }
+      //  foreach ($array as $key => $value) {
+       //     if (array_key_exists($key, $vars)) {
+        
+           //     $this->$key = $value;
+         //   }
+       // }
+       $this->_values = array_merge($this->_values, $array);
     }
 
     /**
@@ -118,7 +82,7 @@ class Content_Model_Content implements Content_Model_Content_Interface {
      */
     public function toArray() {
 
-        return get_object_vars($this);
+        return $this->_values;
     }
 
 }

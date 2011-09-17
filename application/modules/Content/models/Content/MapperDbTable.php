@@ -32,6 +32,7 @@ require_once "MapperInterface.php";
 class Content_Model_Content_MapperDbTable implements Content_Model_Content_MapperInterface {
 
     protected $_table = null;
+    protected $_customTables = array();
 
     /**
      *
@@ -39,61 +40,145 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Content_Model_DbTable_Content();
+            $this->_table = new Zend_Db_Table('content_content');
         }
         return $this->_table;
+    }
+
+    public function getCustomTable($section) {
+        if (!array_key_exists($section, $this->_customTables)) {
+            $customTable = new Zend_Db_Table('content_custom_' . $section);
+            $this->_customTables[$section] = $customTable;
+        }
+        return $this->_customTables[$section];
     }
 
     public function setTable($table) {
         $this->_table = $table;
     }
 
-
-
-
     /**
      * Fetch Section Content Object by Id
      * 
      * @param int $id 
-     * @return Content_Model_DbTabeRow_SectionContent 
+     * @return Content_Model_Content 
      */
-    public function fetchObjectByIdRevision($id,$revision){
-        return $this->getTable()->find($id,$revision)->current();
+    public function fetchObjectByIdRevision($id, $revision) {
+
+        $object = new Content_Model_Content();
+
+        $result = $this->getTable()->find($id)->current();
+        if(empty($result)){
+            return null;
+        }
+        $object->fromArray($result->toArray());
+
+        $result2 = $this->getCustomTable($result->section)->find($id, $revision)->current();
+
+        $object->fromArray($result2->toArray());
+
+        return $object;
     }
-    
-   /**
+
+    /**
      * Fetch Section Content Objects by Section
      * 
      * @param int $section 
      * @return Content_Model_DbTabeRow_SectionContent 
      */
-   public function fetchNewestObjectsBySection($section){
+    public function fetchObjectsBySection($section) {
 
-       $select = $this->getTable()->select()->from($this->getTable(),array(new Zend_Db_Expr('*'),new Zend_Db_Expr('MAX(revision)')))->where('section = ?',$section)->group('id');
-       return $this->getTable()->fetchAll($select);
-    }  
-    
+        $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
+        $select->setIntegrityCheck(false)
+                ->where('section = ?', $section)
+                ->join(array('c' => 'content_custom_' . $section),
+                    'content_content.id = c.id AND 
+                        content_content.active_revision = c.revision'
+        ); //,'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings')
+
+        $results = $this->getTable()->fetchAll($select);
+        //  $row =  $this->getTable()->fetchRow($select);
+        // $select = $this->getTable()->select()->from($this->getTable(),array(new Zend_Db_Expr('*'),new Zend_Db_Expr('MAX(revision)')))->where('section = ?',$section)->group('id');
+        $objects = array();
+        foreach ($results as $result) {
+            $objects[] = new Content_Model_Content(array('data' => $result->toArray()));
+        }
+
+        return $objects;
+    }
+
     /**
      *
      * @param string $url
-     * @return Content_Model_DbTabeRow_SectionContent 
+     * @return Content_Model_Content 
      */
-    public function fetchNewestObjectBySectionUrl($section, $url){
+    public function fetchObjectByUrl($url) {
 
-       $select = $this->getTable()->select()->where('section = ?',$section)->where('url = ?',$url)->order('revision DESC')->limit(1);
-       return $this->getTable()->fetchRow($select);
+        $object = new Content_Model_Content();
+
+        $select = $this->getTable()->select()->where('url = ?',$url);
+        $result = $this->getTable()->fetchRow($select); 
+        
+        if(empty($result)){
+            return null;
+        }
+        
+        $object->fromArray($result->toArray());
+
+//        $select = $this->getCustomTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
+//        $select->setIntegrityCheck(false)
+//                //->where('section = ?', $section)
+//                ->where('url = ?', $url)
+//                ->join(array('c' => 'content_custom_' . $section,
+//                    'content_content.id = c.id AND 
+//                        content_content.active_revision = c.revision')
+//        ); //,'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings')
+
+        $result2 = $this->getCustomTable($result->section)->find($result->id, $result->active_revision)->current();
+        // = $this->getCustomTable()->fetchRow($select2); 
+        $object->fromArray($result2->toArray());
+
+        return $object;
     }
+
     /**
      *
      * @param string $id
-     * @return Content_Model_DbTabeRow_SectionContent 
+     * @return Content_Model_Content 
      */
-    public function fetchNewestObjectById($id){
+    public function fetchObjectById($id) {
+        
+$object = new Content_Model_Content();
 
-       $select = $this->getTable()->select()->where('id = ?',$id)->order('revision DESC')->limit(1);
-       return $this->getTable()->fetchRow($select);
+        $result = $this->getTable()->find($id)->current();
+if(empty($result)){
+            return null;
+        }
+        $object->fromArray($result->toArray());
+       // die(debugArray($object));
+        $result2 = $this->getCustomTable($result->section)->find($result->id, $result->active_revision)->current();
+        // = $this->getCustomTable()->fetchRow($select2); 
+        $object->fromArray($result2->toArray());
+
+//        $object = new Content_Model_Content();
+//
+//        $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
+//        $select->setIntegrityCheck(false)
+//                //->where('section = ?', $section)
+//                ->where('id = ?', $id)
+//                ->join(array('c' => 'content_custom_' . $section,
+//                    'content_content.id = c.id AND 
+//                        content_content.active_revision = c.revision')
+//        ); //,'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings')
+//
+//        $object = new Content_Model_Content();
+//
+//        $result = $this->getTable()->fetchRow($select);
+//
+//        $object->fromArray($result->toArray());
+//
+        return $object;
     }
-
 
 //     public function fetchObjectsByIdHouse($id,$house){
 //
@@ -102,135 +187,198 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
 //
 //       return $this->getTable()->fetchAll($select);
 //    }
-    
-    public function addCustomTable($section){
-        
+
+    public function addCustomTable($section) {
+
+
+        $table = 'content_custom_' . mysql_real_escape_string($section);
+
         //@todo security issue validate $section
-        
-       // return $this->getMapper()->prepareTable($section, $fields);
-        $this->getTable()->getAdapter()->query('CREATE TABLE IF NOT EXISTS `content_custom_'.mysql_real_escape_string($section).'` (
+        // return $this->getMapper()->prepareTable($section, $fields);
+        $this->getTable()->getAdapter()->query('CREATE TABLE IF NOT EXISTS `' . $table . '` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `revision` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `owner`  int(11) unsigned NOT NULL,
+  `autosave`  int(1) unsigned NOT NULL,
   PRIMARY KEY (`id`,`revision`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;');
-        
+
         //check if table exisits
-            //false
-                //create table with columns
-            
-            //true
-               //check to see
-               ////throw Exception 
-        
-        /*CREATE TABLE IF NOT EXISTS `content_section_5` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `revision` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`,`revision`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-*/
-        
+        //false
+        //create table with columns
+        //true
+        //check to see
+        ////throw Exception 
+
+        /* CREATE TABLE IF NOT EXISTS `content_section_5` (
+          `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+          `revision` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY (`id`,`revision`)
+          ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+         */
     }
-    
-    public function addCustomField(Content_Model_Field_Interface $field){
+
+    public function addCustomField(Content_Model_Field_Interface $field) {
         //@todo check to make sure section is valid
         //check to make sure column doesn't exist yet
-        
         //load plugin
-        
-        $class = 'Content_Plugin_Element_'.$field->element.'_Installer';
-        
-        if(!class_exists($class, true)){
-            throw new Exception('Element not found: '.$field->element);
+
+        $class = 'Content_Plugin_Element_' . $field->element . '_Installer';
+
+        if (!class_exists($class, true)) {
+            throw new Exception('Element not found: ' . $field->element);
         }
-        
+
         $element = new $class();
-        
-        return $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_'.mysql_real_escape_string($field->section).'` ADD `'.mysql_real_escape_string($field->name).'` '.$element->getMysqlColumn().' ');
+
+        return $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` ADD `' . mysql_real_escape_string($field->name) . '` ' . $element->getMysqlColumn() . ' ');
     }
-    
-    public function renameCustomField(Content_Model_Field_Interface $old, Content_Model_Field_Interface $field){
+
+    public function renameCustomField(Content_Model_Field_Interface $old, Content_Model_Field_Interface $field) {
         //@todo check to make sure section is valid
         //check to make sure column doesn't exist yet
-        
-        if($old->id != $field->id){
+
+        if ($old->id != $field->id) {
             throw new InvalidArgumentException('Object Id\'s Do not match');
         }
-        
-        
+
+
         //load plugin
-        
-        $class = 'Content_Plugin_Element_'.$field->element.'_Installer';
-        
-        if(!class_exists($class, true)){
-            throw new Exception('Element not found: '.$field->element);
+
+        $class = 'Content_Plugin_Element_' . $field->element . '_Installer';
+
+        if (!class_exists($class, true)) {
+            throw new Exception('Element not found: ' . $field->element);
         }
-        
+
         $element = new $class();
-        
-        return $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_'.mysql_real_escape_string($field->section).'` CHANGE `'.mysql_real_escape_string($old->name).'` `'.mysql_real_escape_string($field->name).'` '.$element->getMysqlColumn().' ');
+
+        return $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` CHANGE `' . mysql_real_escape_string($old->name) . '` `' . mysql_real_escape_string($field->name) . '` ' . $element->getMysqlColumn() . ' ');
     }
-    
-     public function removeCustomField(Content_Model_Field_Interface $field){
+
+    public function removeCustomField(Content_Model_Field_Interface $field) {
         //alter table
-        return $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_'.mysql_real_escape_string($field->section).'` DROP `'.mysql_real_escape_string($field->name).'`');
-       // $this->getMapper()->removeField($field); 
+        return $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` DROP `' . mysql_real_escape_string($field->name) . '`');
+        // $this->getMapper()->removeField($field); 
     }
-    
-      public function removeCustomTable($section){
+
+    public function removeCustomTable($section) {
         //drop table
         //DROP TABLE `content_section_5`
-        return $this->getTable()->getAdapter()->query('DROP TABLE `content_custom_'.mysql_real_escape_string($section));
+        return $this->getTable()->getAdapter()->query('DROP TABLE `content_custom_' . mysql_real_escape_string($section));
     }
-    
-    
-    
-
-
 
     public function save(Content_Model_Content_Interface $content) {
+//die(debugArray($content)); 
+        //get fields in table 1
+        $table = $this->getTable();
+        $fields = $table->info('cols');
+        //  
+        //get fields in table 2
+        $customTable = $this->getCustomTable($content->section);
+        $customFields = $customTable->info('cols');
+        //insert into table 1
 
-        if (($content instanceof Content_Model_DbTableRow_Content) && ($content->isConnected())) {
-            return $content->save();
-        } elseif (!is_null($content->id) && !is_null($content->revision)) {
-            $row = $this->getTable()->find($content->id,$content->revision)->current();
-            if(empty($row)){
-               $row = $this->getTable()->createRow();
-            }
+        $content->revision = date('Y-m-d H:i:s');
+        $content->active_revision = $content->revision;
+        $contentValues = $content->toArray();
 
+        if (isset($content->id)) {
+            $row = $table->find($content->id)->current();
         } else {
-            $row = $this->getTable()->createRow();
+            $row = $table->createRow();
         }
+        foreach ($contentValues as $key => $value) {
+            if (in_array($key, $fields)) {
+                $row->$key = $value;
+            }
+        }
+        $result = $row->save();
+        //   die(debugArray($result));    
+        //get id
+        $content->id = $result['id'];
+        //insert into table 2
+        $customRow = $customTable->createRow();
 
-        $row->fromArray($content->toArray());
-       // die(debugArray($row));
-        $row->save();
+        foreach ($contentValues as $key => $value) {
+            if (in_array($key, $customFields)) {
+                $customRow->$key = $value;
+            }
+        }
+        $customRow->save();
+        //update id in orginal content
 
-        return $row;
+        return $content;
     }
 
     public function delete(Content_Model_Content_Interface $content) {
 
-        if (($content instanceof Content_Model_DbTableRow_Content) && ($content->isConnected())) {
-            $content->delete();
-            return true;
-        } elseif (!is_null($content->id) && !is_null($content->revision)) {
-            $row = $this->getTable()->find($content->id,$content->revision)->current();
-            $row->delete();
-            return true;
+        $table = $this->getTable();
+
+        $customTable = $this->getCustomTable($content->section);
+
+        //deletemain
+        $row = $table->find($content->id)->current();
+        if (empty($row)) {
+            throw new Exception('Invalid Content');
+        }
+        $row->delete();
+
+        //deletecustom
+        $rowCustom = $customTable->find($content->id, $content->revision)->current();
+        $rowCustom->delete();
+
+        return true;
+    }
+
+    public function deleteById($section) {
+
+        $customTable = $this->getCustomTable($content->section);
+        $where = $this->getTable()->getAdapter()->quoteInto('id = ?', $id);
+
+        //deletemain
+        $this->getTable()->delete($where);
+
+        //deletecustom
+        $rowCustom = $customTable->delete($where);
+        return true;
+    }
+
+    public function deleteOldRevisions($id) {
+
+
+        $select = $this->getTable()->select()->where('id = ?', $id)->order('revision DESC')->limit(1);
+        $newest = $this->getTable()->fetchRow($select);
+
+        $customTable = $this->getCustomTable($content->section);
+        $where = $this->getTable()->getAdapter()->quoteInto('revision < ?', $newest->revision);
+
+        //deletemain
+        $this->getTable()->delete($where);
+
+        //deletecustom
+        $rowCustom = $customTable->delete($where);
+        return true;
+    }
+
+    public function deleteBySection($section) {
+
+        $where = $this->getTable()->getAdapter()->quoteInto('section = ?', $section);
+        $this->getTable()->delete($where);
+    }
+
+    public function deleteAll() {
+
+        $service = new Content_Model_Section_Service();
+        $sections = $service->getObjects();
+
+        foreach ($sections as $section) {
+            $this->removeCustomTable($section->id);
         }
 
-        throw new Exception('Invalid Content');
-    }
-    
-    public function deleteBySection($section){
- 
-         $where = $this->getTable()->getAdapter()->quoteInto('section = ?',$section);
-         $this->getTable()->delete($where);
-    }
-    
-    public function deleteAll(){
         if (APPLICATION_ENV != 'production') {
-            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `' . $this->getTable()->info('name') . '`');
         }
     }
+
 }

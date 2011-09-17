@@ -24,6 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
+
 class Core_Model_Menu_Service {
     
     /**
@@ -46,66 +47,76 @@ class Core_Model_Menu_Service {
     public function setMapper(Core_Model_Menu_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
+    
+    /**
+     * @param int $id
+     * @return Core_Model_Menu_Interface 
+     */
+    public function getObjects(){
+        $objects = $this->getMapper()->fetchObjects();
+
+       // if (empty($objects)) {
+       //     throw new NotFoundException('Category Sets Not Found', 404);
+       // }
+        return $objects;
+    }
+    
     /**
      * @param int $id
      * @return Core_Model_Menu_Interface 
      */
     public function getObjectById($id){
-        $menu = $this->getMapper()->fetchObjectById($id);
+        $object = $this->getMapper()->fetchObjectById($id);
 
-        if (empty($menu)) {
-            throw new Exception('Menu Not Found', 404);
+        if (empty($object)) {
+            throw new NotFoundException('Category Set Not Found', 404);
         }
-        return $menu;
+        return $object;
     }
 
-  /**
-    * @param mixed $menu
-    * @throws InvalidArgumentException 
-    */
-    public function create($menu) {
-        if ($menu instanceof Core_Model_Menu_Interface) {
-            $h = $menu;
-        } elseif (is_array($menu)) {
-            $h = new Core_Model_Menu(array('data' => $menu));
+    public function create($mixed) {
+        if ($mixed instanceof Core_Model_Menu_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_Menu(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Menu');
+            throw new InvalidArgumentException('Invalid Category Set');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
-  /**
-    * @param mixed $menu
-    * @throws InvalidArgumentException 
-    */
-    public function update($menu) {
-        if ($menu instanceof Core_Model_Menu_Interface) {
-            $h = $menu;
-        } elseif (is_array($menu)) {
-            $h = new Core_Model_Menu(array('data' => $menu));
+    public function update($mixed) {
+        if ($mixed instanceof Core_Model_Menu_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_Menu(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Menu');
+            throw new InvalidArgumentException('Invalid Category Set');
         }
         
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
-  /**
-    * @param mixed $menu
-    * @throws InvalidArgumentException 
-    */
-    public function delete($menu) {
-        if (is_int($menu)) {
-            $h = new Core_Model_Menu();
-            $h->id = $menu;
-        } elseif ($menu instanceof Core_Model_Menu_Interface) {
-            $h = $menu;
-        } elseif (is_array($menu)) {
-            $h = new Core_Model_Menu(array('data' => $menu));
+
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = new Core_Model_Menu();
+            $object->id = $mixed;
+        } elseif ($mixed instanceof Core_Model_Menu_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_Menu(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Menu');
+            throw new InvalidArgumentException('Invalid Category Set');
         }
 
-        return $this->getMapper()->delete($h);
+        return $this->getMapper()->delete($object);
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV == 'production'){
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
     }
 }

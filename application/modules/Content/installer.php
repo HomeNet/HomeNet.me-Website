@@ -26,6 +26,23 @@
 
 class Content_Installer extends CMS_Installer_Abstract
 {
+    static public $testSection; 
+    
+    function installTest() {
+        
+        $section = new Content_Model_Section();
+        $section->title = 'Test Section';
+        $section->url = 'test_section';
+        $section->visible = false;
+        
+         $manager = new Content_Model_Section_Manager();
+        $object = $manager->createByTemplate($section, 'Base');
+         
+         self::$testSection = $object->id;
+         //die(self::$testSection );
+     }
+    
+    
     function uninstallTest() {
         $service = new Content_Model_Category_Service();
         $service->deleteAll();

@@ -179,7 +179,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->createTestUserAcls();
         $result = $this->object->getObjectsByUserModuleControllerObject(2, 'test', 'test', 1);
   //   echo debugArray($result->toArray());
-        $this->assertEquals(5, count($result));
+        $this->assertEquals(1, count($result));
 
         foreach ($result as $acl) {
 
@@ -196,7 +196,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->createTestUserAcls();
         $result = $this->object->getObjectsByUserModuleControllerObjects(2, 'test', 'test', array(1, 2));
         
-        $this->assertEquals(6, count($result));
+        $this->assertEquals(2, count($result));
 
         foreach ($result as $acl) {
 

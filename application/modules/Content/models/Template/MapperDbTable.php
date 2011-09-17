@@ -39,7 +39,8 @@ class Content_Model_Template_MapperDbTable implements Content_Model_Template_Map
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Content_Model_DbTable_Template();
+             $this->_table = new Zend_Db_Table('content_templates');
+            $this->_table->setRowClass('Content_Model_Template_DbTableRow');
         }
         return $this->_table;
     }
@@ -67,10 +68,10 @@ class Content_Model_Template_MapperDbTable implements Content_Model_Template_Map
      * @param int $section 
      * @return Content_Model_DbTabeRow_SectionContent 
      */
-   public function fetchNewestObjectsBySection($section){
+   public function fetchObjectsBySection($section){
 
-       $select = $this->getTable()->select()->from($this->getTable(),array(new Zend_Db_Expr('*'),new Zend_Db_Expr('MAX(revision)')))->where('section = ?',$section)->group('id');
-       return $this->getTable()->fetchAll($select);
+       $select = $this->getTable()->select()->where('section = ?',$section)->where('active = 1')->group('id');//->where(new Zend_Db_Expr('MAX(revision) = revision')); //;
+       return $this->getTable()->fetchAll($select); //from($this->getTable(),array(new Zend_Db_Expr('*'),new Zend_Db_Expr('MAX(revision)')))->
     }  
     
     /**
@@ -78,9 +79,9 @@ class Content_Model_Template_MapperDbTable implements Content_Model_Template_Map
      * @param string $url
      * @return Content_Model_DbTabeRow_SectionContent 
      */
-    public function fetchNewestObjectBySectionUrl($section, $url){
+    public function fetchObjectBySectionUrl($section, $url){
 
-       $select = $this->getTable()->select()->where('section = ?',$section)->where('url = ?',$url)->order('revision DESC')->limit(1);
+       $select = $this->getTable()->select()->where('section = ?',$section)->where('url = ?',$url)->where('active = 1')->limit(1);
        return $this->getTable()->fetchRow($select);
     }
     /**
@@ -88,9 +89,20 @@ class Content_Model_Template_MapperDbTable implements Content_Model_Template_Map
      * @param string $id
      * @return Content_Model_DbTabeRow_SectionContent 
      */
-    public function fetchNewestObjectById($id){
+    public function fetchObjectById($id){
 
-       $select = $this->getTable()->select()->where('id = ?',$id)->order('revision DESC')->limit(1);
+       $select = $this->getTable()->select()->where('id = ?',$id)->where('active = 1')->limit(1);
+       return $this->getTable()->fetchRow($select);
+    }
+    
+    /**
+     *
+     * @param string $id
+     * @return Content_Model_DbTabeRow_SectionContent 
+     */
+    public function fetchRevisionsById($id){
+
+       $select = $this->getTable()->select()->from($this->getTable(),array('id','revision', 'owner', 'active', 'section', 'url'))->where('id = ?',$id)->where('active = 1')->limit(1);
        return $this->getTable()->fetchRow($select);
     }
 
@@ -121,7 +133,15 @@ class Content_Model_Template_MapperDbTable implements Content_Model_Template_Map
 
         $row->fromArray($content->toArray());
        // die(debugArray($row));
-        $row->save();
+        $object = $row->save();
+        
+        if($content->active == true){
+            $where1 = $this->getTable()->getAdapter()->quoteInto('id = ?', $object->id);
+            $where2 = $this->getTable()->getAdapter()->quoteInto('revision != ?', $object->revision);
+ 
+            $this->getTable()->update(array('active' => false), array($where1, $where2));
+
+        }
 
         return $row;
     }

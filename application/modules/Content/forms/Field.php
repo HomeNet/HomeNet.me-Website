@@ -56,6 +56,7 @@ class Content_Form_Field extends Zend_Form
         $name->setRequired('true');
         $name->addFilter('StripTags');
         $this->addElement($name);
+        //@todo check for resevred names
         
         $value = $this->createElement('text','value');
         $value->setLabel('Value: ');
