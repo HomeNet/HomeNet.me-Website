@@ -1,0 +1,23 @@
+<h1>Admin Options</h1>
+
+<?php
+foreach ($this->links as $module => $links) {
+    if(empty($links)){
+        continue;
+    }
+    ?>
+    <h2><?php echo $module ?></h2>
+    <div class="transparent box">
+
+        <ul>
+            <?php
+            foreach ($links as $link) {
+                ?><li><a href="<?php echo $this->url($link['options'], $link['route']); ?>"><?php echo $link['title']; ?></a></li><?php
+            }
+            ?>
+        </ul>
+    </div>
+
+    <?php
+}
+?>
