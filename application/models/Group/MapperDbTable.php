@@ -45,7 +45,7 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
         return $this->_table;
     }
 
-    public function setTable($table) {
+    public function setTable(Zend_Db_Table_Abstract $table) {
         $this->_table = $table;
     }
 
@@ -97,7 +97,7 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
 
     public function save(Core_Model_Group_Interface $group) {
 
-        if (($group instanceof Core_Model_DbTableRow_Group) && ($group->isConnected())) {
+        if (($group instanceof Core_Model_Group_DbTableRow) && ($group->isConnected())) {
             return $group->save();
         } elseif (!is_null($group->id)) {
             $row = $this->getTable()->find($group->id)->current();
@@ -118,7 +118,7 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
 
     public function delete(Core_Model_Group_Interface $group) {
 
-        if (($group instanceof Core_Model_DbTableRow_Group) && ($group->isConnected())) {
+        if (($group instanceof Core_Model_Group_DbTableRow) && ($group->isConnected())) {
             $group->delete();
             return true;
         } elseif (!is_null($group->id)) {

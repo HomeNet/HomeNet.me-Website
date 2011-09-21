@@ -57,6 +57,8 @@ class Content_Model_Section implements Content_Model_Section_Interface {
      * @var int
      */
     public $visible = false;
+    
+    public $_fields = null;
   
 
     public function __construct(array $config = array()) {
@@ -85,5 +87,19 @@ class Content_Model_Section implements Content_Model_Section_Interface {
 
         return get_object_vars($this);
     }
+    
+    public function getFields(){
+        
+        if(!isset($this->id)){
+            throw new Exception('Id Not Loaded yet');
+        }
+        
+        if(is_null($this->_fields)){
+            $service = new Content_Model_Field_Service();
+            $this->_fields = $service->getMetadataBySection($this->id);
+        }
+        return $this->_fields;
+    }
+    
 
 }

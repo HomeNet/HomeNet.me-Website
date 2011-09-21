@@ -41,7 +41,9 @@ class Core_Model_Menu_Item_Service {
 
         return $this->_mapper;
     }
-
+/**
+     * @param Content_Model_Section_MapperInterface $mapper 
+     */
     public function setMapper(Core_Model_Menu_Item_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
@@ -52,43 +54,31 @@ class Core_Model_Menu_Item_Service {
      */
     public function getObjectById($id){
         
-        $category = $this->getMapper()->fetchObjectById($id);
+        $result = $this->getMapper()->fetchObjectById($id);
 
-        if (empty($category)) {
-            throw new NotFoundException('Menu_Item not found', 404);
+        if (empty($result)) {
+            throw new NotFoundException('Id: '.$id.' Not Found', 404);
         }
-        return $category;
+        return $result;
     }
     
         /**
      * @param int $id
      * @return Core_Model_Menu_Item_Interface 
      */
-    public function getObjectsBySet($id){
+    public function getObjectsByMenu($id){
         
-        $objects = $this->getMapper()->fetchObjectsBySet($id);
+        $results = $this->getMapper()->fetchObjectsByMenu($id);
 
-        if (empty($objects)) {
-            throw new NotFoundException('Set not found', 404);
-        }
-        return $objects;
+//        if (empty($objects)) {
+//            throw new NotFoundException('Set not found', 404);
+//        }
+        return $results;
     }
     
     /**
-     * @param string $url
-     * @return Core_Model_Menu_Item_Interface 
-     */
-    public function getObjectByUrl($url){
-        
-        $category = $this->getMapper()->fetchObjectByUrl($url);
-
-        if (empty($category)) {
-            throw new NotFoundException('Menu_Item not found', 404);
-        }
-        return $category;
-    }
-/**
-     * @param mixed $category
+     * @param Core_Model_Menu_Item_Interface|array $mixed
+     * @return Core_Model_Menu_Item
      * @throws InvalidArgumentException 
      */
     public function create($category) {
@@ -97,13 +87,14 @@ class Core_Model_Menu_Item_Service {
         } elseif (is_array($category)) {
             $h = new Core_Model_Menu_Item(array('data' => $category));
         } else {
-            throw new InvalidArgumentException('Invalid Menu_Item');
+            throw new InvalidArgumentException('Invalid Object');
         }
 
         return $this->getMapper()->save($h);
     }
 /**
-     * @param mixed $category
+     * @param Core_Model_Menu_Item_Interface|array $mixed
+     * @return Core_Model_Menu_Item
      * @throws InvalidArgumentException 
      */
     public function update($category) {
@@ -112,13 +103,14 @@ class Core_Model_Menu_Item_Service {
         } elseif (is_array($category)) {
             $h = new Core_Model_Menu_Item(array('data' => $category));
         } else {
-            throw new InvalidArgumentException('Invalid Menu_Item');
+            throw new InvalidArgumentException('Invalid Object');
         }
         
         return $this->getMapper()->save($h);
     }
 /**
-     * @param mixed $category
+     * @param Core_Model_Menu_Item_Interface|array|integer $mixed
+     * @return boolean Success
      * @throws InvalidArgumentException 
      */
     public function delete($category) {
@@ -130,16 +122,21 @@ class Core_Model_Menu_Item_Service {
         } elseif (is_array($category)) {
             $h = new Core_Model_Menu_Item(array('data' => $category));
         } else {
-            throw new InvalidArgumentException('Invalid Menu_Item');
+            throw new InvalidArgumentException('Invalid Object');
         }
 
         return $this->getMapper()->delete($h);
     }
-    
+     /**
+     * Delete all data. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
     public function deleteAll(){
         if(APPLICATION_ENV == 'production'){
             throw new Exception("Not Allowed");
         }
-        $this->getMapper()->deleteAll();
+        return $this->getMapper()->deleteAll();
     }
 }

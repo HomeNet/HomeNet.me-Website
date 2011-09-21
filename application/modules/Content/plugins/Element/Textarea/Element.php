@@ -25,7 +25,7 @@
  *
  * @author Matthew Doll <mdoll at homenet.me>
  */
-class Content_Plugin_Element_Textarea_Element {
+class Content_Plugin_Element_Textarea_Element extends Content_Model_Plugin_Element {
    
     
     /**
@@ -34,21 +34,30 @@ class Content_Plugin_Element_Textarea_Element {
      * @return CMS_Sub_Form
      */
     function getSetupForm($options = array()){
-        $form = parent::getSetupForm();
+        $form = parent::getSetupForm($options);
+        $form->setLegend('Textarea Options');
         
-         $rows = $form->createElement('text','rows');
+        $rows = $form->createElement('text','rows');
         $rows->setLabel('Rows: ');
       //  $rows->setDescription('This is the label that will show up in the form interface');
       //  $rows->setRequired('true');
+        $rows->setValue(3);
         $rows->addFilter('Int');
         $form->addElement($rows);
         
-        $cols = $this->createElement('text','cols');
+        $cols = $form->createElement('text','cols');
         $cols->setLabel('Cols: ');
+        $cols->setValue(50);
      //   $cols->setDescription('This is the label that will show up in the form interface');
      //   $cols->setRequired('true');
         $cols->addFilter('Int');
         $form->addElement($cols);
+                
+        $path = $form->createElement('text','value');
+        $path->setLabel('Starting Value: ');
+        $path->setRequired('true');
+        $path->addFilter('StripTags');//@todo filter chars
+        $form->addElement($path);
         
         return $form;
     }
@@ -59,7 +68,7 @@ class Content_Plugin_Element_Textarea_Element {
      * @param $config config of how object shoiuld be rendered
      * @return Zend
      */
-    function getElement($config){
+    function getElement(array $config, $options = array()){
         
         $element = new Zend_Form_Element_Textarea($config); 
         return $element;

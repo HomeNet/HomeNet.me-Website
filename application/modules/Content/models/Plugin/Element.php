@@ -26,44 +26,60 @@
  * @author Matthew Doll <mdoll at homenet.me>
  */
 abstract class Content_Model_Plugin_Element {
-    /**
-     * Get Mysql Column Datatype.
-     * 
-     * @return string 
-     */
-    function getMysqlColumn(){
-        return 'VARCHAR(255)';
+
+    protected $_value;
+    protected $_options = array();
+    public $isArray = false;
+
+    public function __construct($config = array()) {
+        if (isset($config['data'])) {
+
+
+            if (($this->isArray == true) && is_string($config['data'])) {
+                $config['data'] = unserialize($config['data']);
+            }
+            $this->_value = $config['data'];
+
+//            if ($this->isArray) {
+//                die(debugArray($this->_value));
+//            }
+        }
+        if (isset($config['options'])) {
+            $this->_options = $config['options'];
+        }
     }
-    
+
+    public function __toString() {
+        return $this->_value;
+    }
+
+    /**
+     * Get the value of the element
+     * 
+     * @param array $values 
+     */
+    public function getValue() {
+        return $this->_value;
+    }
+
     /**
      * get any custom options for the setup of the field type
      * 
      * @return CMS_Sub_Form
      */
-    function getSetupForm($options = array()){
-        $form = new CMS_Sub_Form();
-        
+    function getSetupForm($options = array()) {
+        $form = new CMS_Form_SubForm();
+
         return $form;
     }
-    
+
     /**
      * Get the form for Inserting data
      * 
      * @param Content_Model_Field $field
      * @return CMS_Form_SubForm 
      */
-    function getField($config = array()){
-        $form = new CMS_Form_SubForm();
-        
-        return $form;
-    }
+    abstract function getElement(array $config, $options = array());
     
-    /**
-     * Parse the Subform and return the value to be stored in the database
-     * 
-     * @param array $values 
-     */
-    function getValue($values = array()){
-        
-    }
+    public function save();
 }

@@ -21,7 +21,7 @@
 
 /**
  * @package Core
- * @subpackage User
+ * @subpackage Acl_User
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
@@ -44,39 +44,65 @@ class Core_Model_Acl_User_Service {
         return $this->_mapper;
     }
 
+    /**
+     * @param Content_Model_Section_MapperInterface $mapper 
+     */
     public function setMapper(Core_Model_Acl_User_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
     /**
-     * @param int $id
-     * @return Core_Model_User_Interface 
+     * @param int $id   Acl_User Id
+     * @return Core_Model_Acl_User
+     * @throws NotFoundException 
      */
     public function getObjectById($id) {
-        $acl = $this->getMapper()->fetchObjectById($id);
+        $result = $this->getMapper()->fetchObjectById($id);
 
-        if (empty($acl)) {
-            throw new NotFoundException('User Acl not found', 404);
+        if (empty($result)) {
+            throw new NotFoundException('Id ' . $id . ' Not Found', 404);
         }
-        return $acl;
-    }
-    
-    public function getObjectsByUser($user){
-         return $this->getMapper()->fetchObjectsByUser($user); 
+        return $result;
     }
 
+    /**
+     * @param integer $user  User Id
+     * @return Core_Model_Acl_User 
+     */
+    public function getObjectsByUser($user) {
+        return $this->getMapper()->fetchObjectsByUser($user);
+    }
+
+    /**
+     * @param integer $user User Id
+     * @param string $module
+     * @return Core_Model_Acl_User[] 
+     */
     public function getObjectsByUserModule($user, $module) {
-        return $this->getMapper()->fetchObjectsByUserModule($user, $module); 
+        return $this->getMapper()->fetchObjectsByUserModule($user, $module);
     }
-    
-    public function getObjectsByUserModuleControllerObject($user, $module,$controller, $object = null){
-        return $this->getMapper()->fetchObjectsByUserModuleControllerObject($user, $module,$controller, $object);
+
+    /**
+     * @param integer $user User Id
+     * @param string $module
+     * @param string $controller
+     * @param int $object   Object Id
+     * @return Core_Model_Acl_User[] 
+     */
+    public function getObjectsByUserModuleControllerObject($user, $module, $controller, $object = null) {
+        return $this->getMapper()->fetchObjectsByUserModuleControllerObject($user, $module, $controller, $object);
     }
-    
-    public function getObjectsByUserModuleControllerObjects($user, $module, $controller, array $objects){
+
+    /**
+     * @param integer $user User Id
+     * @param string $module
+     * @param string $controller
+     * @param array $objects
+     * @return Core_Model_Acl_User[] 
+     */
+    public function getObjectsByUserModuleControllerObjects($user, $module, $controller, array $objects) {
         return $this->getMapper()->fetchObjectsByUserModuleControllerObjects($user, $module, $controller, $objects);
     }
-    
 
 //    public function getObjectsBySection($section){
 //        $contents = $this->getMapper()->fetchObjectsBySection($section);
@@ -97,63 +123,78 @@ class Core_Model_Acl_User_Service {
 //    }
 
     /**
-     * @param mixed $acl
+     * @param Core_Model_Acl_User_Interface|array $mixed
+     * @return Core_Model_Acl_User
      * @throws InvalidArgumentException 
      */
-    public function create($acl) {
-        if ($acl instanceof Core_Model_Acl_User_Interface) {
-            $h = $acl;
-        } elseif (is_array($acl)) {
-            $h = new Core_Model_Acl_User(array('data' => $acl));
+    public function create($mixed) {
+        if ($mixed instanceof Core_Model_Acl_User_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_Acl_User(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Object');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
     /**
-     * @param mixed $acl
+     * @param Core_Model_Acl_User_Interface|array $mixed
+     * @return Core_Model_Acl_User
      * @throws InvalidArgumentException 
      */
-    public function update($acl) {
-        if ($acl instanceof Core_Model_Acl_User_Interface) {
-            $h = $acl;
-        } elseif (is_array($acl)) {
-            $h = new Core_Model_Acl_User(array('data' => $acl));
+    public function update($mixed) {
+        if ($mixed instanceof Core_Model_Acl_User_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_Acl_User(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Object');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
     /**
-     * @param mixed $acl
+     * @param Core_Model_Acl_User_Interface|array $mixed
+     * @return boolean Success
      * @throws InvalidArgumentException 
      */
-    public function delete($acl) {
-        if (is_int($acl)) {
-            $h = new Core_Model_Acl_User();
-            $h->id = $acl;
-        } elseif ($acl instanceof Core_Model_Acl_User_Interface) {
-            $h = $acl;
-        } elseif (is_array($acl)) {
-            $h = new Core_Model_Acl_User(array('data' => $acl));
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = new Core_Model_Acl_User();
+            $object->id = $mixed;
+        } elseif ($mixed instanceof Core_Model_Acl_User_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_Acl_User(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Object');
         }
 
-        return $this->getMapper()->delete($h);
+        return $this->getMapper()->delete($object);
     }
-public function deleteByUser($user) {
-        $this->getMapper()->deleteByUser($user);
+
+    /**
+     * @param integer $user User Id
+     * @return boolean Success
+     */
+    public function deleteByUser($user) {
+        return $this->getMapper()->deleteByUser($user);
     }
-    
-     public function deleteAll(){
-        if(APPLICATION_ENV == 'production'){
+
+    /**
+     * Delete all data. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
             throw new Exception("Not Allowed");
         }
-        $this->getMapper()->deleteAll();
+        return $this->getMapper()->deleteAll();
     }
+
 }

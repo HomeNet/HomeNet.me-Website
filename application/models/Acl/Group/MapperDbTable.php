@@ -25,7 +25,7 @@ require "MapperInterface.php";
 
 /**
  * @package Core
- * @subpackage Group
+ * @subpackage Acl_Group
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
@@ -45,7 +45,7 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
         return $this->_table;
     }
 
-    public function setTable($table) {
+    public function setTable(Zend_Db_Table_Abstract $table) {
         $this->_table = $table;
     }
 
@@ -109,13 +109,13 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
         return $this->getTable()->fetchAll($select);
     }
 
-    public function save(Core_Model_Acl_Group_Interface $membership) {
+    public function save(Core_Model_Acl_Group_Interface $object) {
 
-        if (($membership instanceof Core_Model_DbTableRow_GroupAcl) && ($membership->isConnected())) {
-            return $membership->save();
+        if (($object instanceof Core_Model_GroupAcl_DbTableRow) && ($object->isConnected())) {
+            return $object->save();
 
-        } elseif (!is_null($membership->id)) {
-            $row = $this->getTable()->find($membership->id)->current();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current();
             if(empty($row)){
                $row = $this->getTable()->createRow();
             }
@@ -124,20 +124,20 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($membership->toArray());
+        $row->fromArray($object->toArray());
        // die(debugArray($row));
         $row->save();
 
         return $row;
     }
 
-    public function delete(Core_Model_Acl_Group_Interface $membership) {
+    public function delete(Core_Model_Acl_Group_Interface $object) {
 
-        if (($membership instanceof Core_Model_DbTableRow_GroupAcl) && ($membership->isConnected())) {
-            $membership->delete();
+        if (($object instanceof Core_Model_GroupAcl_DbTableRow) && ($object->isConnected())) {
+            $object->delete();
             return true;
-        } elseif (!is_null($membership->id)) {
-            $row = $this->getTable()->find($membership->id)->current()->delete();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current()->delete();
             return;
         }
 

@@ -1,8 +1,6 @@
 <?php
 
 /*
- * Interface.php
- * 
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * 
  * This file is part of HomeNet.
@@ -178,5 +176,13 @@ abstract class CMS_Installer_Abstract {
     function uninstallTest() {
         
     }
+    /**
+     * Get Links to show in the admin Menu
+     * 
+     * @return array
+     */
+    public function getAdminLinks(){
+        return array();
+    } 
 
 }

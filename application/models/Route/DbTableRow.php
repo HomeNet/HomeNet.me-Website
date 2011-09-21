@@ -46,34 +46,28 @@ class Core_Model_Route_DbTableRow extends Zend_Db_Table_Row_Abstract implements 
     }
 
     public function init(){
-        $this->visible = (bool) $this->visible;
+        $this->active = (bool) $this->active;
         $this->uncompress();
     }
     
-//    public function uncompress(){
-//        if(is_string($this->settings)){
-//            $this->settings = unserialize($this->settings);
-//        }
-//
-//        if(is_string($this->permissions)){
-//            $this->permissions = unserialize($this->permissions);
-//        }
-//    }
-//    
-//    public function compress(){
-//        if(is_array($this->settings)){
-//            $this->settings = serialize($this->settings);
-//        }
-//
-//        if(is_array($this->permissions)){
-//            $this->permissions = serialize($this->permissions);
-//        }
-//    }
+    public function uncompress(){
+        if(is_string($this->options)){
+            $this->options = unserialize($this->options);
+        }
+    }
+    
+    public function compress(){
+        if(is_array($this->options)){
+            $this->options = serialize($this->options);
+        } else {
+            die(debugArray($this->options));
+        }
+    }
 
     public function save(){
-//      $this->compress();
+      $this->compress();
         if (parent::save()) {
-//            $this->uncompress();
+            $this->uncompress();
             return $this;
         }
         throw new Exception("Save Error");

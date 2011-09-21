@@ -1,7 +1,7 @@
 <?php
 
 /*
- * ApikeyMapperDbTable.php
+ * MapperDbTable.php
  *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -35,7 +35,6 @@ class Core_Model_Menu_MapperDbTable implements Core_Model_Menu_MapperInterface {
     protected $_table = null;
 
     /**
-     *
      * @return Core_Model_DbTable_Menu;
      */
     public function getTable() {
@@ -46,17 +45,13 @@ class Core_Model_Menu_MapperDbTable implements Core_Model_Menu_MapperInterface {
         return $this->_table;
     }
 
-    public function setTable($table) {
+    public function setTable(Zend_Db_Table_Abstract $table) {
         $this->_table = $table;
     }
-
-
 
     public function fetchObjects(){
         return $this->getTable()->fetchAll();
     }
-
-
 
     public function fetchObjectById($id){
         return $this->getTable()->find($id)->current();
@@ -86,34 +81,33 @@ class Core_Model_Menu_MapperDbTable implements Core_Model_Menu_MapperInterface {
 
 
 
-    public function save(Core_Model_Menu_Interface $content) {
+    public function save(Core_Model_Menu_Interface $object) {
 
-        if (($content instanceof Core_Model_DbTableRow_Menu) && ($content->isConnected())) {
-            return $content->save();;
-        } elseif (!is_null($content->id)) {
-            $row = $this->getTable()->find($content->id)->current();
+        if (($object instanceof Core_Model_Menu_DbTableRow) && ($object->isConnected())) {
+            return $object->save();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current();
             if(empty($row)){
                $row = $this->getTable()->createRow();
             }
-
         } else {
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($content->toArray());
+        $row->fromArray($object->toArray());
        // die(debugArray($row));
         $row->save();
 
         return $row;
     }
 
-    public function delete(Core_Model_Menu_Interface $content) {
+    public function delete(Core_Model_Menu_Interface $object) {
 
-        if (($content instanceof Core_Model_DbTableRow_Menu) && ($content->isConnected())) {
-            $content->delete();
+        if (($object instanceof Core_Model_Menu_DbTableRow) && ($object->isConnected())) {
+            $object->delete();
             return true;
-        } elseif (!is_null($content->id)) {
-            $row = $this->getTable()->find($content->id)->current()->delete();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current()->delete();
             return;
         }
 

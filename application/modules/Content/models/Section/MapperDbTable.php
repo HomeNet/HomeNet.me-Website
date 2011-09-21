@@ -1,8 +1,6 @@
 <?php
 
 /*
- * ApikeyMapperDbTable.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -18,10 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
+ * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-require_once "MapperInterface.php";
 
 /**
  * @package Content
@@ -34,7 +30,6 @@ class Content_Model_Section_MapperDbTable implements Content_Model_Section_Mappe
     protected $_table = null;
 
     /**
-     *
      * @return Content_Model_DbTable_Section;
      */
     public function getTable() {
@@ -45,7 +40,7 @@ class Content_Model_Section_MapperDbTable implements Content_Model_Section_Mappe
         return $this->_table;
     }
 
-    public function setTable($table) {
+    public function setTable(Zend_Db_Table_Abstract $table) {
         $this->_table = $table;
     }
 
@@ -59,7 +54,7 @@ class Content_Model_Section_MapperDbTable implements Content_Model_Section_Mappe
 
     public function save(Content_Model_Section_Interface $section) {
 
-        if (($section instanceof Content_Model_DbTableRow_Section) && ($section->isConnected())) {
+        if (($section instanceof Content_Model_Section_DbTableRow) && ($section->isConnected())) {
             return $section->save();
         } elseif (!is_null($section->id)) {
             $row = $this->getTable()->find($section->id)->current();
@@ -89,7 +84,7 @@ class Content_Model_Section_MapperDbTable implements Content_Model_Section_Mappe
 
     public function delete(Content_Model_Section_Interface $section) {
 
-        if (($section instanceof Content_Model_DbTableRow_Section) && ($section->isConnected())) {
+        if (($section instanceof Content_Model_Section_DbTableRow) && ($section->isConnected())) {
             $section->delete();
             return true;
         } elseif (!is_null($section->id)) {

@@ -19,11 +19,9 @@
  * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
  */
 
-require_once "MapperInterface.php";
-
 /**
  * @package Content
- * @subpackage Content
+ * @subpackage Field
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
@@ -43,7 +41,7 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
         return $this->_table;
     }
 
-    public function setTable($table) {
+    public function setTable(Zend_Db_Table_Abstract $table) {
         $this->_table = $table;
     }
 
@@ -79,7 +77,7 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
 
     public function save(Content_Model_Field_Interface $content) {
 
-        if (($content instanceof Content_Model_DbTableRow_Field) && ($content->isConnected())) {
+        if (($content instanceof Content_Model_Field_DbTableRow) && ($content->isConnected())) {
             return $content->save();
         } elseif (!is_null($content->id)) {
             $row = $this->getTable()->find($content->id)->current();
@@ -100,7 +98,7 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
 
     public function delete(Content_Model_Field_Interface $content) {
 
-        if (($content instanceof Content_Model_DbTableRow_Field) && ($content->isConnected())) {
+        if (($content instanceof Content_Model_Field_DbTableRow) && ($content->isConnected())) {
             $content->delete();
             return true;
         } elseif (!is_null($content->id)) {

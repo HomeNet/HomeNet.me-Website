@@ -1,36 +1,28 @@
 <?php
-/**
- * Zend Framework
+/*
+ * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
- * LICENSE
+ * This file is part of HomeNet.
  *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://framework.zend.com/license/new-bsd
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@zend.com so we can send you a copy immediately.
+ * HomeNet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * @category   Zend
- * @package    Zend_Acl
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Role.php 23775 2011-03-01 17:25:24Z ralph $
+ * HomeNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /**
- * @see Zend_Acl_Role_Interface
- */
-require_once 'Zend/Acl/Role/Interface.php';
-
-
-/**
- * @category   Zend
- * @package    Zend_Acl
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * @package CMS
+ * @subpackage Acl
+ * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 class CMS_Acl_Role_User implements Zend_Acl_Role_Interface
 {

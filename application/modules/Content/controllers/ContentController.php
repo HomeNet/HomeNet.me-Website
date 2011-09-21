@@ -1,5 +1,29 @@
 <?php
+/*
+ * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ *
+ * This file is part of HomeNet.
+ *
+ * HomeNet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * HomeNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
+/**
+ * @package Content
+ * @subpackage Content
+ * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
+ */
 class Content_ContentController extends Zend_Controller_Action
 {
 
@@ -50,17 +74,17 @@ class Content_ContentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         
         $service = new Content_Model_Content_Service();
-        $manager = new Content_Model_Section_Manager();
-        $form = $manager->getForm($this->_getParam('id'));
+        $object = $service->getObjectById($this->_getParam('id'));
+        $form = $object->getForm();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
-        $form->addElement('hidden', 'section');
+        $form->addElement('hidden', 'section', array('value' =>$object->section));
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
-            $object = $service->getObjectById($this->_getParam('id'));
             
-            $values = $object->toArray();
+            
+          //  $values = $object->toArray();
 
-            $form->populate($values);
+           // $form->populate($values);
 
             $this->view->form = $form;
             return;

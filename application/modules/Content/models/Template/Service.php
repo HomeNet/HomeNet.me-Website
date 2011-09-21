@@ -43,7 +43,9 @@ class Content_Model_Template_Service {
 
         return $this->_mapper;
     }
-
+/**
+     * @param Content_Model_Section_MapperInterface $mapper 
+     */
     public function setMapper(Content_Model_Template_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
@@ -51,12 +53,13 @@ class Content_Model_Template_Service {
     /**
      * @param int $id
      * @return Content_Model_Template_Interface 
+     * @throws NotFoundException
      */
     public function getObjectByIdRevision($id,$revision) {
         $result = $this->getMapper()->fetchObjectByIdRevision($id, $revision);
 
         if (empty($result)) {
-            throw new NotFoundException('Content not found', 404);
+            throw new NotFoundException('Id: ' . $id . ', Revision: '.$revision.' Not Found', 404);
         }
         return $result;
     }
@@ -76,12 +79,13 @@ class Content_Model_Template_Service {
     /**
      * @param int $id
      * @return Content_Model_Template_Interface 
+     * @throws NotFoundException
      */
     public function getObjectById($id) {
         $result = $this->getMapper()->fetchObjectById($id);
 
         if (empty($result)) {
-            throw new NotFoundException('Template not found', 404);
+            throw new NotFoundException('Id: ' . $id . ' Not Found', 404);
         }
         return $result;
     }
@@ -89,91 +93,99 @@ class Content_Model_Template_Service {
     /**
      * @param int $url
      * @return Content_Model_Template_Interface 
+     * @throws NotFoundException
      */
     public function getObjectByUrl($url) {
         $result = $this->getMapper()->fetchObjectByUrl($url);
 
         if (empty($result)) {
-            throw new NotFoundException('Template not found', 404);
+            throw new NotFoundException('URL: ' . $url . ' Not Found', 404);
         }
         return $result;
     }
 
-//    public function getObjectsByIdHouse($id,$house){
-//        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
-//
-//        if (empty($apikeys)) {
-//            return array();
-//            //throw new Content_Model_Exception('Apikey not found', 404);
-//        }
-//        return $apikeys;
-//    }
-
     /**
-     * @param mixed $content
+     * @param Content_Model_Template_Interface|array $mixed
+     * @return Content_Model_Template
      * @throws InvalidArgumentException 
      */
-    public function create($content) {
-        if ($content instanceof Content_Model_Template_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Content_Model_Template(array('data' => $content));
+    public function create($mixed) {
+        if ($mixed instanceof Content_Model_Template_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_Template(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Object');
         }
         //create cache
-        $h->active = true;
+        $object->active = true;
         //@todo test to see if url aleady exists
         //die(debugArray($h));
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
     /**
-     * @param mixed $content
+     * @param Content_Model_Template_Interface|array $mixed
+     * @return Content_Model_Template
      * @throws InvalidArgumentException 
      */
-    public function update($content) {
-        if ($content instanceof Content_Model_Template_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Content_Model_Template(array('data' => $content));
+    public function update($mixed) {
+        if ($mixed instanceof Content_Model_Template_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_Template(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Object');
         }
         
         //create cache
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
     /**
-     * @param mixed $content
+     * @param Content_Model_Template_Interface|array $mixed
+     * @return boolean Success
      * @throws InvalidArgumentException 
      */
-    public function delete($content) {
-        if (is_int($content)) {
-            $h = new Content_Model_Template();
-            $h->id = $content;
-        } elseif ($content instanceof Content_Model_Template_Interface) {
-            $h = $content;
-        } elseif (is_array($content)) {
-            $h = new Content_Model_Template(array('data' => $content));
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = new Content_Model_Template();
+            $object->id = $mixed;
+        } elseif ($mixed instanceof Content_Model_Template_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_Template(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Object');
         }
         
         //delete cache
+        //@todo delete cache
 
-        return $this->getMapper()->delete($h);
+        return $this->getMapper()->delete($object);
     }
+    
+    /**
+     * @param integer $id Content Template Id 
+     * @return boolean Success
+     */
     public function deleteById($id) {
         $this->getMapper()->deleteById($id);
     }
-    
+        /**
+     * @param integer $section Content Section Id 
+     * @return boolean Success
+     */
     public function deleteBySection($section) {
         $this->getMapper()->deleteBySection($section);
     }
-    
+     /**
+     * Delete all data. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
      public function deleteAll(){
         if(APPLICATION_ENV != 'production'){
             $this->getMapper()->deleteAll();

@@ -45,7 +45,7 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
         return $this->_table;
     }
 
-    public function setTable($table) {
+    public function setTable(Zend_Db_Table_Abstract $table) {
         $this->_table = $table;
     }
 
@@ -75,13 +75,13 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
         return $array;
     }
 
-    public function save(Core_Model_User_Membership_Interface $membership) {
+    public function save(Core_Model_User_Membership_Interface $object) {
 
-        if (($membership instanceof Core_Model_DbTableRow_UserMembership) && ($membership->isConnected())) {
+        if (($object instanceof Core_Model_UserMembership_DbTableRow) && ($object->isConnected())) {
 
-            return $membership->save();
-        } elseif (!is_null($membership->id)) {
-            $row = $this->getTable()->find($membership->id)->current();
+            return $object->save();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current();
             if (empty($row)) {
                 $row = $this->getTable()->createRow();
             }
@@ -89,20 +89,20 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($membership->toArray());
+        $row->fromArray($object->toArray());
         // die(debugArray($row));
         $row->save();
 
         return $row;
     }
 
-    public function delete(Core_Model_User_Membership_Interface $membership) {
+    public function delete(Core_Model_User_Membership_Interface $object) {
 
-        if (($membership instanceof Core_Model_DbTableRow_UserMembership) && ($membership->isConnected())) {
-            $membership->delete();
+        if (($object instanceof Core_Model_UserMembership_DbTableRow) && ($object->isConnected())) {
+            $object->delete();
             return true;
-        } elseif (!is_null($membership->id)) {
-            $row = $this->getTable()->find($membership->id)->current()->delete();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current()->delete();
             return;
         }
 

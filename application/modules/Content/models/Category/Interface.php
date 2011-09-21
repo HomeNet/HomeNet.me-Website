@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *

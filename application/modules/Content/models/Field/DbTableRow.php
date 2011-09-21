@@ -66,6 +66,10 @@ class Content_Model_Field_DbTableRow extends Zend_Db_Table_Row_Abstract implemen
         if(is_string($this->attributes)){
             $this->attributes = unserialize($this->attributes);
         }
+        
+         if(is_string($this->options)){
+            $this->options = unserialize($this->options);
+        }
     }
     
     public function compress(){
@@ -79,6 +83,9 @@ class Content_Model_Field_DbTableRow extends Zend_Db_Table_Row_Abstract implemen
         
         if(is_array($this->attributes)){
             $this->attributes = serialize($this->attributes);
+        }
+         if(is_array($this->options)){
+            $this->options = serialize($this->options);
         }
         
         if(empty($this->value)){

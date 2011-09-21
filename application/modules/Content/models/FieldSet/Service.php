@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -24,9 +25,8 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-
 class Content_Model_FieldSet_Service {
-    
+
     /**
      * @var Content_Model_FieldSet_MapperInterface
      */
@@ -47,25 +47,25 @@ class Content_Model_FieldSet_Service {
     public function setMapper(Content_Model_FieldSet_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
-    
+
     /**
-     * @param int $id
-     * @return Content_Model_FieldSet_Interface 
+     * @return Content_Model_FieldSet[]
      */
-    public function getObjects(){
+    public function getObjects() {
         $fieldSets = $this->getMapper()->fetchObjects();
 
-       // if (empty($fieldSets)) {
-       //     throw new NotFoundException('Field Sets Not Found', 404);
-       // }
+        // if (empty($fieldSets)) {
+        //     throw new NotFoundException('Field Sets Not Found', 404);
+        // }
         return $fieldSets;
     }
-    
+
     /**
-     * @param int $id
-     * @return Content_Model_FieldSet_Interface 
+     * @param int $id FieldSet Id
+     * @return Content_Model_FieldSet
+     * @throws NotFoundException
      */
-    public function getObjectById($id){
+    public function getObjectById($id) {
         $content = $this->getMapper()->fetchObjectById($id);
 
         if (empty($content)) {
@@ -73,12 +73,13 @@ class Content_Model_FieldSet_Service {
         }
         return $content;
     }
-    
+
     /**
-     * @param int $id
-     * @return Content_Model_FieldSet_Interface 
+     * @param int $id Section Id
+     * @return Content_Model_FieldSet
+     * @throws NotFoundException
      */
-    public function getObjectsBySection($id){
+    public function getObjectsBySection($id) {
         $results = $this->getMapper()->fetchObjectsBySection($id);
 
         if (empty($results)) {
@@ -87,55 +88,81 @@ class Content_Model_FieldSet_Service {
         return $results;
     }
 
-    public function create($fieldSet) {
-        if ($fieldSet instanceof Content_Model_FieldSet_Interface) {
-            $h = $fieldSet;
-        } elseif (is_array($fieldSet)) {
-            $h = new Content_Model_FieldSet(array('data' => $fieldSet));
+    /**
+     * @param Content_Model_FieldSet_Interface|array  $mixed
+     * @return Content_Model_FieldSet 
+     * @throws InvalidArgumentException
+     */
+    public function create($mixed) {
+        if ($mixed instanceof Content_Model_FieldSet_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_FieldSet(array('data' => $mixed));
         } else {
             throw new InvalidArgumentException('Invalid Field Set');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
-    public function update($fieldSet) {
-        if ($fieldSet instanceof Content_Model_FieldSet_Interface) {
-            $h = $fieldSet;
-        } elseif (is_array($fieldSet)) {
-            $h = new Content_Model_FieldSet(array('data' => $fieldSet));
+    /**
+     * @param Content_Model_FieldSet_Interface|array  $mixed
+     * @return Content_Model_FieldSet 
+     * @throws InvalidArgumentException
+     */
+    public function update($mixed) {
+        if ($mixed instanceof Content_Model_FieldSet_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_FieldSet(array('data' => $mixed));
         } else {
             throw new InvalidArgumentException('Invalid Field Set');
         }
-        
-        return $this->getMapper()->save($h);
+
+        return $this->getMapper()->save($object);
     }
 
-    public function delete($fieldSet) {
-        if (is_int($fieldSet)) {
-            $h = new Content_Model_FieldSet();
-            $h->id = $fieldSet;
-        } elseif ($fieldSet instanceof Content_Model_FieldSet_Interface) {
-            $h = $fieldSet;
-        } elseif (is_array($fieldSet)) {
-            $h = new Content_Model_FieldSet(array('data' => $fieldSet));
+    /**
+     * @param Content_Model_FieldSet_Interface|array|int  $mixed
+     * @return bool Success
+     * @throws InvalidArgumentException
+     */
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = new Content_Model_FieldSet();
+            $object->id = $mixed;
+        } elseif ($mixed instanceof Content_Model_FieldSet_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_FieldSet(array('data' => $mixed));
         } else {
             throw new InvalidArgumentException('Invalid Field Set');
         }
-        
-        //if last fieldset don't delete
 
-        return $this->getMapper()->delete($h);
+        //@todo if last fieldset don't delete
+
+        return $this->getMapper()->delete($object);
     }
-    
+
+    /**
+     * @param type $section Section Id 
+     * @return boolean      Success 
+     */
     public function deleteBySection($section) {
         return $this->getMapper()->deleteBySection($section);
     }
-    
-    public function deleteAll(){
-        if(APPLICATION_ENV == 'production'){
+
+    /**
+     * Delete all data. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
             throw new Exception("Not Allowed");
         }
-        $this->getMapper()->deleteAll();
+        return $this->getMapper()->deleteAll();
     }
+
 }

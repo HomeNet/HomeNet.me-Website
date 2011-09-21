@@ -21,7 +21,7 @@
 
 /**
  * @package Core
- * @subpackage User
+ * @subpackage Acl_Group
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
@@ -44,52 +44,76 @@ class Core_Model_Acl_Group_Service {
         return $this->_mapper;
     }
 
+    /**
+     * @param Content_Model_Section_MapperInterface $mapper 
+     */
     public function setMapper(Core_Model_Acl_Group_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
-    
-      /**
-     * @param int $id
-     * @return Core_Model_Acl_Group_Interface 
+
+    /**
+     * @param int $id   Acl_Group Id
+     * @return Core_Model_Acl_Group 
+     * @throws NotFoundException
      */
     public function getObjectById($id) {
         $result = $this->getMapper()->fetchObjectById($id);
 
         if (empty($result)) {
-            throw new NotFoundException('User Acl not found', 404);
+            throw new NotFoundException('Id: '.$id.' Not Found', 404);
         }
         return $result;
     }
-    
-    public function getObjectsByGroup($group){
-         return $this->getMapper()->fetchObjectsByGroup($group); 
+
+    /**
+     * @param type $group   Group Id
+     * @return Core_Model_Acl_Group[] 
+     */
+    public function getObjectsByGroup($group) {
+        return $this->getMapper()->fetchObjectsByGroup($group);
     }
-    
-    public function getObjectsByGroups(array $groups){
-      $rows = $this->getMapper()->fetchObjectsByGroups($groups); 
-      $array = array();
-        foreach($rows as $row){
+
+    /**
+     * @param array $groups Array of Group Ids
+     * @return Core_Model_Acl_Group[] 
+     */
+    public function getObjectsByGroups(array $groups) {
+        $rows = $this->getMapper()->fetchObjectsByGroups($groups);
+        $array = array();
+        foreach ($rows as $row) {
             $array[$row->group][] = $row;
         }
 
         return $array;
     }
-    
+
+    /**
+     * @param array $groups Array of Group Ids
+     * @param string $module
+     * @return Core_Model_Acl_Group[] 
+     */
     public function getObjectsByGroupsModule(array $groups, $module) {
-        $rows = $this->getMapper()->fetchObjectsByGroupsModule($groups, $module); 
-        
+        $rows = $this->getMapper()->fetchObjectsByGroupsModule($groups, $module);
+
         $array = array();
-        foreach($rows as $row){
+        foreach ($rows as $row) {
             $array[$row->group][] = $row;
         }
 
-        return $array; 
+        return $array;
     }
-    
-    public function getObjectsByGroupsModuleControllerObject(array $groups, $module,$controller, $object = null){
-        $rows = $this->getMapper()->fetchObjectsByGroupsModuleControllerObject($groups, $module,$controller, $object);
+
+    /**
+     * @param array $groups Array of Group Ids
+     * @param string $module
+     * @param string $controller
+     * @param integer $object
+     * @return Core_Model_Acl_Group[] 
+     */
+    public function getObjectsByGroupsModuleControllerObject(array $groups, $module, $controller, $object = null) {
+        $rows = $this->getMapper()->fetchObjectsByGroupsModuleControllerObject($groups, $module, $controller, $object);
         $array = array();
-        foreach($rows as $row){
+        foreach ($rows as $row) {
             $array[$row->group][] = $row;
         }
 
@@ -98,88 +122,93 @@ class Core_Model_Acl_Group_Service {
 //        }
         return $array;
     }
-    
-    public function getObjectsByGroupsModuleControllerObjects(array $groups, $module, $controller, array $objects){
+
+    /**
+     * @param array $groups
+     * @param type $module
+     * @param type $controller
+     * @param integer[] $objects
+     * @return Core_Model_Acl_Group[] 
+     */
+    public function getObjectsByGroupsModuleControllerObjects(array $groups, $module, $controller, array $objects) {
         $rows = $this->getMapper()->fetchObjectsByGroupsModuleControllerObjects($groups, $module, $controller, $objects);
         $array = array();
-        foreach($rows as $row){
+        foreach ($rows as $row) {
             $array[$row->group][] = $row;
         }
 
         return $array;
     }
-    
-    
-//    public function getObjectsByIdHouse($id,$house){
-//        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
-//
-//        if (empty($apikeys)) {
-//            return array();
-//            //throw new Core_Model_Exception('Apikey not found', 404);
-//        }
-//        return $apikeys;
-//    }
 
     /**
-     * @param mixed $acl
+     * @param Core_Model_Acl_Group_Interface|array $mixed
+     * @return Core_Model_Acl_Group
      * @throws InvalidArgumentException 
      */
-    public function create($acl) {
-        if ($acl instanceof Core_Model_Acl_Group_Interface) {
-            $h = $acl;
-        } elseif (is_array($acl)) {
-            $h = new Core_Model_Acl_Group(array('data' => $acl));
+    public function create($mixed) {
+        if ($mixed instanceof Core_Model_Acl_Group_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_Acl_Group(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Object');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
     /**
-     * @param mixed $acl
+     * @param Core_Model_Acl_Group_Interface|array $mixed
+     * @return Core_Model_Acl_Group
      * @throws InvalidArgumentException 
      */
-    public function update($acl) {
-        if ($acl instanceof Core_Model_Acl_Group_Interface) {
-            $h = $acl;
-        } elseif (is_array($acl)) {
-            $h = new Core_Model_Acl_Group(array('data' => $acl));
+    public function update($mixed) {
+        if ($mixed instanceof Core_Model_Acl_Group_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_Acl_Group(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Object');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
     /**
-     * @param mixed $acl
+     * @param Core_Model_Acl_Group_Interface|array|integer $mixed
+     * @return boolean Success
      * @throws InvalidArgumentException 
      */
-    public function delete($acl) {
-        if (is_int($acl)) {
-            $h = new Core_Model_Acl_Group();
-            $h->id = $acl;
-        } elseif ($acl instanceof Core_Model_Acl_Group_Interface) {
-            $h = $acl;
-        } elseif (is_array($acl)) {
-            $h = new Core_Model_Acl_Group(array('data' => $acl));
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = new Core_Model_Acl_Group();
+            $object->id = $mixed;
+        } elseif ($mixed instanceof Core_Model_Acl_Group_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_Acl_Group(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Object');
         }
 
-        return $this->getMapper()->delete($h);
+        return $this->getMapper()->delete($object);
     }
-    
+
     public function deleteByGroup($group) {
-        $this->getMapper()->deleteByGroup($group);
+        return $this->getMapper()->deleteByGroup($group);
     }
-    
-     public function deleteAll(){
-        if(APPLICATION_ENV == 'production'){
+
+    /**
+     * Delete all data. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
             throw new Exception("Not Allowed");
         }
-        $this->getMapper()->deleteAll();
+        return $this->getMapper()->deleteAll();
     }
 
 }

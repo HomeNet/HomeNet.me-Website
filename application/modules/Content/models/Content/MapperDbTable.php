@@ -1,8 +1,6 @@
 <?php
 
 /*
- * ApikeyMapperDbTable.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -48,12 +46,13 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
     public function getCustomTable($section) {
         if (!array_key_exists($section, $this->_customTables)) {
             $customTable = new Zend_Db_Table('content_custom_' . $section);
+           // die(debugArray($customTable->info(Zend_Db_Table::METADATA)));
             $this->_customTables[$section] = $customTable;
         }
         return $this->_customTables[$section];
     }
 
-    public function setTable($table) {
+    public function setTable(Zend_Db_Table_Abstract $table) {
         $this->_table = $table;
     }
 
@@ -290,6 +289,10 @@ if(empty($result)){
         }
         foreach ($contentValues as $key => $value) {
             if (in_array($key, $fields)) {
+                if(is_object($value)){
+                    $value = $value->getValue();
+                }
+                
                 $row->$key = $value;
             }
         }
@@ -302,6 +305,12 @@ if(empty($result)){
 
         foreach ($contentValues as $key => $value) {
             if (in_array($key, $customFields)) {
+                if(is_object($value)){
+                    $value = $value->getValue();
+                    } 
+                if(is_array($value)){
+                    $value = serialize($value);
+                }
                 $customRow->$key = $value;
             }
         }

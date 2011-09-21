@@ -43,14 +43,16 @@ class Content_Model_CategorySet_Service {
 
         return $this->_mapper;
     }
-
+/**
+     * @param Content_Model_Section_MapperInterface $mapper 
+     */
     public function setMapper(Content_Model_CategorySet_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
     
     /**
      * @param int $id
-     * @return Content_Model_CategorySet_Interface 
+     * @return Content_Model_CategorySet[]
      */
     public function getObjects(){
         $categorySets = $this->getMapper()->fetchObjects();
@@ -62,57 +64,75 @@ class Content_Model_CategorySet_Service {
     }
     
     /**
-     * @param int $id
-     * @return Content_Model_CategorySet_Interface 
+     * @param int $id CategorySet Id
+     * @return Content_Model_CategorySet
+     * @throws NotFoundException
      */
     public function getObjectById($id){
         $content = $this->getMapper()->fetchObjectById($id);
 
         if (empty($content)) {
-            throw new NotFoundException('Category Set Not Found', 404);
+            throw new NotFoundException('Id: ' . $id . ' Not Found', 404);
         }
         return $content;
     }
-
-    public function create($categorySet) {
-        if ($categorySet instanceof Content_Model_CategorySet_Interface) {
-            $h = $categorySet;
-        } elseif (is_array($categorySet)) {
-            $h = new Content_Model_CategorySet(array('data' => $categorySet));
+    /**
+     * @param Content_Model_Section_Interface|array $mixed
+     * @return Content_Model_Section
+     * @throws InvalidArgumentException 
+     */
+    public function create($mixed) {
+        if ($mixed instanceof Content_Model_CategorySet_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_CategorySet(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Category Set');
+            throw new InvalidArgumentException('Invalid Object');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
-
-    public function update($categorySet) {
-        if ($categorySet instanceof Content_Model_CategorySet_Interface) {
-            $h = $categorySet;
-        } elseif (is_array($categorySet)) {
-            $h = new Content_Model_CategorySet(array('data' => $categorySet));
+    /**
+     * @param Content_Model_CategorySet_Interface|array $mixed
+     * @return Content_Model_CategorySet
+     * @throws InvalidArgumentException 
+     */
+    public function update($mixed) {
+        if ($mixed instanceof Content_Model_CategorySet_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_CategorySet(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Category Set');
+            throw new InvalidArgumentException('Invalid Object');
         }
         
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
-
-    public function delete($categorySet) {
-        if (is_int($categorySet)) {
-            $h = new Content_Model_CategorySet();
-            $h->id = $categorySet;
-        } elseif ($categorySet instanceof Content_Model_CategorySet_Interface) {
-            $h = $categorySet;
-        } elseif (is_array($categorySet)) {
-            $h = new Content_Model_CategorySet(array('data' => $categorySet));
+   /**
+     * @param Content_Model_CategorySet_Interface|array $mixed
+     * @return boolean Success
+     * @throws InvalidArgumentException 
+     */
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = new Content_Model_CategorySet();
+            $object->id = $mixed;
+        } elseif ($mixed instanceof Content_Model_CategorySet_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_CategorySet(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Category Set');
+            throw new InvalidArgumentException('Invalid Object');
         }
 
-        return $this->getMapper()->delete($h);
+        return $this->getMapper()->delete($object);
     }
-    
+     /**
+     * Delete all data. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
     public function deleteAll(){
         if(APPLICATION_ENV == 'production'){
             throw new Exception("Not Allowed");

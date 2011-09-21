@@ -120,7 +120,7 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertNotNull($result->id);
         $this->assertEquals(Content_Installer::$testSection, $result->section);
-        $this->assertEquals('test-url', $result->url);
+        $this->assertEquals('test-url', (string) $result->url);
         $this->assertEquals(true, (bool) $result->visible);
         $this->assertNotNull($result->active_revision);
         $this->assertEquals($result->revision, $result->active_revision);
@@ -134,11 +134,11 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(5, $result->owner);
         $this->assertEquals(true, (bool) $result->autosave);
 
-        $this->assertEquals('testTitle', $result->title);
+        $this->assertEquals('testTitle', (string) $result->title);
 
 //        $this->assertEquals(4, $result->status);
-//        $this->assertArrayHasKey('body', $result->content);
-//        $this->assertEquals('value', $result->content['body']);
+//        $this->assertArrayHasKey('body', (string) $result->content);
+//        $this->assertEquals('value', (string) $result->content['body']);
     }
 
 //     public function testToArray() {
@@ -156,7 +156,7 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
 //
 //        $array = $content->toArray();
 //        
-//        $this->assertArrayHasKey('primary_group', $array);
+//        $this->assertArrayHasKey('primary_group', (string) $array);
 //        $this->assertEquals(1, $array['primary_group']);
 //    }
 
@@ -190,7 +190,7 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertNotNull($result->id);
         $this->assertEquals(Content_Installer::$testSection, $result->section);
-        $this->assertEquals('test-url', $result->url);
+        $this->assertEquals('test-url', (string) $result->url);
         $this->assertEquals(true, (bool) $result->visible);
         $this->assertEquals($result->active_revision, $result->revision);
         
@@ -198,16 +198,16 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(5, $result->owner);
         $this->assertEquals(true, (bool) $result->autosave);
         
-        $this->assertEquals('testTitle', $result->title);
+        $this->assertEquals('testTitle', (string) $result->title);
         
 //        $this->assertEquals(4, $result->status);
 //        $this->assertNotNull($result->date);
 //        $this->assertNotNull($result->expires);
 //        $this->assertEquals(5, $result->author);
 //        $this->assertEquals(6, $result->editor);
-//        $this->assertArrayHasKey('body', $result->content);
+//        $this->assertArrayHasKey('body', (string) $result->content);
         
-//        $this->assertEquals('value', $result->content['body']);
+//        $this->assertEquals('value', (string) $result->content['body']);
     }
 
     public function testCreateException() {
@@ -229,7 +229,7 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertNotNull($result->id);
         $this->assertEquals(Content_Installer::$testSection, $result->section);
-        $this->assertEquals('test-url', $result->url);
+        $this->assertEquals('test-url', (string) $result->url);
         $this->assertEquals(true, (bool) $result->visible);
         $this->assertEquals($result->active_revision, $result->revision);
         
@@ -237,16 +237,16 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(5, $result->owner);
         $this->assertEquals(true, (bool) $result->autosave);
         
-        $this->assertEquals('testTitle', $result->title);
+        $this->assertEquals('testTitle', (string) $result->title);
         
 //        $this->assertEquals(4, $result->status);
 //        $this->assertNotNull($result->date);
 //        $this->assertNotNull($result->expires);
 //        $this->assertEquals(5, $result->author);
 //        $this->assertEquals(6, $result->editor);
-//        $this->assertArrayHasKey('body', $result->content);
+//        $this->assertArrayHasKey('body', (string) $result->content);
         
-//        $this->assertEquals('value', $result->content['body']);
+//        $this->assertEquals('value', (string) $result->content['body']);
     }
 
     public function testGetObjectByUrl() {
@@ -261,7 +261,7 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertNotNull($result->id);
         $this->assertEquals(Content_Installer::$testSection, $result->section);
-        $this->assertEquals('test-url', $result->url);
+        $this->assertEquals('test-url', (string) $result->url);
         $this->assertEquals(true, (bool) $result->visible);
         $this->assertEquals($result->active_revision, $result->revision);
         
@@ -269,16 +269,16 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(5, $result->owner);
         $this->assertEquals(true, (bool) $result->autosave);
         
-        $this->assertEquals('testTitle', $result->title);
+        $this->assertEquals('testTitle', (string) $result->title);
         
 //        $this->assertEquals(4, $result->status);
 //        $this->assertNotNull($result->date);
 //        $this->assertNotNull($result->expires);
 //        $this->assertEquals(5, $result->author);
 //        $this->assertEquals(6, $result->editor);
-//        $this->assertArrayHasKey('body', $result->content);
+//        $this->assertArrayHasKey('body', (string) $result->content);
         
-//        $this->assertEquals('value', $result->content['body']);
+//        $this->assertEquals('value', (string) $result->content['body']);
     }
 //    
 //     public function testGetInvalidObjectByUrl() {
@@ -316,7 +316,7 @@ sleep(1);
 
         $this->assertNotNull($result->id);
         $this->assertEquals(Content_Installer::$testSection, $result->section);
-        $this->assertEquals('test-url2', $result->url);
+        $this->assertEquals('test-url2', (string) $result->url);
         $this->assertEquals(false, (bool) $result->visible);
         $this->assertNotNull($result->active_revision);
         
@@ -324,14 +324,14 @@ sleep(1);
         $this->assertEquals(6, $result->owner);
         $this->assertEquals(false, (bool) $result->autosave);
         
-        $this->assertEquals('testTitle2', $result->title);
+        $this->assertEquals('testTitle2', (string) $result->title);
         
 //        $this->assertEquals(5, $result->status);
 //        $this->assertNotNull($result->date);
 //        $this->assertEquals(7, $result->editor);
 //        $this->assertNotNull($result->expires);       
-//        $this->assertArrayHasKey('body', $result->content);
-//        $this->assertEquals('value2', $result->content['body']);
+//        $this->assertArrayHasKey('body', (string) $result->content);
+//        $this->assertEquals('value2', (string) $result->content['body']);
     }
 
     public function testUpdateFromArray() {
@@ -363,20 +363,20 @@ sleep(1);
 
         $this->assertNotNull($result->id);
         $this->assertEquals(Content_Installer::$testSection, $result->section);
-        $this->assertEquals('test-url2', $result->url);
+        $this->assertEquals('test-url2', (string) $result->url);
 //        $this->assertNotEquals($result->active_revision, $result->revision);
 
         $this->assertNotNull($result->revision);
         $this->assertEquals(6, $result->owner);
         $this->assertEquals(false, (bool) $result->autosave);
-        $this->assertEquals('testTitle2', $result->title);
+        $this->assertEquals('testTitle2', (string) $result->title);
         
 //        $this->assertEquals(5, $result->status);
 //        $this->assertEquals(7, $result->editor);
 //        $this->assertNotNull($result->date);
 //        $this->assertNotNull($result->expires);
-//        $this->assertArrayHasKey('body', $result->content);
-//        $this->assertEquals('value2', $result->content['body']);
+//        $this->assertArrayHasKey('body', (string) $result->content);
+//        $this->assertEquals('value2', (string) $result->content['body']);
     }
 
     public function testUpdateException() {

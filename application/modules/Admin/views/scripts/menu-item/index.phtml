@@ -1,0 +1,46 @@
+<h1><?php echo $this->controllerTitle ?>s</h1>
+<p><a class="button"  href="<?php echo $this->url(array('controller' => 'menu', 'action' => 'index'), 'admin'); ?>">Back to Menu</a></p>
+<table class="ui-widget" width="100%">
+    <thead class="ui-widget-header">
+        <tr><th width="50">ID</th><th>Name</th><th width="150">Edit/Delete</th></tr>
+    </thead>
+    <tbody class="ui-widget-content">
+        <?php
+        foreach ($this->objects as $object) {
+            /* @var $object Content_Model_Category */
+            ?>
+            <tr  class="<?php echo $this->cycle(array("", "ui-state-highlight"))->next() ?>" >
+                <td><?php echo $object->id ?></td>
+                <td><?php echo $object->title ?></td>
+                <td><a href="<?php echo $this->url(array('controller' => 'menu-item', 'id' => $object->id, 'action' => 'edit'), 'admin-id'); ?>">Edit</a> <a href="<?php echo $this->url(array('controller' => 'menu-item', 'id' => $object->id, 'action' => 'delete'), 'admin-id'); ?>">Delete</a></td>
+            </tr><?php
+        }
+        ?>
+    </tbody>
+</table>
+<a class="button"  href="<?php echo $this->url(array('controller' => 'menu-item', 'action' => 'new','id' => $this->id), 'admin-id'); ?>">New</a>
+
+<?php /*
+ * <h1>Node List</h1>
+
+<table class="ui-widget" width="100%">
+  <thead class="ui-widget-header">
+    <tr><th width="30">ID</th><th>Name</th><th>Description</th><th width="150">Edit/Delete</th></tr>
+    </thead>
+    <tbody class="ui-widget-content">
+<?php foreach($this->nodes as $node){ ?>
+<tr class="<?php echo $this->cycle(array("","ui-state-highlight"))->next()?>">
+    <td><?php echo $node->node ?></td>
+    <td><?php echo $node->modelName ?></td>
+    <td><?php echo $node->description ?></td>
+    <td><a class="button" href="<?php echo $this->url(array('house'=>$this->house, 'node'=>$node->id, 'action'=>'index'),'homenet-node'); ?>"><span class="ui-icon ui-icon-wrench"></span></a>
+        <a class="button" href="<?php echo $this->url(array('house'=>$this->house, 'node'=>$node->id, 'action'=>'edit'),'homenet-node'); ?>"><span class="ui-icon ui-icon-pencil"></span></a>
+        <a class="button" href="<?php echo $this->url(array('house'=>$this->house, 'node'=>$node->id, 'action'=>'remove'),'homenet-node'); ?>"><span class="ui-icon ui-icon-closethick"></span></a></td>
+</tr>
+<?php } ?>
+</tbody>
+</table>
+<a class="button" href="<?php echo $this->url(array('house'=>$this->house),'homenet-node-add'); ?>">Add Node</a>
+<a class="button" href="<?php echo $this->url(array('house'=>$this->house),'homenet-apikeys'); ?>">API Keys</a>
+ * 
+ */

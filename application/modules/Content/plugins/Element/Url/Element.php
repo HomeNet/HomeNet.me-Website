@@ -25,7 +25,7 @@
  *
  * @author Matthew Doll <mdoll at homenet.me>
  */
-class Content_Plugin_Element_Url_Element {
+class Content_Plugin_Element_Url_Element extends Content_Model_Plugin_Element {
 
     
     /**
@@ -34,7 +34,22 @@ class Content_Plugin_Element_Url_Element {
      * @return CMS_Sub_Form
      */
     function getSetupForm($options = array()){
-        $form = new CMS_Sub_Form();
+        $form = parent::getSetupForm($options);
+        $form->setLegend('Url Options');
+        
+        $type = $form->createElement('select', 'target');
+        $type->setLabel('Target: ');
+        $type->setRequired('true');
+
+        $options = array(
+            'name' => 'Name',
+            'title' => 'Title',
+        );
+
+        //$template->addMultiOption('None','');
+        $type->setMultiOptions($options);
+        $form->addElement($type);
+        
         
         return $form;
     }
@@ -45,7 +60,7 @@ class Content_Plugin_Element_Url_Element {
      * @param $config config of how object shoiuld be rendered
      * @return Zend
      */
-    function getElement($config){
+    function getElement(array $config, $options = array()){
         
         $element = new Zend_Form_Element_Text($config); 
         return $element;

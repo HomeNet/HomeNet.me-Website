@@ -1,5 +1,29 @@
 <?php
+/*
+ * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ *
+ * This file is part of HomeNet.
+ *
+ * HomeNet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * HomeNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
+/**
+ * @package Content
+ * @subpackage Field
+ * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
+ */
 class Content_FieldController extends Zend_Controller_Action
 {
 
@@ -81,6 +105,7 @@ class Content_FieldController extends Zend_Controller_Action
 
         //save
         $values = $form->getValues();
+       // die(debugArray($values));
          $object = $service->getObjectById($this->_getParam('id'));
          $object->fromArray($values);
         $service->update($object);
@@ -125,5 +150,31 @@ class Content_FieldController extends Zend_Controller_Action
     public function showAction()
     {
         // action body
+    }
+    
+    public function elementFormAjaxAction(){
+        
+       // die('works');
+        $this->_helper->viewRenderer->setNoRender(true);
+        $element = $this->_getParam('element');
+        //$element = $_GET['element'];
+        if(is_null($element)){
+            throw new InvalidArgumentException('Element Required'.$element);
+        }
+        
+        $tes = new Content_Plugin_Element_Text_Element();
+
+        
+        $class = 'Content_Plugin_Element_'.ucfirst($element).'_Element';
+
+        if(!class_exists($class, true)){
+            throw new InvalidArgumentException('Invaild Class: '.$class);
+        }
+        
+        $object = new $class();
+        $form = $object->getSetupForm();
+        echo $form->render();
+        
+        
     }
 }

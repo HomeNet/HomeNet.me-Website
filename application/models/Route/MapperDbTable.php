@@ -45,7 +45,7 @@ class Core_Model_Route_MapperDbTable implements Core_Model_Route_MapperInterface
         return $this->_table;
     }
 
-    public function setTable($table) {
+    public function setTable(Zend_Db_Table_Abstract $table) {
         $this->_table = $table;
     }
 
@@ -57,12 +57,12 @@ class Core_Model_Route_MapperDbTable implements Core_Model_Route_MapperInterface
         return $this->getTable()->find($id)->current();
     }
 
-    public function save(Core_Model_Route_Interface $router) {
+    public function save(Core_Model_Route_Interface $object) {
 
-        if (($router instanceof Core_Model_DbTableRow_Route) && ($router->isConnected())) {
-            return $router->save();
-        } elseif (!is_null($router->id)) {
-            $row = $this->getTable()->find($router->id)->current();
+        if (($object instanceof Core_Model_DbTableRow_Route) && ($object->isConnected())) {
+            return $object->save();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current();
             if (empty($row)) {
                 $row = $this->getTable()->createRow();
             }
@@ -70,7 +70,7 @@ class Core_Model_Route_MapperDbTable implements Core_Model_Route_MapperInterface
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($router->toArray());
+        $row->fromArray($object->toArray());
         // die(debugArray($row));
         try {
             $row->save();
@@ -87,13 +87,13 @@ class Core_Model_Route_MapperDbTable implements Core_Model_Route_MapperInterface
         return $row;
     }
 
-    public function delete(Core_Model_Route_Interface $router) {
+    public function delete(Core_Model_Route_Interface $object) {
 
-        if (($router instanceof Core_Model_DbTableRow_Route) && ($router->isConnected())) {
-            $router->delete();
+        if (($object instanceof Core_Model_DbTableRow_Route) && ($object->isConnected())) {
+            $object->delete();
             return true;
-        } elseif (!is_null($router->id)) {
-            $row = $this->getTable()->find($router->id)->current()->delete();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current()->delete();
             return;
         }
 

@@ -46,23 +46,23 @@ class Core_Model_Menu_Item_DbTableRow extends Zend_Db_Table_Row_Abstract impleme
     }
 
     public function init(){
-//        $this->uncompress();
+        $this->uncompress();
     }
     
-//    public function uncompress(){
-//        if(is_string($this->settings)){
-//            $this->settings = unserialize($this->settings);
-//        }
-//
+    public function uncompress(){
+        if(is_string($this->options)){
+            $this->options = unserialize($this->options);
+        }
+
 //        if(is_string($this->permissions)){
 //            $this->permissions = unserialize($this->permissions);
 //        }
-//    }
+    }
     
     public function compress(){
-//        if(is_array($this->settings)){
-//            $this->settings = serialize($this->settings);
-//        }
+        if(is_array($this->options)){
+            $this->options = serialize($this->options);
+        }
 //
 //        if(is_array($this->permissions)){
 //            $this->permissions = serialize($this->permissions);
@@ -70,9 +70,9 @@ class Core_Model_Menu_Item_DbTableRow extends Zend_Db_Table_Row_Abstract impleme
     }
 
     public function save(){
-//      $this->compress();
+      $this->compress();
         if (parent::save()) {
-//            $this->uncompress();
+            $this->uncompress();
             return $this;
         }
     }

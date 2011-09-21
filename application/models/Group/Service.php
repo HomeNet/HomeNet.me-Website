@@ -44,52 +44,79 @@ class Core_Model_Group_Service {
         return $this->_mapper;
     }
 
+    /**
+     * @param Content_Model_Section_MapperInterface $mapper 
+     */
     public function setMapper(Core_Model_Group_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
     /**
-     * @param int $id
-     * @return Core_Model_Group_Interface 
+     * @param int $id   Group Id
+     * @return Core_Model_Group
+     * @throws NotFoundException
      */
     public function getObjectById($id) {
         $result = $this->getMapper()->fetchObjectById($id);
 
         if (empty($result)) {
-            throw new NotFoundException('Group not found', 404);
+            throw new NotFoundException('Id: '.$id.' Not Found', 404);
         }
         return $result;
     }
-    
-     public function incrementGroupCount($id, $amount = 1) {
+
+    /**
+     * @param integer $id Group Id
+     * @param integer $amount Amount to increment by
+     * @return integer affected rows  
+     * @throws NotFoundException
+     */
+    public function incrementGroupCount($id, $amount = 1) {
         $affectedRows = $this->getMapper()->incrementUserCount($id, $amount);
 
         if ($affectedRows == 0) {
-            throw new NotFoundException('Group not found', 404);
+            throw new NotFoundException('Id: '.$id.' Not Found', 404);
         }
         return $affectedRows;
     }
-    
-     public function decrementGroupCount($id, $amount = 1 ) {
+
+    /**
+     * @param integer $id Group Id
+     * @param integer $amount Amount to increment by
+     * @return integer affected rows  
+     * @throws NotFoundException
+     */
+    public function decrementGroupCount($id, $amount = 1) {
         $affectedRows = $this->getMapper()->incrementUserCount($id, $amount * -1);
 
         if ($affectedRows == 0) {
-            throw new NotFoundException('Group not found '.$id, 404);
+            throw new NotFoundException('Id: '.$id.' Not Found', 404);
         }
         return $affectedRows;
     }
-    
+
+    /**
+     * @param integer $id Group Id
+     * @param integer $amount Set Group Count
+     * @return integer affected rows 
+     * @throws NotFoundException
+     */
     public function updateGroupCount($id, $amount) {
         $affectedRows = $this->getMapper()->updateUserCount($id, $amount);
 
         if ($affectedRows == 0) {
-           throw new NotFoundException('Group not found', 404);
+            throw new NotFoundException('Id: '.$id.' Not Found', 404);
         }
-        
+
         return $affectedRows;
     }
 
-    public function getObjectsByType($type){
+    /**
+     *
+     * @param integer $type Group Type
+     * @return Core_Model_Group[] 
+     */
+    public function getObjectsByType($type) {
         $results = $this->getMapper()->fetchObjectsByType($type);
 
 //        if (empty($contents)) {
@@ -97,69 +124,69 @@ class Core_Model_Group_Service {
 //        }
         return $results;
     }
-//    public function getObjectsByIdHouse($id,$house){
-//        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
-//
-//        if (empty($apikeys)) {
-//            return array();
-//            //throw new Core_Model_Exception('Apikey not found', 404);
-//        }
-//        return $apikeys;
-//    }
 
     /**
-     * @param mixed $group
+     * @param Core_Model_Group_Interface|array $mixed
+     * @return Core_Model_Group
      * @throws InvalidArgumentException 
      */
-    public function create($group) {
-        if ($group instanceof Core_Model_Group_Interface) {
-            $h = $group;
-        } elseif (is_array($group)) {
-            $h = new Core_Model_Group(array('data' => $group));
+    public function create($mixed) {
+        if ($mixed instanceof Core_Model_Group_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_Group(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Group');
+            throw new InvalidArgumentException('Invalid Object');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
     /**
-     * @param mixed $group
+     * @param Core_Model_Group_Interface|array $mixed
+     * @return Core_Model_Group
      * @throws InvalidArgumentException 
      */
-    public function update($group) {
-        if ($group instanceof Core_Model_Group_Interface) {
-            $h = $group;
-        } elseif (is_array($group)) {
-            $h = new Core_Model_Group(array('data' => $group));
+    public function update($mixed) {
+        if ($mixed instanceof Core_Model_Group_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_Group(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Group');
+            throw new InvalidArgumentException('Invalid Object');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
     /**
-     * @param mixed $group
+     * @param Core_Model_Group_Interface|array $mixed
+     * @return boolean Success
      * @throws InvalidArgumentException 
      */
-    public function delete($group) {
-        if (is_int($group)) {
-            $h = new Core_Model_Group();
-            $h->id = $group;
-        } elseif ($group instanceof Core_Model_Group_Interface) {
-            $h = $group;
-        } elseif (is_array($group)) {
-            $h = new Core_Model_Group(array('data' => $group));
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = new Core_Model_Group();
+            $object->id = $mixed;
+        } elseif ($mixed instanceof Core_Model_Group_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_Group(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Group');
+            throw new InvalidArgumentException('Invalid Object');
         }
 
-        return $this->getMapper()->delete($h);
+        return $this->getMapper()->delete($object);
     }
-    
-    public function deleteAll(){
-        if(APPLICATION_ENV == 'production'){
+
+    /**
+     * Delete all data. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
             throw new Exception("Not Allowed");
         }
         $this->getMapper()->deleteAll();

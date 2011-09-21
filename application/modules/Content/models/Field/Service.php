@@ -44,112 +44,128 @@ class Content_Model_Field_Service {
         return $this->_mapper;
     }
 
+    /**
+     * @param Content_Model_Section_MapperInterface $mapper 
+     */
     public function setMapper(Content_Model_Field_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
     /**
-     * @param int $id
-     * @return Content_Model_Field_Interface 
+     * @param int $id   Field Id
+     * @return Content_Model_Field
+     * @throws NotFoundException
      */
     public function getObjectById($id) {
         $result = $this->getMapper()->fetchObjectById($id);
 
         if (empty($result)) {
-            throw new NotFoundException('Object not found', 404);
+            throw new NotFoundException('Id: ' . $id . ' Not Found', 404);
         }
         return $result;
     }
-    
+
     /**
-     * @param int $id
+     * @param int $section Content Section Id
+     * @param string $name  Field Name
      * @return Content_Model_Field_Interface 
+     * @throws NotFoundException
      */
-    public function getObjectBySectionName($section,$name) {
-        $result = $this->getMapper()->fetchObjectBySectionName($section,$name);
+    public function getObjectBySectionName($section, $name) {
+        $result = $this->getMapper()->fetchObjectBySectionName($section, $name);
 
         if (empty($result)) {
-            throw new NotFoundException('Object not found', 404);
+            throw new NotFoundException('Section: ' . $section . ' Not Found', 404);
         }
         return $result;
     }
 
     /**
-     * @param int $id
+     * @param int $section Content Section Id
      * @return Content_Model_Field_Interface[]
      */
     public function getObjectsBySection($section) {
-        $contents = $this->getMapper()->fetchObjectsBySection($section);
+        $results = $this->getMapper()->fetchObjectsBySection($section);
 
 //        if (empty($contents)) {
 //            throw new Exception('Apikey not found', 404);
 //        }
-        return $contents;
+        return $results;
+    }
+    
+     public function getMetadataBySection($section) {
+         
+        $fields = array();
+        $results = $this->getObjectsBySection($section);
+        foreach($results as $value){
+            $fields[$value->name] = new Content_Model_Field(array('data'=>$value->toArray()));
+        }
+         
+       
+
+//        if (empty($contents)) {
+//            throw new Exception('Apikey not found', 404);
+//        }
+        return $fields;
     }
 
-//    public function getObjectsByIdHouse($id,$house){
-//        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
-//
-//        if (empty($apikeys)) {
-//            return array();
-//            //throw new Content_Model_Exception('Apikey not found', 404);
-//        }
-//        return $apikeys;
-//    }
-
     /**
-     * @param mixed $object
+     * @param Content_Model_Field_Interface|array $mixed
+     * @return Content_Model_Field
      * @throws InvalidArgumentException 
      */
-    public function create($object) {
-        if ($object instanceof Content_Model_Field_Interface) {
-            $h = $object;
-        } elseif (is_array($object)) {
-            $h = new Content_Model_Field(array('data' => $object));
+    public function create($mixed) {
+        if ($mixed instanceof Content_Model_Field_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_Field(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Object');
         }
-        $field = $this->getMapper()->save($h);
-        
-       // if($field->type != Content_Model_Field::SYSTEM){
-            $service = new Content_Model_Content_Service();
-            $service->addCustomField($field);
-      //  }
+        $field = $this->getMapper()->save($object);
+
+        // if($field->type != Content_Model_Field::SYSTEM){
+        $service = new Content_Model_Content_Service();
+        $service->addCustomField($field);
+        //  }
 
         return $field;
     }
 
     /**
-     * @param mixed $object
+     * @param Content_Model_Field_Interface|array $mixed
+     * @return Content_Model_Field
      * @throws InvalidArgumentException 
      */
-    public function update($object) {
-        if ($object instanceof Content_Model_Field_Interface) {
-            $h = $object;
-        } elseif (is_array($object)) {
-            $h = new Content_Model_Field(array('data' => $object));
+    public function update($mixed) {
+        if ($mixed instanceof Content_Model_Field_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_Field(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
+            throw new InvalidArgumentException('Invalid Object');
         }
-        
+
         $found = null;
-        
+
         try {
-            $found = $this->getObjectBySectionName($h->section,$h->name);
-        } catch(NotFoundException $e){
+            $found = $this->getObjectBySectionName($object->section, $object->name);
+        } catch (NotFoundException $e) {
             
         }
-        
-        if(!is_null($found)){
+
+        if (!is_null($found)) {
+            if($found->id != $object->id){
             throw new DuplicateEntryException('Name already exists ');
+            }
         }
-        
-        $old = $this->getObjectById($h->id);
-        
-        
-        $field = $this->getMapper()->save($h);
-        
-        if($field->type != Content_Model_Field::SYSTEM){
+
+        $old = $this->getObjectById($object->id);
+
+
+        $field = $this->getMapper()->save($object);
+
+        if ($field->type != Content_Model_Field::SYSTEM) {
             $service = new Content_Model_Content_Service();
             $service->renameCustomField($old, $field);
         }
@@ -158,42 +174,48 @@ class Content_Model_Field_Service {
     }
 
     /**
-     * @param mixed $sectionField
+     * @param Content_Model_Field_Interface|array|integer $mixed
+     * @return boolean Success
      * @throws InvalidArgumentException 
      */
-    public function delete($sectionField) {
-        if (is_int($sectionField)) {
-            
-            $h = $this->getObjectById($sectionField);
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+
+            $object = $this->getObjectById($mixed);
             //$h = new Content_Model_Field();
             //$h->id = $sectionField;
-        } elseif ($sectionField instanceof Content_Model_Field_Interface) {
-            $h = $sectionField;
-        } elseif (is_array($sectionField)) {
-            $h = new Content_Model_Field(array('data' => $sectionField));
+        } elseif ($mixed instanceof Content_Model_Field_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_Field(array('data' => $mixed));
         } else {
-            throw new InvalidArgumentException('Invalid Content');
-        }
-        
-        if($h->type != Content_Model_Field::SYSTEM){
-            $service = new Content_Model_Content_Service();
-            //die('remove field');
-            $service->removeCustomField($h);
+            throw new InvalidArgumentException('Invalid Object');
         }
 
-        return $this->getMapper()->delete($h);
+        if ($object->type != Content_Model_Field::SYSTEM) {
+            $service = new Content_Model_Content_Service();
+            //die('remove field');
+            $service->removeCustomField($object);
+        }
+
+        return $this->getMapper()->delete($object);
     }
-    
+
     public function deleteBySection($section) {
         return $this->getMapper()->deleteBySection($section);
     }
-    
+
+    /**
+     * Delete all data. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
      public function deleteAll(){
-        if(APPLICATION_ENV != 'production'){
-            $this->getMapper()->deleteAll();
-            return;
+        if(APPLICATION_ENV == 'production'){
+            throw new Exception("Not Allowed");
         }
-        throw new Exception("Not Allowed");
+        $this->getMapper()->deleteAll();
     }
 
 }

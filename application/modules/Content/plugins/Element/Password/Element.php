@@ -25,7 +25,8 @@
  *
  * @author Matthew Doll <mdoll at homenet.me>
  */
-abstract class Content_Plugin_Element_Password_Element {
+
+class Content_Plugin_Element_Password_Element extends Content_Model_Plugin_Element {
 
     
     /**
@@ -34,21 +35,22 @@ abstract class Content_Plugin_Element_Password_Element {
      * @return CMS_Sub_Form
      */
     function getSetupForm($options = array()){
-        $form = new CMS_Sub_Form();
+        $form = parent::getSetupForm();
+        $form->setLegend('Password Options');
         
         return $form;
     }
     
-    /**
-     * Get the form for Inserting data
+   /**
+     * Get the form element to display
      * 
-     * @param Content_Model_Field $field
-     * @return CMS_Form_SubForm 
+     * @param $config config of how object shoiuld be rendered
+     * @return Zend
      */
-    function getField(Content_Model_Field $field){
-        $form = new CMS_Form_SubForm();
+    function getElement(array $config, $options = array()){
         
-        return $form;
+        $element = new Zend_Form_Element_Text($config); 
+        return $element;
     }
     
     /**

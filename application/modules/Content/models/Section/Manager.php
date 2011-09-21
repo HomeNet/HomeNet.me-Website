@@ -1,30 +1,29 @@
 <?php
 
 /*
- * Manager.php
- * 
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
- * 
+ *
  * This file is part of HomeNet.
- * 
+ *
  * HomeNet is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * HomeNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
+ * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
- * Description of Manager
- *
- * @author Matthew Doll <mdoll at homenet.me>
+ * @package Content
+ * @subpackage Section
+ * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 class Content_Model_Section_Manager {
 
@@ -57,45 +56,9 @@ class Content_Model_Section_Manager {
 
     function getForm($section) {
         
-        $sService = new Content_Model_Section_Service();
-        $sObject = $sService->getObjectById($section);
-
-        $fService = new Content_Model_Field_Service();
-        $objects = $fService->getObjectsBySection($section);
-
-        $form = new CMS_Form();
-
-        foreach ($objects as $field) {
-            /* @var $field Content_Model_Field */
-            $class = 'Content_Plugin_Element_' . ucfirst($field->element) . '_Element';
-
-            if (!class_exists($class, true)) {
-                throw new Exception('Element not found: ' . $class);
-            }
-            /* @var $element Content_Model_Plugin_Element */
-            $element = new $class();
-
-            $options = array();
-            
-            $options['name'] = $field->name;
-            $options['label'] =  $field->label;
-            $options['description'] =  $field->description;
-            $options['value'] =  $field->value;
-            $options['required'] = $field->required;
-
-           // $options['validators'] = $field->validators; // array('alnum', array('regex', false, '/^[a-z]/i')  );
-           // $options['filters'] = $field->filters; //array('StringToLower');
-            //$options['attrib'] = $field->attributes;
-//die(debugArray($options));
-
-            $e = $element->getElement($options);
-            
-            $form->addElement($e);
-        }
-        
-        $form->addDisplayGroup($form->getElements(), 'main', array('legend' => $sObject->title));
-        
-        return $form;
+        $content = new Content_Model_Content(array('data'=>array('section'=>$section)));
+        $content->loadMetadata();
+        return $content->getForm();
     }
 
     /**

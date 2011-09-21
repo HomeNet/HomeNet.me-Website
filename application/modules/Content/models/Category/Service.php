@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -17,6 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 /**
  * @package Content
  * @subpackage Category
@@ -24,7 +26,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 class Content_Model_Category_Service {
-    
+
     /**
      * @var Content_Model_Category_MapperInterface
      */
@@ -42,104 +44,122 @@ class Content_Model_Category_Service {
         return $this->_mapper;
     }
 
+    /**
+     * @param Content_Model_Section_MapperInterface $mapper 
+     */
     public function setMapper(Content_Model_Category_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
-        /**
-     * @param int $id
-     * @return Content_Model_Category_Interface 
-     */
-    public function getObjectById($id){
-        
-        $category = $this->getMapper()->fetchObjectById($id);
-
-        if (empty($category)) {
-            throw new NotFoundException('Category not found', 404);
-        }
-        return $category;
-    }
-    
-        /**
-     * @param int $id
-     * @return Content_Model_Category_Interface 
-     */
-    public function getObjectsBySet($id){
-        
-        $objects = $this->getMapper()->fetchObjectsBySet($id);
-
-        if (empty($objects)) {
-            throw new NotFoundException('Set not found', 404);
-        }
-        return $objects;
-    }
-    
     /**
-     * @param string $url
-     * @return Content_Model_Category_Interface 
+     * @param int $id
+     * @return Content_Model_Category
+     * @throws NotFoundException
      */
-    public function getObjectByUrl($url){
-        
-        $category = $this->getMapper()->fetchObjectByUrl($url);
+    public function getObjectById($id) {
 
-        if (empty($category)) {
-            throw new NotFoundException('Category not found', 404);
+        $result = $this->getMapper()->fetchObjectById($id);
+
+        if (empty($result)) {
+            throw new NotFoundException('Id: ' . $id . ' Not Found', 404);
         }
-        return $category;
+        return $result;
     }
-/**
-     * @param mixed $category
+
+    /**
+     * @param int $id Content Category Set Id
+     * @return Content_Model_Category
+     */
+    public function getObjectsBySet($id) {
+
+        $results = $this->getMapper()->fetchObjectsBySet($id);
+
+        if (empty($results)) {
+            throw new NotFoundException('Id: ' . $id . ' Not Found', 404);
+        }
+        return $results;
+    }
+
+    /**
+     * @param string $url Content Category Url
+     * @return Content_Model_Category
+     * @throws NotFoundException
+     */
+    public function getObjectByUrl($url) {
+
+        $result = $this->getMapper()->fetchObjectByUrl($url);
+
+        if (empty($result)) {
+            throw new NotFoundException('URL: ' . $url . ' Not Found', 404);
+        }
+        return $result;
+    }
+
+    /**
+     * @param Content_Model_Category_Interface|array $mixed
+     * @return Content_Model_Category
      * @throws InvalidArgumentException 
      */
-    public function create($category) {
-        if ($category instanceof Content_Model_Category_Interface) {
-            $h = $category;
-        } elseif (is_array($category)) {
-            $h = new Content_Model_Category(array('data' => $category));
+    public function create($mixed) {
+        if ($mixed instanceof Content_Model_Category_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_Category(array('data' => $mixed));
         } else {
             throw new InvalidArgumentException('Invalid Category');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
-/**
-     * @param mixed $category
+
+    /**
+     * @param Content_Model_Category_Interface|array $mixed
+     * @return Content_Model_Category
      * @throws InvalidArgumentException 
      */
-    public function update($category) {
-        if ($category instanceof Content_Model_Category_Interface) {
-            $h = $category;
-        } elseif (is_array($category)) {
-            $h = new Content_Model_Category(array('data' => $category));
-        } else {
-            throw new InvalidArgumentException('Invalid Category');
-        }
-        
-        return $this->getMapper()->save($h);
-    }
-/**
-     * @param mixed $category
-     * @throws InvalidArgumentException 
-     */
-    public function delete($category) {
-        if (is_int($category)) {
-            $h = new Content_Model_Category();
-            $h->id = $category;
-        } elseif ($category instanceof Content_Model_Category_Interface) {
-            $h = $category;
-        } elseif (is_array($category)) {
-            $h = new Content_Model_Category(array('data' => $category));
+    public function update($mixed) {
+        if ($mixed instanceof Content_Model_Category_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_Category(array('data' => $mixed));
         } else {
             throw new InvalidArgumentException('Invalid Category');
         }
 
-        return $this->getMapper()->delete($h);
+        return $this->getMapper()->save($object);
     }
-    
-    public function deleteAll(){
-        if(APPLICATION_ENV == 'production'){
+
+    /**
+     * @param Content_Model_Category_Interface|array|integer $mixed
+     * @return boolean Success
+     * @throws InvalidArgumentException 
+     */
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = new Content_Model_Category();
+            $object->id = $mixed;
+        } elseif ($mixed instanceof Content_Model_Category_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_Category(array('data' => $mixed));
+        } else {
+            throw new InvalidArgumentException('Invalid Category');
+        }
+
+        return $this->getMapper()->delete($object);
+    }
+
+    /**
+     * Delete all data. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
             throw new Exception("Not Allowed");
         }
         $this->getMapper()->deleteAll();
     }
+
 }

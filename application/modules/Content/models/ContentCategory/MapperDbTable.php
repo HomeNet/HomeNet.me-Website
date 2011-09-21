@@ -1,8 +1,6 @@
 <?php
 
 /*
- * ApikeyMapperDbTable.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -21,11 +19,9 @@
  * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
  */
 
-require "MapperInterface.php";
-
 /**
  * @package Content
- * @subpackage Category
+ * @subpackage ContentCategory
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
@@ -45,7 +41,7 @@ class Content_Model_ContentCategory_MapperDbTable implements Content_Model_Conte
         return $this->_table;
     }
 
-    public function setTable($table) {
+    public function setTable(Zend_Db_Table_Abstract $table) {
         $this->_table = $table;
     }
 
@@ -76,7 +72,7 @@ class Content_Model_ContentCategory_MapperDbTable implements Content_Model_Conte
 
     public function save(Content_Model_ContentCategory_Interface $category) {
 
-        if (($category instanceof Content_Model_DbTableRow_ContentCategory) && ($category->isConnected())) {
+        if (($category instanceof Content_Model_ContentCategory_DbTableRow) && ($category->isConnected())) {
             return $category->save();
         } elseif (!is_null($category->id)) {
             $row = $this->getTable()->find($category->id)->current();
@@ -106,7 +102,7 @@ class Content_Model_ContentCategory_MapperDbTable implements Content_Model_Conte
 
     public function delete(Content_Model_ContentCategory_Interface $category) {
 
-        if (($category instanceof Content_Model_DbTableRow_ContentCategory) && ($category->isConnected())) {
+        if (($category instanceof Content_Model_ContentCategory_DbTableRow) && ($category->isConnected())) {
             $category->delete();
             return true;
         } elseif (!is_null($category->id)) {

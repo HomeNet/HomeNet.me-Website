@@ -25,8 +25,10 @@
  *
  * @author Matthew Doll <mdoll at homenet.me>
  */
-abstract class Content_Plugin_Element_Categories_Element {
+class Content_Plugin_Element_Categories_Element  extends Content_Model_Plugin_Element  {
 
+    
+    public $isArray = true;
     
     /**
      * get any custom options for the setup of the field type
@@ -34,21 +36,54 @@ abstract class Content_Plugin_Element_Categories_Element {
      * @return CMS_Sub_Form
      */
     function getSetupForm($options = array()){
-        $form = new CMS_Sub_Form();
+        $form = parent::getSetupForm($options);
+        $form->setLegend('Category Options');
+        
+        $set = $form->createElement('select', 'set');
+        $set->setLabel('Set: ');
+        $set->setRequired('true');
+        
+        $service = new Content_Model_CategorySet_Service();
+        $results = $service->getObjects();
+
+        $options = array();
+        foreach($results as $value){
+            $options[$value->id] = $value->title;
+        }
+
+        //$template->addMultiOption('None','');
+        $set->setMultiOptions($options);
+        $form->addElement($set);
         
         return $form;
     }
     
     /**
-     * Get the form for Inserting data
+     * Get the form element to display
      * 
-     * @param Content_Model_Field $field
-     * @return CMS_Form_SubForm 
+     * @param $config config of how object shoiuld be rendered
+     * @return Zend
      */
-    function getField(Content_Model_Field $field){
-        $form = new CMS_Form_SubForm();
+    function getElement(array $config, $options = array()){
         
-        return $form;
+       // die(var_dump($this->_value));
+        
+        if(empty($options['set'])){
+            throw new InvalidArgumentException('Missing Set Id');
+        }
+        $service = new Content_Model_Category_Service();
+        $objects = $service->getObjectsBySet($options['set']);
+        $options = array();
+        foreach($objects as $value){
+            $options[$value->id] = $value->title;
+        }
+        
+        $element = new Zend_Form_Element_MultiCheckbox($config); 
+        $element->setMultiOptions($options);
+      //  echo debugArray($this->_value);
+     //   die(debugArray($config));
+      $element->setValue($this->_value);
+        return $element;
     }
     
     /**

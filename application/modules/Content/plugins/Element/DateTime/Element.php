@@ -25,7 +25,7 @@
  *
  * @author Matthew Doll <mdoll at homenet.me>
  */
-abstract class Content_Plugin_Element_DateTime_Element {
+class Content_Plugin_Element_DateTime_Element extends Content_Model_Plugin_Element  {
 
     
   /**
@@ -34,9 +34,33 @@ abstract class Content_Plugin_Element_DateTime_Element {
      * @return CMS_Sub_Form
      */
     function getSetupForm($options = array()){
-        $form = parent::getSetupForm();
+        $form = parent::getSetupForm($options);
+        $form->setLegend('DateTime Options');
         
-       
+        $type = $form->createElement('multiCheckbox', 'target');
+        $type->setLabel('Show: ');
+        $type->setRequired('true');
+
+        $options = array(
+            'year' => 'Year',
+            'month' => 'Month',
+            'day' => 'Day',
+            'hour' => 'Hour',
+            'minute' => 'Minute',
+            'second' => 'Second',
+        );
+        $type->setMultiOptions($options);
+        $form->addElement($type);
+        
+        $format = $form->createElement('select', 'format');
+        $format->setLabel('Format: ');
+        $format->setRequired('true');
+
+        $options = array(
+            'YYYY-MM-DD' => '2011-01-26',
+        );
+        $format->setMultiOptions($options);
+        $form->addElement($format);
         
         return $form;
     }
@@ -47,7 +71,7 @@ abstract class Content_Plugin_Element_DateTime_Element {
      * @param $config config of how object shoiuld be rendered
      * @return Zend
      */
-    function getElement($config){
+    function getElement(array $config, $options = array()){
         
         $element = new ZendX_JQuery_Form_Element_DatePicker();
         

@@ -1,8 +1,6 @@
 <?php
 
 /*
- * ApikeyMapperDbTable.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -45,7 +43,7 @@ class Content_Model_Category_MapperDbTable implements Content_Model_Category_Map
         return $this->_table;
     }
 
-    public function setTable($table) {
+    public function setTable(Zend_Db_Table_Abstract $table) {
         $this->_table = $table;
     }
 
@@ -76,7 +74,7 @@ class Content_Model_Category_MapperDbTable implements Content_Model_Category_Map
 
     public function save(Content_Model_Category_Interface $category) {
 
-        if (($category instanceof Content_Model_DbTableRow_Category) && ($category->isConnected())) {
+        if (($category instanceof Content_Model_Category_DbTableRow) && ($category->isConnected())) {
             return $category->save();
         } elseif (!is_null($category->id)) {
             $row = $this->getTable()->find($category->id)->current();
@@ -107,7 +105,7 @@ class Content_Model_Category_MapperDbTable implements Content_Model_Category_Map
 
     public function delete(Content_Model_Category_Interface $category) {
 
-        if (($category instanceof Content_Model_DbTableRow_Category) && ($category->isConnected())) {
+        if (($category instanceof Content_Model_Category_DbTableRow) && ($category->isConnected())) {
             $category->delete();
             return true;
         } elseif (!is_null($category->id)) {

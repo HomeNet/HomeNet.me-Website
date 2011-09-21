@@ -28,7 +28,10 @@
 class Core_Model_Group_DbTableRow extends Zend_Db_Table_Row_Abstract implements Core_Model_Group_Interface {
 
 //    public $rooms;
-
+/**
+ *
+ * @param array $array 
+ */
     public function fromArray(array $array){
 
         foreach($array as $key => $value){

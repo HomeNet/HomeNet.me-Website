@@ -51,6 +51,10 @@ class Core_Model_Menu_Item implements Core_Model_Menu_Item_Interface {
      * @var string
      */
     public $route;
+     /**
+     * @var string
+     */
+    public $options;
     /**
      * @var string
      */

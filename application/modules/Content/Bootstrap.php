@@ -42,40 +42,4 @@ class Content_Bootstrap extends Zend_Application_Module_Bootstrap
 }
 
 
-function flattenArray($array) {
 
-        if(empty($array)){
-            return '';
-        }
-
-        $strings = array();
-        foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                $value = implode(',', $value).',';
-            }
-            $strings[] = $key . ':' . $value;
-        }
-        return implode("\n", $strings);
-    }
-
- function unflattenArray($string) {
-        if(empty($string)){
-            return '';
-        }
-
-        $strings = preg_split("`[\n\r]+`", $string);
-        $array = array();
-        foreach ($strings as $value) {
-            $value = explode(':', $value);
-            if (strpos($value[1], ',') !== false) {
-                $value[1] = explode(',', $value[1]);
-                $last = end($value[1]);
-                if (empty($last)) {
-                    array_pop($value[1]);
-                }
-            }
-            $array[$value[0]] = $value[1];
-        }
-
-        return $array;
-    }

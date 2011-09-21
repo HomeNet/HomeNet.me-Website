@@ -20,7 +20,7 @@
 
 /**
  * @package Core
- * @subpackage Group
+ * @subpackage Acl_Group
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */

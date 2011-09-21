@@ -45,15 +45,9 @@ class Core_Model_User_MapperDbTable implements Core_Model_User_MapperInterface {
         return $this->_table;
     }
 
-    public function setTable($table) {
+    public function setTable(Zend_Db_Table_Abstract $table) {
         $this->_table = $table;
     }
-
-
-
-
-
-
 
     public function fetchObjectById($id){
         return $this->getTable()->find($id)->current();
@@ -64,16 +58,12 @@ class Core_Model_User_MapperDbTable implements Core_Model_User_MapperInterface {
       return $this->getTable()->fetchAll($select);
     }
    
-    
-    
-    
+    public function save(Core_Model_User_Interface $object) {
 
-    public function save(Core_Model_User_Interface $user) {
-
-        if (($user instanceof Core_Model_DbTableRow_User) && ($user->isConnected())) {
-            return $user->save();
-        } elseif (!is_null($user->id)) {
-            $row = $this->getTable()->find($user->id)->current();
+        if (($object instanceof Core_Model_User_DbTableRow) && ($object->isConnected())) {
+            return $object->save();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current();
             if(empty($row)){
                $row = $this->getTable()->createRow();
             }
@@ -82,7 +72,7 @@ class Core_Model_User_MapperDbTable implements Core_Model_User_MapperInterface {
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($user->toArray());
+        $row->fromArray($object->toArray());
        // die(debugArray($row));
                 try {
         $row->save();
@@ -99,13 +89,13 @@ class Core_Model_User_MapperDbTable implements Core_Model_User_MapperInterface {
         return $row;
     }
 
-    public function delete(Core_Model_User_Interface $user) {
+    public function delete(Core_Model_User_Interface $object) {
 
-        if (($user instanceof Core_Model_DbTableRow_User) && ($user->isConnected())) {
-            $user->delete();
+        if (($object instanceof Core_Model_User_DbTableRow) && ($object->isConnected())) {
+            $object->delete();
             return true;
-        } elseif (!is_null($user->id)) {
-            $row = $this->getTable()->find($user->id)->current()->delete();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current()->delete();
             return;
         }
 

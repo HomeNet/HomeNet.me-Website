@@ -1,7 +1,5 @@
 <?php
 /* 
- * RoomMapperInterface.php
- * 
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * 
  * This file is part of HomeNet.
@@ -28,15 +26,15 @@
  */
 interface Content_Model_Content_MapperInterface {
     /**
-     * @return Content_Model_Content_Interface
+     * @return Content_Model_Content
      */
     public function fetchObjectByIdRevision($id,$revision);
       /**
-     * @return Content_Model_Content_Interface
+     * @return Content_Model_Content
      */
     public function fetchObjectsBySection($section);
     /**
-     * @return Content_Model_Content_Interface
+     * @return Content_Model_Content
      */
     public function fetchObjectByUrl($url);
 

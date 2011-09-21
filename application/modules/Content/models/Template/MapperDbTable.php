@@ -1,8 +1,6 @@
 <?php
 
 /*
- * ApikeyMapperDbTable.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -18,10 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
+ * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-require_once "MapperInterface.php";
 
 /**
  * @package Content
@@ -45,7 +41,7 @@ class Content_Model_Template_MapperDbTable implements Content_Model_Template_Map
         return $this->_table;
     }
 
-    public function setTable($table) {
+    public function setTable(Zend_Db_Table_Abstract $table) {
         $this->_table = $table;
     }
 
@@ -119,7 +115,7 @@ class Content_Model_Template_MapperDbTable implements Content_Model_Template_Map
 
     public function save(Content_Model_Template_Interface $content) {
 
-        if (($content instanceof Content_Model_DbTableRow_Template) && ($content->isConnected())) {
+        if (($content instanceof Content_Model_Template_DbTableRow) && ($content->isConnected())) {
             return $content->save();
         } elseif (!is_null($content->id) && !is_null($content->revision)) {
             $row = $this->getTable()->find($content->id,$content->revision)->current();
@@ -148,7 +144,7 @@ class Content_Model_Template_MapperDbTable implements Content_Model_Template_Map
 
     public function delete(Content_Model_Template_Interface $content) {
 
-        if (($content instanceof Content_Model_DbTableRow_Template) && ($content->isConnected())) {
+        if (($content instanceof Content_Model_Template_DbTableRow) && ($content->isConnected())) {
             $content->delete();
             return true;
         } elseif (!is_null($content->id) && !is_null($content->revision)) {

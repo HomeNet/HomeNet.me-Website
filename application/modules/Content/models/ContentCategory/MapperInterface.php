@@ -1,7 +1,6 @@
 <?php
-/* 
- * RoomMapperInterface.php
- * 
+
+/*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * 
  * This file is part of HomeNet.
@@ -22,7 +21,7 @@
 
 /**
  * @package Content
- * @subpackage Category
+ * @subpackage ContentCategory
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */

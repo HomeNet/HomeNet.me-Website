@@ -25,10 +25,6 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 class Core_Model_Route implements Core_Model_Route_Interface {
-
-
-    
-    
     
     /**
      * @var int
@@ -43,6 +39,13 @@ class Core_Model_Route implements Core_Model_Route_Interface {
      /**
      * @var bool
      */
+    
+    public $package = null;
+    
+     /**
+     * @var bool
+     */
+    
     public $active = false;
    /**
      * @var int
@@ -58,6 +61,9 @@ class Core_Model_Route implements Core_Model_Route_Interface {
      */
     public $path;
     
+    /**
+     * @var string 
+     */
     public $module = null;
     
     /**

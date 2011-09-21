@@ -30,9 +30,9 @@ interface Core_Model_Menu_Item_MapperInterface {
 
     public function fetchObjectById($id);
     
-    public function fetchObjectsBySet($id);
+    public function fetchObjectsByMenu($id);
 
-    public function fetchObjectByUrl($url);
+//    public function fetchObjectByUrl($url);
 
 //    public function fetchObjectsByIdHouse($id,$house);
 

@@ -1,7 +1,5 @@
 <?php
 /* 
- * RoomMapperInterface.php
- * 
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * 
  * This file is part of HomeNet.
@@ -22,21 +20,21 @@
 
 /**
  * @package Content
- * @subpackage Content
+ * @subpackage Field
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 interface Content_Model_Field_MapperInterface {
     /**
-     * @return Content_Model_Field_Interface
+     * @return Content_Model_Field
      */
     public function fetchObjectById($id);
     /**
-     * @return Content_Model_Field_Interface
+     * @return Content_Model_Field[_Interface]]
      */
     public function fetchObjectsBySection($section);
     /**
-     * @return Content_Model_Field_Interface
+     * @return Content_Model_Field
      */
     public function fetchObjectBySectionName($section,$name);
 

@@ -28,6 +28,13 @@ class Content_Installer extends CMS_Installer_Abstract
 {
     static public $testSection; 
     
+    public function getAdminLinks(){
+        return array(
+            array('title' => 'Category Sets',    'route'=>'content', 'options' =>  array('controller'=>'category-set')),
+            array('title' => 'Content Sections', 'route'=>'content', 'options' =>  array('controller'=>'section'))
+        );
+    } 
+    
     function installTest() {
         
         $section = new Content_Model_Section();

@@ -25,7 +25,7 @@
  *
  * @author Matthew Doll <mdoll at homenet.me>
  */
-class Content_Plugin_Element_Text_Element {
+class Content_Plugin_Element_Text_Element extends Content_Model_Plugin_Element {
     /**
      * Get Mysql Column Datatype.
      * 
@@ -40,8 +40,12 @@ class Content_Plugin_Element_Text_Element {
      */
     function getSetupForm($options = array()){
         $form = parent::getSetupForm();
-        
-       
+        $form->setLegend('Text Options');
+        $path = $form->createElement('text','value');
+        $path->setLabel('Starting Value: ');
+        $path->setRequired('true');
+        $path->addFilter('StripTags');//@todo filter chars
+        $form->addElement($path);
         
         return $form;
     }
@@ -52,7 +56,7 @@ class Content_Plugin_Element_Text_Element {
      * @param $config config of how object shoiuld be rendered
      * @return Zend
      */
-    function getElement($config){
+    function getElement(array $config, $options = array()){
         
         $element = new Zend_Form_Element_Text($config); 
         return $element;

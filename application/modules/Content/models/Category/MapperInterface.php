@@ -1,7 +1,5 @@
 <?php
 /* 
- * RoomMapperInterface.php
- * 
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * 
  * This file is part of HomeNet.

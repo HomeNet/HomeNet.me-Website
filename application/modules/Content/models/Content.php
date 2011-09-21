@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -26,55 +27,97 @@
  */
 class Content_Model_Content implements Content_Model_Content_Interface {
 
-    private $_fields = array();
-    
-    private $_values = array('autosave' => false, 'status' => -1, 'visible'=>false);
-    
-   
-   // public $id, $revision, $owner, $autosave = false, $section, $status = -1, $created, $expires, $author, $editor, $title, $url, $content, $visible = true;
+    private $_values = array('autosave' => false, 'status' => -1, 'visible' => false);
+    private $_objects = array();
+    private $_metadata = null;
+
+    // public $id, $revision, $owner, $autosave = false, $section, $status = -1, $created, $expires, $author, $editor, $title, $url, $content, $visible = true;
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {
             $this->fromArray($config['data']);
         }
+        if (isset($config['metadata'])) {
+            $this->_metadata($config['metadata']);
+        }
     }
-    
+
+    public function getSection() {
+        if (is_null($this->_metadata)) {
+            $this->loadMetadata();
+        }
+        return $this->_metadata;
+    }
+
     public function __get($name) {
-        if(!isset($this->_values[$name])){
-            return null;
-        } else {
-            return $this->_values[$name];
+
+
+        if (!isset($this->_objects[$name])) {
+
+            $fields = $this->getSection()->getFields();
+            // $fields = array();
+            //unset($fields['url']);
+            if (isset($fields[$name])) {
+                //create object
+
+                $class = 'Content_Plugin_Element_' . ucfirst($fields[$name]->element) . '_Element';
+                if (!class_exists($class, true)) {
+                    throw new Exception('Element not found: ' . $class);
+                }
+
+                $data = array();
+                if(isset($this->_values[$name])){
+                    $data = $this->_values[$name];
+                }
+
+                $this->_objects[$name] = new $class(array(
+                            'data' => $data,
+                            'options' => $fields[$name]->options));
+                //$this->_objects[$name] = $this->_values[$name];
+            } elseif (isset($this->_values[$name])) {
+                //id or revision or something without metadata
+                $this->_objects[$name] = $this->_values[$name];
+            } else {
+                return null;
+            }
+        }
+
+
+        return $this->_objects[$name];
+    }
+
+    public function loadMetadata() {
+        if (is_null($this->_metadata)) {
+            if (!isset($this->_values['section'])) {
+                throw new Exception('Section Required');
+            }
+            $service = new Content_Model_Section_Service();
+            $this->_metadata = $service->getMetadataById($this->_values['section']);
         }
     }
 
     public function __set($name, $value) {
         $this->_values[$name] = $value;
     }
-    
+
     public function __unset($name) {
         unset($this->_values[$name]);
     }
-    
+
     public function __isset($name) {
         return isset($this->_values[$name]);
     }
 
-
-
-
     public function fromArray(array $array) {
 
-      //  $vars = get_object_vars($this);
-
+        //  $vars = get_object_vars($this);
         // die(debugArray($vars));
-
-      //  foreach ($array as $key => $value) {
-       //     if (array_key_exists($key, $vars)) {
-        
-           //     $this->$key = $value;
-         //   }
-       // }
-       $this->_values = array_merge($this->_values, $array);
+        //  foreach ($array as $key => $value) {
+        //     if (array_key_exists($key, $vars)) {
+        //     $this->$key = $value;
+        //   }
+        // }
+        $this->_values = array_merge($this->_values, $array);
     }
 
     /**
@@ -82,7 +125,62 @@ class Content_Model_Content implements Content_Model_Content_Interface {
      */
     public function toArray() {
 
-        return $this->_values;
+        $array = $this->_values;
+
+        foreach ($this->_objects as $key => $value) {
+            if (is_object($value)) {
+                $array[$key] = $value->getValue();
+            }
+        }
+
+        return $array;
+    }
+
+    public function getForm() {
+
+        $form = new CMS_Form();
+
+        $fields = $this->getSection()->getFields();
+        
+
+        foreach ($fields as $key => $field) {
+
+            $object = $this->$key;
+          //  die(debugArray($object));
+            $options = array(
+                'name' => $field->name,
+                'label' => $field->label,
+                'description' => $field->description,
+                'value' => $object->getValue(),
+                'required' => $field->required,
+            );
+          //  debugArray($object->getValue());
+            // $options['validators'] = $field->validators; // array('alnum', array('regex', false, '/^[a-z]/i')  );
+            // $options['filters'] = $field->filters; //array('StringToLower');
+            //$options['attrib'] = $field->attributes;
+
+
+            $e = $object->getElement($options, $field->options);
+
+            $form->addElement($e);
+        }
+//        echo debugArray($this->_objects);
+//    exit;  
+
+        $form->addDisplayGroup($form->getElements(), 'main', array('legend' => $this->getSection()->title));
+
+        return $form;
+    }
+    
+    public function save(){
+        $fields = $this->getSection()->getFields();
+        
+
+        foreach ($fields as $key => $field) {
+
+            $object = $this->$key;
+            $object->save();
+        }
     }
 
 }
