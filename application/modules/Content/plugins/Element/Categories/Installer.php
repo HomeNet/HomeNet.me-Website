@@ -43,6 +43,7 @@ class Content_Plugin_Element_Categories_Installer {
     function getMysqlColumn(){
         return 'text'; //doesnot require a column
     }
+    //@todo add unitall function to remove categiory data if removed from a section
     
     
 //    function getFields($fieldSets){

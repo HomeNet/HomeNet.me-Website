@@ -28,8 +28,11 @@
 
 class Content_Bootstrap extends Zend_Application_Module_Bootstrap
 {
-    protected function _initPlugins()
+    protected function _initRoute()
     {
+       // die(debugArray(Zend_Controller_Front::getInstance()->getRequest()->getParams() ));
+
+        
 //        $bootstrap = $this->getApplication();
 //        $bootstrap->bootstrap('frontcontroller');
 //        $front = $bootstrap->getResource('frontcontroller');

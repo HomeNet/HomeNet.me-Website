@@ -46,7 +46,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
     public function getCustomTable($section) {
         if (!array_key_exists($section, $this->_customTables)) {
             $customTable = new Zend_Db_Table('content_custom_' . $section);
-           // die(debugArray($customTable->info(Zend_Db_Table::METADATA)));
+            // die(debugArray($customTable->info(Zend_Db_Table::METADATA)));
             $this->_customTables[$section] = $customTable;
         }
         return $this->_customTables[$section];
@@ -67,7 +67,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         $object = new Content_Model_Content();
 
         $result = $this->getTable()->find($id)->current();
-        if(empty($result)){
+        if (empty($result)) {
             return null;
         }
         $object->fromArray($result->toArray());
@@ -90,12 +90,12 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('section = ?', $section)
-                ->join(array('c' => 'content_custom_' . $section),
-                    'content_content.id = c.id AND 
+                ->join(array('c' => 'content_custom_' . $section), 'content_content.id = c.id AND 
                         content_content.active_revision = c.revision'
-        ); //,'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings')
+        )->order('content_content.active_revision DESC'); //,'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings')
 
         $results = $this->getTable()->fetchAll($select);
+       // die(debugArray($section));
         //  $row =  $this->getTable()->fetchRow($select);
         // $select = $this->getTable()->select()->from($this->getTable(),array(new Zend_Db_Expr('*'),new Zend_Db_Expr('MAX(revision)')))->where('section = ?',$section)->group('id');
         $objects = array();
@@ -115,13 +115,13 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
 
         $object = new Content_Model_Content();
 
-        $select = $this->getTable()->select()->where('url = ?',$url);
-        $result = $this->getTable()->fetchRow($select); 
-        
-        if(empty($result)){
+        $select = $this->getTable()->select()->where('url = ?', $url);
+        $result = $this->getTable()->fetchRow($select);
+
+        if (empty($result)) {
             return null;
         }
-        
+
         $object->fromArray($result->toArray());
 
 //        $select = $this->getCustomTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
@@ -146,15 +146,15 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
      * @return Content_Model_Content 
      */
     public function fetchObjectById($id) {
-        
-$object = new Content_Model_Content();
+
+        $object = new Content_Model_Content();
 
         $result = $this->getTable()->find($id)->current();
-if(empty($result)){
+        if (empty($result)) {
             return null;
         }
         $object->fromArray($result->toArray());
-       // die(debugArray($object));
+        // die(debugArray($object));
         $result2 = $this->getCustomTable($result->section)->find($result->id, $result->active_revision)->current();
         // = $this->getCustomTable()->fetchRow($select2); 
         $object->fromArray($result2->toArray());
@@ -195,7 +195,7 @@ if(empty($result)){
         //@todo security issue validate $section
         // return $this->getMapper()->prepareTable($section, $fields);
         $this->getTable()->getAdapter()->query('CREATE TABLE IF NOT EXISTS `' . $table . '` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(11) unsigned NOT NULL,
   `revision` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `owner`  int(11) unsigned NOT NULL,
   `autosave`  int(1) unsigned NOT NULL,
@@ -289,31 +289,34 @@ if(empty($result)){
         }
         foreach ($contentValues as $key => $value) {
             if (in_array($key, $fields)) {
-                if(is_object($value)){
+                if (is_object($value)) {
                     $value = $value->getValue();
                 }
-                
+
                 $row->$key = $value;
             }
         }
         $result = $row->save();
-        //   die(debugArray($result));    
+
+   
         //get id
-        $content->id = $result['id'];
+       $content->id = $row->id;
+          
         //insert into table 2
         $customRow = $customTable->createRow();
 
         foreach ($contentValues as $key => $value) {
             if (in_array($key, $customFields)) {
-                if(is_object($value)){
+                if (is_object($value)) {
                     $value = $value->getValue();
-                    } 
-                if(is_array($value)){
+                }
+                if (is_array($value)) {
                     $value = serialize($value);
                 }
                 $customRow->$key = $value;
             }
         }
+        $customRow->id = $row->id;
         $customRow->save();
         //update id in orginal content
 

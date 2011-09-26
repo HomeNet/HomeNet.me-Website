@@ -65,7 +65,7 @@ class Content_Model_Content implements Content_Model_Content_Interface {
                     throw new Exception('Element not found: ' . $class);
                 }
 
-                $data = array();
+                $data = null;
                 if(isset($this->_values[$name])){
                     $data = $this->_values[$name];
                 }
@@ -142,11 +142,13 @@ class Content_Model_Content implements Content_Model_Content_Interface {
 
         $fields = $this->getSection()->getFields();
         
+        $sets = array();
 
         foreach ($fields as $key => $field) {
 
             $object = $this->$key;
-          //  die(debugArray($object));
+         //   echo $key;
+        //  echo debugArray($object->getValue());
             $options = array(
                 'name' => $field->name,
                 'label' => $field->label,
@@ -154,6 +156,11 @@ class Content_Model_Content implements Content_Model_Content_Interface {
                 'value' => $object->getValue(),
                 'required' => $field->required,
             );
+            if(empty($sets[$field->set])){
+                $sets[$field->set] = array();
+            }
+           $sets[$field->set][] = $field->name;
+            
           //  debugArray($object->getValue());
             // $options['validators'] = $field->validators; // array('alnum', array('regex', false, '/^[a-z]/i')  );
             // $options['filters'] = $field->filters; //array('StringToLower');
@@ -161,13 +168,21 @@ class Content_Model_Content implements Content_Model_Content_Interface {
 
 
             $e = $object->getElement($options, $field->options);
-
+            $form->applyDefaultDecorators($e);
             $form->addElement($e);
         }
-//        echo debugArray($this->_objects);
-//    exit;  
+        
+        $service = new Content_Model_FieldSet_Service();
+        $fieldSets = $service->getObjectsBySection($this->section);
 
-        $form->addDisplayGroup($form->getElements(), 'main', array('legend' => $this->getSection()->title));
+        foreach($fieldSets as $value){
+            if(isset($sets[$value->id])){
+            $form->addDisplayGroup($sets[$value->id], 'set-'.$value->id, array('legend' => $value->title));
+            }
+        }
+        
+
+       // $form->addDisplayGroup($form->getElements(), 'main', array('legend' => $this->getSection()->title));
 
         return $form;
     }

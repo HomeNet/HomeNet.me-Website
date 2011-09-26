@@ -50,11 +50,8 @@
 </head>
 
 <body>
-
-  
-
-    <header class="transparent">
-    <div id="logo"><a href="/">HomeNet</a></div>
+<header class="transparent">
+    <div id="logo"><a href="/"><?php echo $this->config()->site->name; ?></a></div>
     <div id="user">
         <?php  echo $this->action('login-widget', 'Login'); ?>
     </div>

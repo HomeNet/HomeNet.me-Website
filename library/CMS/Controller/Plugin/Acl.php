@@ -92,8 +92,9 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
         if (empty($module) || ($module == 'default')) {
             $module = 'core';
         }
+        
 
-        $aManager = new Core_Model_Acl_Manager(new Core_Model_User(array('data' => $_SESSION['User'])));
+        $aManager = Core_Model_Acl_Manager::getInstance();
 
         $acl = $aManager->getUserAcl($module);
 

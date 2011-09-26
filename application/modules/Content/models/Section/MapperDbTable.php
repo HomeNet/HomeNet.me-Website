@@ -51,6 +51,17 @@ class Content_Model_Section_MapperDbTable implements Content_Model_Section_Mappe
     public function fetchObjectById($id) {
         return $this->getTable()->find($id)->current();
     }
+    
+     /**
+     *
+     * @param string $url
+     * @return Content_Model_DbTabeRow_SectionContent 
+     */
+    public function fetchObjectByUrl($url){
+
+       $select = $this->getTable()->select()->where('url = ?',$url);
+       return $this->getTable()->fetchRow($select);
+    }
 
     public function save(Content_Model_Section_Interface $section) {
 

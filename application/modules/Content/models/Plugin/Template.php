@@ -35,9 +35,9 @@ abstract class Content_Model_Plugin_Template {
     
     function getFields($fieldSets){
           $fields = array();
-         $fields[] = array(
+         $fields['title'] = array(
             'set' => $fieldSets['publish'],
-            'order' => 2,
+            'order' => 1,
             'type' => Content_Model_Field::SYSTEM,
             'element' => 'text',
             'name' => 'title',
@@ -48,7 +48,7 @@ abstract class Content_Model_Plugin_Template {
             'locked' => false,
             'required' => true,
             'visible' => true);
-         $fields[] = array(
+         $fields['url'] = array(
             'set' => $fieldSets['publish'],
             'order' => 2,
             'type' => Content_Model_Field::SYSTEM,

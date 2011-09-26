@@ -157,6 +157,14 @@ class Content_Model_ContentCategory_Service {
     public function deleteBySection($section) {
         return $this->getMapper()->deleteBySection($section);
     }
+    
+    /**
+     * @param integer $section Section Id
+     * @return boolean Success
+     */
+    public function deleteByContent($section) {
+        return $this->getMapper()->deleteByContent($section);
+    }
 
     /**
      * Delete all data. Used for unit testing/Will not work in production 

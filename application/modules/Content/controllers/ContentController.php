@@ -66,7 +66,7 @@ class Content_ContentController extends Zend_Controller_Action
         $values['section'] = $this->view->id;
         $service->create($values);
         
-        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$this->view->id),'content-id').'?message=Successfully added');//
+        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$this->view->id),'content-admin-id').'?message=Successfully added');//
     }
 
     public function editAction()
@@ -102,7 +102,7 @@ class Content_ContentController extends Zend_Controller_Action
          $object->fromArray($values);
         $service->update($object);
 
-        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$values['section']),'content-id').'?message=Updated');//
+        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$values['section']),'content-admin-id').'?message=Updated');//
     }
 
     public function deleteAction()
@@ -128,9 +128,9 @@ class Content_ContentController extends Zend_Controller_Action
         if(!empty($_POST['delete'])){
             
             $service->delete($object);
-            return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$section),'content-id').'?message=Deleted');
+            return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$section),'content-admin-id').'?message=Deleted');
         }
-        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$section),'content-id').'?message=Canceled');
+        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$section),'content-admin-id').'?message=Canceled');
     }
 
     public function hideAction()

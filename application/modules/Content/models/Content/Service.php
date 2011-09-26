@@ -164,7 +164,19 @@ class Content_Model_Content_Service {
             throw new InvalidArgumentException('Invalid Content');
         }
 
-        return $this->getMapper()->save($object);
+        $result = $this->getMapper()->save($object);
+
+        $fields = $object->getSection()->getFields();
+        foreach ($fields as $key => $value) {
+            // die('called'.$key);
+            $o = $object->$key;
+            if ($o instanceof Content_Model_Plugin_Element) {
+
+                $o->save($result);
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -181,7 +193,19 @@ class Content_Model_Content_Service {
             throw new InvalidArgumentException('Invalid Content');
         }
 
-        return $this->getMapper()->save($object);
+        $result = $this->getMapper()->save($object);
+
+        $fields = $object->getSection()->getFields();
+        foreach ($fields as $key => $value) {
+            // die('called'.$key);
+            $o = $object->$key;
+            if ($o instanceof Content_Model_Plugin_Element) {
+
+                $o->save($result);
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -199,6 +223,14 @@ class Content_Model_Content_Service {
             $object = new Content_Model_Content(array('data' => $mixed));
         } else {
             throw new InvalidArgumentException('Invalid Content');
+        }
+
+        $fields = $object->getSection()->getFields();
+        foreach ($fields as $key => $value) {
+            $o = $this->$key;
+            if ($o instanceof Content_Model_Plugin_Element) {
+                $o->delete($object);
+            }
         }
 
         return $this->getMapper()->delete($object);

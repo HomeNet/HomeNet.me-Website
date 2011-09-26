@@ -45,13 +45,13 @@ class Content_Plugin_Element_Textarea_Element extends Content_Model_Plugin_Eleme
         $rows->addFilter('Int');
         $form->addElement($rows);
         
-        $cols = $form->createElement('text','cols');
-        $cols->setLabel('Cols: ');
-        $cols->setValue(50);
-     //   $cols->setDescription('This is the label that will show up in the form interface');
-     //   $cols->setRequired('true');
-        $cols->addFilter('Int');
-        $form->addElement($cols);
+//        $cols = $form->createElement('text','cols');
+//        $cols->setLabel('Cols: ');
+//        $cols->setValue(50);
+//     //   $cols->setDescription('This is the label that will show up in the form interface');
+//     //   $cols->setRequired('true');
+//        $cols->addFilter('Int');
+//        $form->addElement($cols);
                 
         $path = $form->createElement('text','value');
         $path->setLabel('Starting Value: ');
@@ -71,6 +71,12 @@ class Content_Plugin_Element_Textarea_Element extends Content_Model_Plugin_Eleme
     function getElement(array $config, $options = array()){
         
         $element = new Zend_Form_Element_Textarea($config); 
+        if(isset($options['rows'])){
+            $element->setAttrib('rows', $options['rows']);
+        }
+        //if(isset($options['cols'])){
+            $element->setAttrib('style', 'width:580px;');
+       // }
         return $element;
     }
 }

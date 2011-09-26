@@ -38,7 +38,8 @@ class Content_Model_Template_Service {
     public function getMapper() {
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new Content_Model_Template_MapperDbTable();
+            $this->_mapper = new Content_Model_Template_MapperCache();
+            $this->_mapper->setMapper(new Content_Model_Template_MapperDbTable());
         }
 
         return $this->_mapper;
@@ -91,12 +92,35 @@ class Content_Model_Template_Service {
     }
     
     /**
-     * @param int $url
+     * @param string $url
      * @return Content_Model_Template_Interface 
      * @throws NotFoundException
      */
     public function getObjectByUrl($url) {
         $result = $this->getMapper()->fetchObjectByUrl($url);
+
+        if (empty($result)) {
+            throw new NotFoundException('URL: ' . $url . ' Not Found', 404);
+        }
+        return $result;
+    }
+    
+    /**
+     * @param string $url
+     * @return string
+     * @throws NotFoundException
+     */
+    public function getPathBySectionUrl($section, $url) {
+        
+        if(!is_numeric($section)){
+            //@todo cache a lookuparray to make this faster
+            $service = new Content_Model_Section_Service();
+            $object = $service->getObjectByUrl($section);
+            $section = $object->id;
+        }
+        
+        
+        $result = $this->getMapper()->getPath($section, $url) ;
 
         if (empty($result)) {
             throw new NotFoundException('URL: ' . $url . ' Not Found', 404);

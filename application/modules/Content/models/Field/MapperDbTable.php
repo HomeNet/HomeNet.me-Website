@@ -51,7 +51,7 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
 
    public function fetchObjectsBySection($section){
 
-       $select = $this->getTable()->select()->where('section = ?',$section);
+       $select = $this->getTable()->select()->where('section = ?',$section)->order('order ASC');
        return $this->getTable()->fetchAll($select);
     }  
     

@@ -45,7 +45,6 @@ class Content_Plugin_Template_Pages_Installer extends Content_Model_Plugin_Templ
             'element' => 'textarea',
             'name' => 'content',
             'label' => 'Content',
-            'value' => '',
             'validators' => array(),
             'filters' => array(),
             'locked' => false,

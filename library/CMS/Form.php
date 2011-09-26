@@ -64,13 +64,29 @@ class CMS_Form extends Zend_Form {
 
         $element = parent::createElement($type, $name, $settings);
 
-        $type = strtolower($type);
+        $element = $this->applyDefaultDecorators($element);
+
+
+        //array(array('data' => 'HtmlTag'), array('tag' => 'div', 'class' => 'checkbox'))
+
+
+        return $element;
+    }
+    
+    public function applyDefaultDecorators(Zend_Form_Element $element){
+        
+        $class = get_class($element);
+        
+        $type = strtolower(trim(strrchr($class, "_"),'_'));
+        
 
         $skip = array('submit', 'hash', 'hidden');
 
         $ui = array('colorPicker', 'datePicker', 'autoComplete');
 
         $other = array('multicheckbox', 'select', 'radios', 'pickColor');
+        
+         $wide = array('textarea');
         //
         //die(debugArray($element->getDecorators()));
 
@@ -79,34 +95,31 @@ class CMS_Form extends Zend_Form {
 
             if (in_array($type, $ui)) {
                 $this->addDecorator('UiWidgetElement');
-            } elseif (strstr($type, 'ajax')) {
+          //  } elseif (in_array($type, $other)) {
+           //     $this->addDecorator('HtmlTag', array('tag' => 'div'));
+            }elseif (strstr($type, 'ajax')) {
                 $element->addDecorator('AjaxHelper');
             } else {
                 $element->addDecorator('ViewHelper', array());
             }
+            
+            $suffix = '';
+            if (in_array($type, $wide)) {
+               $suffix .='-wide';
+            }
 
             $element->addDecorator('Errors');
             // ->addDecorator('Description', array('tag' => 'p', 'class' => 'description'))
-            $element->addDecorator('HtmlTag', array('tag' => 'div', 'class' => 'form-input'));
+            $element->addDecorator('HtmlTag', array('tag' => 'div', 'class' => 'form-input'.$suffix));
 
             $element->addDecorator('Label', array());
-            $element->addDecorator(array('labelStart' => 'HtmlTag'), array('tag' => 'div', 'class' => 'form-element', 'openOnly' => true));
+            
+            $element->addDecorator(array('labelStart' => 'HtmlTag'), array('tag' => 'div', 'class' => 'form-element'.$suffix, 'openOnly' => true));
         }
-//        elseif (!in_array($type, $skip)) {
-//
-//            $element->setDecorators(array(array('ViewScript', array(
-//                        'viewScript' => '_element.phtml',
-//                        'class' => 'form-element'
-//                ))));
-//        }
+
         else {
             $element->setDecorators(array('ViewHelper'));
         }
-
-
-
-        //array(array('data' => 'HtmlTag'), array('tag' => 'div', 'class' => 'checkbox'))
-
 
         return $element;
     }
@@ -123,26 +136,6 @@ class CMS_Form extends Zend_Form {
         return parent::setView($view);
     }
 
-    /*
-      public function addDisplayGroup(array $elements, $name, $options = null)
-      {
-
-      $settings  = array('disableLoadDefaultDecorators' => true);
-
-      if(is_array($options)){
-      $settings = array_merge($settings, $options);
-
-      }
-
-      $group = parent::addDisplayGroup($elements, $name, $settings);
-
-      $group->addDecorator('FormElements');
-      $group->addDecorator('Fieldset');
-
-      return $group;
-      }
-     */
-
     public function getValues($suppressArrayNotation = false) {
         // return parent::getValues($suppressArrayNotation);
         //$values = parent::getValues($suppressArrayNotation);
@@ -154,8 +147,6 @@ class CMS_Form extends Zend_Form {
 
         foreach ($this->getElements() as $key => $element) {
             if (!$element->getIgnore()) {
-
-
                 $values[$key] = $element->getValue();
             }
         }
@@ -168,13 +159,6 @@ class CMS_Form extends Zend_Form {
                 $values = array_merge($values, $subForm->getValues($suppressArrayNotation));
             }
         }
-
-//        if (!$suppressArrayNotation &&
-//            $this->isArray() &&
-//            !$this->_getIsRendered()) {
-        //   $values = $this->_attachToArray($values, $this->getElementsBelongTo());
-//        }
-        // $values = array_merge($values,$merge);
 
         return $values;
     }

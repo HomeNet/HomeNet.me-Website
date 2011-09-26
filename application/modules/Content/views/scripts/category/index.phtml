@@ -1,6 +1,6 @@
-<h1><?php echo $this->controllerTitle ?></h1>
+<?php echo $this->heading($this->controllerTitle); ?>
 
-<p><a class="button"  href="<?php echo $this->url(array('controller' => 'category-set', 'action' => 'index'), 'content'); ?>">Back to Sets</a></p>
+<p><a class="button"  href="<?php echo $this->url(array('controller' => 'category-set', 'action' => 'index'),'content-admin'); ?>">Back to Sets</a></p>
 
 <table class="ui-widget" width="100%">
     <thead class="ui-widget-header">
@@ -15,10 +15,10 @@
                 <td><?php echo $object->id ?></td>
                 <td class="left"><?php echo $object->title ?></td>
                 <td class="left"><?php echo $object->url ?></td>
-                <td><a href="<?php echo $this->url(array('controller' => 'category', 'id' => $object->id, 'action' => 'edit'), 'content-id'); ?>">Edit</a> <a href="<?php echo $this->url(array('controller' => 'category', 'id' => $object->id, 'action' => 'delete'), 'content-id'); ?>">Delete</a></td>
+                <td><a href="<?php echo $this->url(array('controller' => 'category', 'id' => $object->id, 'action' => 'edit'),'content-admin-id'); ?>">Edit</a> <a href="<?php echo $this->url(array('controller' => 'category', 'id' => $object->id, 'action' => 'delete'),'content-admin-id'); ?>">Delete</a></td>
             </tr><?php
         }
         ?>
     </tbody>
 </table>
-<a class="button"  href="<?php echo $this->url(array('controller' => 'category', 'id' => $this->id, 'action' => 'new'), 'content-id'); ?>">New</a>
+<a class="button"  href="<?php echo $this->url(array('controller' => 'category', 'id' => $this->id, 'action' => 'new'),'content-admin-id'); ?>">New</a>

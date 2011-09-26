@@ -72,7 +72,7 @@ class Content_TemplateController extends Zend_Controller_Action
         $service = new Content_Model_Template_Service();
         $object = $service->create($values);
         
-        return $this->_redirect($this->view->url(array('controller'=>'template', 'action'=>'index', 'id'=>$object->section),'content-id').'?message=Successfully added new Set');//
+        return $this->_redirect($this->view->url(array('controller'=>'template', 'action'=>'index', 'id'=>$object->section),'content-admin-id').'?message=Successfully added new Set');//
     }
 
     public function editAction()
@@ -110,7 +110,7 @@ class Content_TemplateController extends Zend_Controller_Action
         // $object->fromArray($values);
         $object = $service->create($values);
 
-        return $this->_redirect($this->view->url(array('controller'=>'template', 'action'=>'index', 'id'=>$object->section),'content-id').'?message=Updated');//
+        return $this->_redirect($this->view->url(array('controller'=>'template', 'action'=>'index', 'id'=>$object->section),'content-admin-id').'?message=Updated');//
     }
 
     public function deleteAction()
@@ -135,9 +135,9 @@ class Content_TemplateController extends Zend_Controller_Action
         if(!empty($_POST['delete'])){
             
             $service->deleteById($object->id);
-            return $this->_redirect($this->view->url(array('controller'=>'template', 'action'=>'index', 'id'=>$object->section),'content-id').'?message=Deleted');
+            return $this->_redirect($this->view->url(array('controller'=>'template', 'action'=>'index', 'id'=>$object->section),'content-admin-id').'?message=Deleted');
         }
-        return $this->_redirect($this->view->url(array('controller'=>'template', 'action'=>'index', 'id'=>$object->section),'content-id').'?message=Canceled');
+        return $this->_redirect($this->view->url(array('controller'=>'template', 'action'=>'index', 'id'=>$object->section),'content-admin-id').'?message=Canceled');
     }
 
     public function hideAction()

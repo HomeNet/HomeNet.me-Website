@@ -57,7 +57,7 @@ class Content_Form_Field extends CMS_Form
 //                                     'Select' => 'Select',
 //                                     'MultiCheckboxes' => 'CheckBoxes',
 //                                     'Radio' => 'Radio List'));
-                $url = $this->getView()->url(array('controller' => 'field', 'action' => 'element-form'), 'content');
+                $url = $this->getView()->url(array('controller' => 'field', 'action' => 'element-form'), 'content-admin');
        $type->setOption('url',$url);
        $type->setOption('update', '#landing');
 
@@ -158,13 +158,13 @@ class Content_Form_Field extends CMS_Form
         if(isset($values['type'])){
             if($values['type'] < Content_Model_Field::USER){
                 $type = $this->getElement('name');
-                $type->setIgnore(true);
-                $type->setAttrib('disabled', true);
+               $type->setIgnore(true);
+              // $type->setAttrib('disabled', true);
                 
                 $element = $this->getElement('element');
                 $element->setIgnore(true);
-                $element->setAttrib('disabled', true);
-                $type->setOption('update', '#none');
+              //  $element->setAttrib('disabled', true);
+                $element->setOption('update', '#none');
             }
         }
         
@@ -172,6 +172,7 @@ class Content_Form_Field extends CMS_Form
     }
     
     public function isValid($values) {
+       
         if(empty($values['element'])){
             return false;
         }
@@ -180,13 +181,13 @@ class Content_Form_Field extends CMS_Form
             if($values['type'] < Content_Model_Field::USER){
                 $type = $this->getElement('name');
                 $type->setIgnore(true);
-                $type->setAttrib('disabled', true);
+              //  $type->setAttrib('disabled', true);
                 
                  
                 $element = $this->getElement('element');
-                $element->setIgnore(true);
-                $element->setAttrib('disabled', true);
-                $type->setOption('update', '#none');
+             //   $element->setIgnore(true);
+              //  $element->setAttrib('disabled', true);
+               // $element->setOption('update', '#none');
             }
         }
         

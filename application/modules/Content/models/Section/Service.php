@@ -73,6 +73,21 @@ class Content_Model_Section_Service {
         }
         return $section;
     }
+    
+     /**
+     * @param string $url                   Section Url
+     * @return Content_Model_Section
+     * @throws NotFoundException
+     */
+    public function getObjectByUrl($url) {
+        $section = $this->getMapper()->fetchObjectByUrl($url);
+
+        if (empty($section)) {
+            throw new NotFoundException('Section Not Found', 404);
+        }
+        return $section;
+    }
+    
     public function getMetadataById($id) {
         $result = $this->getObjectById($id);
         //@todo cache this metadata

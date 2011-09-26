@@ -64,7 +64,7 @@ class Content_SectionController extends Zend_Controller_Action
         $service = new Content_Model_Section_Manager();
         $service->createByTemplate($values);
         
-        return $this->_redirect($this->view->url(array('controller'=>'section', 'action'=>'index'),'content').'?message=Successfully added new Set');//
+        return $this->_redirect($this->view->url(array('controller'=>'section', 'action'=>'index'),'content-admin').'?message=Successfully added new Set');//
     }
 
     public function editAction()
@@ -99,7 +99,7 @@ class Content_SectionController extends Zend_Controller_Action
          $object->fromArray($values);
         $service->update($object);
 
-        return $this->_redirect($this->view->url(array('controller'=>'section'),'content').'?message=Updated');//
+        return $this->_redirect($this->view->url(array('controller'=>'section'),'content-admin').'?message=Updated');//
     }
 
     public function deleteAction()
@@ -124,9 +124,9 @@ class Content_SectionController extends Zend_Controller_Action
         if(!empty($_POST['delete'])){
             
             $csService->delete($object);
-            return $this->_redirect($this->view->url(array('controller'=>'section'),'content').'?message=Deleted');
+            return $this->_redirect($this->view->url(array('controller'=>'section'),'content-admin').'?message=Deleted');
         }
-        return $this->_redirect($this->view->url(array('controller'=>'section'),'content').'?message=Canceled');
+        return $this->_redirect($this->view->url(array('controller'=>'section'),'content-admin').'?message=Canceled');
     }
 
     public function hideAction()

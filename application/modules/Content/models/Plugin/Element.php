@@ -27,7 +27,7 @@
  */
 abstract class Content_Model_Plugin_Element {
 
-    protected $_value;
+    protected $_value = null;
     protected $_options = array();
     public $isArray = false;
 
@@ -81,5 +81,11 @@ abstract class Content_Model_Plugin_Element {
      */
     abstract function getElement(array $config, $options = array());
     
-    public function save();
+    public function save(Content_Model_Content $content){
+        
+    }
+    
+    public function delete(Content_Model_Content $content){
+        
+    }
 }

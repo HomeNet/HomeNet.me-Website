@@ -69,9 +69,19 @@ class Content_Plugin_Element_Categories_Element  extends Content_Model_Plugin_El
        // die(var_dump($this->_value));
         
         if(empty($options['set'])){
+            
+              $element = new Zend_Form_Element_MultiCheckbox($config); 
+              $element->setDescription('Catergory Set Empty @todo click to edit');
+       // $element->setMultiOptions($options);
+      //  echo debugArray($this->_value);
+     //   die(debugArray($config));
+      //$element->setValue($this->_value);
+        return $element;
+            
             throw new InvalidArgumentException('Missing Set Id');
         }
         $service = new Content_Model_Category_Service();
+
         $objects = $service->getObjectsBySet($options['set']);
         $options = array();
         foreach($objects as $value){
@@ -86,12 +96,22 @@ class Content_Plugin_Element_Categories_Element  extends Content_Model_Plugin_El
         return $element;
     }
     
-    /**
-     * Parse the Subform and return the value to be stored in the database
-     * 
-     * @param array $values 
-     */
-    function getValue($values = array()){
-        
+
+    
+    public function save(Content_Model_Content $content){
+        $service = new Content_Model_ContentCategory_Service();
+        $service->deleteByContent($content->id);
+        foreach($this->getValue() as $value){
+            $object = new Content_Model_ContentCategory();
+            $object->category = $value;
+            $object->content = $content->id;
+            $object->section= $content->section;
+            $service->create($object);
+        }
+    }
+    
+    public function delete(Content_Model_Content $content){
+        $service = new Content_Model_ContentCategory_Service();
+        $service->deleteByContent($content->id);
     }
 }

@@ -46,6 +46,11 @@ class Content_Model_Field implements Content_Model_Field_Interface {
     public $type = 2;
     
     /**
+     * @var int
+     */
+    public $set;
+    
+    /**
      * @var string
      */
     public $name;

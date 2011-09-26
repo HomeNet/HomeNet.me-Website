@@ -43,8 +43,7 @@ class Content_Form_Template extends Zend_Form
         $this->addElement($url);
         
         $content = $this->createElement('textarea','content');
-        $content->setLabel('Description: ');
-        $content->addFilter('StripTags');
+        $content->setLabel('Template: ');
         $content->setAttrib('rows','35');
         $content->setAttrib('cols','110');
         $this->addElement($content);

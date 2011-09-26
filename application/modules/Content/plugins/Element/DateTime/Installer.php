@@ -41,7 +41,7 @@ class Content_Plugin_Element_DateTime_Installer {
      * @return string 
      */
     function getMysqlColumn(){
-        return 'text'; //doesnot require a column
+        return 'datetime'; //doesnot require a column
     }
     
     

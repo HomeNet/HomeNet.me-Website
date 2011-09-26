@@ -71,7 +71,7 @@ class Content_FieldController extends Zend_Controller_Action
         $service = new Content_Model_Field_Service();
         $service->create($values);
         
-        return $this->_redirect($this->view->url(array('controller'=>'field', 'action'=>'index', 'id'=>$values['section']),'content-id').'?message=Successfully added new Set');//
+        return $this->_redirect($this->view->url(array('controller'=>'field', 'action'=>'index', 'id'=>$values['section']),'content-admin-id').'?message=Successfully added new Set');//
     }
 
     public function editAction()
@@ -99,6 +99,7 @@ class Content_FieldController extends Zend_Controller_Action
 
         if (!$form->isValid($_POST)) {
             // Failed validation; redisplay form
+         
             $this->view->form = $form;
             return;
         }
@@ -110,7 +111,7 @@ class Content_FieldController extends Zend_Controller_Action
          $object->fromArray($values);
         $service->update($object);
 
-        return $this->_redirect($this->view->url(array('controller'=>'field', 'action'=>'index', 'id'=>$values['section']),'content-id').'?message=Updated');//
+        return $this->_redirect($this->view->url(array('controller'=>'field', 'action'=>'index', 'id'=>$values['section']),'content-admin-id').'?message=Updated');//
     }
 
     public function deleteAction()

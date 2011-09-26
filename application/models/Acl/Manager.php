@@ -33,6 +33,8 @@ class Core_Model_Acl_Manager {
     private $_user = null;
     private $_aclIdentifier = null;
     private $_aclTags = array();
+    
+    private static $_instance = null;
 
     public function __construct(Core_Model_User_Interface $user = null) {
         if (!is_null($user)) {
@@ -41,6 +43,14 @@ class Core_Model_Acl_Manager {
             $this->_user = new Core_Model_User(array('data' => $_SESSION['User']));
         }
     }
+    
+    static public function getInstance(){
+        if(is_null(self::$_instance)){
+            self::$_instance = new Core_Model_Acl_Manager();
+        }
+        return self::$_instance;
+    }
+    
 
     public function setUser(Core_Model_User_Interface $user) {
         $this->_user = $user;

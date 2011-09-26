@@ -90,8 +90,8 @@ class Content_Model_ContentCategory_MapperDbTable implements Content_Model_Conte
         } catch(Exception $e){
             if(strstr($e->getMessage(), '1062 Duplicate')) {
                throw new DuplicateEntryException("URL Already Exists"); 
-            } elseif(strstr($e->getMessage(), '1048 Column')) {
-               throw new InvalidArgumentException("Invalid Column"); 
+          //  } elseif(strstr($e->getMessage(), '1048 Column')) {
+          //     throw new InvalidArgumentException("Invalid Column"); 
             } else {
                  throw new Exception($e->getMessage());
             }
@@ -115,6 +115,11 @@ class Content_Model_ContentCategory_MapperDbTable implements Content_Model_Conte
     
     public function deleteBySection($section){
          $where = $this->getTable()->getAdapter()->quoteInto('section = ?',$section);
+         $this->getTable()->delete($where);
+    }
+    
+    public function deleteByContent($section){
+         $where = $this->getTable()->getAdapter()->quoteInto('content = ?',$section);
          $this->getTable()->delete($where);
     }
     

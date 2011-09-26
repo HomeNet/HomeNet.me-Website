@@ -1,4 +1,4 @@
-<h1>Category Sets</h1>
+<?php echo $this->heading('Category Sets'); ?>
 <table class="ui-widget" width="100%">
     <thead class="ui-widget-header">
         <tr><th width="50">ID</th><th>Name</th><th width="150">Edit/Delete</th></tr>
@@ -10,14 +10,14 @@
             ?>
             <tr  class="<?php echo $this->cycle(array("", "ui-state-highlight"))->next() ?>" >
                 <td><?php echo $object->id ?></td>
-                <td><a href="<?php echo $this->url(array('controller' => 'category', 'id' => $object->id), 'content-id'); ?>"><?php echo $object->title ?></a></td>
-                <td><a href="<?php echo $this->url(array('controller' => 'category-set', 'id' => $object->id, 'action' => 'edit'), 'content-id'); ?>">Edit</a> <a href="<?php echo $this->url(array('controller' => 'category-set', 'id' => $object->id, 'action' => 'delete'), 'content-id'); ?>">Delete</a></td>
+                <td><a href="<?php echo $this->url(array('controller' => 'category', 'id' => $object->id),'content-admin-id'); ?>"><?php echo $object->title ?></a></td>
+                <td><a href="<?php echo $this->url(array('controller' => 'category-set', 'id' => $object->id, 'action' => 'edit'),'content-admin-id'); ?>">Edit</a> <a href="<?php echo $this->url(array('controller' => 'category-set', 'id' => $object->id, 'action' => 'delete'),'content-admin-id'); ?>">Delete</a></td>
             </tr><?php
         }
         ?>
     </tbody>
 </table>
-<a class="button"  href="<?php echo $this->url(array('controller' => 'category-set', 'action' => 'new'), 'content'); ?>">New</a>
+<a class="button"  href="<?php echo $this->url(array('controller' => 'category-set', 'action' => 'new'),'content-admin'); ?>">New</a>
 
 <?php /*
  * <h1>Node List</h1>

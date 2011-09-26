@@ -74,7 +74,7 @@ class Content_CategoryController extends Zend_Controller_Action
         $service = new Content_Model_Category_Service();
         $service->create($values);
         
-        return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $this->_getParam('id')),'content-id').'?message=Successfully added new Set');//
+        return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $this->_getParam('id')),'content-admin-id').'?message=Successfully added new Set');//
     }
 
     public function editAction()
@@ -109,7 +109,7 @@ class Content_CategoryController extends Zend_Controller_Action
          $object->fromArray($values);
         $service->update($object);
 
-        return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $object->set),'content-id').'?message=Updated');//
+        return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $object->set),'content-admin-id').'?message=Updated');//
     }
 
     public function deleteAction()
@@ -138,9 +138,9 @@ class Content_CategoryController extends Zend_Controller_Action
         if(!empty($_POST['delete'])){
             
             $cService->delete($object);
-            return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $id),'content-id').'?message=Deleted');
+            return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $id),'content-admin-id').'?message=Deleted');
         }
-        return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $id),'content-id').'?message=Canceled');
+        return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $id),'content-admin-id').'?message=Canceled');
     }
 
     public function hideAction()

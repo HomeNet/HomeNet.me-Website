@@ -43,7 +43,7 @@ class Content_Plugin_Element_Text_Element extends Content_Model_Plugin_Element {
         $form->setLegend('Text Options');
         $path = $form->createElement('text','value');
         $path->setLabel('Starting Value: ');
-        $path->setRequired('true');
+        //$path->setRequired('true');
         $path->addFilter('StripTags');//@todo filter chars
         $form->addElement($path);
         

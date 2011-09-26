@@ -30,28 +30,22 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
     
 
     protected function _initView() {
-        $options = $this->getOptions();
-        if (isset($options['resources']['view'])) {
-            $view = new Zend_View($options['resources']['view']);
+        $options = Zend_Registry::get('config');
+        if (isset($options->resources->view)) {
+            $view = new Zend_View($options->resources->view);
         } else {
             $view = new Zend_View;
         }
-        if (isset($options['resources']['view']['doctype'])) {
-            $view->doctype($options['resources']['view']['doctype']);
+        if (isset($options->resources->view->doctype)) {
+            $view->doctype($options->resources->view->doctype);
         }
-        if (isset($options['resources']['view']['contentType'])) {
-            $view->headMeta()->appendHttpEquiv('Content-Type', $options['resources']['view']['contentType']);
+        if (isset($options->resources->view->contentType)) {
+            $view->headMeta()->appendHttpEquiv('Content-Type', $options->resources->view->contentType);
         }
 
-        //$this->bootstrap('FrontController');
-        //$front = $this->getResource('FrontController');
-        // $request = $front->getRequest();
-        //$view = $this->getResource('View');
-        // Zend_Controller_Front::getInstance()->getRequest();
-        $view->headTitle($options['site']['name']);
-        //$view->headTitle($request->getActionName());
-//->headTitle($request->getModuleName())
-        // $view->headTitle()->PREPEND//
+        //setup title
+        $view->headTitle($options->site->name);
+        $view->headTitle()->setDefaultAttachOrder('PREPEND');
         $view->headTitle()->setSeparator(' | ');
 
         //Setup jquery
@@ -62,14 +56,15 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         $view->jQuery()->uiEnable();
         $view->jQuery()->setUiVersion('1.8.9');
         $view->jQuery()->useUiCdn();
-
+        
+        
+        //setup themes
         $defaultTheme = 'default';
         if (isset($options->site->defaultTheme)) {
             $defaultTheme = $options->site->defaultTheme;
         }
 
         //$isMobile = true;
-
         if(APPLICATION_ENV == 'mobile'){
 
             $mobileTheme = 'mobile';
@@ -84,9 +79,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
                 $theme = $options->site->theme;
             }
         }
+        
+        $layout = Zend_Layout::startMvc();
 
         //add default path
-        Zend_Layout::startMvc()->setLayoutPath(APPLICATION_PATH.'/layouts/scripts/');
+        $layout->setLayoutPath(APPLICATION_PATH.'/layouts/scripts/');
         $view->setScriptPath(APPLICATION_PATH.'/views/scripts');
 
         
@@ -94,7 +91,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
             if(!file_exists(APPLICATION_PATH.'/themes/'.$defaultTheme)){
                 throw new Zend_Exception('Theme folder Doesn&quot;t exsist: '.APPLICATION_PATH.'/themes/'.$defaultTheme);
             }
-            Zend_Layout::startMvc()->setLayoutPath(APPLICATION_PATH.'/themes/'.$defaultTheme.'/layouts/scripts/');
+            $layout->addLayoutPath(APPLICATION_PATH.'/themes/'.$defaultTheme.'/layouts/scripts/');
             $view->addScriptPath(APPLICATION_PATH.'/themes/'.$defaultTheme.'/views/scripts');
         }
 
@@ -102,30 +99,28 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
             if(!file_exists(APPLICATION_PATH.'/themes/'.$theme)){
                 throw new Zend_Exception('Theme folder Doesn&quot;t exsist: '.APPLICATION_PATH.'/themes/'.$theme);
             }
-            Zend_Layout::startMvc()->setLayoutPath(APPLICATION_PATH.'/themes/'.$theme.'/layouts/scripts/');
             
+            $layout->addLayoutPath(APPLICATION_PATH.'/themes/'.$theme.'/layouts/scripts/');
             $view->addScriptPath(APPLICATION_PATH.'/themes/'.$theme.'/views/scripts');
-            
-            //$view->
         }
+        
+        $layout->setLayout('one-column');
+        
+        //setup our custom helpers
+        $view->addHelperPath('CMS/View/Helper/', 'CMS_View_Helper');
 
+        //setup viewrender
         $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
         $viewRenderer->setView($view);
         $viewRenderer->setViewScriptPathNoControllerSpec('generic/:action.:suffix');
 
-       // die(debugArray($view->getScriptPaths()));
-
-        //die($viewRenderer->getModule());
-//:moduleDir
+ 
+        //:moduleDir
         if(!empty($theme)){
             $viewRenderer->setViewBasePathSpec(APPLICATION_PATH.'/themes/'.$theme.'/modules/:module/views');
         }
-
-        
-        
-
-        //die($viewRenderer->getViewBasePathSpec());
         Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
+        
         return $view;
     }
 
@@ -158,5 +153,22 @@ class DuplicateEntryException extends DomainException {
 
 class RequiresFurtherActionException extends DomainException {
     
+}
+
+function delete_directory($dirname) {
+   if (is_dir($dirname))
+      $dir_handle = opendir($dirname);
+   if (!$dir_handle)
+      return false;
+   while($file = readdir($dir_handle)) {
+      if ($file != "." && $file != "..") {
+         if (!is_dir($dirname."/".$file))
+            unlink($dirname."/".$file);
+         else
+            delete_directory($dirname.'/'.$file);    
+      }
+   }
+   closedir($dir_handle);
+   rmdir($dirname);
 }
 
