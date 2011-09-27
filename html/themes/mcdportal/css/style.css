@@ -81,7 +81,12 @@ button {  width: auto; overflow: visible; }
 .clearfix:after { clear: both; }
 .clearfix { zoom: 1; }
 
-
+.left {
+    text-align: left;
+}
+.right {
+    text-align: right;
+}
 
 .ui-widget {
     font-size: 11px;
@@ -391,6 +396,55 @@ fieldset {
 
 
 
+form > dl {
+    /* border: solid 1px #333333; */
+    padding: 0px;
+    padding-top: 5px;
+  
+    /* margin: 10px 0;
+    background-color: transparent;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#FF000000',EndColorStr='#FF000000');
+    clear: both;  */
+}
+dd {
+  
+  text-align: left;
+
+  /*
+  float: right;
+  width: 260px;
+  
+  */
+  display: block;
+  margin: 0 5px 5px 5px;
+}
+
+form > dl > dd { 
+  text-align: center;
+  padding:5px 0;
+  width:100%;
+  float: none;
+}
+
+div > label {
+    display: inline-block;
+    margin: 2px 0;
+}
+
+
+dt {
+    clear: left;
+    margin: 5px 5px 5px 5px;
+    width: 260px;
+    text-align: right;
+    float: left;
+    
+}
+
+.zend_form > dt {
+    display: none;
+}
+
 input[type=text], input[type=password] {
     width: 150px;
 }
@@ -421,7 +475,9 @@ input[type=checkbox] {
     right: 5px;
 }
 
-
+.center {
+    text-align: center;
+}
 
 .center form{
     display: inline;

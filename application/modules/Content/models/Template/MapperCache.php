@@ -125,7 +125,7 @@ class Content_Model_Template_MapperCache implements Content_Model_Template_Mappe
         if (!is_dir($dir)) {
             mkdir($dir);
         }
-
+//die($path);
         file_put_contents($path, $content->content);
         
         }

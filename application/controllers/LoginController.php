@@ -33,7 +33,7 @@ class LoginController extends Zend_Controller_Action {
 
     public function indexAction() {
         $form = new Core_Form_Login();
-        $form->setAction('/login/');
+        $form->setAction($this->view->url(array( 'action'=>'index'),'login'));
 
         if (!$this->getRequest()->isPost()) {
             $this->view->form = $form;
@@ -53,10 +53,10 @@ class LoginController extends Zend_Controller_Action {
 
         try {
             $manager->login($values);
-        } catch (CMS_Exception $e) {
-
+        } catch (Exception $e) {
+            $user = Core_Model_User_Manager::getUser();
             if($e->getCode() == Core_Model_User_Manager::ERROR_NOT_ACTIVATED){
-                $this->_setParam('user',$_SESSION['User']['id']);
+                $this->_setParam('user',$user->id);
                 $this->_forward('next-steps', 'User');
             }
             
@@ -70,7 +70,8 @@ class LoginController extends Zend_Controller_Action {
         if ($request->getParam('forward')) {
             $this->_redirect($_SERVER['REQUEST_URI']);
         }
-
+        
+        die(debugArray($_SESSION));
 
         $this->_redirect('/');
 

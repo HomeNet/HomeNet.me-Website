@@ -50,6 +50,30 @@ class Content_Model_Category_Service {
     public function setMapper(Content_Model_Category_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
+    
+//     /**
+//     * @param int $id
+//     * @return Content_Model_Category
+//     * @throws NotFoundException
+//     */
+//    public function getObject($mixed) {
+//        
+//        if (is_numeric($mixed)) {
+//            $result = $this->getObjectById((int) $mixed);
+//        } elseif (is_string($mixed)) {
+//            $result = $object = $this->getObjectByUrl($mixed);
+//        } elseif (is_array($mixed) && !empty($mixed['id'])) {
+//            $result = $object = $this->getObjectById($mixed['id']);
+//        } else {
+//            throw new InvalidArgumentException('Invalid Category');
+//        }
+//
+//
+//        if (empty($result)) {
+//            throw new NotFoundException('Id: ' . $mixed . ' Not Found', 404);
+//        }
+//        return $result;
+//    }
 
     /**
      * @param int $id

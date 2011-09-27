@@ -143,7 +143,7 @@ class Content_Model_Category_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('testDescription', $result->description);
     }
     
-    public function testGetObjectByUrl() {
+    public function testGetObjectBySectionUrl() {
 
         //setup
         $category = $this->createValidCategory();

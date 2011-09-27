@@ -280,11 +280,28 @@ class Content_Model_Content_ServiceTest extends PHPUnit_Framework_TestCase {
         
 //        $this->assertEquals('value', (string) $result->content['body']);
     }
-//    
-//     public function testGetInvalidObjectByUrl() {
+    //getObjectsBySectionCategory($section, $mixed)
+//    public function testGetObjectsBySectionCategory() {
 //
-//        $this->setExpectedException('NotFoundException');
-//        $result = $this->object->getObjectByUrl("testnotindatabase");
+//        //setup
+//        $content = $this->createValidObject();
+//
+//        //test getObject
+//        $result = $this->object->getObjectsBySectionCategory($content->section, $content->category);
+//        
+//        $this->assertInstanceOf('Content_Model_Content_Interface', $result);
+//
+//        $this->assertNotNull($result->id);
+//        $this->assertEquals(Content_Installer::$testSection, $result->section);
+//        $this->assertEquals('test-url', (string) $result->url);
+//        $this->assertEquals(true, (bool) $result->visible);
+//        $this->assertEquals($result->active_revision, $result->revision);
+//        
+//        $this->assertNotNull($result->revision);
+//        $this->assertEquals(5, $result->owner);
+//        $this->assertEquals(true, (bool) $result->autosave);
+//        
+//        $this->assertEquals('testTitle', (string) $result->title);
 //
 //    }
 

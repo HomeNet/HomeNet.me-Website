@@ -49,10 +49,10 @@ body, button, input, select, textarea { font-family: sans-serif; color: #222; }
 /* =============================================================================
    Links
    ========================================================================== */
-
+/*
 a { color: #00e; }
 a:visited { color: #551a8b; }
-a:hover { color: #06e; }
+a:hover { color: #06e; } */
 a:focus { outline: thin dotted; }
 
 /* Improve readability when focused and hovered in all browsers: h5bp.com/h */
@@ -101,7 +101,6 @@ sub { bottom: -0.25em; }
 ul, ol { margin: 1em 0; padding: 0 0 0 40px; }
 dd { margin: 0 0 0 40px; }
 nav ul, nav ol { list-style: none; list-style-image: none; margin: 0; padding: 0; }
-
 
 /* =============================================================================
    Embedded content
@@ -210,6 +209,194 @@ td { vertical-align: top; }
 /* ==|== primary styles =====================================================
    Author: 
    ========================================================================== */
+html {  
+    height: 100%;
+    min-height: 600px;
+    min-width: 800px;
+}
+
+.transparent {
+    
+    background-color: rgba(0, 0, 0, 0.4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#77000001',EndColorStr='#77000001');
+  /*  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#66000000',EndColorStr='#66000000')"; */
+  /* background-color: #000000; */
+}
+
+.box {
+    padding: 10px;
+}
+
+.inline {
+    display: inline-block;
+}
+
+h3 {
+    font-size: 16px;
+    color:  #FF9900;
+}
+
+body {
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/img/forest.jpg', sizingMethod='scale');
+   /* -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/background.jpg', sizingMethod='scale')"; */
+
+    background: url(/img/forest.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    /*
+    font-family: helvetica,arial,sans-serif;
+    */
+    font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+    font-size: 11px;
+    color: #FFFFFF;
+    position: relative;
+    min-height: 100%;
+
+}
+
+header  h1 {
+    text-align: left;
+    font-size: 24px;
+    padding: 10px;
+    margin:0px;
+
+}
+
+header a{
+    padding: 5px 8px;
+    background-color: rgba(0, 0, 0, 0.4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#66000001',EndColorStr='#66000001');
+}
+
+header a:link, header a:active, header a:visited  {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+
+nav {
+    /*font-size: 16px;*/
+    position: absolute;
+    left: 20px;
+    bottom: 40px;
+    z-index:0;
+    font-size: 16px;
+    color: #fff;
+    
+}
+
+
+
+nav li {
+    line-height: 2.5 
+}
+
+nav a {
+    padding: 5px 8px;
+    background-color: #666666;
+    background-color: rgba(0, 0, 0, 0.4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#66000001',EndColorStr='#66000001'); 
+}
+nav a:link, nav a:visited {
+    color: #fff;
+    text-decoration: none;
+}
+nav a:hover, nav a:active {
+    color: #fff;
+    text-decoration: underline;
+}
+
+aside {
+    /*font-size: 16px;*/
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index:0;
+}
+
+aside ul, aside ol { list-style: none; list-style-image: none; margin: 0; padding: 0; }
+aside li {
+    margin:10px 0;
+}
+
+section {
+    background-color: #666666;
+    background-color: rgba(0, 0, 0, 0.4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#66000001',EndColorStr='#66000001');
+}
+
+body > section {
+    padding: 20px;
+    margin: 40px 50px 20px 200px;
+    position: relative;
+}
+
+
+section h1  {
+    
+    font-size: 24px;
+    width: 580px;
+    padding: 5px 10px;
+   font-weight: normal;
+    color:  #fff;
+    /* font-weight: bold; rgba(0,0,0,.4);*/
+    position: absolute;
+    top: -20px;
+     left: 5px;
+     margin:0px;
+    /* padding: 0 5px;
+     */
+    /* filter:progid:DXImageTransform.Microsoft.Shadow(color='#66000000',direction='45',strength='1');
+    filter: DropShadow(Color=#66cccccc, OffX=1, OffY=-1, Positive=1);
+    text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+   /*     */
+}
+
+
+footer {
+    margin-top: -20px;
+    position: absolute;
+    left: 2px;
+    bottom: 0px;
+    height: 20px;
+    z-index: 50;
+}
+
+#container {
+    width:600px;
+    margin: 40px auto;
+    margin-bottom: 0px;
+    position: relative;
+}
+
+#logo {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0px 0px;
+    padding: 10px 10px 0px 10px;
+    z-index:1;
+}
+
+#logo:hover {
+    background-color: #666666;
+    background-color: rgba(0, 0, 0, 0.4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#77000001',EndColorStr='#77000001');
+}
+
+.left {
+    text-align: left;
+}
+.right {
+    text-align: right;
+}
+.center {
+    text-align: center;
+}
 
 
 
@@ -219,10 +406,161 @@ td { vertical-align: top; }
 
 
 
+h2 {
+    font-size: 20px;
+    margin-top: 10px;
+}
+h2 a:link, h2 a:hover, h2 a:visited  {
+    color: #FFFFFF;
+}
+
+p, ul {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+th, td {
+    padding: 2px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+
+label {
+    font-weight: bold;
+}
+
+form {
+    text-align: center;
+}
+
+legend {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    width:100%;
+    /*display: block;
+    position: absolute;
+    top: -8px;*/
+}
+
+fieldset {
+    padding: 5px 0;
+    margin-bottom: 5px;
+   /* position: relative; */
+    background-color: rgba(0, 0, 0, 0.4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#66000001',EndColorStr='#66000001');
+}
+
+.form-element{
+    position: relative;
+    padding: 3px 0;
+    clear: both;
+}
+
+.form-element label {
+    float:left;
+    display: inline-block;
+    width: 49%;
+    text-align: right;
+    padding-right: 2px;
+    height:100%;
+}
+
+.form-input {
+    /* float:left; */
+    display: inline-block;
+    width: 49%;
+    text-align: left;
+    padding-left: 2px;
+}
+
+.form-input label {
+    display: block;
+    width:90%;
+    text-align: left;
+    padding-left: 2px;
+}
+
+.form-element-wide{
+    position: relative;
+    padding: 3px 0;
+    clear: both;
+}
+
+.form-element-wide label {
+    width: 100%;
+    text-align: center;
+    height:100%;
+}
+
+.form-input-wide  {
+    width: 100%;
+    text-align: center;
+}
+
+.form-input-wide label {
+    display: block;
+    width:90%;
+    text-align: center;
+}
 
 
 
+/*
 
+input[type=text], input[type=password] {
+    width: 150px;
+}
+
+input[type=checkbox] {
+    margin-right: 5px;
+}
+*/
+.errors {
+    color: #EE5757;
+    font-style: italic;
+    margin-top: 2px;
+    list-style:none;
+    margin-left: .5em;
+}
+
+.cms-button-icon-right {
+    padding-right: 15px;
+}
+
+.cms-button-icon-right .ui-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.ui-widget {
+    font-size: 11px;
+    /* font-family: "lucida grande",tahoma,verdana,arial,sans-serif; */
+}
+
+.cms-message {
+    position: relative;
+    padding: 5px 20px 5px 5px;
+}
+
+.cms-message > .ui-icon {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.center form{
+    display: inline;
+    width:auto;
+}
+
+
+table .button {
+    padding: 0px;
+    margin: 0px;
+}
 
 
 

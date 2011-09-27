@@ -141,5 +141,9 @@ class Core_Model_User implements Core_Model_User_Interface {
         }
         return $this->memberships;
     }
+    
+    public function getRoleId(){
+        return 'u'.(string) $this->id;
+    }
 
 }

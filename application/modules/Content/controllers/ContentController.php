@@ -63,6 +63,7 @@ class Content_ContentController extends Zend_Controller_Action
         $values = $form->getValues();
 
         $service = new Content_Model_Content_Service();
+         $values['owner'] = Core_Model_User_Manager::getUser()->id; 
         $values['section'] = $this->view->id;
         $service->create($values);
         
@@ -98,6 +99,7 @@ class Content_ContentController extends Zend_Controller_Action
 
         //save
         $values = $form->getValues();
+         $values['owner'] = Core_Model_User_Manager::getUser()->id; 
          $object = $service->getObjectById($this->_getParam('id'));
          $object->fromArray($values);
         $service->update($object);

@@ -34,15 +34,17 @@ class Content_IndexController extends Zend_Controller_Action
 
         $action = 'index';
         
-        $uRole = new CMS_Acl_Role_User($_SESSION['User']['id']);
+        $user = Core_Model_User_Manager::getUser();
+        
+      //  $uRole = new CMS_Acl_Role_User($_SESSION['User']['id']);
 
-        if (!$acl->isAllowed($uRole, $cResource, $action)) {
+        if (!$acl->isAllowed($user, $cResource, $action)) {
             
             $dispatcher = Zend_Controller_Front::getInstance()->getDispatcher();
 
             $config = Zend_Registry::get('config');
             
-             if ($_SESSION['User']['id'] == $config->site->user->guest) { //if guest
+             if ($user->id == $config->site->user->guest) { //if guest
                return $this->_redirect($this->view->url(array(),'login'));// 
                
             } else {                

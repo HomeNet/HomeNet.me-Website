@@ -34,7 +34,10 @@ class IndexController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        //if user is logged in redirect them thier homenet feed
+        Zend_Layout::getMvcInstance()->setLayout('custom');
+        
+          die(debugArray($_SESSION));
+//if user is logged in redirect them thier homenet feed
 //        $auth = Zend_Auth::getInstance();
 //        if($auth->hasIdentity()) {
 //            return $this->_forward('Index', 'Index', 'HomeNet');

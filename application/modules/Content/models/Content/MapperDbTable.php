@@ -105,6 +105,37 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
 
         return $objects;
     }
+    
+     /**
+     * Fetch Section Content Objects by Section
+     * 
+     * @param int $section 
+     * @return Content_Model_DbTabeRow_SectionContent 
+     */
+    public function fetchObjectsBySectionCategory($section, $id){
+
+      //  if()
+        
+        $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
+        $select->setIntegrityCheck(false)
+                ->where('content_content.section = ?', $section)
+                ->join(array('c' => 'content_custom_' . $section), 'content_content.id = c.id AND 
+                        content_content.active_revision = c.revision')
+                ->join(array('cat'=>'content_content_categories'), 'content_content.id = cat.content'
+        )->where('cat.category = ?',$id)
+                ->order('content_content.active_revision DESC'); //,'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings')
+
+        $results = $this->getTable()->fetchAll($select);
+       // die(debugArray($section));
+        //  $row =  $this->getTable()->fetchRow($select);
+        // $select = $this->getTable()->select()->from($this->getTable(),array(new Zend_Db_Expr('*'),new Zend_Db_Expr('MAX(revision)')))->where('section = ?',$section)->group('id');
+        $objects = array();
+        foreach ($results as $result) {
+            $objects[] = new Content_Model_Content(array('data' => $result->toArray()));
+        }
+
+        return $objects;
+    }
 
     /**
      *

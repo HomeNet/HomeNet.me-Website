@@ -28,62 +28,26 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
 
     public function preDispatch(Zend_Controller_Request_Abstract $request) {
 
-
-//        // set up acl
-//        $acl = new Zend_Acl();
-//
-//        // add the roles
-//        $acl->addRole(new Zend_Acl_Role('guest'));
-//        $acl->addRole(new Zend_Acl_Role('user'), 'guest');
-//        $acl->addRole(new Zend_Acl_Role('administrator'), 'user');
-//        // add the resources
-//        $acl->add(new Zend_Acl_Resource('m_core'));
-//        $acl->add(new Zend_Acl_Resource('m_core_c_index'),'m_core');
-//        $acl->add(new Zend_Acl_Resource('m_core_c_register'),'m_core');
-//        $acl->add(new Zend_Acl_Resource('m_core_c_error'),'m_core');
-//        $acl->add(new Zend_Acl_Resource('m_core_c_login'),'m_core');
-//        $acl->add(new Zend_Acl_Resource('m_core_c_user'),'m_core');
-//        $acl->add(new Zend_Acl_Resource('m_core_c_contact'),'m_core');
-//
-//     
-//     
-//        $acl->allow(null, array('m_core_c_index', 'm_core_c_error'));
-//        // a guest can only read content and login
-//        $acl->allow('guest',  array('m_core_c_login','m_core_c_user', 'm_core_c_register'), null);
-//        $acl->allow('guest',  array('m_core_c_user'), array('next-steps'));
-//        // cms users can also work with content
-//       // $acl->allow('user', 'page', array('list', 'create', 'edit', 'delete'));
-//        // administrators can do anything
-//       // $acl->allow('administrator', null);
-//        $acl->allow('user');//, null);
-///*
-//        $acl->allow('guest', 'homenet_index', null);
-//        $acl->allow('guest', 'homenet_device', null);
-//        $acl->allow('guest', 'homenet_house', null);
-//        $acl->allow('guest', 'homenet_room', null);*/
-//
-//        // fetch the current user
-
         $config = Zend_Registry::get('config');
 
         $auth = Zend_Auth::getInstance();
 
+        $user = Core_Model_User_Manager::getUser();
 
 
-
-        if (!$auth->hasIdentity()) {  //guest
-            //check to see if guest profile is loaded
-            if (empty($_SESSION['User'])) {
-                $uService = new Core_Model_Acl_User_Service();
-                $guest = $uService->getObjectById($config->site->user->guest);
-                $_SESSION['User'] = $guest->toArray();
-            }
-        }
+//        if (!$auth->hasIdentity()) {  //guest
+//            //check to see if guest profile is loaded
+//            if (empty($_SESSION['User'])) {
+//                $uService = new Core_Model_Acl_User_Service();
+//                $guest = $uService->getObjectById($config->site->user->guest);
+//                $_SESSION['User'] = $guest->toArray();
+//            }
+//        }
 //        } else {
 //            $user = $_SESSION['User'];
 //        }
 
-        $uRole = new CMS_Acl_Role_User($_SESSION['User']['id']);
+        //$uRole = new CMS_Acl_Role_User($_SESSION['User']['id']);
 
         $module = strtolower($request->module);
 
@@ -133,7 +97,7 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
 //        }
 //       echo "<br>";
 //        die('Failed Acl: ' . $module . ' > ' . $request->controller . ' > ' . $action);
-        if (!$acl->isAllowed($uRole, $cResource, $action)) {
+        if (!$acl->isAllowed($user, $cResource, $action)) {
             
             $dispatcher = Zend_Controller_Front::getInstance()->getDispatcher();
 
@@ -148,7 +112,7 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
 
 
 
-            } elseif ($_SESSION['User']['id'] == $config->site->user->guest) { //if guest
+            } elseif ($user->id == $config->site->user->guest) { //if guest
                 
                 die('Route to Login: ' . $module . ' > ' . $request->controller . ' > ' . $action);
                 $request->setModuleName('core');

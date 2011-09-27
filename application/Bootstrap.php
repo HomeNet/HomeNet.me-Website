@@ -6,6 +6,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         include str_replace('_', '/', $class) . '.php';
         return $class;
     }
+    
+    protected function _initSession(){
+        Zend_Session::start();
+    }
 
     protected function _initLoaderResource() {
         $resourceLoader = new Zend_Loader_Autoloader_Resource(array(
@@ -51,10 +55,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         //Setup jquery
         $view->addHelperPath("ZendX/JQuery/View/Helper", "ZendX_JQuery_View_Helper");
         $view->jQuery()->enable();
-        $view->jQuery()->setVersion('1.4.2');
+        $view->jQuery()->setVersion('1.6.2');
         $view->jQuery()->useCdn();
         $view->jQuery()->uiEnable();
-        $view->jQuery()->setUiVersion('1.8.9');
+        $view->jQuery()->setUiVersion('1.8.16');
         $view->jQuery()->useUiCdn();
         
         

@@ -49,11 +49,11 @@ class Content_Form_Template extends Zend_Form
         $this->addElement($content);
         
 
-        $element = $this->createElement('MultiCheckbox','sdfsfsdfsf');
-        $options = array(1=>'test', 2=>'test2');
-        $element->setMultiOptions($options);
-       $element->setValue(array(2));
-        $this->addElement($element);
+//        $element = $this->createElement('MultiCheckbox','sdfsfsdfsf');
+//        $options = array(1=>'test', 2=>'test2');
+//        $element->setMultiOptions($options);
+//       $element->setValue(array(2));
+//        $this->addElement($element);
 
 
         $this->addDisplayGroup($this->getElements(), 'category', array('legend' => 'Template'));

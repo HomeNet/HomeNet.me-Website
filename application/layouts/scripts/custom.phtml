@@ -17,26 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
+?>
+<?php echo $this->render('header.phtml') ?>
 
-/**
- * @package Core
- * @subpackage User
- * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
- * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
- */
-interface Core_Model_User_Interface extends Zend_Acl_Role_Interface {
 
-    /**
-     * @return array
-     */
-    public function toArray();
+<?php echo $this->layout()->content ?>
 
-    public function fromArray(array $array);
-    
-    public function setSetting($key, $value);
-    
-    public function getSetting($key);
-    
-    public function clearSetting($key);
-
-}
+<?php echo $this->render('footer.phtml') ?>
+  

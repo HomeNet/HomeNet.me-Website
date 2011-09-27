@@ -116,6 +116,9 @@ class Core_Model_User_DbTableRow extends Zend_Db_Table_Row_Abstract implements C
         }
         return $this->memberships;
     }
+    public function getRoleId(){
+        return 'u'.(string) $this->id;
+    }
 
 }
 

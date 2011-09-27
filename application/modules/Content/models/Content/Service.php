@@ -121,6 +121,41 @@ class Content_Model_Content_Service {
 //        }
         return $objects;
     }
+    
+      /**
+     * @param int $category Section Id
+     * @return Content_Model_Content[]
+     */
+    public function getObjectsBySectionCategory($section, $mixed) {
+        
+        if(!is_numeric($section) && is_string($section)){
+            $sService = new Content_Model_Section_Service();
+            $object = $sService->getObjectByUrl($section); 
+            $s = $object->id;
+        } elseif(is_int($mixed)){
+            $s = $section;
+        } else {
+            throw new InvalidArgumentException('Invalid Section: '.$section);
+        }
+        
+        
+        if(!is_numeric($mixed) && is_string($mixed)){
+            $cService = new Content_Model_Category_Service();
+            $object = $cService->getObjectByUrl($mixed); 
+            $category = $object->id;
+        } elseif(is_int($mixed)){
+            $category = $mixed;
+        } else {
+            throw new InvalidArgumentException('Invalid Category: '.$mixed);
+        }
+        
+        $objects = $this->getMapper()->fetchObjectsBySectionCategory($s, $category);
+
+//        if (empty($contents)) {
+//            throw new Exception('Apikey not found', 404);
+//        }
+        return $objects;
+    }
 
     /**
      * @param int $id Content Id

@@ -308,7 +308,13 @@ FileETag None
   RewriteEngine On
 </IfModule>
 
-
+<IfModule mod_rewrite.c>
+  RewriteCond %{REQUEST_FILENAME} -s [OR]
+  RewriteCond %{REQUEST_FILENAME} -l [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^.*$ - [NC,L]
+  RewriteRule ^.*$ index.php [NC,L]
+</IfModule>
 
 # ----------------------------------------------------------------------
 # Suppress or force the "www." at the beginning of URLs
@@ -335,6 +341,9 @@ FileETag None
   RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
   RewriteRule ^ http://%1%{REQUEST_URI} [R=301,L]
 </IfModule>
+
+
+
 
 # ----------------------------------------------------------------------
 
@@ -432,6 +441,7 @@ AddCharset utf-8 .html .css .js .xml .json .rss .atom
 # "-Indexes" will have Apache block users from browsing folders without a default document
 # Usually you should leave this activated, because you shouldn't allow everybody to surf through
 # every folder on your server (which includes rather private places like CMS system folders).
+
 Options -Indexes
 
 

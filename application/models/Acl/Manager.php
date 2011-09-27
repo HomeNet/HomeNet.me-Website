@@ -40,7 +40,7 @@ class Core_Model_Acl_Manager {
         if (!is_null($user)) {
             $this->_user = $user;
         } else {
-            $this->_user = new Core_Model_User(array('data' => $_SESSION['User']));
+            $this->_user = Core_Model_User_Manager::getUser();
         }
     }
     

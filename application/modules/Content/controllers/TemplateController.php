@@ -67,7 +67,7 @@ class Content_TemplateController extends Zend_Controller_Action
         //$nodeService = new HomeNet_Model_NodesService();
 
         $values = $form->getValues();
-        $values['owner'] = $_SESSION['User']['id']; 
+        $values['owner'] = Core_Model_User_Manager::getUser()->id; 
         $values['section'] = $this->_getParam('id');
         $service = new Content_Model_Template_Service();
         $object = $service->create($values);

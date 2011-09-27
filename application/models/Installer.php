@@ -222,8 +222,8 @@ class Core_Model_Installer {
         $agService = new Core_Model_Acl_Group_Service();
         $agService->deleteAll();
 
-        $uaService = new Core_Model_Acl_User_Service();
-        $uaService->deleteAll();
+        $auService = new Core_Model_Acl_User_Service();
+        $auService->deleteAll();
 
         $uService = new Core_Model_User_Service();
         $uService->deleteAll();
