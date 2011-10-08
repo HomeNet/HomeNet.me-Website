@@ -1,0 +1,18 @@
+<div class="cms-element-image" data-rest="<?php echo $this->url(array('controller'=>'content','action'=>'rest'),'content-admin'); ?>" data-folder="content/projects" data-hash="<?php echo securityHash('content/projects'); ?>">
+    <div data-type="image" data-name="image" 
+         data-title="This is the Alt Text" 
+         data-path="/content/projects/homenet-me-index.png" 
+         data-thumbnail="<?php echo $this->imagePath('content/projects/homenet-me-index.png',100,100) ?>" 
+         data-preview="<?php echo $this->imagePath('content/projects/homenet-me-index.png',480,320)?>"></div>
+</div>
+<?php
+$this->jquery()->addOnLoad("$('.cms-element-image').selectimage({ max: 2, layout:'default' } );     ");
+$this->headScript()->appendFile('/js/mylibs/jquery.selectimage.js');
+$this->headScript()->appendFile('/js/mylibs/jquery.imageeditor.js');
+$this->headScript()->appendFile('/js/libs/jquery.fileupload.js');
+$this->headScript()->appendFile('/js/libs/jquery.fileupload-ui.js?v='.time());
+$this->headScript()->appendFile('/js/mylibs/jquery.fileupload.js?v='.time());
+$this->headScript()->appendFile('/js/libs/jquery.iframe-transport.js');
+$this->headLink()->appendStylesheet('/css/jquery.fileupload-ui.css');
+
+?>
