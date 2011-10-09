@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Form_Login extends Zend_Form 
+class Core_Form_Login extends CMS_Form 
 {
 
     public function init()

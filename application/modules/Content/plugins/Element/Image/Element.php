@@ -28,6 +28,11 @@
 class Content_Plugin_Element_Image_Element  extends Content_Model_Plugin_Element  {
 
     
+    
+    
+    
+    
+    
     /**
      * get any custom options for the setup of the field type
      * 

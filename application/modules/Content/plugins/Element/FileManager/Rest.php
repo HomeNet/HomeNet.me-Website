@@ -27,6 +27,13 @@
  * @author Matthew Doll <mdoll at homenet.me>
  */
 class Content_Plugin_Element_FileManager_Rest {
+    
+    private $config;
+    
+    public function __construct(){
+       $this->config = Zend_Registry::get('config'); 
+    }
+    
     public function folders($item,$hash){
         //folder
         //?method=sayHello&who=Davey&when=Day
@@ -55,22 +62,18 @@ class Content_Plugin_Element_FileManager_Rest {
         );*/
     
     public function upload($id, $folder,$hash){
-        
+         
         $service = new Content_Model_Field_Service();
         $object = $service->getObjectById($id);
         
         $options = array('folder'=>'','fileType'=>'images');
         
-        //array('')
+        if(empty($_FILES['files'])){
+            return json_encode(array('error' => 'noFile'));
+        }
         
-         $upload = isset($_FILES[$this->options['param_name']]) ?
-            $_FILES[$this->options['param_name']] : array(
-                'tmp_name' => null,
-                'name' => null,
-                'size' => null,
-                'type' => null,
-                'error' => null
-            );
+        $upload = $_FILES['files'];
+        
         $info = array();
         if (is_array($upload['tmp_name'])) {
             foreach ($upload['tmp_name'] as $index => $value) {

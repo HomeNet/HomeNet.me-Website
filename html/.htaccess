@@ -507,6 +507,8 @@ Options -Indexes
 # Don't prepend to error (doesn't accept empty string, use whitespace if you need)
 # php_value error_append_string " "
 
+php_value APPLICATION_ENV "production"
+
 # Increase cookie security
 <IfModule php5_module>
 	php_value session.cookie_httponly true

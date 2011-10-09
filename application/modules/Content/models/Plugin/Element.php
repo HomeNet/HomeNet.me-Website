@@ -50,7 +50,11 @@ abstract class Content_Model_Plugin_Element {
     }
 
     public function __toString() {
-        return $this->_value;
+        return (string) $this->_value;
+    }
+    
+    public function hasValue(){
+        return !empty($this->_value);
     }
 
     /**

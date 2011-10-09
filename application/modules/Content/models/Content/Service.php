@@ -132,8 +132,8 @@ class Content_Model_Content_Service {
             $sService = new Content_Model_Section_Service();
             $object = $sService->getObjectByUrl($section); 
             $s = $object->id;
-        } elseif(is_int($mixed)){
-            $s = $section;
+        } elseif(is_numeric($section)){
+            $s = (int)$section;
         } else {
             throw new InvalidArgumentException('Invalid Section: '.$section);
         }
@@ -143,8 +143,8 @@ class Content_Model_Content_Service {
             $cService = new Content_Model_Category_Service();
             $object = $cService->getObjectByUrl($mixed); 
             $category = $object->id;
-        } elseif(is_int($mixed)){
-            $category = $mixed;
+        } elseif(is_numeric($mixed)){
+            $category = (int) $mixed;
         } else {
             throw new InvalidArgumentException('Invalid Category: '.$mixed);
         }

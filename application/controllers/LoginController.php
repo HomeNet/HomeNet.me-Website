@@ -71,7 +71,7 @@ class LoginController extends Zend_Controller_Action {
             $this->_redirect($_SERVER['REQUEST_URI']);
         }
         
-        die(debugArray($_SESSION));
+       // die(debugArray($_SESSION));
 
         $this->_redirect('/');
 

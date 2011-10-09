@@ -55,7 +55,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         //Setup jquery
         $view->addHelperPath("ZendX/JQuery/View/Helper", "ZendX_JQuery_View_Helper");
         $view->jQuery()->enable();
-        $view->jQuery()->setVersion('1.6.2');
+        $view->jQuery()->setVersion('1.6.4');
         $view->jQuery()->useCdn();
         $view->jQuery()->uiEnable();
         $view->jQuery()->setUiVersion('1.8.16');
@@ -176,3 +176,94 @@ function delete_directory($dirname) {
    rmdir($dirname);
 }
 
+//from http://neo22s.com/slug/
+function cleanFilename($url) {
+	// everything to lower and no spaces begin or end
+	$url = strtolower(trim($url));
+ 
+	//replace accent characters, depends your language is needed
+	//$url=replace_accents($url);
+ 
+	// decode html maybe needed if there's html I normally don't use this
+	//$url = html_entity_decode($url,ENT_QUOTES,'UTF8');
+ 
+	// adding - for spaces and union characters
+	$find = array(' ', '&', '\r\n', '\n', '+',',');
+	$url = str_replace ($find, '-', $url);
+ 
+	//delete and replace rest of special chars
+	$find = array('/[^a-z0-9_+\-]/', '/[\-]+/', '/<[^>]*>/');
+	$repl = array('', '-', '');
+	$url = preg_replace ($find, $repl, $url);
+ 
+	//return the friendly url
+	return $url; 
+}
+
+function cleanDir($url) {
+	// everything to lower and no spaces begin or end
+	$url = strtolower(trim($url));
+ 
+	//replace accent characters, depends your language is needed
+	//$url=replace_accents($url);
+ 
+	// decode html maybe needed if there's html I normally don't use this
+	//$url = html_entity_decode($url,ENT_QUOTES,'UTF8');
+ 
+	// adding - for spaces and union characters
+	$find = array(' ', '&', '\r\n', '\n', '+',',');
+	$url = str_replace ($find, '-', $url);
+ 
+	//delete and replace rest of special chars
+	$find = array('/[^a-z0-9\-<>\/]/');
+	$repl = array('');
+	$url = preg_replace ($find, $repl, $url);
+ 
+	//return the friendly url
+	return $url; 
+}
+
+function attachmentHash($source){
+     $source = strtolower($source);
+        $config = Zend_Registry::get('config');
+        $salt = $config->site->salt;
+
+        $code = 'CTO5K18"->>_1;O5|-)l9>.!1c2P5h' . $salt . 'o]r7^3!3CYMG.hef%d3B20jdd7RuL' .
+                $source . '/&"|l.N> U' . $salt . ')WOwl1<NS5XrBN"l|uV/h|7p;r`J4}l*@p"6.x+O7g=T`R<>K.O:l' .
+                $source . '<{3|W[=;0w,+[:YY It-(*&rWu"{"R' . $salt . ',*5%8\.?{.#@2:@&1t3.2(f-[&T|1?' .
+                $source . 'rC&RuBt@/)"|&,>j\Kr$DWJYL[tSQ5' . $salt . ']e\,"G$-e*{`2i"G(PBTk~ 8p)Vk@@<o' .
+                $source . '/l[vr\_8!O}?lKf.' . $salt . 'k5!;JK00Ex<-CO+ji43.][\3%#}x# 41^7EY@Q00/{o9mY';
+        return substr(md5($code), 0, 5);
+}
+function imageHash($source, $width, $height, $type){
+     $source = strtolower($source);
+        $config = Zend_Registry::get('config');
+        $salt = $config->site->salt;
+  $code = 'Oqez_H8QnGn|Np8[n-Vp\'=7) yd+xx' . $salt . 'Tw|C$2l{;G*n="rGY=w,:Q?aF@; kTO}c' .
+            $width  . '/&"|l.N> U' . $salt . ')WOwl1<NS5XrBN"l|uV/h|7p;r`J4}l*@p"6.x+O7g=T`R<>K.O:l' .
+            $height . '0Q`U%;LFIs)(8D0*y]E%RmO#wTZFW0}ME"8-!5i' . $salt . ',&d]Rr6`x~-|Ca)0zkWAKR-q' .
+            $type . 'rC&RuBt@/)"|&,>j\Kr$DWJYL[tSQ5' . $salt . ']e\,"G$-e*{`2i"G(PBTk~ 8p)Vk@@<o' .
+            $source . '/l[vr\_8!O}?lKf.' . $salt . 'k5!;JK00Ex<-CO+jUe.Q;lHQA=me)o}Y0-$e$IZLmK;N\AY';
+
+        return substr(md5($code), 0, 5);
+}
+function securityHash($source){
+    
+    if(is_array($source)){
+        $source = implode("", $source);
+    }
+    
+     $source = strtolower($source);
+        $config = Zend_Registry::get('config');
+        $salt = $config->site->salt;
+        
+        $user = Core_Model_User_Manager::getUser();
+        $user->id;
+
+        $code = 'CTO5K18"->>_1;O5|-)l9>.!1c2P5h' . $salt . 'o]r7^3!3CYMG.hef%d3B20jdd7RuL' .
+                $source . '/&"|l.N> U' . $salt . ')WOwl1<NS5XrBN"l|uV/h|7p;r'.$user->id.'`J4}l*@p"6.x+O7g=T`R<>K.O:l' .
+                $source . '<{3|W[=;0w,+[:YY It-(*&rWu"{"R' . $salt . ',*5%8\.?{.#@2:@&1t3.2(f-[&T|1?' .
+                $source . 'rC&RuBt@/)"|&,>j\Kr$DWJYL[tSQ5' . $salt . ']e\,"G$-e*{`2i'.$user->id.'"G(PBTk~ 8p)Vk@@<o' .
+                $source . '/l[vr\_8!O}?lKf.' . $salt . 'k5!;JK00Ex<-CO+ji43.][\3%#}x# 41^7EY@Q00/{o9mY';
+        return substr(md5($code), 0, 10);
+}

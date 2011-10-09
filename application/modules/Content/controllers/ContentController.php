@@ -134,6 +134,45 @@ class Content_ContentController extends Zend_Controller_Action
         }
         return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$section),'content-admin-id').'?message=Canceled');
     }
+    
+    public function restAjaxAction(){
+        $this->_helper->viewRenderer->setNoRender(true);
+        $element = $this->_getParam('element');
+        $method = $this->_getParam('method');
+        
+        $class = 'Content_Plugin_Element_'.ucfirst($element).'_Rest';
+
+        if(!class_exists($class, true)){
+            throw new InvalidArgumentException('Invaild Class: '.$class,500);
+        }
+        
+//            $server = new Zend_Rest_Server();
+//            $server->setClass($class);
+//            $server->handle();
+            
+//             $server = new Zend_Json_Server();
+//             $server->setClass($class);
+//             $server->handle();
+        //Target our class
+$reflector = new ReflectionClass($class);
+
+//Get the parameters of a method
+$parameters = $reflector->getMethod($method)->getParameters();
+$p = array();
+//Loop through each parameter and get the type
+foreach($parameters as $param)
+{
+    $p[] = $this->_getParam($param->getname());
+}
+        
+        
+        
+        
+        
+        $server = new $class();
+        echo call_user_func_array(array($server,$method), $p);
+        
+    }
 
     public function hideAction()
     {

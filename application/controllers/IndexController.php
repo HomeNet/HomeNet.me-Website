@@ -36,7 +36,7 @@ class IndexController extends Zend_Controller_Action
     {
         Zend_Layout::getMvcInstance()->setLayout('custom');
         
-          die(debugArray($_SESSION));
+        //  die(debugArray($_SESSION));
 //if user is logged in redirect them thier homenet feed
 //        $auth = Zend_Auth::getInstance();
 //        if($auth->hasIdentity()) {
@@ -45,9 +45,9 @@ class IndexController extends Zend_Controller_Action
         //default shows front page
     }
 
-    public function aboutAction()
+    public function testAction()
     {
-        $this->view->assign('test', 'about');
+        
     }
 
     public function plansAction()
@@ -84,10 +84,7 @@ die(debugArray('email sent'));
         // action body
     }
 
-    public function testAction()
-    {
-        //$this->view->message = "Hello World";
-    }
+    
 
     public function contactAction()
     {
