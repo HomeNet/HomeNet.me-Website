@@ -230,7 +230,7 @@ class CMS_Form_Decorator_AjaxHelper extends Zend_Form_Decorator_Abstract
         
       //  return "Loop 1";
 
-        $elementContent = $view->$helper($name, $value, $element->getAttribs(), $element->getOptions(), $element->getParams());
+        $elementContent = $view->$helper($name, $value, $element->getAttribs(), $element->getParams()); //, $element->getOptions()
         switch ($this->getPlacement()) {
             case self::APPEND:
                 return $content . $separator . $elementContent;

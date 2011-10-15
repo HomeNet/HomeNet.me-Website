@@ -611,16 +611,20 @@ fieldset {
     font-size: 10px;
 }
 
-.cms-filemanager-default .cms-filemanager-contents {
-    height: 200px;
+.cms-filemanager {
+    text-align: left;
+}
+
+
+.cms-filemanager li{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 
 
 
-
-
-
-.cms-filemanager-item {
+.cms-filemanager .icon-item {
     position: relative;
     border: #999 solid 1px; 
     margin: 2px;
@@ -633,18 +637,18 @@ fieldset {
     line-height: 100px;
     
 }
-.cms-filemanager-item > img { 
+.cms-filemanager .icon-item > img { 
     vertical-align: middle;
 }
 
-.cms-filemanager-edit {
+.cms-filemanager .icon-item .edit {
     position: absolute !important;
     top: 1px;
     left: 1px;
     margin: 0 !important;
 }
 
-.cms-filemanager-delete {
+.cms-filemanager .icon-item .delete {
     position: absolute !important;
     top: 1px;
     right: 1px;
@@ -653,9 +657,8 @@ fieldset {
 
 
 
-.cms-filemanager-container .ui-selecting { background: #FECA40; }
-.cms-filemanager-container .ui-selected { background: #F39814; color: white; }
-.cms-filemanager-container li { 
+.cms-filemanager ul, .cms-filemanager ol { margin: 0; padding: 0; }
+.cms-filemanager .icon-item { 
     border: #999 solid 1px; 
     margin: 2px;
     padding: 2px; 
@@ -667,24 +670,30 @@ fieldset {
     vertical-align: middle;
 }
 
-.cms-filemanager-container  {
+.cms-element-gallery {
+    height: 210px;
+}
+
+.cms-filemanager .item-container  {
     display: block;
     overflow: auto;
-    height: 335px;
+    
     /*@todo auto adjust this*/
-    list-style-type: none; 
+    
     margin: 0; 
     padding: 0;
+    text-align: left;
 }
 
-.cms-filemanager-listitem{
+.cms-filemanager .list-item{
   height: 77px;  
   position: relative;
-  margin: 2px 0; 
+  margin: 4px 0; 
   padding: 5px;
+   
 }
 
-.cms-filemanager-listitem .thumbnail {
+.cms-filemanager .list-item .thumbnail {
     position: absolute;
     top: 5px;
     left: 5px;
@@ -696,32 +705,36 @@ fieldset {
     line-height: 75px;
 }
 
-.cms-filemanager-listitem canvas, .cms-filemanager-listitem img{
+.cms-filemanager .list-item canvas, .cms-filemanager .list-item img{
     margin: auto;
     vertical-align: middle;
     display: inline-block !important;
 }
 
-.cms-filemanager-listitem .details {
+.cms-filemanager .list-item .details {
      margin: 10px 50px 0 105px;
 }
 
-.cms-filemanager-listitem .name {
+.cms-filemanager .list-item .title {
      font-weight: bold;
      margin-bottom: 10px;
      padding: 0 !important;
 }
 
-.cms-filemanager-listitem .properties {
+.cms-filemanager .list-item .properties {
     
 }
-.cms-filemanager-listitem .controls {
+.cms-filemanager .list-item .controls {
     position: absolute;
     top: 5px;
     right: 5px;
     width: 40px;
     height: 75px;
     text-align: right;
+}
+
+.cms-filemanager .list-item .controls button {
+    margin-bottom: 5px;
 }
 
 
@@ -738,7 +751,181 @@ fieldset {
 .ui-selectable-helper {
     z-index: 1000 !important;
 }
+/*  */
+.cms-icon { display: block; width: 24px; height: 24px; background-image: url(/img/cms-icons.png)/*{iconsContent}*/; }
+.cms-wysiwyg .toolbar-wrapper{
+    height:30px;
+}
 
+.cms-wysiwyg .toolbar{
+    z-index: 50;
+}
+
+.cms-wysiwyg .toolbar a {
+  display: inline-block;
+  height:24px;
+  line-height: 24px;
+  position: relative;
+}
+.cms-wysiwyg .ui-buttonset {
+    margin-right:5px;
+}
+
+.cms-wysiwyg .ui-button{
+    margin-right: 0 !important;
+}
+
+.cms-wysiwyg .editor {
+    padding: 10px;
+    color: #000;
+    position: relative;
+}
+
+.cms-wysiwyg  .container {
+    padding: 0px;
+    border: 1px dotted #AAAAAA;
+    position: relative;
+    margin-bottom: 1em;
+}
+
+.cms-wysiwyg  .container .ui-widget-content {
+    padding: 5px;
+    text-align: center;
+
+}
+
+
+
+.cms-wysiwyg  .container .edit {
+    position: absolute;
+    top: 4px  !important;
+    right: 25px !important;
+    width: auto !important;
+    height: auto !important;
+    z-index: 10;
+}
+
+.cms-wysiwyg  .container .delete {
+     position: absolute;
+    top: 4px  !important;
+    right: 5px !important;
+    width: auto !important;
+    height: auto !important;
+    z-index: 10;
+}
+
+.cms-wysiwyg  .container img {
+    width: auto !important;
+    height: auto !important;
+
+}
+
+.cms-wysiwyg  .container .shield {
+    position: absolute;
+    top: 0  !important;
+    left: 0  !important;
+    width:100% !important;
+    height:100% !important;
+    z-index: 5;   
+}
+
+.cms-wysiwyg .handle {
+    height: 20px;
+      cursor: move;
+      padding: 2px;
+      
+}
+.cms-wysiwyg .handle  .ui-icon {
+   float: left;
+   margin-right: 5px;
+   margin-top: 2px
+      
+}
+
+
+.cms-wysiwyg h1, .cms-wysiwyg h2, .cms-wysiwyg h3, .cms-wysiwyg h4, .cms-wysiwyg h5, .cms-wysiwyg pre, .cms-wysiwyg h5, .cms-wysiwyg p , .cms-wysiwyg section, .cms-wysiwyg .section , .cms-wysiwyg ul, .cms-wysiwyg ol {
+    border: 1px dotted #AAAAAA;
+    color: #000;
+    position: relative;
+    padding: 0 .4em;
+    margin: 0 0 1em 0;
+    left: 0;
+}
+
+.cms-wysiwyg p{ background: url(/img/wysiwyg/p.png) top left no-repeat; }
+.cms-wysiwyg h1{ background: url(/img/wysiwyg/h1.png) top left no-repeat; }
+.cms-wysiwyg h2{ background: url(/img/wysiwyg/h2.png) top left no-repeat; }
+.cms-wysiwyg h3{ background: url(/img/wysiwyg/h3.png) top left no-repeat; }
+.cms-wysiwyg h4{ background: url(/img/wysiwyg/h4.png) top left no-repeat; }
+.cms-wysiwyg h5{ background: url(/img/wysiwyg/h5.png) top left no-repeat; }
+.cms-wysiwyg pre{ background: url(/img/wysiwyg/code.png) top left no-repeat; }
+.cms-wysiwyg section, .cms-wysiwyg .section{ background: url(/img/wysiwyg/section.png) top left no-repeat; padding: 1em; }
+.cms-wysiwyg ol{ background: url(/img/wysiwyg/ol.png) top left no-repeat; padding-left: 25px; }
+.cms-wysiwyg ul{ background: url(/img/wysiwyg/ul.png) top left no-repeat; padding-left: 25px; }
+
+.ui-button-icon-only .cms-icon {
+    position: absolute;
+    left: 50%;
+    margin-left: -12px;
+    top: 50%;
+    margin-top: -12px;
+}
+
+.cms-icon-bold { background-position: 0 0; }
+.cms-icon-italic { background-position: -24px 0; }
+.cms-icon-underline { background-position: -48px 0; }
+.cms-icon-strike { background-position: -72px 0; }
+.cms-icon-erase { background-position: -96px 0; }
+.cms-icon-ul { background-position: -120px 0; }
+.cms-icon-ol { background-position: -144px 0; }
+.cms-icon-indent { background-position: -168px 0; }
+.cms-icon-outdent { background-position: -192px 0; }
+.cms-icon-superscript { background-position: -216px 0; }
+.cms-icon-subscript { background-position: -240px 0; }
+.cms-icon-alignleft { background-position: -264px 0; }
+.cms-icon-aligncenter { background-position: -288px 0; }
+.cms-icon-alignright { background-position: -312px 0; }
+.cms-icon-link { background-position: -336px 0; }
+.cms-icon-image { background-position: -360px 0; }
+.cms-icon-video { background-position: -384px 0; }
+.cms-icon-quote { background-position: -408px 0; }
+.cms-icon-code { background-position: -432px 0; }
+
+.cms-icon-space { background-position: -456px 0; }
+.cms-icon-pasteword { background-position: -480px 0; }
+.cms-icon-pagebreak { background-position: -504px 0; }
+.cms-icon-table { background-position: -528px 0; }
+.cms-icon-h1 { background-position: -552px 0; }
+.cms-icon-h2 { background-position: -576px 0; }
+.cms-icon-h3 { background-position: -600px 0; }
+.cms-icon-h4 { background-position: -624px 0; }
+.cms-icon-h5 { background-position: -648px 0; }
+.cms-icon-section { background-position: -676px 0; }
+
+
+.cms-icon-new { background-position: 0 0; }
+.cms-icon-open { background-position: -24px -24px; }
+.cms-icon-save { background-position: -48px -24px; }
+.cms-icon-cut { background-position: -72px -24px; }
+.cms-icon-copy { background-position: -96px -24px; }
+.cms-icon-paste { background-position: -120px -24px; }
+.cms-icon-undo { background-position: -144px -24px; }
+.cms-icon-redo { background-position: -168px -24px; }
+.cms-icon-fontcolor { background-position: -192px -24px; }
+.cms-icon-highlight { background-position: -216px -24px; }
+.cms-icon-vbar { background-position: -240px -24px; }
+.cms-icon-hbar { background-position: -264px -24px; }
+.cms-icon-alignjustify { background-position: -288px -24px; }
+.cms-icon-anchor { background-position: -312px -24px; }
+.cms-icon-unlink { background-position: -336px -24px; }
+.cms-icon-editimage { background-position: -360px -24px; }
+.cms-icon-paragraph { background-position: -384px -24px; }
+.cms-icon-smilely { background-position: -408px -24px; }
+.cms-icon-resize { background-position: -432px -24px; }
+
+.cms-icon-fullscreen { background-position: -456px -24px; }
+.cms-icon-pastetext { background-position: -480px -24px; }
+.cms-icon-config { background-position: -504px -24px; }
 /*
 
 input[type=text], input[type=password] {

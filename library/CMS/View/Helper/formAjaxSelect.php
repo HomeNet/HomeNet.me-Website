@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class CMS_View_Helper_FormAjaxSelect extends ZendX_JQuery_View_Helper_UiWidget
+class CMS_View_Helper_FormAjaxSelect extends CMS_View_Helper_FormAjaxElement
 {
 	/**
 	 * Render a Ajax Select Element.
@@ -36,9 +36,9 @@ class CMS_View_Helper_FormAjaxSelect extends ZendX_JQuery_View_Helper_UiWidget
 	 * @param  array  $attribs
 	 * @return string
 	 */
-    public function formAjaxSelect($name, $value = null, $attribs = null, $options = null, $params = null)
+    public function formAjaxSelect($name, $value = null, $attribs = null, $params = null)
     {
-        //unset($attribs['par'])//
+        extract($this->_prepareArgs($name, $value, $attribs, $params));
         
        // $attribs = $this->_prepareAttributes($name, $value, $attribs);
      //   die(debugArray($attribs));        
@@ -48,20 +48,8 @@ class CMS_View_Helper_FormAjaxSelect extends ZendX_JQuery_View_Helper_UiWidget
         
         $jqHandler = (ZendX_JQuery_View_Helper_JQuery::getNoConflictMode()==true)?'$j':'$';
 
-//        $attribs = array();
-//        if(isset($options['attribs']) && is_array($options['attribs'])) {
-//            $attribs = $options['attribs'];
-//        }
-//
-//        //
-//        // The next following 4 conditions check for html attributes that the link might need
-//        //
-//        if(empty($options['noscript']) || $options['noscript'] == false) {
-//            $attribs['href'] = "#";
-//        } else {
-//            $attribs['href'] = $url;
-//        }
-//
+
+
 //        if(!empty($options['title'])) {
 //            $attribs['title'] = $options['title'];
 //        }
@@ -72,22 +60,7 @@ class CMS_View_Helper_FormAjaxSelect extends ZendX_JQuery_View_Helper_UiWidget
             $attribs['class'] = array();
         } elseif(is_string($attribs['class'])) {
             $attribs['class'] = explode(" ", $attribs['class']);
-        }
-        if(!empty($options['class'])) {
-            $attribs['class'][] = $options['class'];
-        }
-
-        if(!empty($options['id'])) {
-            $attribs['id'] = $options['id'];
-        }
-
-        //
-        // Execute Javascript inline?
-        //
-        $inline = false;
-        if(!empty($options['inline']) && $options['inline'] == true) {
-            $inline = true;
-        }
+        }      
 
         //
         // Detect the callbacks:
@@ -95,146 +68,128 @@ class CMS_View_Helper_FormAjaxSelect extends ZendX_JQuery_View_Helper_UiWidget
         // Pick all the defined callbacks and put them on their respective stacks.
         //
         $callbacks = array('beforeSend' => null, 'complete' => null);
-        if(isset($options['beforeSend'])) {
-            $callbacks['beforeSend'] = $options['beforeSend'];
+        if(isset($params['beforeSend'])) {
+            $callbacks['beforeSend'] = $params['beforeSend'];
         }
-        if(isset($options['complete'])) {
-            $callbacks['complete'] = $options['complete'];
+        if(isset($params['complete'])) {
+            $callbacks['complete'] = $params['complete'];
         }
 
         $updateContainer = false;
-        if(!empty($options['update']) && is_string($options['update'])) {
-            $updateContainer = $options['update'];
+        if(!empty($params['update']) && is_string($params['update'])) {
+            $updateContainer = $params['update'];
 
             // Additionally check if there is a callback complete that is a shortcut to be executed
             // on the specified update container
             if(!empty($callbacks['complete'])) {
+                
+                $callbacks['complete'] = "$('".$updateContainer."')";
+                
                 switch(strtolower($callbacks['complete'])) {
                     case 'show':
-                        $callbacks['complete'] = sprintf("%s('%s').show();", $jqHandler, $updateContainer);
+                        $callbacks['complete'] .= ".show();";
                         break;
                     case 'showslow':
-                        $callbacks['complete'] = sprintf("%s('%s').show('slow');", $jqHandler, $updateContainer);
+                        $callbacks['complete'] .= ".show('slow');";
                         break;
                     case 'shownormal':
-                        $callbacks['complete'] = sprintf("%s('%s').show('normal');", $jqHandler, $updateContainer);
+                        $callbacks['complete'] .= ".show('normal');";
                         break;
                     case 'showfast':
-                        $callbacks['complete'] = sprintf("%s('%s').show('fast');", $jqHandler, $updateContainer);
+                        $callbacks['complete'] .= ".show('fast');";
                         break;
                     case 'fadein':
-                        $callbacks['complete'] = sprintf("%s('%s').fadeIn('normal');", $jqHandler, $updateContainer);
+                        $callbacks['complete'] .= ".fadeIn('normal');";
                         break;
                     case 'fadeinslow':
-                        $callbacks['complete'] = sprintf("%s('%s').fadeIn('slow');", $jqHandler, $updateContainer);
+                        $callbacks['complete'] .= ".fadeIn('slow');";
                         break;
                     case 'fadeinfast':
-                        $callbacks['complete'] = sprintf("%s('%s').fadeIn('fast');", $jqHandler, $updateContainer);
+                        $callbacks['complete'] .= ".fadeIn('fast');";
                         break;
                     case 'slidedown':
-                        $callbacks['complete'] = sprintf("%s('%s').slideDown('normal');", $jqHandler, $updateContainer);
+                        $callbacks['complete'] .= ".slideDown('normal');";
                         break;
                     case 'slidedownslow':
-                        $callbacks['complete'] = sprintf("%s('%s').slideDown('slow');", $jqHandler, $updateContainer);
+                        $callbacks['complete'] .= ".slideDown('slow');";
                         break;
                     case 'slidedownfast':
-                        $callbacks['complete'] = sprintf("%s('%s').slideDown('fast');", $jqHandler, $updateContainer);
+                        $callbacks['complete'] .= ".slideDown('fast');";
                         break;
                 }
             }
         }
 
-        if(empty($options['dataType'])) {
-            $options['dataType'] = "html";
+        if(empty($params['dataType'])) {
+            $params['dataType'] = "html";
         }
         
 //        if(!empty($options['url'])) {
 //            $url$options['url'];
 //        }
         
-        $params[$name] = '%%REPLACE%%';
-        $replace = sprintf("%s('select#%s').val()", $jqHandler, $name);
+        $options = "{element:$('select#".$name."').val()}";
 
-        $requestHandler = $this->_determineRequestHandler($options, (count($params)>0)?true:false);
+        $requestHandler = $this->_determineRequestHandler($params, true);
 
         $callbackCompleteJs = array();
+        
         if($updateContainer != false) {
-            if($options['dataType'] == "text") {
-                $callbackCompleteJs[] = sprintf("%s('%s').text(data);", $jqHandler, $updateContainer);
+            if($params['dataType'] == "text") {
+                $callbackCompleteJs[] = "$('".$updateContainer."').text(data);";
             } else {
-                $callbackCompleteJs[] = sprintf("%s('%s').html(data);", $jqHandler, $updateContainer);
+                $callbackCompleteJs[] = "$('".$updateContainer."').html(data);";
             }
         }
         if($callbacks['complete'] != null) {
             $callbackCompleteJs[] = $callbacks['complete'];
         }
 
-        if(isset($params) && count($params) > 0) {
-            $params = ZendX_JQuery::encodeJson($params);
-        } else {
-            $params = '{}';
-        }
-        
-        $params = str_replace('"%%REPLACE%%"', $replace, $params);
-
         $js = array();
         if($callbacks['beforeSend'] != null) {
             switch(strtolower($callbacks['beforeSend'])) {
                 case 'fadeout':
-                    $js[] = sprintf("%s(this).fadeOut();", $jqHandler);
+                    $js[] = "$(this).fadeOut();";
                     break;
                 case 'fadeoutslow':
-                    $js[] = sprintf("%s(this).fadeOut('slow');", $jqHandler);
+                    $js[] = "$(this).fadeOut('slow');";
                     break;
                 case 'fadeoutfast':
-                    $js[] = sprintf("%s(this).fadeOut('fast');", $jqHandler);
+                    $js[] = "$(this).fadeOut('fast');";
                     break;
                 case 'hide':
-                    $js[] = sprintf("%s(this).hide();", $jqHandler);
+                    $js[] = "$(this).hide();";
                     break;
                 case 'hideslow':
-                    $js[] = sprintf("%s(this).hide('slow');", $jqHandler);
+                    $js[] = "$(this).hide('slow');";
                     break;
                 case 'hidefast':
-                    $js[] = sprintf("%s(this).hide('fast');", $jqHandler);
+                    $js[] = "$(this).hide('fast');";
                     break;
                 case 'slideup':
-                    $js[] = sprintf("%s(this).slideUp(1000);", $jqHandler);
+                    $js[] = "$(this).slideUp(1000);";
                     break;
                 default:
                     $js[] = $callbacks['beforeSend'];
                     break;
             }
         }
+        
+        $callbackCompleteJs = implode(" ", $callbackCompleteJs);
 
         switch($requestHandler) {
             case 'GET':
-                $js[] = sprintf("%s.get('%s', %s, function(data, textStatus) { %s }, '%s');return false;",
-                    $jqHandler, $options['url'], $params, implode(" ", $callbackCompleteJs), $options['dataType']);
+                $js[] = " $.get('".$params['url']."', ".$options.", function(data, textStatus) { ".$callbackCompleteJs." }, '".$params['dataType']."');return false;";
                 break;
             case 'POST':
-                $js[] = sprintf("%s.post('%s', %s, function(data, textStatus) { %s }, '%s');return false;",
-                    $jqHandler,$options['url'], $params, implode(" ", $callbackCompleteJs), $options['dataType']);
+                $js[] = "$.post('".$params['url']."', ".$options.", function(data, textStatus) { ".$callbackCompleteJs." }, '".$params['dataType']."');return false;";
                 break;
         }
 
         $js = implode($js);
 
-        if($inline == true) {
-            $attribs['onclick'] = $js;
-        } else {
-//            if(!isset($attribs['id'])) {
-//                $clickClass = sprintf("ajaxLink%d", ZendX_JQuery_View_Helper_AjaxLink::$currentLinkCallbackId);
-//                ZendX_JQuery_View_Helper_AjaxLink::$currentLinkCallbackId++;
-//
-//                $attribs['class'][] = $clickClass;
-//                $onLoad = sprintf("%s('input.%s').click(function() { %s });", $jqHandler, $clickClass, $js);
-//            } else {
-                $onLoad = sprintf("%s('select#%s').change(function() { %s });", $jqHandler, $name, $js);
-//            }
-
-            $jquery->addOnLoad($onLoad);
-        }
+        $jquery->addOnLoad("$('select#".$name."').change(function() { ".$js." });");
+        
 
         if(count($attribs['class']) > 0) {
             $attribs['class'] = implode(" ", $attribs['class']);
@@ -250,8 +205,8 @@ class CMS_View_Helper_FormAjaxSelect extends ZendX_JQuery_View_Helper_UiWidget
 //        return $html;
 //
 //        $attribs = array_merge($attribs,array('data-text'=>'hidden', 'data-hex'=>'true'));
-        $options = $attribs['options'];
-        unset($attribs['options']);
+        $options = $params['options'];
+        //unset($attribs['options']);
 	return $this->view->formSelect($name, $value, $attribs, $options);
     }
     /**

@@ -17,11 +17,18 @@
  * You should have received a copy of the GNU General Public License
  * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
-?>
-<?php echo $this->render('header.phtml') ?>
 
-<section>
-<?php echo $this->layout()->content ?>
-</section>
-<?php echo $this->render('footer.phtml') ?>
-  
+/**
+ * @package CMS
+ * @subpackage Form
+ * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
+ */
+class CMS_Form_Element_AjaxGallery extends CMS_Form_Element_Ajax
+{
+    /**
+     * Default form view helper to use for rendering
+     * @var string
+     */
+    public $helper = 'formAjaxGallery';
+}

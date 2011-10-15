@@ -27,12 +27,8 @@
  */
 class Content_Plugin_Element_Image_Element  extends Content_Model_Plugin_Element  {
 
-    
-    
-    
-    
-    
-    
+    public $isArray = true;
+   
     /**
      * get any custom options for the setup of the field type
      * 
@@ -41,9 +37,10 @@ class Content_Plugin_Element_Image_Element  extends Content_Model_Plugin_Element
     function getSetupForm($options = array()){
          $form = parent::getSetupForm($options);
         $form->setLegend('Image Options');
-        $path = $form->createElement('text','path');
+        $path = $form->createElement('text','folder');
         $path->setLabel('Path: ');
-        $path->setDescription('Path is Prefixed with: '.APPLICATION_ROOT);
+         $config = Zend_Registry::get('config');
+        $path->setDescription('Path is Prefixed with: '.$config->site->uploadDirectory);
         $path->setRequired('true');
         $path->addFilter('StripTags');//@todo filter chars
         $form->addElement($path);
@@ -62,17 +59,11 @@ class Content_Plugin_Element_Image_Element  extends Content_Model_Plugin_Element
      * @return Zend
      */
     function getElement(array $config, $options = array()){
-        
-        $element = new Zend_Form_Element_Text($config); 
+        $element = new CMS_Form_Element_AjaxImage($config); 
+        $view = Zend_Registry::get('view');
+        $element->setParams($options);
+        $element->setParam('rest', $view->url(array('controller'=>'content','action'=>'rest'),'content-admin'));
+                
         return $element;
-    }
-    
-    /**
-     * Parse the Subform and return the value to be stored in the database
-     * 
-     * @param array $values 
-     */
-    function getValue($values = array()){
-        
     }
 }

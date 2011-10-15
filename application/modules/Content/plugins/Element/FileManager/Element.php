@@ -27,7 +27,7 @@
  */
 class Content_Plugin_Element_FileManager_Element  extends Content_Model_Plugin_Element  {
 
-    
+    public $isArray = true;
     
     
     

@@ -6,8 +6,9 @@ foreach ($this->links as $module => $links) {
         continue;
     }
     ?>
+    <section>
     <h2><?php echo $module ?></h2>
-    <div class="transparent box">
+
 
         <ul>
             <?php
@@ -16,7 +17,7 @@ foreach ($this->links as $module => $links) {
             }
             ?>
         </ul>
-    </div>
+    </section>
 
     <?php
 }

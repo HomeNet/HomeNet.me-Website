@@ -28,7 +28,7 @@
             crop: false,
             title: "",
             source: "",
-            sourceUrl: "",
+            url: "",
             copyright: ""
         },
         
@@ -54,13 +54,13 @@
             this.openEditor();
         },
         openEditor: function(){
-            $.cmsEditImageDialog.dialog('option','title', "Edit "+this.options.path);
+            $.cmsEditImageDialog.dialog('option','title', "Edit "+this.options.name);
             $.cmsEditImageDialog.html('<img id="preview" src="'+this.options.preview+'" alt="Preview"/>\n\
-  <fieldset><legend><span id="path">'+this.options.path+'</span> Properties</legend>\n\
+  <fieldset><legend><span id="name">'+this.options.name+'</span> Properties</legend>\n\
 <div class="properties">Width: <span id="width">'+this.options.width+'</span> Height: <span id="height">'+this.options.height+'</span> Uploaded By: <span id="owner">'+this.options.owner+'</span> <span id="date">'+this.options.date+'</span></div>\n\
 <div><label for="title">Image Title:</label><input type="text" value="'+this.options.title+'" id="title"></div>\n\
 <div><label for="source">Source:</label><input type="text" value="'+this.options.source+'" id="source"></div>\n\
-<div><label for="sourceUrl">Source Url:</label><input type="text" value="'+this.options.sourceUrl+'" id="sourceUrl"></div>\n\
+<div><label for="url">Source Url:</label><input type="text" value="'+this.options.url+'" id="url"></div>\n\
 <div><label for="copyright">Copyright:</label><input type="text" value="'+this.options.copyright+'" id="copyright"></div>\n\
 </fieldset>')
             // $.cmsEditImageDialog.setOption('image', this);
@@ -68,15 +68,15 @@
         // alert('Open Editor');
         },
         saveImage: function(){
+           var dialog = $.cmsEditImageDialog;
             var data = {
-                    title: $("input#title").val(),
-                   source: $("input#source").val(),
-                sourceUrl: $("input#sourceUrl").val(),
-                copyright: $("input#copyright").val()
-            }
-            this.element.data(data);
+                    title: dialog.find("input#title").val(),
+              description: dialog.find("input#description").val(),
+                   source: dialog.find("input#source").val(),
+                url: dialog.find("input#url").val(),
+                copyright: dialog.find("input#copyright").val()
+            };
             this._trigger('save',null, data);
-            //this._trigger('imageeditorsave', null, this.element.data());
             
             this.closeEditor();
         },

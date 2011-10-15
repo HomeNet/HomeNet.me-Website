@@ -36,7 +36,7 @@ class Content_Form_CategorySet extends CMS_Form
         $title->setRequired('true');
         $title->addFilter('StripTags');
         $this->addElement($title);
-        
+
         $this->addDisplayGroup($this->getElements(), 'house', array('legend' => 'Category Set'));
 
         $this->addElement('hash', 'hash', array('salt' => 'unique'));

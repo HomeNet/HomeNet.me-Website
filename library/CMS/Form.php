@@ -86,7 +86,7 @@ class CMS_Form extends Zend_Form {
 
         $other = array('multicheckbox', 'select', 'radios', 'pickColor');
         
-         $wide = array('textarea');
+         $wide = array('textarea','ajaxgallery');
         //
         //die(debugArray($element->getDecorators()));
 

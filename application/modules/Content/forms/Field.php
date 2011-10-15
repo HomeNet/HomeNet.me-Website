@@ -58,8 +58,8 @@ class Content_Form_Field extends CMS_Form
 //                                     'MultiCheckboxes' => 'CheckBoxes',
 //                                     'Radio' => 'Radio List'));
                 $url = $this->getView()->url(array('controller' => 'field', 'action' => 'element-form'), 'content-admin');
-       $type->setOption('url',$url);
-       $type->setOption('update', '#landing');
+       $type->setParam('url',$url);
+       $type->setParam('update', '#landing');
 
 //        $options = array(
 //            Core_Model_Menu_Item::ROUTE   => 'Internal Route',
@@ -67,7 +67,7 @@ class Content_Form_Field extends CMS_Form
 //            Core_Model_Menu_Item::TEXT => 'Plain Text',
 //            Core_Model_Menu_Item::URL => 'External URL'
 //        );
-      $type->setAttrib('options', $options);
+      $type->setParam('options', $options);
       $this->addElement($type);
         
         

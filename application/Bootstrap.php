@@ -124,7 +124,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
             $viewRenderer->setViewBasePathSpec(APPLICATION_PATH.'/themes/'.$theme.'/modules/:module/views');
         }
         Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
-        
+        Zend_Registry::set('layout', $layout);
+        Zend_Registry::set('view', $view);
         return $view;
     }
 
@@ -188,12 +189,12 @@ function cleanFilename($url) {
 	//$url = html_entity_decode($url,ENT_QUOTES,'UTF8');
  
 	// adding - for spaces and union characters
-	$find = array(' ', '&', '\r\n', '\n', '+',',');
+	$find = array('&', '\r\n', '\n', '+',',');
 	$url = str_replace ($find, '-', $url);
  
 	//delete and replace rest of special chars
-	$find = array('/[^a-z0-9_+\-]/', '/[\-]+/', '/<[^>]*>/');
-	$repl = array('', '-', '');
+	$find = array('/[.]/','/[^a-z0-9_+\-]/', '/[\-]+/', '/<[^>]*>/');
+	$repl = array('_','', '-', '');
 	$url = preg_replace ($find, $repl, $url);
  
 	//return the friendly url

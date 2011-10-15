@@ -34,41 +34,41 @@ require_once 'Zend/Form/Element/Xhtml.php';
  */
 class CMS_Form_Element_Ajax extends Zend_Form_Element {
     
-    private $_options2 = array();
-    
+//    private $_options2 = array();
+//
+//    public function setOptions(array $options) {
+//        $this->_options2 = $options;
+//    }
+//
+//    public function getOptions() {
+//        return $this->_options2;
+//    }
+//
+//    public function setOption($key, $value) {
+//        $this->_options2[$key] = $value;
+//    }
+//
+//    public function getOption($key) {
+//        return $this->options2[$key];
+//    }
+
     private $_params = array();
 
-   public function setOptions(array $options) {
-      $this->_options2 = $options;
-   }
-   
-   public function setParams(array $params) {
-       $this->_params = $params;
-   }
-   
-   public function getOptions() {
-      return $this->_options2;
-   }
-   
-   public function getParams() {
-       return $this->_params;
-   }
-   
-    public function setOption($key, $value) {
-      $this->_options2[$key] = $value;
-   }
-   
+    public function setParams(array $params) {
+        $this->_params = $params;
+    }
+
+    public function getParams() {
+        return $this->_params;
+    }
+
     public function setParam($key, $value) {
-      $this->_params[$key] = $value;
-   }
-   
-   public function getOption($key) {
-      return $this->options2[$key];
-   }
-   
+        $this->_params[$key] = $value;
+    }
+
     public function getParam($key) {
-      return $this->params[$key];
-   }
+        return $this->params[$key];
+    }
    
    
    /**
@@ -98,5 +98,4 @@ class CMS_Form_Element_Ajax extends Zend_Form_Element {
         }
         return $this;
     }
-
 }

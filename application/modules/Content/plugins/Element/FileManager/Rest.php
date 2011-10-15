@@ -29,12 +29,13 @@
 class Content_Plugin_Element_FileManager_Rest {
     
     private $config;
+    private $element;
     
     public function __construct(){
        $this->config = Zend_Registry::get('config'); 
     }
     
-    public function folders($item,$hash){
+    public function folders($id){
         //folder
         //?method=sayHello&who=Davey&when=Day
     }
@@ -61,45 +62,68 @@ class Content_Plugin_Element_FileManager_Rest {
             )
         );*/
     
-    public function upload($id, $folder,$hash){
+    public function upload(){//$id, $folder,$hash){ //$id = null
          
-        $service = new Content_Model_Field_Service();
-        $object = $service->getObjectById($id);
+       // $service = new Content_Model_Field_Service();
+       // $element = $service->getObjectById($id);
+       $this->options = array('folder'=>'','fileType'=>'images', 'maxSize' => 8000, 'maxFileSize' => 1000000, 'minFileSize' => 0);
+       
+       if(!empty($this->options['folder'])){
+           $this->options['folder'].='/';
+       }
+
+       // $this->options = array_merge($options, $element->options);
         
-        $options = array('folder'=>'','fileType'=>'images');
+        switch($this->options['fileType']){
+            case "images":
+               $this->options['validExt'] = array('jpg', 'jpeg', 'png', 'gif', 'bmp');
+            case "documents":
+               $this->options['validExt'] = array('pdf','doc','docx');
+            case "archives":    
+               $this->options['validExt'] = array('zip','7z');
+            case "executables":     
+               $this->options['validExt'] = array('exe','msi'); 
+            case "any":
+            default:
+               $this->options['validExt'] = array();
+                
+        }
+        
         
         if(empty($_FILES['files'])){
             return json_encode(array('error' => 'noFile'));
         }
         
         $upload = $_FILES['files'];
-        
         $info = array();
-        if (is_array($upload['tmp_name'])) {
+        
+        //is multi upload
+        if(is_array($upload['tmp_name'])){
             foreach ($upload['tmp_name'] as $index => $value) {
-                $info[] = $this->handle_file_upload(
-                    $upload['tmp_name'][$index],
-                    isset($_SERVER['HTTP_X_FILE_NAME']) ?
-                        $_SERVER['HTTP_X_FILE_NAME'] : $upload['name'][$index],
-                    isset($_SERVER['HTTP_X_FILE_SIZE']) ?
-                        $_SERVER['HTTP_X_FILE_SIZE'] : $upload['size'][$index],
-                    isset($_SERVER['HTTP_X_FILE_TYPE']) ?
-                        $_SERVER['HTTP_X_FILE_TYPE'] : $upload['type'][$index],
-                    $upload['error'][$index]
-                );
-            }
+                
+                $file = array(
+                    'tmp_name' => $upload['tmp_name'][$index],
+                    'name' => $upload['name'][$index],
+                    'size' => $upload['size'][$index],
+                    'type' => $upload['type'][$index],
+                    'error' => $upload['error'][$index]);
+               
+                $info[] = $this->_uploadFile($file);
+            }    
         } else {
-            $info[] = $this->handle_file_upload(
-                $upload['tmp_name'],
-                isset($_SERVER['HTTP_X_FILE_NAME']) ?
-                    $_SERVER['HTTP_X_FILE_NAME'] : $upload['name'],
-                isset($_SERVER['HTTP_X_FILE_SIZE']) ?
-                    $_SERVER['HTTP_X_FILE_SIZE'] : $upload['size'],
-                isset($_SERVER['HTTP_X_FILE_TYPE']) ?
-                    $_SERVER['HTTP_X_FILE_TYPE'] : $upload['type'],
-                $upload['error']
-            );
+            $file = $upload;
+             if( isset($_SERVER['HTTP_X_FILE_NAME'])){
+                $file['name'] = $_SERVER['HTTP_X_FILE_NAME'];
+            } 
+            if( isset($_SERVER['HTTP_X_FILE_SIZE'])){
+                $file['size'] = $_SERVER['HTTP_X_FILE_SIZE'];
+            } 
+            if( isset($_SERVER['HTTP_X_FILE_TYPE'])){
+                $file['type'] = $_SERVER['HTTP_X_FILE_TYPE'];
+            } 
+            $info[] = $this->_uploadFile($file);
         }
+        
         header('Vary: Accept');
         if (isset($_SERVER['HTTP_ACCEPT']) &&
             (strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)) {
@@ -110,89 +134,118 @@ class Content_Plugin_Element_FileManager_Rest {
         return json_encode($info);
         
     }
-        private function has_error($uploaded_file, $file, $error) {
-        if ($error) {
-            return $error;
-        }
-        if (!preg_match($this->options['accept_file_types'], $file->name)) {
+        private function _validateFile($file) {
+            
+        if(isset($file['error']) && ($file['error'] != 0)){
+            switch ($file['error']) {
+                case UPLOAD_ERR_INI_SIZE:
+                case UPLOAD_ERR_FORM_SIZE:
+                    return 'maxFileSize';
+                case UPLOAD_ERR_PARTIAL:
+                case UPLOAD_ERR_NO_FILE:
+                case UPLOAD_ERR_NO_TMP_DIR:
+                case UPLOAD_ERR_CANT_WRITE:
+                case UPLOAD_ERR_EXTENSION:
+                    return 'acceptFileTypes';
+                default:
+                    return 'error: '.$file['error'];
+            } 
+        }    
+        
+        $info = pathinfo($file['name']);
+            
+        if (in_array($file['ext'], $this->options['validExt'])) {
             return 'acceptFileTypes';
         }
-        if ($uploaded_file && is_uploaded_file($uploaded_file)) {
-            $file_size = filesize($uploaded_file);
+        if (is_uploaded_file($file['tmp_name'])) {
+            $file_size = filesize($file['tmp_name']);
         } else {
             $file_size = $_SERVER['CONTENT_LENGTH'];
         }
-        if ($this->options['max_file_size'] && (
-                $file_size > $this->options['max_file_size'] ||
-                $file->size > $this->options['max_file_size'])
-            ) {
+        if ($file_size > $this->options['maxFileSize']) {
             return 'maxFileSize';
         }
-        if ($this->options['min_file_size'] &&
+        if ($this->options['minFileSize'] &&
             $file_size < $this->options['min_file_size']) {
             return 'minFileSize';
         }
-        if (is_int($this->options['max_number_of_files']) && (
-                count($this->get_file_objects()) >= $this->options['max_number_of_files'])
-            ) {
-            return 'maxNumberOfFiles';
-        }
-        return $error;
+//        if (is_int($this->options['max_number_of_files']) && (
+//                count($this->get_file_objects()) >= $this->options['max_number_of_files'])
+//            ) {
+//            return 'maxNumberOfFiles';
+//        }
+        return false;
     }
     
-    private function handle_file_upload($uploaded_file, $name, $size, $type, $error) {
-        $file = new stdClass();
-        // Remove path information and dots around the filename, to prevent uploading
-        // into different directories or replacing hidden system files.
-        // Also remove control characters and spaces (\x00..\x20) around the filename:
-        $file->name = trim(basename(stripslashes($name)), ".\x00..\x20");
-        $file->size = intval($size);
-        $file->type = $type;
-        $error = $this->has_error($uploaded_file, $file, $error);
-        if (!$error && $file->name) {
-            $file_path = $this->options['upload_dir'].$file->name;
-            $append_file = !$this->options['discard_aborted_uploads'] &&
-                is_file($file_path) && $file->size > filesize($file_path);
-            clearstatcache();
-            if ($uploaded_file && is_uploaded_file($uploaded_file)) {
-                // multipart/formdata uploads (POST method uploads)
-                if ($append_file) {
-                    file_put_contents(
-                        $file_path,
-                        fopen($uploaded_file, 'r'),
-                        FILE_APPEND
-                    );
-                } else {
-                    move_uploaded_file($uploaded_file, $file_path);
-                }
-            } else {
-                // Non-multipart uploads (PUT method support)
-                file_put_contents(
-                    $file_path,
-                    fopen('php://input', 'r'),
-                    $append_file ? FILE_APPEND : 0
-                );
-            }
-            $file_size = filesize($file_path);
-            if ($file_size === $file->size) {
-                $file->url = $this->options['upload_url'].rawurlencode($file->name);
-                foreach($this->options['image_versions'] as $version => $options) {
-                    if ($this->create_scaled_image($file->name, $options)) {
-                        $file->{$version.'_url'} = $options['upload_url']
-                            .rawurlencode($file->name);
-                    }
-                }
-            } else if ($this->options['discard_aborted_uploads']) {
-                unlink($file_path);
-                $file->error = 'abort';
-            }
-            $file->size = $file_size;
-            $file->delete_url = $this->options['script_url']
-                .'?file='.rawurlencode($file->name);
-            $file->delete_type = 'DELETE';
-        } else {
-            $file->error = $error;
+    private function _uploadFile($file) {
+
+        $info = pathinfo($file['name']);
+        $file['ext'] = $info['extension'];
+        $file['name'] = cleanFilename($info['filename']).'.'.$info['extension'];
+        $file['size'] = intval($file['size']);
+
+        $error = $this->_validateFile($file);
+        
+        if($error){
+            $file['error'] = $error;
+            unset($file['tmp_name']);
+            return $file;
         }
+        unset($file['error']);
+        $file['path'] = $this->options['folder'].$file['name'];
+
+        $tempPath = $this->config->site->tempUploadDirectory.'/'.$file['name'].'.part';
+        $fullPath = $this->config->site->uploadDirectory.'/'.$file['path'];
+        clearstatcache();
+        
+        $append = false;
+        if(file_exists($tempPath) && ($file['size'] > filesize($tempPath))){
+            
+            $append = true;
+        }
+        
+        if (is_uploaded_file($file['tmp_name'])) {
+            // multipart/formdata uploads (POST method uploads)
+            if ($append) {
+                file_put_contents($tempPath, fopen($file['tmp_name'], 'r'), FILE_APPEND );
+            } else {
+                move_uploaded_file($file['tmp_name'], $tempPath);
+            }
+        } else {
+            // Non-multipart uploads (PUT method support)
+            file_put_contents($tempPath, fopen('php://input', 'r'), $append ? FILE_APPEND : 0 );
+        }
+
+        $discardIncompleteUploads = false;
+        $file_size = filesize($tempPath);
+            
+        if ($file_size === $file['size']) {
+
+            rename($tempPath, $fullPath);
+            
+            if($this->options['fileType'] == 'images'){
+                $helper = new CMS_View_Helper_ImagePath();
+
+                $file['thumbnail'] = $helper->imagePath($file['path'],100,75);
+                $file['preview'] =   $helper->imagePath($file['path'],480,320);
+            } else {
+                $file['thumbnail'] = "";
+            }
+            $helper = new CMS_View_Helper_AttachmentPath();
+            $file['download'] = $helper->attachmentPath($file['path']);
+
+        } elseif ($discardIncompleteUploads) {
+            unlink($file_path);
+            $file['error'] = 'abort';
+        }
+        $file['uploaded_size'] = $file_size;
+       //     $file->delete_url = $this->options['script_url']
+       //         .'?file='.rawurlencode($file->name);
+       //     $file->delete_type = 'DELETE';
+       
+        
+        unset($file['tmp_name']);
+        
         return $file;
     }
     
@@ -209,10 +262,14 @@ class Content_Plugin_Element_FileManager_Rest {
         
         $helper = new CMS_View_Helper_ImagePath();
         
+        if(!empty($folder)){
+            $folder .= '/';
+        }
+        
         foreach (scandir($path) as $file) {
 
             if (($file != '.') && ($file != '..') && !is_dir($file) && in_array(stristr($file,'.'), $types)) {
-                $image = $folder.'/'.$file;
+                $image = $folder.$file;
                 $files[] = array('path' => $image, 
                     'thumbnail' => $helper->imagePath($image, 100, 100),
                     'preview' => $helper->imagePath($image, 480, 320),
