@@ -15,10 +15,14 @@
 (function($) {
     // The jQuery.aj namespace will automatically be created if it doesn't exist
     
-    // var cmsEditImageDialog = undefined;
+    // var cmsImageEditor = undefined;
     
     $.widget("cms.imageeditor", {
         options: {
+            image: {}
+        },
+        
+        data: {
             width: 1000,
             height: 1000,
             owner: "Matthew Doll",
@@ -31,13 +35,13 @@
             url: "",
             copyright: ""
         },
-        
-        
-        
-        _init: function() {
-            if($.cmsEditImageDialog == undefined){
-                $.cmsEditImageDialog = $('<div id="cms-image-editor"></div>'); 
-                $.cmsEditImageDialog.dialog({
+
+        _create: function() {
+        //_init: function() {
+            console.log('imageeditor create');
+         if($.cmsImageEditor == undefined){
+            $.cmsImageEditor = $('<div id="cms-image-editor"></div>'); 
+                $.cmsImageEditor.dialog({
                     autoOpen: false,
                     resizable: false,
                     width:550,
@@ -45,46 +49,65 @@
                     title: "Edit Image",
                     modal: true,
                     buttons: {
-                        Save: $.proxy(this.saveImage,this),
-                        Cancel: $.proxy(this.closeEditor,this)
+                        Save: function(){},
+                        Cancel: function(){}
                     }
                 });
-            }
+           }
        
-            this.openEditor();
+           // this.open();
         },
-        openEditor: function(){
-            $.cmsEditImageDialog.dialog('option','title', "Edit "+this.options.name);
-            $.cmsEditImageDialog.html('<img id="preview" src="'+this.options.preview+'" alt="Preview"/>\n\
-  <fieldset><legend><span id="name">'+this.options.name+'</span> Properties</legend>\n\
-<div class="properties">Width: <span id="width">'+this.options.width+'</span> Height: <span id="height">'+this.options.height+'</span> Uploaded By: <span id="owner">'+this.options.owner+'</span> <span id="date">'+this.options.date+'</span></div>\n\
-<div><label for="title">Image Title:</label><input type="text" value="'+this.options.title+'" id="title"></div>\n\
-<div><label for="source">Source:</label><input type="text" value="'+this.options.source+'" id="source"></div>\n\
-<div><label for="url">Source Url:</label><input type="text" value="'+this.options.url+'" id="url"></div>\n\
-<div><label for="copyright">Copyright:</label><input type="text" value="'+this.options.copyright+'" id="copyright"></div>\n\
-</fieldset>')
-            // $.cmsEditImageDialog.setOption('image', this);
-            $.cmsEditImageDialog.dialog("open");
+        _init: function(){
+            console.log(['imageeditor init',this, this.element.get(0)]);
+            if(this.options.image){
+                this.data = $.extend(this.data,this.options.image);
+            }
+            this.open();
+        },
+        
+        
+        open: function(){
+             
+      
+            $.cmsImageEditor.dialog('option','title', "Edit "+this.data.name);
+            
+            $.cmsImageEditor.dialog('option','buttons', {
+                Save: $.proxy(this.save,this),
+                Cancel: $.proxy(this.close,this)
+            });
+            
+            $.cmsImageEditor.html('<img id="preview" src="'+this.data.preview+'" alt="Preview"/>\n\
+  <fieldset><legend><span id="name">'+this.data.name+'</span> Properties</legend>\n\
+<div class="properties">Width: <span id="width">'+this.data.width+'</span> Height: <span id="height">'+this.data.height+'</span> Uploaded By: <span id="owner">'+this.data.owner+'</span> <span id="date">'+this.data.date+'</span></div>\n\
+<div><label for="title">Image Title:</label><input type="text" value="'+this.data.title+'" class="title"></div>\n\
+<div><label for="description">Image Title:</label><input type="text" value="'+this.data.description+'" class="description"></div>\n\
+<div><label for="source">Source:</label><input type="text" value="'+this.data.source+'" class="source"></div>\n\
+<div><label for="url">Source Url:</label><input type="text" value="'+this.data.url+'" class="url"></div>\n\
+<div><label for="copyright">Copyright:</label><input type="text" value="'+this.data.copyright+'" class="copyright"></div>\n\
+</fieldset>');
+            // $.cmsImageEditor.setOption('image', this);
+            $.cmsImageEditor.dialog("open");
         // alert('Open Editor');
         },
-        saveImage: function(){
-           var dialog = $.cmsEditImageDialog;
-            var data = {
-                    title: dialog.find("input#title").val(),
-              description: dialog.find("input#description").val(),
-                   source: dialog.find("input#source").val(),
-                url: dialog.find("input#url").val(),
-                copyright: dialog.find("input#copyright").val()
-            };
-            this._trigger('save',null, data);
-            
-            this.closeEditor();
+        save: function(){
+           var dialog = $.cmsImageEditor;
+           this.data = $.extend(this.data,{
+                    title: dialog.find("input.title").val(),
+              description: dialog.find("input.description").val(),
+                   source: dialog.find("input.source").val(),
+                      url: dialog.find("input.url").val(),
+                copyright: dialog.find("input.copyright").val()
+            });
+            this._trigger('save',{}, this.data);
+            this.close();
         },
-        closeEditor: function(){
-            $.cmsEditImageDialog.dialog("close");
+        close: function(){
+            $.cmsImageEditor.dialog("close");
         },
      
         destroy: function() {
+            $.cmsImageEditor.dialog('destory');
+            $.cmsImageEditor = undefined;
             $.Widget.prototype.destroy.call(this);
         }
     });

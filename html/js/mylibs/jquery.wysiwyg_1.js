@@ -6,81 +6,78 @@ Copyright © 2011 FreshCode
 http://www.freshcode.co.za/
 
 */ 
-if (typeof Object.create === 'undefined') {
-    Object.create = function (o) { 
-        function F() {} 
-        F.prototype = o; 
-        return new F(); 
-    };
-}
-
-
-
 (function($) {
    
     // The jQuery.aj namespace will automatically be created if it doesn't exist
     $.widget("cms.wysiwyg", {
         options: {
-            toolbar: "bold italic strike removeformat | insertLink insertImage insertGallery insertHtml "+
+            toolbar: "bold italic strike removeformat | insertLink insertImage blockquote code "+
         "| unorderedlist orderedlist indent outdent superscript subscript " +
-        "section paragraph h2 h3 h4 fontcolor" //h1 //h5//blockquote code
+        "section paragraph h2 h3 h4 fontcolor" //h1 //h5
         },
         actions: {
             bold: {
+                text: 'B',
                 title: "Bold",
-                iconClass: 'cms-icon-bold',
-                hotkey: 'ctrl+b',
                 action: function(){
                     document.execCommand("bold", false, null);
-                }
+                },
+                iconClass: 'cms-icon-bold',
+                hotkey: 'ctrl+b'
             },
             italic: {
+                text: 'I',
                 title: 'Italicize',
-                iconClass: 'cms-icon-italic',
-                hotkey: 'ctrl+i',
                 action: function(){
                     document.execCommand('italic', false, null);
-                }
+                },
+                iconClass: 'cms-icon-italic',
+                hotkey: 'ctrl+i'
             },
             underline: {
+                text: 'U',
                 title: 'Underline',
-                iconClass: 'cms-icon-underline',
-                hotkey: 'ctrl+u',
                 action: function(){
                     document.execCommand('underline', false, null);
-                }
+                },
+                iconClass: 'cms-icon-underline',
+                hotkey: 'ctrl+u'
             },
             strike: {
+                text: "S",
                 title: "Strike",
-                iconClass: 'cms-icon-strike',
                 action: function(){
                     document.execCommand('strikeThrough', false, null);
-                }
+                    return false;
+                },
+                iconClass: 'cms-icon-strike'
             },
             removeformat: {
+                text: '&minus;',
                 title: 'Remove Formating',
-                iconClass: 'cms-icon-erase',
-                hotkey: 'ctrl+m',
                 action: function(){
                     document.execCommand('removeFormat', false, null);
-                }
+                    return false;
+                },
+                iconClass: 'cms-icon-erase',
+                hotkey: 'ctrl+m'
             },
             /////////////////////////////////
             insertLink: {
+                text: "L",
                 title: "Insert Link to a web page",
-                iconClass: 'cms-icon-link',
-                hotkey: 'ctrl+l',
                 action: function(){
                     //   var urlPrompt = prompt("Enter URL:", "http://");
                     // document.execCommand("createLink", false, urlPrompt);
                     alert(this.getSelectionContainerElement());
                     return false;
-                }
+                },
+                iconClass: 'cms-icon-link',
+                hotkey: 'ctrl+l'
             },
             insertImage: {
+                text: "I",
                 title: "Insert Image",
-                iconClass: 'cms-icon-image',
-                hotkey: 'ctrl+g',
                 init: function(){
                     console.log('init Image');
                     this.editor.filemanager({
@@ -95,194 +92,206 @@ if (typeof Object.create === 'undefined') {
                             document.execCommand("enableObjectResizing", false, false);
                         } catch (e){}
                         
-                        //console.log(data);
+                        console.log(data);
 
                         self.insertBlock('cms.image', data);
                     });
                 },
+                
+                
                 action: function(){
+                    console.log('insert IMage');
+                    
+                    
                     this.editor.filemanager("show");
                 //  var urlPrompt = prompt("Enter Image URL:", "http://");
                 //document.execCommand("InsertImage", false, urlPrompt); 
                 // this._insertHtml('<div style="width: 100px; height:100px; background: #f00; float:left">dfsdsfsf</div>');
-                }
+                },
+                iconClass: 'cms-icon-image',
+                hotkey: 'ctrl+g'
             },
             blockquote: {
+                text: "&nbsp;",
                 title: "Blockquote",
-                iconClass: 'cms-icon-quote',
-                hotkey: 'ctrl+q',
                 action: function(){
                     document.execCommand("FormatBlock", null, '<blockquote>');
-                }
+                },
+                iconClass: 'cms-icon-quote',
+                hotkey: 'ctrl+q'
             },
             code: {
+                text: "&nbsp;",
                 title: "Code",
-                iconClass: 'cms-icon-code',
-                hotkey: 'ctrl+alt+k',
                 action: function(){
                     document.execCommand("FormatBlock", null, '<pre>');
-                }
+                },
+                iconClass: 'cms-icon-code',
+                hotkey: 'ctrl+alt+k'
             },
             ///////////////////////////////
             unorderedlist: {
+                text: "U",
                 title: "Unordered List",
-                iconClass: 'cms-icon-ul',
-                hotkey: 'ctrl+alt+u',
                 action: function(){
                     document.execCommand("InsertUnorderedList", false, null);
-                }
+                },
+                iconClass: 'cms-icon-ul',
+                hotkey: 'ctrl+alt+u'
             },
             orderedlist: {
+                text: "O",
                 title: "Ordered List",
-                iconClass: 'cms-icon-ol',
-                hotkey: 'ctrl+alt+o',
                 action: function(){
                     document.execCommand("InsertOrderedList", false, null);
-                }
+                },
+                iconClass: 'cms-icon-ol',
+                hotkey: 'ctrl+alt+o'
             },
             indent: {
+                text: ">",
                 title: "Indent",
-                iconClass: 'cms-icon-indent',
-                hotkey: 'tab',
                 action: function(){
                     document.execCommand("indent", false, null);
-                }
+                },
+                iconClass: 'cms-icon-indent',
+                hotkey: 'tab'
             },
             outdent: {
+                text: "<",
                 title: "Outdent",
-                iconClass: 'cms-icon-outdent',
-                hotkey: 'shift+tab',
                 action: function(){
                     document.execCommand("outdent", false, null);
-                }
+                },
+                iconClass: 'cms-icon-outdent',
+                hotkey: 'shift+tab'
             },
             superscript: {
+                text: "x<sup>2</sup>",
                 title: "Superscript",
-                iconClass: 'cms-icon-superscript',
-                hotkey: 'ctrl+.',
                 action: function(){
                     document.execCommand("superscript", false, null);
-                }
+                },
+                iconClass: 'cms-icon-superscript',
+                hotkey: 'ctrl+.'
             },
             subscript: {
+                text: "x<sub>2</sub>",
                 title: "Subscript",
-                iconClass: 'cms-icon-subscript',
-                hotkey: 'ctrl+shift+.',
                 action: function(){
                     document.execCommand("subscript", false, null);
-                }
+                },
+                iconClass: 'cms-icon-subscript',
+                hotkey: 'ctrl+shift+.'
             },
             //////////////////////////////
             section: {
+                text: "S",
                 title: "Section",
-                iconClass: 'cms-icon-section',
                 action: function(){ 
                     // document.execCommand("FormatBlock", null, '<div>');
              
-                   // console.log('wrapping');
-                  //  console.log($().wrapSelection().parentsUntil( this.editor));
+                    console.log('wrapping');
+                    console.log($().wrapSelection().parentsUntil( this.editor));
                     document.createElement('section');//this fixes html5 issue in ie8
                     $().wrapSelection().parentsUntil('.editor').filter('p, h1, h2, h3, h4, h5, hr, ul, ol').wrapAll('<div class="section" />'); //
                     //  $().wrapSelection().parentsUntil('.editor').wrapAll('<div class="section" />');
                     this.editor.find('.selection').replaceWith(function() {
                         return $(this).contents();
                     }); //remove selection tags
-                }
+                },
+                iconClass: 'cms-icon-section'
             },
             paragraph: {
+                text: "P",
                 title: "Paragraph",
-                iconClass: 'cms-icon-paragraph',
-                hotkey: 'ctrl+alt+0',
                 action: function(){
                     document.execCommand("FormatBlock", null, '<p>');
-                }
+                },
+                iconClass: 'cms-icon-paragraph',
+                hotkey: 'ctrl+alt+0'
             },
             h1: {
+                text: "H<sub>1</sub>",
                 title: "Heading 1",
-                iconClass: 'cms-icon-h1',
-                hotkey: 'ctrl+alt+1',
                 action: function(){
                     document.execCommand("FormatBlock", null, '<h1>');
-                }
+                },
+                iconClass: 'cms-icon-h1',
+                hotkey: 'ctrl+alt+1'
             },
             h2: {
+                text: "H<sub>2</sub>",
                 title: "Heading 2",
-                iconClass: 'cms-icon-h2',
-                hotkey: 'ctrl+alt+2',
                 action: function(){
                     document.execCommand("FormatBlock", null, '<h2>');
-                }
+                },
+                iconClass: 'cms-icon-h2',
+                hotkey: 'ctrl+alt+2'
             },
             h3: {
+                text: "H<sub>3</sub>",
                 title: "Heading 3",
-                iconClass: 'cms-icon-h3',
-                hotkey: 'ctrl+alt+3',
                 action: function(){
                     document.execCommand("FormatBlock", null, '<h3>');
-                }
+                },
+                iconClass: 'cms-icon-h3',
+                hotkey: 'ctrl+alt+3'
             },
             h4: {
+                text: "H<sub>4</sub>",
                 title: "Heading 4",
-                iconClass: 'cms-icon-h4',
-                hotkey: 'ctrl+alt+4',
                 action: function(){
                     document.execCommand("FormatBlock", null, '<h4>');
-                }
+                },
+                iconClass: 'cms-icon-h4',
+                hotkey: 'ctrl+alt+4'
             },
             h5: {
+                text: "H<sub>5</sub>",
                 title: "Heading 5",
-                iconClass: 'cms-icon-h5',
-                hotkey: 'ctrl+alt+5',
                 action: function(){
                     document.execCommand("FormatBlock", null, '<h5>');
-                }
+                },
+                iconClass: 'cms-icon-h5',
+                hotkey: 'ctrl+alt+5'
             },
             ////////////////////////
             undo: {
+                text: "U",
                 title: "Undo",
-                iconClass: 'cms-icon-undo',
                 action: function(){
                     document.execCommand("FormatBlock", null, '<h4>');
-                }
-                
+                },
+                iconClass: 'cms-icon-undo'
             },
             redo: {
+                text: "Redo",
                 title: "Redo",
-                iconClass: 'cms-icon-redo',
                 action: function(){
                     document.execCommand("FormatBlock", null, '<h5>');
-                }
+                },
+                iconClass: 'cms-icon-redo'
             },
             
             fontcolor: {
+                text: "Font Color",
                 title: "Font Color",
-                iconClass: 'cms-icon-fontcolor',
                 action: function(){
-                   // $().wrapSelection().removeClass('selection').css('color','#f00');
+                    $().wrapSelection().removeClass('selection').css('color','#f00');
                 // this.editor.find('.selection').unwrap();
-                    this.insertBlock('cms.html', {}, true)
                     
-                }
-            },
-            insertGallery: {
-                title: "Insert Gallery",
-                iconClass: 'cms-icon-gallery',
-                action: function(){
-                    this.insertBlock('cms.html', {}, true)  
-                }
-            },
-            insertHtml: {
-                title: "Insert HTML",
-                iconClass: 'cms-icon-html',
-                action: function(){
-                    this.insertBlock('cms.html', {}, true)  
-                }
+                },
+                iconClass: 'cms-icon-fontcolor'
             }
+            
+            
         },
         
         defaultBlock: {
             title: "CMS Block",
-            className: "cms-block",
+            className: "cms-block-image",
+            contents: undefined,
             data: {},
             
             init: function(data){
@@ -293,45 +302,43 @@ if (typeof Object.create === 'undefined') {
             },
             
             
-            compact: function(e, block){
-               // var block = $(this).data('block');
-                $(this).empty();
+            compact: function(){
+                var block = $(this).data('block');
+                block.element.empty();
             },
-            expand: function(e, block){
-               var $this =$(this);  
-               //  var block = $(this).data('block');
-               //     block.element = $(this);
-               //     $(this).data('block', block);
+            expand: function(){
+                
+                 var block = $(this).data('block');
+                    block.element = $(this);
+                    $(this).data('block', block);
                     
-               // console.log(['default expand', this, block]);    
+                console.log(['default expand', this, block]);    
 
                 // this.create.call(this);
-                block.create.call(this, null, block);
-                
-      
-                $this.children().wrapAll('<div class="ui-widget-content ui-state-default"/>');
-                
-                $this.prepend('<div class="ui-widget-header handle"><span class="ui-icon ui-icon-carat-2-n-s"></span> '+block.title+'</div>');
+                block.create.call(this);
+                    
+                block.element.children().wrapAll('<div class="ui-widget-content ui-state-default"/>');
+                block.element.prepend('<div class="ui-widget-header handle"><span class="ui-icon ui-icon-carat-2-n-s"></span> '+block.title+'</div>');
             
                 //data.order = this.itemCount;
                 //self.data(block.data);
             
-                $this.bind('edit',   block.edit);
-                $this.bind('update', block.update);
-                $this.bind('save',   block.save);
-                $this.bind('remove', block.remove);
-                $this.bind('collapse',block.collapse);
+                block.element.bind('edit',   block.edit);
+                block.element.bind('update', block.update);
+                block.element.bind('save',   block.save);
+                block.element.bind('remove', block.remove);
+                block.element.bind('collapse',block.collapse);
                 //$self.unbind('expand');
                 //$self.bind('expand', block.expand);
 
 
                 var edit = $('<a class="ui-state-default ui-corner-all edit ui-button"><span class="ui-icon ui-icon-pencil"></span></a>');
                 var del = $('<a class="ui-state-default ui-corner-all delete ui-button"><span class="ui-icon ui-icon-closethick"></span></a>');
-                $this.append(edit,del);
+                block.element.append(edit,del);
  
                 edit.bind("click.block", function(e){
-                  //  console.log(['click edit', this, block]);
-                    $this.trigger('edit', block);
+                    console.log(['click edit', this, block]);
+                    $(this).trigger('edit');
                 });
                 
                 del.bind("click.selectimage", function(e){
@@ -342,7 +349,7 @@ if (typeof Object.create === 'undefined') {
                         modal: true,
                         buttons: {
                             Delete: function(){
-                                $this.trigger('remove',block);
+                                block.element.trigger('remove');
                                 $(this).dialog( "close" );
                             },
                             Cancel: function() {
@@ -352,42 +359,41 @@ if (typeof Object.create === 'undefined') {
                     });                    
                 });
                 
-                $this.addClass('expanded');
-                $this.find('*').andSelf().attr('contentEditable',false);
-                $this.disableSelection();
+                block.element.addClass('expanded');
+                block.element.find('*').andSelf().attr('contentEditable',false);
+                block.element.disableSelection();
               //  console.log(['default expand2', block, block.data]);    
 
             },
             create: function(){ },
             edit: function(){},
-            save: function(e, block){
-               // var block = $(this).data('block');
-               // $.extend(block.data,data);
-                var $this = $(this);
-              //  console.log(['default save', this, block]);
+            save: function(e, data){
+                var block = $(this).data('block');
+                $.extend(block.data,data);
+                
+                console.log(['default save', this, block]);
                 for(var i in block.data){
-                    $this.attr('data-'+i, block.data[i]);
+                    block.element.attr('data-'+i, block.data[i]);
                 }
-              //  $this.data('block',block);
+              //  this.$self.data('block',block);
                     
             },
-            update: function(e, block, data){
-              // var block = $(this).data('block');
-              // console.log(['default update', this]);
-               $(this).trigger('save',block);
+            update: function(e, data){
+               var block = $(this).data('block');
+               console.log(['default update', this, block]);
+               block.element.trigger('save');
             },
-            remove: function(e, block){
-              // var block = $(this).data('block');
-              // console.log(['default remove', this, block]);
-               $(this).unbind();
-               $(this).empty().remove();
+            remove: function(e){
+               var block = $(this).data('block');
+               console.log(['default remove', this, block]);
+               block.element.unbind();
+               block.element.empty().remove();
             }
         },   
         
         blocks: {
             'cms.image': {
                 title: "Image Block",
-                className: "cms-block-image",
                 data: {
                     name:"",
                     type:"",
@@ -408,12 +414,12 @@ if (typeof Object.create === 'undefined') {
                 options: {
                     
                 },
-                create: function(e, block){                    
+                create: function(e){                    
                    
-                   // block = $(this).data('block');
-                   // console.log(['img create', this, block]);
+                    block = $(this).data('block');
+                    console.log(['img create', this, block]);
                     var data = block.data;
-                    $(this).append('<img src="'+data.preview+'" alt="'+data.title+'" />\n\
+                    block.element.append('<img src="'+data.preview+'" alt="'+data.title+'" />\n\
                         <div class="overlay"><div class="properties">\n\
                             <div><label>Title:</label><span class="title">'+data.title+'</span></div>\n\
                             <div><label>Description:</label><span class="description">'+data.description+'</span></div>\n\
@@ -422,15 +428,15 @@ if (typeof Object.create === 'undefined') {
                             <div><label>Copyright:</label><span class="copyright">'+data.copyright+'</span></div>\n\
                         </div></div>');
                 },
-                edit: function(e, block){
-                   // var block = $(this).data('block');
-                   var $this = $(this);
-                   // console.log(['img edit', this, block]);
+                edit: function(e){
+                    var block = $(this).data('block');
+                   
+                    console.log(['img edit', this, block]);
                     
-                    $this.imageeditor({
+                    $(this).imageeditor({
                         image: block.data,
                         save: function(e, data){ 
-                            $this.trigger('update',[block, data]);
+                            block.element.trigger('update',data);
                         }
                     });
                 
@@ -441,117 +447,38 @@ if (typeof Object.create === 'undefined') {
                    // $(this).unbind('imageeditorsave');
                    // $(this).bind('imageeditorsave', function(){ $(this).css('border','solid red'); });//$.proxy(block.update, this)
                 },
-                update: function(e, block, data){
-                    
-                    var $this = $(this);
-                    
-                    if(data){
-                        block.data = $.extend(block.data, data);
-                    }
-                    
-                   // var block = $(this).data('block');
-                   // console.log(['img update',this, block]);
+                update: function(e, data){
+                    var block = $(this).data('block');
+                    console.log(['img update',this, block]);
 
-                    $this.trigger('save',  block.data);
-                    $this.find('.title').text(block.data.title);
-                    $this.find('.description').text(block.data.description);
-                    $this.find('.source').text(block.data.source);
-                    $this.find('.url').text(block.data.url);
-                    $this.find('.copyright').text(block.data.copyright); 
+                    block.element.trigger('save', data);
+                    block.element.find('.title').text(data.title);
+                    block.element.find('.description').text(data.description);
+                    block.element.find('.source').text(data.source);
+                    block.element.find('.url').text(data.url);
+                    block.element.find('.copyright').text(data.copyright); 
                 }
             },
             'cms.html': {
                 title: "HTML Block",
-                className: "cms-block-html",
-                data: {contents:""},
-                collapase: function(e, block){
-                    var contents = $(this).find('.contents').html();
-                    $(this).html(contents);
-                },
-                create: function(e, block){
-                    var $this = $(this);
-                    
-                  //  console.log($this.children().length);
-                    if($this.children().length > 0){
-                        $this.children().wrapAll('<div class="contents"/>');
-                    } else {
-                        $this.append('<div class="contents"></div>');
-                    }
-                },
-               // create: function(e, block){  },
-                edit: function(e,block){
-                    var $this = $(this);
-                    $('<div class="cms-block-html"><textarea>'+block.data.contents+'</textarea></div>').dialog({
-                    autoOpen: true,
-                    resizable: false,
-                    width:550,
-                    height:600,
-                    title: "Edit HTML",
-                    modal: true,
-                    buttons: {
-                        Save: function(){ 
-                            console.log(this);
-                           var c = $(this).find('textarea').val();
-                           $this.trigger('update', [block, {contents: c }]);
-                           $(this).dialog('close');
-                       },
-                        Cancel: function(){$(this).dialog('close')}
-                    }
-                })},
-                update: function(e, block, data){                   
-                    if(data){
-                        block.data = $.extend(block.data, data);
-                    }
-                    $(this).trigger('save',  block.data);
-                    $(this).find('.contents').html(block.data.contents);
-                }
+                data: undefined,
+                create: function(data){  },
+                edit: function(){
+                    alert('trigger edit')
+                    },
+                save: function(){}
             },
             'cms.gallery': {
                 title: "Gallery Block",
-                className: "cms-block-gallery",
-                data: {contents:""},
-                collapase: function(e, block){
-                    var contents = $(this).find('.contents').html();
-                    $(this).html(contents);
-                },
-                create: function(e, block){
-                    var $this = $(this);
-                    
-                  //  console.log($this.children().length);
-                    if($this.children().length > 0){
-                        $this.children().wrapAll('<div class="contents"/>');
-                    } else {
-                        $this.append('<div class="contents"><ul></ul></div>');
-                    }
-                },
-               // create: function(e, block){  },
-                edit: function(e,block){
-                    var $this = $(this);
-                    $('<ul class="cms-block-html cms-filemanager"></div>').dialog({
-                    autoOpen: true,
-                    resizable: false,
-                    width:550,
-                    height:600,
-                    title: "Edit HTML",
-                    modal: true,
-                    buttons: {
-                        Save: function(){ 
-                            console.log(this);
-                           var c = $(this).find('textarea').val();
-                           $this.trigger('update', [block, {contents: c }]);
-                           $(this).dialog('close');
-                       },
-                        Cancel: function(){$(this).dialog('close')}
-                    }
-                })},
-                update: function(e, block, data){                   
-                    if(data){
-                        block.data = $.extend(block.data, data);
-                    }
-                    $(this).trigger('save',  block.data);
-                    $(this).find('.contents').html(block.data.contents);
-                }
-            },
+                data: undefined,
+                create: function(e, block){ /*$(this).append('<img src="'+$(this).data('preview')+'" alt="'+$(this).data('title')+'"  contentEditable="false" />');*/ },
+                edit: function(){
+                    alert('trigger edit')
+                    },
+                save: function(){}
+            }
+            
+        },
     
         _create: function() {
             
@@ -735,7 +662,7 @@ if (typeof Object.create === 'undefined') {
         
 
 
-        insertBlock: function(name, data, edit){
+        insertBlock: function(name, data){
            // var def = $.extend({},this.defaultBlock);
            var base = Object.create(this.blocks[name]);
            var block = $.extend(true,{},this.defaultBlock,base);
@@ -745,24 +672,20 @@ if (typeof Object.create === 'undefined') {
             //$.extend(true, block.data, data);
             
             //  console.log(['insertBlock',block, base, this.defaultBlock]);
- 
-         //   b.data('block', block);
-           var b = $('<div class="ui-widget container '+block.className+'" />');
-
-            console.log(["insert block",b]);
-                      
-            block.init(data);
             
-           // b.data('block', block);
+         //   b.data('block', block);
+           var b = $(document.createElement('div'));
+           b.addClass('ui-widget container '+block.className);
+          //  b.data('block',block);
+           // 
+            console.log(["insert block",b]);
+           
+           
+            block.init(data);
+            b.data('block', block);
             b.bind('expand', block.expand); 
             this._insertBlock(b);
-            b.trigger('expand', block);
-            
-            if(edit){
-                b.trigger('edit', block);
-            }
-            
-            
+            b.trigger('expand');
             //  img.append();
            
           //  return b;
@@ -770,29 +693,20 @@ if (typeof Object.create === 'undefined') {
         
         _insertBlock: function(block, prepend){
             this.editor.focus();
-           // console.log('insert block');
+            console.log('insert block');
             var element = this._getSelectionContainerElement();
-            //console.log('insert block');
-            //console.log(element.parentNode);
-            //$(element.parentNode).css('border','solid red');
-            if($.browser.msie){
-               // element = element.parentNode;
-              //  document.selection
-                document.execCommand('insertImage', false, '#replace');
-               // this.editor.find('img[src="#replace"]').parentsUntil('.editor,section').css('border','solid red');
-                this.editor.find('img[src="#replace"]').parentsUntil('.editor,section').last().after(block);
-                this.editor.find('img[src="#replace"]').remove();
-                return
-            }
+            
+            //console.log(element);
+
 
             if(element == this.editor.get(0)){
                 return this.editor.prepend(block);
             }
 
             if(prepend){
-                return $(element).parentsUntil('.editor,section').last().before(block); //last() fixes issues with inserting into lists
+                return $(element).parentsUntil('.editor, section').last().before(block); //last() fixes issues with inserting into lists
             } else {
-                return $(element).parentsUntil('.editor,section').last().after(block);
+                return $(element).parentsUntil('.editor, section').last().after(block);
             }
         },
 
@@ -802,7 +716,7 @@ if (typeof Object.create === 'undefined') {
             if($.browser.msie){
                
                 var range = document.selection.createRange();
-                    range.collapse();
+                    
 
                 if ($(range.parentElement()).parents('.editor').is('*')) {
                     try {
@@ -827,7 +741,6 @@ if (typeof Object.create === 'undefined') {
             if ($.browser.msie) {
                 // IE case
                 range = document.selection.createRange();
-                range.collapse();
                 return range.parentElement();
             //   return range.parentElement();
             } else if (window.getSelection) {

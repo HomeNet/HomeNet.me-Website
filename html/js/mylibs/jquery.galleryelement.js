@@ -176,7 +176,7 @@
            var image =  event.data;
             var that = this;
             console.log(that);
-            image.imageeditor({
+            image.imageeditor({image:{
                      name: image.data('name'),
                      size: image.data('size'),
                     owner: image.data('owner'),
@@ -193,7 +193,7 @@
 //                save: function(event, data){
 //                    that.updateImage(event, data);
 //                }
-            });
+            }});
             this.element.bind('imageeditorsave', image, this.updateImage);
             return false;
         },
@@ -217,7 +217,7 @@
             var self = this;
             //var image = $(event.target).parent().parent();
             var image =  event.data;
-            $('<div>Are you sure you want to delete '+image.data('title')+'</div>').dialog({
+            $('<div>Are you sure you want to delete &quot;'+image.data('title')+'&quot;</div>').dialog({
                 resizable: false,
                 title: "Delete",
                 modal: true,

@@ -326,7 +326,7 @@ header a, header a:active, header a:visited  {
     color: #ffffff;
     text-decoration: none;
 }
-
+/*
 .overlay {
     position:fixed;
     min-height: 600px;
@@ -336,7 +336,7 @@ header a, header a:active, header a:visited  {
     z-index: 5;
 }
 
-
+*/
 
 nav {
 
@@ -789,8 +789,9 @@ fieldset {
 }
 
 .cms-wysiwyg  .container .ui-widget-content {
-    padding: 5px;
     text-align: center;
+    position: relative;
+    min-height: 200px;
 
 }
 
@@ -814,10 +815,10 @@ fieldset {
     z-index: 10;
 }
 
-.cms-wysiwyg  .container img {
+.cms-block-image img {
     width: auto !important;
     height: auto !important;
-
+    margin: 5px;
 }
 
 .cms-wysiwyg  .container .shield {
@@ -828,6 +829,42 @@ fieldset {
     height:100% !important;
     z-index: 5;   
 }
+
+.cms-block-image .overlay {
+    position: absolute;
+    width: 100% !important;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: #FFF;
+}
+
+.cms-block-image .properties{
+    margin: 5px;
+    text-align: left;
+}
+
+.cms-block-image label{
+    width: 150px;
+    text-align: right;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.ui-dialog .cms-block-html textarea{
+    width: 100%;
+    height: 100%;
+} 
+.ui-dialog .cms-block-html {
+    overflow: hidden !important;
+}
+
+.cms-block-html .contents {
+   overflow: auto;
+   padding: 5px;
+    
+}
+
+
 
 .cms-wysiwyg .handle {
     height: 20px;
@@ -894,13 +931,13 @@ fieldset {
 .cms-icon-space { background-position: -456px 0; }
 .cms-icon-pasteword { background-position: -480px 0; }
 .cms-icon-pagebreak { background-position: -504px 0; }
-.cms-icon-table { background-position: -528px 0; }
+.cms-icon-paragraph { background-position: -528px 0; }
 .cms-icon-h1 { background-position: -552px 0; }
 .cms-icon-h2 { background-position: -576px 0; }
 .cms-icon-h3 { background-position: -600px 0; }
 .cms-icon-h4 { background-position: -624px 0; }
 .cms-icon-h5 { background-position: -648px 0; }
-.cms-icon-section { background-position: -676px 0; }
+.cms-icon-section { background-position: -672px 0; }
 
 
 .cms-icon-new { background-position: 0 0; }
@@ -918,14 +955,14 @@ fieldset {
 .cms-icon-alignjustify { background-position: -288px -24px; }
 .cms-icon-anchor { background-position: -312px -24px; }
 .cms-icon-unlink { background-position: -336px -24px; }
-.cms-icon-editimage { background-position: -360px -24px; }
-.cms-icon-paragraph { background-position: -384px -24px; }
+.cms-icon-gallery { background-position: -360px -24px; }
+.cms-icon-html { background-position: -384px -24px; }
 .cms-icon-smilely { background-position: -408px -24px; }
-.cms-icon-resize { background-position: -432px -24px; }
+.cms-icon-config { background-position: -432px -24px; }
 
 .cms-icon-fullscreen { background-position: -456px -24px; }
 .cms-icon-pastetext { background-position: -480px -24px; }
-.cms-icon-config { background-position: -504px -24px; }
+.cms-icon-table { background-position: -504px -24px; }
 /*
 
 input[type=text], input[type=password] {

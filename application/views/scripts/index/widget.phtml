@@ -1,0 +1,27 @@
+<?php
+
+if(!empty($_POST)){
+    echo debugArray($_POST);
+}
+
+?>
+<form action="" method="post">
+    <p>Select Single Gallery:<br />
+<?php
+echo $this->formAjaxGallery('gallery', null, null, array(
+    'rest'=>$this->url(array('controller'=>'content','action'=>'rest'),'content-admin'),
+    'folder' => 'content/projects'));
+
+?>
+        </p>
+            <p>Select Single Image:<br />
+<?php
+echo $this->formAjaxImage('image', null, null, array(
+    'rest'=>$this->url(array('controller'=>'content','action'=>'rest'),'content-admin'),
+    'folder' => ''));
+
+?>
+        </p>
+    <input type="submit" value="submit">
+</form>
+ 

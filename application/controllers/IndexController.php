@@ -74,7 +74,7 @@ die(debugArray('email sent'));
         // action body
     }
 
-    public function developersAction()
+    public function widgetAction()
     {
         // action body
     }

@@ -42,7 +42,7 @@ class Content_Plugin_Element_Image_Rest {
         $types = array('.jpg','.jpeg','.png','.bmp');
         
         $helper = new CMS_View_Helper_ImagePath();
-        
+        $count = 0;
         foreach (scandir($path) as $file) {
 
             if (($file != '.') && ($file != '..') && !is_dir($file) && in_array(stristr($file,'.'), $types)) {
@@ -50,10 +50,12 @@ class Content_Plugin_Element_Image_Rest {
                 $files[] = array('path' => $image, 
                     'thumbnail' => $helper->imagePath($image, 100, 100),
                     'preview' => $helper->imagePath($image, 480, 320),
-                    'title'=>'Image Title',
-                    'source'=>'Image Source',
-                    'sourceUrl'=>'',
-                    'copyright'=>'My Copyright');
+                    'title'=>'Title '.$count,
+                    'description'=>'description '.$count,
+                    'source'=>'Source '.$count,
+                    'url'=>'',
+                    'copyright'=>'My Copyright '.$count);
+                $count++;
             }
         }
         //return array('test'=>'test');
