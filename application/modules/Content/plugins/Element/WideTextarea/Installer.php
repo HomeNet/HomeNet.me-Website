@@ -26,24 +26,23 @@
  *
  * @author Matthew Doll <mdoll at homenet.me>
  */   
-class Content_Plugin_Element_SimpleEditor_Installer {
+class Content_Plugin_Element_WideTextarea_Installer {
     
     function getDependencies(){
         $dependencies = array(
-            'Zend_Form_Element_TextArea'
+            'Zend_Form_Element_Textarea'
         );
         return $dependencies;
     }
     
-        /**
+     /**
      * Get Mysql Column Datatype.
      * 
      * @return string 
      */
     function getMysqlColumn(){
-        return 'LONGTEXT'; //doesnot require a column
+        return 'LONGTEXT';
     }
-    
     
 //    function getFields($fieldSets){
 //         $fields = parent::installFields($fieldSets);
