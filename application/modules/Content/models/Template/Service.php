@@ -110,7 +110,7 @@ class Content_Model_Template_Service {
      * @return string
      * @throws NotFoundException
      */
-    public function getPathBySectionUrl($section, $url) {
+    public function getPathBySectionTemplate($section, $template) {
         
         if(!is_numeric($section)){
             //@todo cache a lookuparray to make this faster
@@ -118,15 +118,27 @@ class Content_Model_Template_Service {
             $object = $service->getObjectByUrl($section);
             $section = $object->id;
         }
-        
-        
-        $result = $this->getMapper()->getPath($section, $url) ;
 
-        if (empty($result)) {
-            throw new NotFoundException('URL: ' . $url . ' Not Found', 404);
+        $path = $this->getMapper()->fetchPathBySection($section);
+
+        if (empty($path)) {
+            throw new NotFoundException('Section not found: ' . $section . ' Not Found', 404);
         }
-        return $result;
+        
+        if (!file_exists($path .'/'. $template.'.phtml')) {
+            throw new Exception("Template: $template is not in the cache");
+        }
+        
+        return $path;
     }
+    
+    public function getTemplate($template) {
+        return $template.'.phtml';
+    }
+
+    
+
+    
 
     /**
      * @param Content_Model_Template_Interface|array $mixed

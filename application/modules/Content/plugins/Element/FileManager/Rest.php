@@ -270,7 +270,7 @@ class Content_Plugin_Element_FileManager_Rest {
         foreach (scandir($path) as $file) {
 
             if (($file != '.') && ($file != '..') && !is_dir($file) && in_array(stristr($file,'.'), $types)) {
-                $image = $folder.'/'.$file;
+                $image = $folder.$file;
                 $files[] = array('path' => $image, 
                     'thumbnail' => $helper->imagePath($image, 100, 100),
                     'preview' => $helper->imagePath($image, 480, 320),

@@ -35,6 +35,10 @@ class CMS_View_Helper_FormAjaxFileManager extends CMS_View_Helper_FormAjaxElemen
         if (!empty($value) && !is_array($value)) {
             throw new Exception('invalid value');
         }
+        
+        if(empty($params['folder'])){
+            $params['folder'] = '';
+        }
 
         //add class;
         $class = 'cms-element-filemanager';
@@ -62,14 +66,14 @@ class CMS_View_Helper_FormAjaxFileManager extends CMS_View_Helper_FormAjaxElemen
     }
 
     protected function _list($values, $attribs, $params) {
-        $xhtml = '<ul' . $this->_htmlAttribs($attribs) . $this->_htmlData($params) . '>';
+        $xhtml = '<div' . $this->_htmlAttribs($attribs) . $this->_htmlData($params) . '>';
         if (!is_null($values) && is_array($values)) {
 
             foreach ($values as $value) {
                 $xhtml .= $this->_listItem($value);
             }
         }
-        $xhtml .= '</ul>';
+        $xhtml .= '</div>';
         return $xhtml;
     }
 
@@ -84,7 +88,7 @@ class CMS_View_Helper_FormAjaxFileManager extends CMS_View_Helper_FormAjaxElemen
         $value['preview'] = $this->view->imagePath($value['path'], 480, 320);
         //    }
 
-        return '<li' . $this->_htmlData($value) . '></li>';
+        return '<div' . $this->_htmlData($value) . '></div>';
     }
 
     protected function _htmlData($values) {

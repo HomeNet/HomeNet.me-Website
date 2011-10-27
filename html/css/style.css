@@ -616,14 +616,6 @@ fieldset {
 }
 
 
-.cms-filemanager li{
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-
-
 .cms-filemanager .icon-item {
     position: relative;
     border: #999 solid 1px; 
@@ -674,12 +666,24 @@ fieldset {
     height: 210px;
 }
 
-.cms-filemanager .item-container  {
+.cms-block-gallery .item-container  {
     display: block;
     overflow: auto;
     
     /*@todo auto adjust this*/
     
+    margin: 0; 
+    padding: 0;
+    text-align: left;
+   height: 210px;
+}
+
+.cms-filemanager .item-container  {
+    display: block;
+    overflow: auto;
+    
+    /*@todo auto adjust this*/
+ 
     margin: 0; 
     padding: 0;
     text-align: left;
@@ -776,28 +780,50 @@ fieldset {
 }
 
 .cms-wysiwyg .editor {
+    text-align: left;
     padding: 10px;
     color: #000;
     position: relative;
+    min-height:400px;
 }
 
-.cms-wysiwyg  .container {
+.cms-wysiwyg textarea {
+    padding: 10px;
+    color: #000;
+    position: relative;
+    display: block;
+   /* width: 100%; 
+    height: 500px;*/
+}
+
+.cms-wysiwyg  .block {
     padding: 0px;
     border: 1px dotted #AAAAAA;
     position: relative;
     margin-bottom: 1em;
 }
 
-.cms-wysiwyg  .container .ui-widget-content {
+::selection{
+    border: none !important;
+}
+
+.cms-wysiwyg  .block > .ui-widget-content {
     text-align: center;
     position: relative;
     min-height: 200px;
 
 }
 
+.cms-wysiwyg  .block > .add {
+    position: absolute;
+    top: 4px  !important;
+    right: 45px !important;
+    width: auto !important;
+    height: auto !important;
+    z-index: 10;
+}
 
-
-.cms-wysiwyg  .container .edit {
+.cms-wysiwyg  .block > .edit {
     position: absolute;
     top: 4px  !important;
     right: 25px !important;
@@ -806,7 +832,7 @@ fieldset {
     z-index: 10;
 }
 
-.cms-wysiwyg  .container .delete {
+.cms-wysiwyg  .block > .delete {
      position: absolute;
     top: 4px  !important;
     right: 5px !important;
@@ -821,7 +847,7 @@ fieldset {
     margin: 5px;
 }
 
-.cms-wysiwyg  .container .shield {
+.cms-wysiwyg  .block .shield {
     position: absolute;
     top: 0  !important;
     left: 0  !important;
@@ -963,6 +989,23 @@ fieldset {
 .cms-icon-fullscreen { background-position: -456px -24px; }
 .cms-icon-pastetext { background-position: -480px -24px; }
 .cms-icon-table { background-position: -504px -24px; }
+
+
+.CodeMirror {
+    background-color: #FFF;
+    text-align: left;
+    color: #000;
+    margin: 5px;
+}
+
+.CodeMirror-scroll {
+    min-height: 300px;
+  height: auto !important;
+  
+  overflow-y: hidden!important;
+  overflow-x: auto!important;
+  width: 100%;
+}
 /*
 
 input[type=text], input[type=password] {

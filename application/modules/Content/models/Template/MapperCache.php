@@ -49,13 +49,18 @@ class Content_Model_Template_MapperCache implements Content_Model_Template_Mappe
         $this->_mapper = $mapper;
     }
 
-    private function _getCacheDir($section) {
-        return '/cache/content-templates/' . $section;
+    public function fetchPathBySection($section) {
+        
+        if(!is_numeric($section)){
+            throw new Exception('Invalid Section: '.$section);
+        }
+        
+        return APPLICATION_PATH .'/cache/content-templates/' . $section.'/';
     }
     
-    private function _getCachePath($section, $template) {
-        return $this->_getCacheDir($section) . '/' . $template . '.phtml';
-    }
+//    private function _getCachePath($section) {
+//        return $this->_getCacheDir($section) . '/';
+//    }
 
     /**
      * Fetch Section Content Object by Id
@@ -159,13 +164,4 @@ class Content_Model_Template_MapperCache implements Content_Model_Template_Mappe
     public function deleteAll() {
         return $this->_mapper->deleteAll();
     }
-
-    public function getPath($section, $template) {
-        $path = $this->_getCachePath($section, $template);
-        if (!file_exists(APPLICATION_PATH . $path)) {
-            return false;
-        }
-        return $path;
-    }
-
 }

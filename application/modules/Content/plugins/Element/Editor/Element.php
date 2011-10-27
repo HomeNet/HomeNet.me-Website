@@ -63,7 +63,13 @@ class Content_Plugin_Element_Editor_Element extends Content_Model_Plugin_Element
         return $element;
     }
     
+   public function getSaveValue(){
+       
+   }
    
+   public function getFormValue(){
+       
+   }
    
     
     function render(){
@@ -92,7 +98,7 @@ class Content_Plugin_Element_Editor_Element extends Content_Model_Plugin_Element
            
            $object = new $class(array('node'=>$block));
            
-           $replacement = $object->renderSave();
+           $replacement = $object->renderForm();
            if($replacement){
            
            //die(debugArray($block->parentNode));

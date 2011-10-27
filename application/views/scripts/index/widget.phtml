@@ -6,22 +6,36 @@ if(!empty($_POST)){
 
 ?>
 <form action="" method="post">
-    <p>Select Single Gallery:<br />
+    <section>
+    <h2>Select Gallery:</h2>
 <?php
 echo $this->formAjaxGallery('gallery', null, null, array(
     'rest'=>$this->url(array('controller'=>'content','action'=>'rest'),'content-admin'),
     'folder' => 'content/projects'));
 
 ?>
-        </p>
-            <p>Select Single Image:<br />
+       </section>
+    <section>
+            <h2>Select Single Image:</h2>
 <?php
 echo $this->formAjaxImage('image', null, null, array(
     'rest'=>$this->url(array('controller'=>'content','action'=>'rest'),'content-admin'),
     'folder' => ''));
 
 ?>
-        </p>
+        </section>
+    
+        <section>
+            <h2>Wysiwyg Editor:</h2>
+<?php
+echo $this->formAjaxWysiwyg('content', null, null, array(
+    'rest'=>$this->url(array('controller'=>'content','action'=>'rest'),'content-admin'),
+    'folder' => ''));
+
+?>
+        </section>
+    
+    
     <input type="submit" value="submit">
 </form>
  

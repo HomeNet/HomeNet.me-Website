@@ -53,21 +53,28 @@ class Content_IndexController extends Zend_Controller_Action
             }
         }
          
+         $service = new Content_Model_Template_Service();
+        $path = $service->getPathBySectionTemplate($section, $template);
+        $view = $this->_helper->viewRenderer->view;
+        
+        $paths = array_reverse($view->getScriptPaths());
+        foreach($paths as $value){
+            $view->addScriptPath($value.'generic/');
+        }
+   
          
+       //  $this->_helper->viewRenderer->setNoController(true);
          
-         
-         
-        $this->_helper->viewRenderer->view->setScriptPath(APPLICATION_PATH);
+        $view->addScriptPath($path);
         // $this->_helper->viewRenderer->setNoRender();  
-       // die(debugArray($this->_helper->viewRenderer->view->getScriptPaths())); 
+     //  die(debugArray($this->_helper->viewRenderer->view->getScriptPaths())); 
          
          
-        $service = new Content_Model_Template_Service();
-        $path = $service->getPathBySectionUrl($section, $template);
+        
         //categories
         $this->view->params = $this->_getAllParams();
         //tags
-        return $this->renderScript($path);
+        return $this->renderScript($service->getTemplate($template));
         //return $this->renderScript($path);
         
     }

@@ -3,3 +3,6 @@
 
 User-agent: *
 
+Disallow /mcdportalv4/
+Disallow /awards.php
+

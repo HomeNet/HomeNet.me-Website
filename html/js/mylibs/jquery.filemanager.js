@@ -187,7 +187,7 @@
 })(jQuery);
 
 (function($) {
-   
+   $.cmsTabCount = 0;
     // The jQuery.aj namespace will automatically be created if it doesn't exist
     $.widget("cms.filemanager", {
         options: {
@@ -216,8 +216,8 @@
         
             for(var i in this.options.managers){
                 
-                var id = 'tabs-'+this.options.name+'-'+i;
-                
+                var id = 'tabs-'+this.options.name+'-'+i+'-'+$.cmsTabCount;
+                $.cmsTabCount++;
                 this.options.managers[i] = $.extend(true, {}, this.options.managers[i]);
                 
                 this.options.managers[i].init({
@@ -319,6 +319,8 @@
 
             var that = this;
             this.dialog.dialog("close");
+            //console.log(['managers', this.options.managers]);
+            
             $.each(this.options.managers[this.currentTab].getSelected(), function(index,value){
                 that._trigger('selected', null ,value);
             } );

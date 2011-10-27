@@ -86,7 +86,7 @@ class CMS_Form extends Zend_Form {
 
         $other = array('multicheckbox', 'select', 'radios', 'pickColor');
         
-         $wide = array('textarea','ajaxgallery');
+        // $wide = array('textarea','ajaxgallery');
         //
         //die(debugArray($element->getDecorators()));
 
@@ -104,7 +104,7 @@ class CMS_Form extends Zend_Form {
             }
             
             $suffix = '';
-            if (in_array($type, $wide)) {
+            if(isset($element->wide)  && ($element->wide == true)){
                $suffix .='-wide';
             }
 

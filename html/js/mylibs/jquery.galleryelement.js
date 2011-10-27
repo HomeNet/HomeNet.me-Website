@@ -1,17 +1,3 @@
-/*
- * jQuery File Upload User Interface Plugin 5.0.17
- * https://github.com/blueimp/jQuery-File-Upload
- *
- * Copyright 2010, Sebastian Tschan
- * https://blueimp.net
- *
- * Licensed under the MIT license:
- * http://creativecommons.org/licenses/MIT/
- */
-
-/*jslint nomen: true, unparam: true, regexp: true */
-/*global window, document, URL, webkitURL, FileReader, jQuery */
-
 (function($) {
     // The jQuery.aj namespace will automatically be created if it doesn't exist
     $.widget("cms.galleryelement", {
@@ -43,8 +29,11 @@
             
             this._loadOptions();
             
+            this.element.addClass('ui-widget ui-widget-content item-container');
+            
             this.element.wrap('<div class="ui-widget cms-filemanager '+this.options.className+'" />')
             
+            this.element.bind('update', $.proxy(this.updateContainer,this));
             //<div class="cms-element-image" data-name="image" data-alt="" data-path="" data-thumbnail=""></div>
 
             //if layout is compact set max to 1;
@@ -60,51 +49,69 @@
             for (var i = 0; i < images.length; i++) {
                 this.addImageContents($(images[i]));
                 this.itemCount++;
-            }          
-            this.button = $('<button class="cms-button"></button>');
+            }    
+
+            this.button = $('<a class="cms-button" htrf="#"></a>');
             
             var that = this;
                 
-                this.element.sortable({
-                    placeholder: "ui-state-highlight icon-item"
-                });
-                this.element.addClass('item-container ui-widget-content');
-                this.element.disableSelection();
-                this.button.text('Select Images');
-                this.element.after($('<div class="ui-widget-header cms-footer"></div>').append(this.button));
+            this.element.sortable({
+                placeholder: "ui-state-highlight icon-item"
+            });
+           
+            this.element.disableSelection();
+            this.button.text('Select Images');
+            this.element.after($('<div class="ui-widget-header cms-footer"></div>').append(this.button));
         
             this.button.button();
             this.button.bind("click.selectimage", $.proxy(this.selectImages,this));
             //this.button.disableDefault
+         //   console.log(['gallery create',this.element.length]);
+           // this.button.css('border', 'solid red');
+         //  console.log([images.length,this.options.maxItems]);
 
             //hide select if the container is full
-            if(images.length == this.options.maxitems){
-                alert('hide select '+this.options.max);
+            if(images.length == this.options.maxItems){
+              //  alert('hide select '+this.options.max);
                 this.hideSelect();
             }
-            this.element.filemanager(this.options);
+            this.element.filemanager({
+                name: this.options.name,
+                folder: this.options.folder,
+                hash:   this.options.hash,
+                type:   this.options.type,
+                rest:   this.options.rest,
+                maxItems:  this.options.maxItems,
+                selected: $.proxy(this.addImage,this)
+            }
+        );
 
             //right before submit, update order elements
-            this.element.parents('form').bind("submit",function(){   
+            this.element.parents('form').first().bind("submit",function(){   
                 that.element.children().each(function(index, element){
                     $(element).find('.order').val(index);
                 });  
             });
+            
+          //  console.log(['gallery',this.element]);
      
             //when a file is selected, called once for each image selected
-            this.element.bind("filemanagerselected",$.proxy(this.addImage,this));
+           // this.element.bind("filemanagerselected",);
             
         },
 
 
-        selectImages: function(){
-            
+        selectImages: function(e){
+           // console.log('selectimages');
+            //e.preventDefault();
             var count = this.options.maxItems - this.itemCount;
             if(count <= 0){
                 alert("Form Full");
                 this.hideSelect();
                 return false;
             }
+            
+            
             
             this.element.filemanager("option","maxItems",count);
             this.element.filemanager("show");
@@ -128,7 +135,7 @@
                 return;
             }
 
-            var img = $('<li />');//document.createElement('div');
+            var img = $('<div />');//document.createElement('div');
             //data.order = this.itemCount;
             img.data(data);
             img = this.addImageContents(img); 
@@ -143,11 +150,16 @@
         addImageContents: function(image){
             
             image.addClass('icon-item ui-widget-content');
-            
+
             var name = this.options.name;
             if(this.options.maxItems != 1){
                 name += '['+this.count+']';
             }
+            image.bind('edit', this.edit);
+            image.bind('save', this.save);
+            image.bind('deletePrompt', this.deletePrompt);
+            image.bind('delete', this.deleteImage);
+            
             
             image.append('<img src="'+image.data('thumbnail')+'">'+
                 '<input class="path" type="hidden" name="'+name+'[path]"  value="'+image.data('path')+'">'+
@@ -158,9 +170,14 @@
                 '<input class="order" type="hidden" name="'+name+'[order]" value="'+this.itemCount+'">');
             var edit = $('<div class="ui-state-default ui-corner-all edit ui-button"  ><span class="ui-icon ui-icon-pencil"></span></div>');
             // edit.editimage(image.data());
-            edit.bind("click.selectimage", image, $.proxy(this.editPrompt,this));
+           // edit.bind("click.selectimage", image, $.proxy(this.editPrompt,this));
+           edit.bind("click.selectimage", function(){
+               $(this).trigger('edit');
+           });
             var del = $('<div class="ui-state-default ui-corner-all delete ui-button"  ><span class="ui-icon ui-icon-closethick"></span></div>');
-            del.bind("click.selectimage", image, $.proxy(this.deletePrompt,this));
+            del.bind("click.selectimage",  function(){
+               $(this).trigger('deletePrompt');
+           });
             //  edit.append('');
             //  '<div class="ui-state-default ui-corner-all content-image-delete ui-button"><span class="ui-icon ui-icon-closethick"></span></div>');
             //  image.children('content-image-edit').click(this.editImage(image));// $.proxy(this, "editImage"));// //this.editImage(image)
@@ -170,37 +187,41 @@
             return image;
         },
         
-        editPrompt: function(event){
-            
-            event.preventDefault();
-           var image =  event.data;
-            var that = this;
-            console.log(that);
+        edit: function(event){
+            //event.preventDefault();
+           var image =  $(this);
+            var data = image.data();
+            //console.log(that);
             image.imageeditor({image:{
-                     name: image.data('name'),
-                     size: image.data('size'),
-                    owner: image.data('owner'),
-                     date: image.data('date'),
-                    width: image.data('width'),
-                   height: image.data('height'),
-                thumbnail: image.data('thumbnail'),
-                  preview: image.data('preview'),
-                    title: image.data('title'),
-              description: image.data('description'),
-                   source: image.data('source'),
-                url: image.data('url'),
-                copyright: image.data('copyright')
-//                save: function(event, data){
-//                    that.updateImage(event, data);
-//                }
-            }});
-            this.element.bind('imageeditorsave', image, this.updateImage);
+                     name: data.name,
+                     size: data.size,
+                    owner: data.owner,
+                     date: data.date,
+                    width: data.width,
+                   height: data.height,
+                   
+                   path: data.path,
+                   
+                thumbnail: data.thumbnail,
+                  preview: data.preview,
+                    
+                    title: data.title,
+              description: data.description,
+                   source: data.source,
+                      url: data.url,
+                copyright: data.copyright
+            },
+                 save: function(event, data){
+                    image.trigger('save', data);
+                }
+            });
+          //  this.element.bind('imageeditorsave', image, this.updateImage);
             return false;
         },
         
-        updateImage: function(event, data){
-            console.log('Update Image');
-            var image =  event.data;
+        save: function(event, data){
+            //console.log('Update Image');
+            var image =  $(this)
             
             image.data(data);
             //this.find(".content-image-alt").html(data.title);
@@ -216,14 +237,14 @@
            // event.preventDefault();
             var self = this;
             //var image = $(event.target).parent().parent();
-            var image =  event.data;
+            var image =  $(this);
             $('<div>Are you sure you want to delete &quot;'+image.data('title')+'&quot;</div>').dialog({
                 resizable: false,
                 title: "Delete",
                 modal: true,
                 buttons: {
                     Delete: function(){
-                        self.deleteImage(image);
+                        image.trigger('delete');
                         $( this ).dialog( "close" );
                     },
                     Cancel: function() {
@@ -233,11 +254,18 @@
             });
             return false;
         },
+        deleteImage:function(){
+            console.log('deleteImage');
+          var parent = $(this).parent();
+          $(this).remove(); 
+          parent.trigger('update');
+        },
         
-        deleteImage: function(image){
-            
+        updateContainer: function(e){
+              console.log('updateContainer');
+            //console.log(['deleteImage',image, this]);
             this.showSelect();
-            image.remove();
+            
             
             this.element.children().each(function(index, element){
                 $(element).find('.order').val(index);

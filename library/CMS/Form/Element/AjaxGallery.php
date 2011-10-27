@@ -31,4 +31,5 @@ class CMS_Form_Element_AjaxGallery extends CMS_Form_Element_Ajax
      * @var string
      */
     public $helper = 'formAjaxGallery';
+    public $wide = true;
 }

@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Content_Form_Template extends Zend_Form
+class Content_Form_Template extends CMS_Form
 {
 
     public function init()
@@ -42,7 +42,7 @@ class Content_Form_Template extends Zend_Form
         $url->addFilter('StripTags');
         $this->addElement($url);
         
-        $content = $this->createElement('textarea','content');
+        $content = $this->createElement('AjaxCodeEditor','content');
         $content->setLabel('Template: ');
         $content->setAttrib('rows','35');
         $content->setAttrib('cols','110');

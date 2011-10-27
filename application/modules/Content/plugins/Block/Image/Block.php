@@ -74,8 +74,8 @@ class Content_Plugin_Block_Image_Block extends Content_Model_Plugin_Block {
         $doc = new DOMDocument();
         $block = $doc->createElement('div');
        
-        $this->_value['thumbnail'] = $this->_view->image($this->_value['path'], '', 100, 75);
-        $this->_value['preview'] = $this->_view->image($this->_value['path'], '', 480, 320);
+        $this->_value['thumbnail'] = $this->_view->imagePath($this->_value['path'], '', 100, 75);
+        $this->_value['preview'] = $this->_view->imagePath($this->_value['path'], '', 480, 320);
 
         //get image info from db
         

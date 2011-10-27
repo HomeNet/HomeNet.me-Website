@@ -21,8 +21,13 @@
     <!-- CSS concatenated and minified via ant build script-->
 
     
-
+    <?php if (APPLICATION_ENV == 'production') { ?>
+    <link rel="stylesheet" href="/css/style.css">
+    <?php 
+        } else { ?>
     <link rel="stylesheet" href="/css/style.css?v=<?php echo time(); ?>">
+    <?php } ?>
+    
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css" type="text/css" media="all" />
 <?php
  echo $this->headLink();
@@ -56,13 +61,13 @@
     </nav>
     <aside>
         <ul>
-            <li><a href="http://facebook.com/mdoll"><img src="/img/social/16/facebook.png" /></a></li>
-            <li><a href="http://twitter.com/archicroc"><img src="/img/social/16/twitter.png" /></a></li> 
-            <li><a href="http://www.flickr.com/photos/archicroc"><img src="/img/social/16/flickr.png" /></a></li>
-            <li><a href="http://www.youtube.com/user/crocodolljr"><img src="/img/social/16/youtube.png" /></a> </li>
-            <li><a href="https://plus.google.com/105807368292490700748/"><img src="/img/social/16/google-plus.png" /></a> </li>
-            <li><a href="https://github.com/ArchiCroc"><img src="/img/social/16/github.png" /></a> </li>
-            <li><a href="/contact"><img src="/img/social/16/email.png" /></a></li> 
+            <li><a href="http://facebook.com/mdoll"><img src="/img/social/16/facebook.png" alt="Facebook"/></a></li>
+            <li><a href="http://twitter.com/archicroc"><img src="/img/social/16/twitter.png" alt="Twiiter"/></a></li> 
+            <li><a href="http://www.flickr.com/photos/archicroc"><img src="/img/social/16/flickr.png" alt="Flickr"/></a></li>
+            <li><a href="http://www.youtube.com/user/crocodolljr"><img src="/img/social/16/youtube.png" alt="YouTube"/></a> </li>
+            <li><a href="https://plus.google.com/105807368292490700748/"><img src="/img/social/16/google-plus.png" alt="Google+"/></a> </li>
+            <li><a href="https://github.com/ArchiCroc"><img src="/img/social/16/github.png" alt="GitHub"/></a> </li>
+            <li><a href="/contact"><img src="/img/social/16/email.png" alt="Email" /></a></li> 
         </ul>
     </aside>
     <div id="main">

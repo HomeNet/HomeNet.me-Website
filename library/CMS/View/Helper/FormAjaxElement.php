@@ -43,9 +43,7 @@ class CMS_View_Helper_FormAjaxElement extends Zend_View_Helper_FormElement {
          if(!is_array($options)){
             $options = array();
         }
-        if(empty($params['folder'])){
-            $params['folder'] = '';
-        }
+        
 
         // Set ID for element
         if (empty($attribs['id'])) {

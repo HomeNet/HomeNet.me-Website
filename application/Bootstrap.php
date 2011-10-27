@@ -144,7 +144,19 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
 }
 
+function _htmlspecialchars($item){
+    if(is_array($item)){
+        return array_map("_htmlspecialchars", $item);
+    }
+     return htmlspecialchars($item);
+    //return htmlspecialchars($item);
+}
+
+
 function debugArray($array) {
+    if(is_array($array)){
+   $array = array_map("_htmlspecialchars", $array);
+    }
     return '<pre>' . print_r($array, 1) . '</pre>';
 }
 

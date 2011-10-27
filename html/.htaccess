@@ -308,6 +308,14 @@ FileETag None
   RewriteEngine On
 </IfModule>
 
+redirect 410 /award.php
+redirect 410 /awards.php
+redirect 410 /mcdportalv4/
+
+
+
+
+
 <IfModule mod_rewrite.c>
   RewriteCond %{REQUEST_FILENAME} -s [OR]
   RewriteCond %{REQUEST_FILENAME} -l [OR]
@@ -336,11 +344,7 @@ FileETag None
 # Option 1:
 # Rewrite "www.example.com -> example.com" 
 
-<IfModule mod_rewrite.c>
-  RewriteCond %{HTTPS} !=on
-  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-  RewriteRule ^ http://%1%{REQUEST_URI} [R=301,L]
-</IfModule>
+
 
 
 
@@ -513,3 +517,6 @@ php_value APPLICATION_ENV "production"
 <IfModule php5_module>
 	php_value session.cookie_httponly true
 </IfModule>
+
+
+

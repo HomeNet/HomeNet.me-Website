@@ -34,7 +34,6 @@ abstract class Content_Model_Plugin_Element {
     public function __construct($config = array()) {
         if (isset($config['data'])) {
 
-
             if (($this->isArray == true) && is_string($config['data'])) {
                 $config['data'] = unserialize($config['data']);
             }
@@ -50,7 +49,7 @@ abstract class Content_Model_Plugin_Element {
     }
 
     public function __toString() {
-        return (string) $this->_value;
+        return  $this->render();
     }
     
     public function hasValue(){
@@ -65,6 +64,17 @@ abstract class Content_Model_Plugin_Element {
     public function getValue() {
         return $this->_value;
     }
+    
+    public function getSaveValue(){
+        if(($this->isArray == true) && !empty($this->_value)){
+            return serialize($this->getValue());
+        }
+        return $this->getValue();
+   }
+   
+   public function getFormValue(){
+       return $this->getValue();
+   }
 
     /**
      * get any custom options for the setup of the field type
@@ -91,5 +101,9 @@ abstract class Content_Model_Plugin_Element {
     
     public function delete(Content_Model_Content $content){
         
+    }
+    
+    public function render(){
+        return (string) $this->_value;
     }
 }

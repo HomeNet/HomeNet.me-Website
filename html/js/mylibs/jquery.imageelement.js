@@ -1,17 +1,3 @@
-/*
- * jQuery File Upload User Interface Plugin 5.0.17
- * https://github.com/blueimp/jQuery-File-Upload
- *
- * Copyright 2010, Sebastian Tschan
- * https://blueimp.net
- *
- * Licensed under the MIT license:
- * http://creativecommons.org/licenses/MIT/
- */
-
-/*jslint nomen: true, unparam: true, regexp: true */
-/*global window, document, URL, webkitURL, FileReader, jQuery */
-
 (function($) {
     // The jQuery.aj namespace will automatically be created if it doesn't exist
     $.widget("cms.imageelement", $.cms.galleryelement, {
@@ -26,7 +12,7 @@
             this._loadOptions();
             
             this.element.wrap('<div class="ui-widget cms-filemanager cms-element-image" />')
-            
+            this.element.bind('update', $.proxy(this.updateContainer,this));
             //<div class="cms-element-image" data-name="image" data-alt="" data-path="" data-thumbnail=""></div>
             
             var images = this.element.children();
@@ -89,17 +75,28 @@
                     </div>';
             
             var row = $(item);
+            
+            image.bind('edit', this.edit);
+            image.bind('save', this.save);
+            image.bind('deletePrompt', this.deletePrompt);
+            image.bind('delete', this.deleteImage);
 
             
             row.find('.edit').button({
                     text: false,
                     icons: {primary: 'ui-icon-pencil'}
-            }).bind('click', image,$.proxy(this.editPrompt, this));
+            }).bind('click', function(){
+               $(this).trigger('edit');
+               return false;
+           });
           
             row.find('.delete').button({
                     text: false,
                     icons: {primary: 'ui-icon-closethick'}
-             }).bind('click', image,$.proxy(this.deletePrompt,this));
+             }).bind('click', function(){
+               $(this).trigger('delete');
+               return false;
+           });
             
             image.append(row);
             
@@ -113,12 +110,12 @@
             this.count++;
             return image;
         },
-        updateImage: function(event, data){
+        save: function(event, data){
 
-            $.cms.galleryelement.prototype.updateImage.call(this, event, data);
+            $.cms.galleryelement.prototype.save.call(this, event, data);
 
 //            this.find("span.path").val(data.path);
-            event.data.find("div.title").text(data.title);
+            $(this).find("div.title").text(data.title);
 //            this.find("span.source").val(data.source);
 //            this.find("span.url").val(data.url);
 //            this.find("span.copyright").val(data.copyright);

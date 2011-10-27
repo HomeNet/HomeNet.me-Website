@@ -43,6 +43,10 @@ class CMS_View_Helper_FormAjaxImage extends CMS_View_Helper_FormAjaxFileManager 
             $value['type'] = 'image';
         }
         
+        if(empty($params['folder'])){
+            $params['folder'] = '';
+        }
+        
         $params['hash'] = securityHash($params['folder']);
 
         //add class;

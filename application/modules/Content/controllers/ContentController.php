@@ -76,6 +76,7 @@ class Content_ContentController extends Zend_Controller_Action
         
         $service = new Content_Model_Content_Service();
         $object = $service->getObjectById($this->_getParam('id'));
+      //  die(debugArray($object));
         $form = $object->getForm();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
         $form->addElement('hidden', 'section', array('value' =>$object->section));
