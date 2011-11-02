@@ -41,7 +41,7 @@ class Content_Plugin_Element_Image_Element  extends Content_Model_Plugin_Element
         $path->setLabel('Path: ');
          $config = Zend_Registry::get('config');
         $path->setDescription('Path is Prefixed with: '.$config->site->uploadDirectory);
-        $path->setRequired('true');
+        //$path->setRequired('true');
         $path->addFilter('StripTags');//@todo filter chars
         $form->addElement($path);
         
@@ -66,4 +66,8 @@ class Content_Plugin_Element_Image_Element  extends Content_Model_Plugin_Element
                 
         return $element;
     }
+    
+//    public function getSaveValue(){
+//        die(debugArray(parent::getSaveValue()));
+//   }
 }

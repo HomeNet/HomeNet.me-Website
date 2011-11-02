@@ -21,8 +21,8 @@ if (typeof Object.create === 'undefined') {
     // The jQuery.aj namespace will automatically be created if it doesn't exist
     $.widget("cms.wysiwyg", {
         options: {
-            toolbar: "bold italic strike removeformat | insertLink insertImage insertGallery insertHtml "+
-        "| unorderedlist orderedlist indent outdent superscript subscript " +
+            toolbar: "bold italic strike removeformat | insertLink | insertImage insertGallery insertHtml insertDivider "+
+        "| unorderedlist orderedlist superscript subscript " +
         "section paragraph h2 h3 h4 | htmlView" //h1 //h5//blockquote code //fontcolor
         },
         actions: {
@@ -75,32 +75,6 @@ if (typeof Object.create === 'undefined') {
                     // document.execCommand("createLink", false, urlPrompt);
                     alert(this.getSelectionContainerElement());
                     return false;
-                }
-            },
-            insertImage: {
-                title: "Insert Image",
-                iconClass: 'cms-icon-image',
-                hotkey: 'ctrl+g',
-                init: function(){
-                    var self = this;
-                    this.editor.filemanager({
-                        maxItems: 20, 
-                        folder: this.element.data('folder'), 
-                        rest: this.element.data('rest'), 
-                        hash: this.element.data('hash'),
-                        
-                    
-                       selected: function(event,data){
-                             self.insertBlock('cms.image', data);
-                       }
-                    });
-              
-                },
-                action: function(){
-                    this.editor.filemanager("show");
-                //  var urlPrompt = prompt("Enter Image URL:", "http://");
-                //document.execCommand("InsertImage", false, urlPrompt); 
-                // this._insertHtml('<div style="width: 100px; height:100px; background: #f00; float:left">dfsdsfsf</div>');
                 }
             },
             blockquote: {
@@ -178,7 +152,7 @@ if (typeof Object.create === 'undefined') {
                    // console.log('wrapping');
                   //  console.log($().wrapSelection().parentsUntil( this.editor));
                     document.createElement('section');//this fixes html5 issue in ie8
-                    $().wrapSelection().parentsUntil('.editor').filter('p, h1, h2, h3, h4, h5, hr, ul, ol').wrapAll('<section />'); //div class="section"
+                    $().wrapSelection().parentsUntil('.editor').filter('p, h1, h2, h3, h4, h5, hr, ul, ol').wrapAll('<div class="section"/>'); //div class="section"
                     //  $().wrapSelection().parentsUntil('.editor').wrapAll('<div class="section" />');
                     this.editor.find('.selection').replaceWith(function() {
                         return $(this).contents();
@@ -256,24 +230,65 @@ if (typeof Object.create === 'undefined') {
                 action: function(){
                    // $().wrapSelection().removeClass('selection').css('color','#f00');
                 // this.editor.find('.selection').unwrap();
-                    this.insertBlock('cms.html', {}, true)
+                    this.insertBlock('cms.html', {}, true);
                     
                 }
             },
+           insertImage: {
+                title: "Insert Image",
+                iconClass: 'cms-icon-image',
+                hotkey: 'ctrl+g',
+                init: function(){
+                    var self = this;
+                    this.editor.filemanager({
+                        maxItems: 20, 
+                        folder: this.element.data('folder'), 
+                        rest: this.element.data('rest'), 
+                        hash: this.element.data('hash'),
+                        
+                    
+                       selected: function(event,data){
+                             self.insertBlock('cms.image', data);
+                       }
+                    });
+              
+                },
+                action: function(){
+                    this.editor.filemanager("show");
+                }
+            },
+            
             insertGallery: {
                 title: "Insert Gallery",
                 iconClass: 'cms-icon-gallery',
                 action: function(){
-                    this.insertBlock('cms.gallery', {}, true)  
+                    this.insertBlock('cms.gallery', {}, true);
                 }
             },
             insertHtml: {
                 title: "Insert HTML",
                 iconClass: 'cms-icon-html',
                 action: function(){
-                    this.insertBlock('cms.html', {}, true)  
+                    this.insertBlock('cms.html', {}, true);
                 }
             },
+            
+            insertDivider: {
+                title: "Insert Read More Divder",
+                iconClass: 'cms-icon-pagebreak',
+                action: function(){
+                    if(this.editor.find('div[data-block="cms.divider"]').length == 0){
+                        this.insertBlock('cms.divider');
+                    } else {
+                        alert('Only one divider per article');
+                    }
+                }
+            },
+            
+            
+            
+            
+            
             htmlView:{
                 title: "View HTML Source",
                 iconClass: 'cms-icon-code',
@@ -391,6 +406,17 @@ if (typeof Object.create === 'undefined') {
                 axis: 'y',
                 // cursorAt: 'left',
                 cursor: 'move'
+//                start: function(e, ui){
+//                    
+//                    if(ui.item.hasClass('sort-level1-only')){
+//                        console.log(this);
+//                    
+//                       // alert('level1 only');
+//                       //  $(this).sortable('option','cancel','p,h2,h3,ul,ol,div.block');
+//                    } else {
+//                       // $(this).sortable('option','cancel','');
+//                    }
+//                }
             });
             try {
             document.execCommand('2D-Position' , false, false);

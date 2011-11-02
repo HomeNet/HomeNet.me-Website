@@ -187,6 +187,16 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         $object->fromArray($result->toArray());
         // die(debugArray($object));
         $result2 = $this->getCustomTable($result->section)->find($result->id, $result->active_revision)->current();
+        
+        //if the table is out of sync, get last known revision
+        if(empty($result2)){
+            /*@todo log that the table is out of sync
+             */
+            $select = $this->getCustomTable($result->section)->select()->where('id = ?',$result->id)->order('revision DESC')->limit(1);
+            $result2 = $this->getCustomTable($result->section)->fetchRow($select);
+          //  die(debugArray($result2));
+        }
+        
         // = $this->getCustomTable()->fetchRow($select2); 
         $object->fromArray($result2->toArray());
 
@@ -260,8 +270,9 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         }
 
         $element = new $class();
-
-        return $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` ADD `' . mysql_real_escape_string($field->name) . '` ' . $element->getMysqlColumn() . ' ');
+        $result = $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` ADD `' . mysql_real_escape_string($field->name) . '` ' . $element->getMysqlColumn() . ' ');;
+        $this->getTable()->getMetadataCache()->clean('all'); //reset metadata cache
+        return $result;
     }
 
     public function renameCustomField(Content_Model_Field_Interface $old, Content_Model_Field_Interface $field) {
@@ -282,20 +293,28 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         }
 
         $element = new $class();
+        
+        
 
-        return $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` CHANGE `' . mysql_real_escape_string($old->name) . '` `' . mysql_real_escape_string($field->name) . '` ' . $element->getMysqlColumn() . ' ');
+        $result = $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` CHANGE `' . mysql_real_escape_string($old->name) . '` `' . mysql_real_escape_string($field->name) . '` ' . $element->getMysqlColumn() . ' ');
+        $this->getTable()->getMetadataCache()->clean('all'); //reset metadata cache
+        return $result;
+        
     }
 
     public function removeCustomField(Content_Model_Field_Interface $field) {
         //alter table
-        return $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` DROP `' . mysql_real_escape_string($field->name) . '`');
-        // $this->getMapper()->removeField($field); 
+        $result = $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` DROP `' . mysql_real_escape_string($field->name) . '`');
+        $this->getTable()->getMetadataCache()->clean('all'); //reset metadata cache
+        return $result;
     }
 
     public function removeCustomTable($section) {
         //drop table
         //DROP TABLE `content_section_5`
-        return $this->getTable()->getAdapter()->query('DROP TABLE `content_custom_' . mysql_real_escape_string($section));
+        $result = $this->getTable()->getAdapter()->query('DROP TABLE `content_custom_' . mysql_real_escape_string($section));
+        $this->getTable()->getMetadataCache()->clean('all'); //reset metadata cache
+        return $result;
     }
 
     public function save(Content_Model_Content_Interface $content) {
@@ -308,10 +327,11 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         $customTable = $this->getCustomTable($content->section);
         $customFields = $customTable->info('cols');
         //insert into table 1
-
+//die(debugArray($customFields)); 
         $content->revision = date('Y-m-d H:i:s');
         $content->active_revision = $content->revision;
-        $contentValues = $content->toArray();
+     //   $contentValues = $content->toArray();
+        $contentValues = $content->toObjects();
 
         if (isset($content->id)) {
             $row = $table->find($content->id)->current();
@@ -321,7 +341,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         foreach ($contentValues as $key => $value) {
             if (in_array($key, $fields)) {
                 if (is_object($value)) {
-                    $value = $value->getValue();
+                    $value = $value->getSaveValue();
                 }
 
                 $row->$key = $value;
@@ -339,7 +359,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         foreach ($contentValues as $key => $value) {
             if (in_array($key, $customFields)) {
                 if (is_object($value)) {
-                    $value = $value->getValue();
+                    $value = $value->getSaveValue();
                 }
                 if (is_array($value)) {
                     $value = serialize($value);

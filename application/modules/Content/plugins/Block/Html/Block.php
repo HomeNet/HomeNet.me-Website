@@ -49,7 +49,7 @@ class Content_Plugin_Block_Html_Block  extends Content_Model_Plugin_Block  {
         die(debugArray($this->_value));
     }  
     
-    public function renderView() {
+    public function getViewNode() {
         
         return false;
         
@@ -72,9 +72,9 @@ class Content_Plugin_Block_Html_Block  extends Content_Model_Plugin_Block  {
     
    
 
-    public function renderForm() {
+    public function getFormNode() {
         
-        return false;
+        return self::IGNORE_NODE;
 //        $this->prepareValues();
 //        $doc = new DOMDocument();
 //        $block = $doc->createElement('div');
@@ -90,9 +90,9 @@ class Content_Plugin_Block_Html_Block  extends Content_Model_Plugin_Block  {
         return $this->_node;
     }
 
-    public function renderSave() {
+    public function getSaveNode() {
         
-        return false;
+        return self::IGNORE_NODE;
         
 //        $this->prepareValues();
 //        $doc = new DOMDocument();

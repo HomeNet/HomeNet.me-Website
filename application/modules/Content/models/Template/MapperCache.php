@@ -121,11 +121,13 @@ class Content_Model_Template_MapperCache implements Content_Model_Template_Mappe
 //       return $this->getTable()->fetchAll($select);
 //    }
 
-
+    private function _getPath($section, $url){
+        return $this->fetchPathBySection($section) . $url . '.phtml';
+    } 
 
     public function save(Content_Model_Template_Interface $content) {
         if($content->active == true){
-        $path = APPLICATION_PATH . $this->_getCachePath($content->section, $content->url);
+        $path = $this->_getPath($content->section, $content->url);
         $dir = dirname($path);
         if (!is_dir($dir)) {
             mkdir($dir);
@@ -138,7 +140,7 @@ class Content_Model_Template_MapperCache implements Content_Model_Template_Mappe
     }
 
     public function delete(Content_Model_Template_Interface $content) {
-        $path = APPLICATION_PATH . $this->_getCachePath($content->section, $content->url);
+        $path = $this->_getPath($content->section, $content->url);
         if (!file_exists($path)) {
             throw new Exception('File Doesn\'t exist');
         }

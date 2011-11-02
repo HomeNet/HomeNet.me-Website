@@ -108,17 +108,21 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
    
                $request->setParam('error_message', 'Could not find route ' . $module . ' > ' . $request->controller . ' > ' . $action);            
            
-                 $request->setParam('forward', true);
+                // $request->setParam('forward', true);
 
 
 
             } elseif ($user->id == $config->site->user->guest) { //if guest
                 
-                die('Route to Login: ' . $module . ' > ' . $request->controller . ' > ' . $action);
+              //  die('Route to Login: ' . $module . ' > ' . $request->controller . ' > ' . $action);
+                $_SESSION['login_redirect'] = $_SERVER['REQUEST_URI'];
+              //  $view = Zend_Registry::get('view');
+                
+                
                 $request->setModuleName('core');
                 $request->setControllerName('login');
                 $request->setActionName('index');
-                $request->setParam('forward', true);
+               // $request->setParam('forward', true);
             } else {
                 die('Not Authorized: ' . $module . ' > ' . $request->controller . ' > ' . $action);
                 $request->setModuleName('core');

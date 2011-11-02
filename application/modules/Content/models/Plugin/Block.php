@@ -29,11 +29,19 @@ abstract class Content_Model_Plugin_Block {
 
     protected $_value = '';
     protected $_options = array();
+    
+    const IGNORE_NODE = 0;
+    const REMOVE_NODE = 1;
 
     /**
      * @var DOMNode
      */
     protected $_node;
+    
+    /**
+     * @var DOMDocument
+     */
+    protected $_document;
 
     /**
      * @var Zend_View
@@ -71,6 +79,14 @@ abstract class Content_Model_Plugin_Block {
             }
 
             $this->setNode($config['node']);
+        }
+        if (isset($config['document'])) {
+
+            if (!($config['Document'] instanceof DOMDocument)) {
+                throw new InvalidArgumentException('Invalid DOM Node Supplied');
+            }
+
+            $this->setDocument($config['document']);
         }
     }
 
@@ -141,13 +157,38 @@ abstract class Content_Model_Plugin_Block {
         return $node;
     }
 
+  
     /**
-     * parse dom node and return placeholder values
+     * Set Block's DOM Node
      */
     public function setNode($node) {
         $this->_node = $node;
         $this->parseNode();
     }
+    
+    /**
+     * Get Current DOMNode
+     */
+    public function getNode() {
+        return $this->_node;
+
+    }
+     /**
+     * Set Block's DOM Document
+     */
+    public function setDocument($document) {
+        $this->_document = $document;
+    }
+    
+    /**
+     * Get Current DOMDocument
+     */
+    public function getDocument() {
+       return $this->_document;
+
+    }
+    
+    
 
     public function parseNode() {
         if (empty($this->_node)) {
@@ -165,42 +206,40 @@ abstract class Content_Model_Plugin_Block {
      * @return DOMNode
      */
 
-    public function renderView() {
-        $doc = new DOMDocument();
-        // $frag = $doc->createDocumentFragment();
-        if (empty($this->template)) {
-            $block = $doc->createElement('div');
-            $this->_setData($block, $this->_value);
-            return $block;
-        }
-
-
-
-        $doc->loadHTML(debugArray($this->_value));
-        // die(debugArray($this->_value));
-        //$frag->appendXML(debugArray($this->_value));
-        //$frag->appendXML('<b>dsadadadsadas</b>');
-        // $doc->appendChild($frag);
-        return $doc->getElementsByTagName('body')->item(0)->firstChild;
-        // die(htmlentities($doc->saveHTML()));
-        //$doc->
-        //return $frag;
-    }
-
-    public function renderForm() {
-       
-
-        return $this->renderSave();
-    }
-
-    public function renderSave() {
-
-        $doc = new DOMDocument();
-        $block = $doc->createElement('div');
-        $this->_setData($block, $this->_value);
+    public function getViewNode() {
         
+        return self::IGNORE_NODE;
+        
+//        $doc = new DOMDocument();
+//        // $frag = $doc->createDocumentFragment();
+//        if (empty($this->template)) {
+//            $block = $doc->createElement('div');
+//            $this->_setData($block, $this->_value);
+//            return $block;
+//        }
+//
+//        $doc->loadHTML(debugArray($this->_value));
+//
+//        return $doc->getElementsByTagName('body')->item(0)->firstChild;
 
-        return $block;
+    }
+
+    public function getFormNode() {
+       
+        return self::IGNORE_NODE;
+//        return $this->renderSave();
+    }
+
+    public function getSaveNode() {
+        
+        return self::IGNORE_NODE;
+//
+//        $doc = new DOMDocument();
+//        $block = $doc->createElement('div');
+//        $this->_setData($block, $this->_value);
+//        
+//
+//        return $block;
     }
 
 }

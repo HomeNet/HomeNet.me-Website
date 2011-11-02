@@ -52,8 +52,17 @@ public $template = '_gallery';
         
         //die(debugArray($this->_value));
     }
+    
+    private function toObjectArray($array){
+        $objects = array();
+        foreach($array as $value){
+            $objects[] = (object) $value;
+        }
+      //  die(var_dump($objects));
+        return $objects;
+    }
 
-    public function renderView() {
+    public function getViewNode() {
         $this->prepareValues();
         $doc = new DOMDocument();
         // $frag = $doc->createDocumentFragment();
@@ -63,8 +72,8 @@ public $template = '_gallery';
             return $block;
         }
         //    $doc->loadHTML(debugArray($this->_value));
-
-        $doc->loadHTML('<div data-block="' . $this->_value['block'] . '" class="cms-block-image">' . $this->_view->partial('_image.phtml', $this->_value) . '</div>');
+        $this->_value['images'] = $this->toObjectArray($this->_value['images']);
+        $doc->loadHTML('<div data-block="' . $this->_value['block'] . '" class="cms-block-image">' . $this->_view->partial($this->template.'.phtml', $this->_value) . '</div>');
 
         //  die(debugArray($this->_view->getScriptPaths()));
         //$frag->appendXML(debugArray($this->_value));
@@ -78,7 +87,7 @@ public $template = '_gallery';
     
    
 
-   public function renderForm() {
+   public function getFormNode() {
         $doc = new DOMDocument();
         $block = $doc->createElement('div');
         $this->_setData($block, $this->_value, array('block', 'title'));
@@ -93,8 +102,8 @@ public $template = '_gallery';
             }
 
             $node = $doc->createElement('div');
-            $image['thumbnail'] = $this->_view->image($image['path'], '', 100, 75);
-            $image['preview'] = $this->_view->image($image['path'], '', 480, 320);
+            $image['thumbnail'] = $this->_view->imagePath($image['path'], 100, 75);
+            $image['preview'] = $this->_view->imagePath($image['path'], 480, 320);
 
             $this->_setData($node, $image, array('id', 'path', 'thumbnail', 'preview', 'title', 'description', 'copyright', 'source', 'url', 'copyright',
                 'owner', 'fullname', 'width', 'height'));
@@ -104,7 +113,7 @@ public $template = '_gallery';
         return $block;
     }
 
-    public function renderSave() {
+    public function getSaveNode() {
 
         $doc = new DOMDocument();
         $block = $doc->createElement('div');

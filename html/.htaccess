@@ -312,7 +312,11 @@ redirect 410 /award.php
 redirect 410 /awards.php
 redirect 410 /mcdportalv4/
 
-
+ #<IfModule mod_rewrite.c>
+ #  RewriteCond %{HTTPS} !=on
+ #   RewriteCond %{HTTP_HOST} !^mcdportal\.com$ [NC]
+ #   RewriteRule ^ http://mcdportal\.com%{REQUEST_URI} [R=301,L]
+ #</IfModule>
 
 
 

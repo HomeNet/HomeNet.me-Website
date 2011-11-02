@@ -1,1 +1,7 @@
-Gallery Block
+<!--Generic Gallery Block -->
+<div class="title"><?php echo $this->title ?></div>
+<?php 
+foreach($this->images as $image){
+   echo $this->image($image->path,$image->title,100,100);
+}
+?>

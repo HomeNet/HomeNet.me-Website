@@ -135,6 +135,37 @@ class Content_Model_Content implements Content_Model_Content_Interface {
 
         return $array;
     }
+    
+    public function toObjects() {
+
+        $array = $this->_values;
+
+        $fields = $this->getSection()->getFields();
+
+        foreach ($fields as $name => $value) {
+
+            if (!isset($this->_objects[$name])) {
+
+                $class = 'Content_Plugin_Element_' . ucfirst($value->element) . '_Element';
+                if (!class_exists($class, true)) {
+                    throw new Exception('Element not found: ' . $class);
+                }
+
+                $data = null;
+                if (isset($this->_values[$name])) {
+                    $data = $this->_values[$name];
+                }
+
+                $this->_objects[$name] = new $class(array(
+                            'data' => $data,
+                            'options' => $value->options));
+                //$this->_objects[$name] = $this->_values[$name];
+            }
+            $array[$name] = $this->_objects[$name];
+        }
+
+        return $array;
+    }
 
     public function getForm() {
 
@@ -153,7 +184,7 @@ class Content_Model_Content implements Content_Model_Content_Interface {
                 'name' => $field->name,
                 'label' => $field->label,
                 'description' => $field->description,
-                'value' => $object->getValue(),
+                'value' => $object->getFormValue(),
                 'required' => $field->required,
             );
             if(empty($sets[$field->set])){

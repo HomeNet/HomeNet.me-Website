@@ -44,7 +44,7 @@ class Content_Plugin_Block_Image_Block extends Content_Model_Plugin_Block {
         //if it has id
     }
 
-    public function renderView() {
+    public function getViewNode() {
         $this->prepareValues();
         $doc = new DOMDocument();
         // $frag = $doc->createDocumentFragment();
@@ -55,7 +55,7 @@ class Content_Plugin_Block_Image_Block extends Content_Model_Plugin_Block {
         }
         //    $doc->loadHTML(debugArray($this->_value));
 
-        $doc->loadHTML('<div data-block="' . $this->_value['block'] . '" class="cms-block-image">' . $this->_view->partial('_image.phtml', $this->_value) . '</div>');
+        $doc->loadHTML('<div data-block="' . $this->_value['block'] . '" class="cms-block-image">' . $this->_view->partial($this->template.'.phtml', $this->_value) . '</div>');
 
         //  die(debugArray($this->_view->getScriptPaths()));
         //$frag->appendXML(debugArray($this->_value));
@@ -69,27 +69,27 @@ class Content_Plugin_Block_Image_Block extends Content_Model_Plugin_Block {
     
    
 
-    public function renderForm() {
+    public function getFormNode() {
         $this->prepareValues();
         $doc = new DOMDocument();
         $block = $doc->createElement('div');
        
-        $this->_value['thumbnail'] = $this->_view->imagePath($this->_value['path'], '', 100, 75);
-        $this->_value['preview'] = $this->_view->imagePath($this->_value['path'], '', 480, 320);
+        $this->_value['thumbnail'] = $this->_view->imagePath($this->_value['path'], 100, 75);
+        $this->_value['preview'] = $this->_view->imagePath($this->_value['path'], 480, 320);
 
         //get image info from db
         
-        $this->_setData($block, $this->_value, array('id', 'path', 'thumbnail', 'preview', 'title', 'description', 'copyright', 'source', 'url', 'copyright',
+        $this->_setData($block, $this->_value, array('block', 'id', 'path', 'thumbnail', 'preview', 'title', 'description', 'copyright', 'source', 'url', 'copyright',
             'owner','fullname','width','height'));
 
         return $block;
     }
 
-    public function renderSave() {
+    public function getSaveNode() {
         $this->prepareValues();
         $doc = new DOMDocument();
         $block = $doc->createElement('div');
-        $this->_setData($block, $this->_value, array('id', 'path', 'title', 'description', 'copyright', 'source', 'url', 'copyright'));
+        $this->_setData($block, $this->_value, array('block','id', 'path', 'title', 'description', 'copyright', 'source', 'url', 'copyright'));
 
         return $block;
     }

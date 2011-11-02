@@ -35,7 +35,12 @@ abstract class Content_Model_Plugin_Element {
         if (isset($config['data'])) {
 
             if (($this->isArray == true) && is_string($config['data'])) {
-                $config['data'] = unserialize($config['data']);
+                
+                if(empty($config['data'])){
+                    $config['data'] = array();
+                } else {
+                    $config['data'] = unserialize($config['data']);
+                }
             }
             $this->_value = $config['data'];
 
@@ -46,6 +51,16 @@ abstract class Content_Model_Plugin_Element {
         if (isset($config['options'])) {
             $this->_options = $config['options'];
         }
+    }
+    
+    public function __get($name) {
+
+        
+        
+        if($this->isArray && is_array($this->_value) && array_key_exists($name, $this->_value)){
+            return $this->_value[$name];
+        } 
+        return null;
     }
 
     public function __toString() {

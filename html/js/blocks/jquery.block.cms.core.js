@@ -23,69 +23,71 @@
     
     
     $.cmsBlocks['cms.core'] = {
-            options: {
-                title: "CMS Block",
-                className: "cms-block"
-            },
-            data: {},
-            element: undefined,
+        options: {
+            title: "CMS Block",
+            className: "cms-block",
+            edit: true,
+            remove: true
+        },
+        data: {},
+        element: undefined,
             
-            init: function(data){
-                //only take predefined vars
-                for(var i in this.data){
-                    if(data[i] != undefined){
-                        this.data[i] = data[i];
-                    }
+        init: function(data){
+            //only take predefined vars
+            for(var i in this.data){
+                if(data[i] != undefined){
+                    this.data[i] = data[i];
                 }
-            },
+            }
+        },
             
             
-            collapse: function(){
-              // console.log('default compact');
-               this.element.empty();
-            },
-            expand: function(){
-               var self =this;  
-               //  var block = $(this).data('block');
-               //     block.element = $(this);
-               //     $(this).data('block', block);
+        collapse: function(){
+            // console.log('default compact');
+            this.element.empty();
+        },
+        expand: function(){
+            var self =this;  
+            //  var block = $(this).data('block');
+            //     block.element = $(this);
+            //     $(this).data('block', block);
                     
-             // console.log(['default expand', this]);    
+            // console.log(['default expand', this]);    
 
-                // this.create.call(this);
-                this.create();
+            // this.create.call(this);
+            this.create();
                 
       
-                this.element.children().wrapAll('<div class="ui-widget-content ui-state-default"/>');
+            this.element.children().wrapAll('<div class="ui-widget-content ui-state-default"/>');
                 
-                var title = "";
-                if( this.data.title){
-                    title = ' - <span class="title">'+this.data.title+'</span>';
-                }
+            var title = "";
+            if( this.data.title){
+                title = ' - <span class="title">'+this.data.title+'</span>';
+            }
                 
                 
-                this.element.prepend('<div class="ui-widget-header handle"><span class="ui-icon ui-icon-carat-2-n-s"></span> '+this.options.title+title+'</div>');
+            this.element.prepend('<div class="ui-widget-header handle"><span class="ui-icon ui-icon-carat-2-n-s"></span> '+this.options.title+title+'</div>');
             
-                //data.order = this.itemCount;
-                //self.data(block.data);
+            //data.order = this.itemCount;
+            //self.data(block.data);
             
-//                this.element.bind('edit',   block.edit);
-//                this.element.bind('update', block.update);
-//                this.element.bind('save',   block.save);
-//                this.element.bind('remove', block.remove);
-//                this.element.bind('collapse',block.collapse);
-                //this.element.unbind('expand');
-                //this.element.bind('expand', block.expand);
-
-
+            //                this.element.bind('edit',   block.edit);
+            //                this.element.bind('update', block.update);
+            //                this.element.bind('save',   block.save);
+            //                this.element.bind('remove', block.remove);
+            //                this.element.bind('collapse',block.collapse);
+            //this.element.unbind('expand');
+            //this.element.bind('expand', block.expand);
+                
+            if(this.options.edit == true){
                 var edit = $('<a class="ui-state-default ui-corner-all edit ui-button"><span class="ui-icon ui-icon-pencil"></span></a>');
-                var del = $('<a class="ui-state-default ui-corner-all delete ui-button"><span class="ui-icon ui-icon-closethick"></span></a>');
-                this.element.append(edit,del);
-                
-                
- 
                 edit.bind("click.block", $.proxy(this.configure,this));
+                this.element.append(edit);
+            }
                 
+            if(this.options.remove == true){
+                var del = $('<a class="ui-state-default ui-corner-all delete ui-button"><span class="ui-icon ui-icon-closethick"></span></a>');
+                this.element.append(del);
                 del.bind("click.selectimage", function(e){
                     $('<div>Are you sure you want to delete<br /> &quot;'+self.options.title+'&quot;</div>')
                     .dialog({
@@ -103,31 +105,31 @@
                         }
                     });                    
                 }); 
-                
-                this.save();
-
-            },
-            create: function(){ },
-            configure: function(){},
-            save: function(data){
-                
-              //  console.log(['default save'], data, this.data);
-                
-                if(data){
-                    this.data = $.extend(this.data, data);
-                }
-                
-                for(var i in this.data){
-                    this.element.attr('data-'+i, this.data[i]);
-                }
-              //  $this.data('block',block);
-                    
-            },
-            update: function(data){
-
-            },
-            remove: function(){
-              this.element.remove();
             }
+                
+            this.save();
+        },
+        create: function(){ },
+        configure: function(){},
+        save: function(data){
+                
+            //  console.log(['default save'], data, this.data);
+                
+            if(data){
+                this.data = $.extend(this.data, data);
+            }
+                
+            for(var i in this.data){
+                this.element.attr('data-'+i, this.data[i]);
+            }
+        //  $this.data('block',block);
+                    
+        },
+        update: function(data){
+
+        },
+        remove: function(){
+            this.element.remove();
         }
+    }
 })(jQuery);

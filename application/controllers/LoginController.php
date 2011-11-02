@@ -67,8 +67,10 @@ class LoginController extends Zend_Controller_Action {
         }
 
         $request = $this->getRequest();
-        if ($request->getParam('forward')) {
-            $this->_redirect($_SERVER['REQUEST_URI']);
+        if (isset($_SESSION['login_redirect'])) {
+            $path = $_SESSION['login_redirect'];
+            unset($_SESSION['login_redirect']);
+            $this->_redirect($path);
         }
         
        // die(debugArray($_SESSION));

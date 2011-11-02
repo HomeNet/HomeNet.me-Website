@@ -100,12 +100,14 @@
             
             image.append(row);
             
-            image.append('<input class="path" type="hidden" name="'+name+'[path]"  value="'+image.data('path')+'">'+
-                '<input class="title" type="hidden" name="'+name+'[description]"   value="'+image.data('description')+'">'+
-                '<input class="title" type="hidden" name="'+name+'[title]"   value="'+image.data('title')+'">'+
-                '<input class="source" type="hidden" name="'+name+'[source]"   value="'+image.data('source')+'">'+
-                '<input class="url" type="hidden" name="'+name+'[url]"   value="'+image.data('url')+'">'+
-                '<input class="copyright" type="hidden" name="'+name+'[copyright]"   value="'+image.data('copyright')+'">'+
+            var data = image.data();
+            
+            image.append('<input class="path" type="hidden" name="'+name+'[path]"  value="'+data.path+'">'+
+                '<input class="title" type="hidden" name="'+name+'[title]"   value="'+data.title+'">'+
+                '<input class="description" type="hidden" name="'+name+'[description]"   value="'+data.description+'">'+
+                '<input class="source" type="hidden" name="'+name+'[source]"   value="'+data.source+'">'+
+                '<input class="url" type="hidden" name="'+name+'[url]"   value="'+data.url+'">'+
+                '<input class="copyright" type="hidden" name="'+name+'[copyright]"   value="'+data.copyright+'">'+
                 '<input class="order" type="hidden" name="'+name+'[order]" value="'+this.itemCount+'">');
             this.count++;
             return image;
