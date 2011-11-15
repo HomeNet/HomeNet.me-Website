@@ -87,6 +87,46 @@ class Content_Model_FieldSet_Service {
         }
         return $results;
     }
+    
+    public function getObjectsBySectionWithFields($id) {
+        
+        //@todo create a array collection class for fieldsets with a function that loads fields
+ 
+        $sets = $this->getObjectsBySection($id);
+        $objects = array();
+        foreach($sets as $value){
+            $objects[$value->id] = $value;
+        }
+        
+        $service = new Content_Model_Field_Service();
+        $fields = $service->getObjectsBySection($id);
+        
+       // $fields = (object)$fields->toArray();
+        
+        foreach($fields as $value){
+            if(!array_key_exists($value->set, $objects)){
+                continue;
+            }
+            $objects[$value->set]->fields[] = (object)$value->toArray();
+        }
+        return $objects;
+    }
+    
+    public function setObjectOrder($mixed,$order){
+        
+        if ($mixed instanceof Content_Model_Field_Interface) {
+            $object = $mixed;  
+        } elseif (is_numeric($mixed)) {
+            $object = $this->getObjectById($mixed);
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_Field(array('data' => $mixed));
+        } else {
+            throw new InvalidArgumentException('Invalid Object');
+        }
+        
+        $results = $this->getMapper()->setObjectOrder($object, $order);
+        return $results;
+    }
 
     /**
      * @param Content_Model_FieldSet_Interface|array  $mixed
@@ -101,8 +141,12 @@ class Content_Model_FieldSet_Service {
         } else {
             throw new InvalidArgumentException('Invalid Field Set');
         }
+        
+        $result = $this->getMapper()->save($object);;
+        
+        $this->getMapper()->shiftOrderBySection($result->section, null, $result->order, $result->id);
 
-        return $this->getMapper()->save($object);
+        return $result;
     }
 
     /**
@@ -138,8 +182,18 @@ class Content_Model_FieldSet_Service {
         } else {
             throw new InvalidArgumentException('Invalid Field Set');
         }
-
-        //@todo if last fieldset don't delete
+        //@todo get count using count, this is lazy
+        $count = $this->getObjectsBySection($object->section);
+        if(count($count) == 1){
+            throw new Exception('Can not Delete Last Field Set');
+        }
+        $section = $object->section;
+        $order = $object->order;
+     
+        $result = $this->getMapper()->delete($object);
+        if($result){
+            $this->getMapper()->shiftOrderBySection($section, $order);
+        }
 
         return $this->getMapper()->delete($object);
     }

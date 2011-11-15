@@ -271,9 +271,17 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
 
         $element = new $class();
         $result = $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` ADD `' . mysql_real_escape_string($field->name) . '` ' . $element->getMysqlColumn() . ' ');;
-        $this->getTable()->getMetadataCache()->clean('all'); //reset metadata cache
+        $this->cleanCache(); //reset metadata cache
         return $result;
     }
+    
+    public function cleanCache(){
+        $cache =  $this->getTable()->getMetadataCache();
+        if(is_object($cache)){
+         $cache->clean('all');
+        }
+    }
+    
 
     public function renameCustomField(Content_Model_Field_Interface $old, Content_Model_Field_Interface $field) {
         //@todo check to make sure section is valid
@@ -297,7 +305,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         
 
         $result = $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` CHANGE `' . mysql_real_escape_string($old->name) . '` `' . mysql_real_escape_string($field->name) . '` ' . $element->getMysqlColumn() . ' ');
-        $this->getTable()->getMetadataCache()->clean('all'); //reset metadata cache
+        $this->cleanCache(); //reset metadata cache
         return $result;
         
     }
@@ -305,7 +313,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
     public function removeCustomField(Content_Model_Field_Interface $field) {
         //alter table
         $result = $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` DROP `' . mysql_real_escape_string($field->name) . '`');
-        $this->getTable()->getMetadataCache()->clean('all'); //reset metadata cache
+        $this->cleanCache(); //reset metadata cache
         return $result;
     }
 
@@ -313,7 +321,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         //drop table
         //DROP TABLE `content_section_5`
         $result = $this->getTable()->getAdapter()->query('DROP TABLE `content_custom_' . mysql_real_escape_string($section));
-        $this->getTable()->getMetadataCache()->clean('all'); //reset metadata cache
+        $this->cleanCache(); //reset metadata cache
         return $result;
     }
 

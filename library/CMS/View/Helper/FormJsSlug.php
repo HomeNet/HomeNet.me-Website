@@ -25,36 +25,25 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class CMS_View_Helper_FormAjaxElement extends Zend_View_Helper_FormElement {
+class CMS_View_Helper_FormJsSlug extends CMS_View_Helper_FormJsElement {
 
-    protected function _prepareArgs($name, $value = null, $attribs = null, $params = null, $options = null) {
-        // the baseline info.  note that $name serves a dual purpose;
-        // if an array, it's an element info array that will override
-        // these baseline values.  as such, ignore it for the 'name'
-        // if it's an array.
-       
+    public function formJsSlug($name, $value = null, $attribs = array(), $params = array()) {
+
+        extract($this->_prepareArgs($name, $value, $attribs, $params));       
         
-        if(!is_array($attribs)){
-            $attribs = array();
+        //add class;
+        $class = 'cms-element-slug';
+        if (isset($attribs['class'])) {
+            $class = ' ' . $attribs['class'];
         }
-        if(!is_array($params)){
-            $params = array();
-        }
-         if(!is_array($options)){
-            $options = array();
-        }
+        $attribs['class'] = $class;
         
+        $this->view->headScript()->appendFile('/js/mylibs/jquery.slugelement.js');
 
-        // Set ID for element
-        if (empty($attribs['id'])) {
-            $attribs['id'] = trim(strtr($name, array('[' => '-', ']' => '')), '-');
-        } 
+        $this->view->jquery()->addOnLoad("$('#" . $attribs['id'] . "').slugelement();");
 
-        return array(
-            'attribs' => $attribs,
-            'params' => $params,
-            'options' => $options,
-        );
+        $attribs = $this->_dataAttribs($params,$attribs);
+        
+        return $this->view->formText($name, $value, $attribs);
     }
-
 }

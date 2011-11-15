@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class CMS_View_Helper_FormAjaxSelect extends CMS_View_Helper_FormAjaxElement
+class CMS_View_Helper_FormJsSelect extends CMS_View_Helper_FormJsElement
 {
 	/**
 	 * Render a Ajax Select Element.
@@ -36,7 +36,7 @@ class CMS_View_Helper_FormAjaxSelect extends CMS_View_Helper_FormAjaxElement
 	 * @param  array  $attribs
 	 * @return string
 	 */
-    public function formAjaxSelect($name, $value = null, $attribs = null, $params = null)
+    public function formJsSelect($name, $value = null, $attribs = null, $params = null)
     {
         extract($this->_prepareArgs($name, $value, $attribs, $params));
         

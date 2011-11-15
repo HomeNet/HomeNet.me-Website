@@ -64,7 +64,7 @@ class Content_Model_FieldSet_MapperDbTable implements Content_Model_FieldSet_Map
 //           $user = $u->id;
 //        }
 //
-       $select = $this->getTable()->select()->where('section = ?',$section);
+       $select = $this->getTable()->select()->where('section = ?',$section)->order('order ASC');
 
        return $this->getTable()->fetchAll($select);
     }
@@ -78,6 +78,55 @@ class Content_Model_FieldSet_MapperDbTable implements Content_Model_FieldSet_Map
 //       return $this->getTable()->fetchAll($select);
 //    }
 
+    public function shiftOrderBySection($section, $currentPosition, $newPosition = null, $id = null) {
+        //@todo determine if id is really needed 
+        if ($newPosition == $currentPosition) { //same position, do nothing 
+            return true;
+        }
+
+        $where = array();
+        $where[] = $this->getTable()->getAdapter()->quoteInto('`section` = ?', $section);
+
+        if(!is_null($id)){
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`id` != ?', $id);
+        }
+        
+        if(is_null($newPosition) && !is_null($currentPosition)){ //delete
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`order` > ?', $currentPosition);
+            $data = array('order' => new Zend_Db_Expr('`order` - 1'));
+            
+        } elseif(!is_null($newPosition) && is_null($currentPosition)){ //create
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`order` >= ?', $newPosition);
+            $data = array('order' => new Zend_Db_Expr('`order` + 1'));
+            
+        } elseif($newPosition > $currentPosition) { //moving up
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`order` > ?', $currentPosition);
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`order` <= ?', $newPosition);
+            $data = array('order' => new Zend_Db_Expr('`order` - 1'));
+            
+        } elseif ($newPosition < $currentPosition) { //moving down
+
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`order` < ?', $currentPosition);
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`order` >= ?', $newPosition);
+            $data = array('order' => new Zend_Db_Expr('`order` + 1'));
+        } else { //same position, do nothing 
+            return true;
+        }
+      //  die(debugArray($where));
+        return $this->getTable()->update($data, $where);
+    }
+
+    public function setObjectOrder($object, $newPosition) {
+
+        if (!$this->shiftOrderBySection($object->section, $object->order, $newPosition, $object->id)) {
+            throw new Exception('Error Shifting Fields');
+        }
+
+        //update order
+        $object->order = $newPosition;
+        return $this->save($object);
+    }
+    
 
 
     public function save(Content_Model_FieldSet_Interface $content) {

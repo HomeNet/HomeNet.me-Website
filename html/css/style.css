@@ -436,6 +436,11 @@ section {
     width: 660px; 
     position: relative;
 }
+
+.breadcrumbs {
+    margin: 5px 0;
+}
+
 /*
 .ie7 body >section {
     top:40px;
@@ -482,15 +487,6 @@ footer {
 .center {
     text-align: center;
 }
-
-
-
-
-
-
-
-
-
 
 p, ul {
     margin-top: 5px;
@@ -585,6 +581,63 @@ fieldset {
     display: block;
     width:90%;
     text-align: center;
+}
+
+.cms.ui-widget {
+    margin-bottom: 10px;
+    padding: 2px;
+}
+
+.cms tbody{
+    min-height: 20px;
+
+}
+
+.cms .ui-state-default a{
+    text-decoration: underline !important;
+}
+
+.cms > .ui-widget-content{
+    padding: 10px;
+    border: none;
+}
+
+.cms .move{
+    float: left;
+    margin-right: 5px;
+}
+
+.cms .moveable{
+    cursor: move;
+}
+
+.cms .ui-widget-header{
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.cms .ui-widget-header .buttons{
+    float: right;
+}
+/*
+.cms .ui-button-text{
+    padding: 0px !important;
+}*/
+
+.cms .ui-button{
+    margin-top: 5px;
+}
+
+.cms .ui-button-text-icon-only{
+    margin-top: 0px;
+}
+
+.ui-widget-content.buttonfix {
+    background: none !important;
+    border: none!important;
+    padding: 0;
+    margin: 5px 0;
+    
 }
 
 #cms-image-editor fieldset{

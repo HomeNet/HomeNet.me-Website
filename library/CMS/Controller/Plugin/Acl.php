@@ -90,9 +90,9 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
 //       echo "<br>";
 //       flush();
 //       
-//       if($acl->isAllowed($uRole, $cResource, $action)){
+//       if($acl->isAllowed($user, $cResource, $action)){
 //            echo 'Is Allowed';
-//        } else {
+//       } else {
 //            echo 'Not Allowed';
 //        }
 //       echo "<br>";

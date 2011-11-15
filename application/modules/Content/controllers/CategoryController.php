@@ -27,31 +27,70 @@
 class Content_CategoryController extends Zend_Controller_Action
 {
 
+    private $_id;
+    
     public function init()
     {
         $this->view->controllerTitle = 'Category'; //for generic templates
+        $this->view->id = $this->_id = $this->_getParam('id');
+    }
+    
+     private function _setupCrumbs($set){
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Admin',
+            'route'  => 'admin',   
+        ));
+        
+    
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Content',
+            'route'  => 'content-admin',  
+            'module' => 'Content',
+            'controller' => 'section'
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Category Sets',
+            'route'  => 'content-admin',  
+            'module' => 'Content',
+            'controller' => 'category-set'
+        ));
+        
+        $service = new Content_Model_CategorySet_Service();
+        $object = $service->getObjectById($set);
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => $object->title,
+            'route'  => 'content-admin-id',  
+            'module' => 'Content',
+            'controller' => 'category',
+            'params' => array('id' => $object->id)
+        ));
+
+        $this->view->heading = $object->title.' Category Set';
+        
+       //return $section;
     }
 
     public function indexAction()
     {
-        $this->view->id = $this->_getParam('id');
         
-        if(empty($this->view->id)){
+        if(empty($this->_id)){
             throw new InvalidArgumentException('Missing Set Id', 404);
         }
         
+        $this->_setupCrumbs($this->_id);
+        
         $service = new Content_Model_Category_Service();
-        $this->view->id = $this->_getParam('id');
-        $this->view->assign('objects', $service->getObjectsBySet($this->view->id));
+        $this->view->objects = $service->getObjectsBySet($this->view->id);
     }
 
     public function newAction()
     {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        
+        $this->_setupCrumbs($this->_id);
         $form = new Content_Form_Category();
         $form->addElement('submit', 'submit', array('label' => 'Create'));
-        $this->view->assign('form',$form);
 
         if (!$this->getRequest()->isPost()) {
             //first
@@ -69,12 +108,12 @@ class Content_CategoryController extends Zend_Controller_Action
         //$nodeService = new HomeNet_Model_NodesService();
 
         $values = $form->getValues();
-        $values['set'] = $this->_getParam('id');
+        $values['set'] = $this->_id;
 
         $service = new Content_Model_Category_Service();
         $service->create($values);
         
-        return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $this->_getParam('id')),'content-admin-id').'?message=Successfully added new Set');//
+        return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $this->_id),'content-admin-id').'?message=Successfully added new Set');//
     }
 
     public function editAction()
@@ -84,11 +123,11 @@ class Content_CategoryController extends Zend_Controller_Action
         $service = new Content_Model_Category_Service();
         $form = new Content_Form_Category();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
+        $object = $service->getObjectById($this->_id);
+        $this->_setupCrumbs($object->set);
         
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
-            $object = $service->getObjectById($this->_getParam('id'));
-            
             $values = $object->toArray();
 
             $form->populate($values);
@@ -105,8 +144,7 @@ class Content_CategoryController extends Zend_Controller_Action
 
         //save
         $values = $form->getValues();
-         $object = $service->getObjectById($this->_getParam('id'));
-         $object->fromArray($values);
+        $object->fromArray($values);
         $service->update($object);
 
         return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $object->set),'content-admin-id').'?message=Updated');//
@@ -116,8 +154,9 @@ class Content_CategoryController extends Zend_Controller_Action
     {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         
-        $cService = new Content_Model_Category_Service();
-        $object = $cService->getObjectById($this->_getParam('id'));
+        $service = new Content_Model_Category_Service();
+        $object = $service->getObjectById($this->_id);
+        $this->_setupCrumbs($object->set);
         $form = new Core_Form_Confirm();
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
@@ -137,7 +176,7 @@ class Content_CategoryController extends Zend_Controller_Action
         //need to figure out why this isn't in values
         if(!empty($_POST['delete'])){
             
-            $cService->delete($object);
+            $service->delete($object);
             return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $id),'content-admin-id').'?message=Deleted');
         }
         return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $id),'content-admin-id').'?message=Canceled');

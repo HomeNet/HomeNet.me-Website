@@ -27,20 +27,63 @@
 class Content_ContentController extends Zend_Controller_Action
 {
 
+    private $_id;
+    
     public function init()
     {
-        $this->view->controllerTitle = 'Content'; //for generic templates
-        $this->view->id = $this->_getParam('id');
+        $this->view->controllerTitle = 'Content'; //for generic templates      
+        $this->_id = $this->view->id = $this->_getParam('id');
+    }
+    
+      private function _loadSection($id){
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Admin',
+            'route'  => 'admin'          
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Content',
+            'route'  => 'content-admin',  
+            'module' => 'Content',
+            'controller' => 'section',
+        ));
+        
+        $sService = new Content_Model_Section_Service();
+        $section = $sService->getObjectById($id);
+       // 
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => $section->title,
+            'route'  => 'content-admin-id',  
+            'module' => 'Content',
+            'controller' => 'section',
+            'params' => array('id'=>$id)
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Content',
+            'route'  => 'content-admin-id',  
+            'module' => 'Content',
+            'controller' => 'content',
+            'params' => array('id'=>$id)
+        ));
+        
+        $this->view->heading = $section->title.' Content';
+        
+       return $section;
     }
 
     public function indexAction()
     {
+        $this->_loadSection($this->_id);
         $service = new Content_Model_Content_Service();
-        $this->view->assign('objects', $service->getObjectsBySection($this->_getParam('id')));
+        $this->view->assign('objects', $service->getObjectsBySection($this->_id));
     }
 
     public function newAction()
     {
+        $this->_loadSection($this->_id);
+        
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         $manager = new Content_Model_Section_Manager();
         $form = $manager->getForm($this->_getParam('id'));
@@ -64,10 +107,10 @@ class Content_ContentController extends Zend_Controller_Action
 
         $service = new Content_Model_Content_Service();
          $values['owner'] = Core_Model_User_Manager::getUser()->id; 
-        $values['section'] = $this->view->id;
+        $values['section'] = $this->_id;
         $service->create($values);
         
-        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$this->view->id),'content-admin-id').'?message=Successfully added');//
+        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$this->_id),'content-admin-id').'?message=Successfully added');//
     }
 
     public function editAction()
@@ -75,7 +118,8 @@ class Content_ContentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         
         $service = new Content_Model_Content_Service();
-        $object = $service->getObjectById($this->_getParam('id'));
+        $object = $service->getObjectById($this->_id);
+        $this->_loadSection($object->section);
       //  die(debugArray($object));
         $form = $object->getForm();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
@@ -101,7 +145,7 @@ class Content_ContentController extends Zend_Controller_Action
         //save
         $values = $form->getValues();
          $values['owner'] = Core_Model_User_Manager::getUser()->id; 
-         $object = $service->getObjectById($this->_getParam('id'));
+         $object = $service->getObjectById($this->_id);
          $object->fromArray($values);
         $service->update($object);
 
@@ -113,7 +157,10 @@ class Content_ContentController extends Zend_Controller_Action
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         
         $service = new Content_Model_Content_Service();
-        $object = $service->getObjectById($this->_getParam('id'));
+        $object = $service->getObjectById($this->_id);
+        
+        $this->_loadSection($object->section);
+        
         $form = new Core_Form_Confirm();
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {

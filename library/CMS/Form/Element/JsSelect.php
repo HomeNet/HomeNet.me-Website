@@ -30,11 +30,11 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Select.php 23775 2011-03-01 17:25:24Z ralph $
  */
-class CMS_Form_Element_AjaxSelect extends CMS_Form_Element_Ajax
+class CMS_Form_Element_JsSelect extends CMS_Form_Element_JsElement
 {
     /**
      * Use formSelect view helper by default
      * @var string
      */
-    public $helper = 'formAjaxSelect';
+    public $helper = 'formJsSelect';
 }

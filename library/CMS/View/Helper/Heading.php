@@ -36,10 +36,24 @@ class CMS_View_Helper_Heading extends Zend_View_Helper_Abstract
 	 * @param  array  $attribs
 	 * @return string
 	 */
-    public function heading($title)
+    public function heading($title, $title2 = null)
     {
         $layout = Zend_Layout::getMvcInstance();
-        $layout->getView()->headTitle($title);
-        return '<h1>'.$title.'</h1>';
+        //$layout->getView()->headTitle($title);
+        if(!is_null($title2)){
+            $this->view->breadcrumbs()->addPage(array(
+                'label'  => $title,
+                'uri' => '#'
+            ));
+            $title .= ' '.$title2;
+            
+        }
+        
+        
+        
+        
+        $this->view->headTitle($title);
+        $layout->assign('heading',$title);
+        //return '<h1>'.$title.'</h1>';
     }
 }

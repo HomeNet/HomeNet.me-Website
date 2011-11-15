@@ -29,8 +29,35 @@ class Content_CategorySetController extends Zend_Controller_Action
 
     public function init()
     {
-        $this->view->controllerTitle = 'Category Set'; //for generic templates
+        $this->_setupCrumbs();
     }
+    
+      private function _setupCrumbs(){
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Admin',
+            'route'  => 'admin',   
+        ));
+        
+    
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Content',
+            'route'  => 'content-admin',  
+            'module' => 'Content',
+            'controller' => 'section'
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Category Sets',
+            'route'  => 'content-admin',  
+            'module' => 'Content',
+            'controller' => 'category-set'
+        ));
+
+        $this->view->heading = 'Category Set';
+        
+       //return $section;
+    }
+    
 
     public function indexAction()
     {

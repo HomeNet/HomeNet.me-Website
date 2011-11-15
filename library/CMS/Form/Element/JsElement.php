@@ -32,7 +32,7 @@ require_once 'Zend/Form/Element/Xhtml.php';
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Textarea.php 23775 2011-03-01 17:25:24Z ralph $
  */
-class CMS_Form_Element_Ajax extends Zend_Form_Element {
+class CMS_Form_Element_JsElement extends Zend_Form_Element {
     
 //    private $_options2 = array();
 //
@@ -89,7 +89,7 @@ class CMS_Form_Element_Ajax extends Zend_Form_Element {
             $getId = create_function('$decorator',
                                      'return $decorator->getElement()->getId()
                                              . "-element";');
-            $this->addDecorator('AjaxHelper')
+            $this->addDecorator('JsHelper')
                  ->addDecorator('Errors')
                  ->addDecorator('Description', array('tag' => 'p', 'class' => 'description'))
                  ->addDecorator('HtmlTag', array('tag' => 'dd',

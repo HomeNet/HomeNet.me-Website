@@ -58,7 +58,7 @@ class Content_Plugin_Element_Editor_Element extends Content_Model_Plugin_Element
      */
     function getElement(array $config, $options = array()) {
 
-        $element = new CMS_Form_Element_AjaxWysiwyg($config);
+        $element = new CMS_Form_Element_JsWysiwyg($config);
         $view = Zend_Registry::get('view');
         $element->setParams($options);
         $element->setParam('rest', $view->url(array('controller' => 'content', 'action' => 'rest'), 'content-admin'));

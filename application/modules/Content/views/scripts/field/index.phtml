@@ -1,27 +1,177 @@
-<?php echo $this->heading($this->controllerTitle); ?>
+<?php echo $this->heading($this->heading); ?>
 
 <?php $types = array(0 =>'System', 1 => 'Template', 2 => 'User'); ?>
 
-<p><a class="button"  href="<?php echo $this->url(array('controller' => 'section', 'action' => 'index'),'content-admin'); ?>">Back to Section</a><a class="button"  href="<?php echo $this->url(array('controller' => 'field-set', 'action' => 'index', 'id'=> $this->id ),'content-admin-id'); ?>">Edit Field Sets</a></p>
+<div class="ui-widget-content buttonfix">
+    <a class="button"  data-icon="ui-icon-circle-arrow-w" href="<?php echo $this->url(array('controller' => 'section', 'action' => 'index'),'content-admin'); ?>">Back to Section</a>
+    <?php /*<a class="button"  data-icon="ui-icon-pencil" href="<?php echo $this->url(array('controller' => 'field-set', 'action' => 'index', 'id'=> $this->id ),'content-admin-id'); ?>">Edit Field Sets</a>
+*/?>
+</div>
 
-<table class="ui-widget" width="100%">
-    <thead class="ui-widget-header">
-        <tr><th>Label</th><th>Name</th> <th>Element</th> <th>Type</th> <th width="150">Edit/Delete</th></tr>
+    <div class="cms ui-widget ui-widget-content ui-corner-all">
+    <div class="ui-widget-header ui-corner-all">
+        Field Sets
+        <span class="buttons">
+        <a class="button" title="Add FieldSet" data-icon="ui-icon-plusthick" data-text="false" 
+           href="<?php echo $this->url(array('controller' => 'field-set', 'action' => 'new','id' => $this->id),'content-admin-id'); ?>">Add</a> 
+        <a class="button" title="Edit FieldSets" data-icon="ui-icon-pencil" data-text="false" 
+           href="<?php echo $this->url(array('controller' => 'field-set', 'action' => 'index', 'id'=> $this->id ),'content-admin-id'); ?>">">Edit</a> 
+       
+        </span>
+    </div>
+    <div class="ui-widget-content">
+
+
+<?php 
+$this->jquery()->addOnLoad("$('#sortFieldSets').sortable({
+    axis: 'y',
+    handle: '.handle',
+    placeholder: 'ui-state-highlight',
+    forcePlaceholderSize: true,
+    stop: function(event, ui) { 
+        var fieldset = ui.item[0].id.replace(/[^0-9]/g, '');
+        var position = ui.item.index();
+        //if(position > 1){
+       // position = position -1;
+       // }
+        console.log(['sort change',event, ui, fieldset, position, '". $this->url(array('controller' => 'field-set', 'action' => 'change-order'),'content-admin') ."']);
+        $.post('". $this->url(array('controller' => 'field-set', 'id' => $this->id, 'action' => 'change-order'),'content-admin') ."', {id:fieldset, order:position },
+            
+            function(data) {
+              console.log('ajax success');
+            });
+        }
+    });
+    
+
+
+$('.sortFields').sortable({
+    axis: 'y',
+    connectWith:'.sortFields',
+   // handle: '.handle2',
+    placeholder: 'ui-state-highlight',
+    forcePlaceholderSize: true,
+    items: 'tbody > tr',
+   
+receive: function(ev, ui) { //fixes issues with empty tbody
+ //$.Widget.prototype.receive.call(this,ev, ui );  
+ //console.log(ui.item.parent().children().size());
+// console.log(ui.item.parent().is('tbody'));
+ //console.log(ui.item.parent().find('tbody').size());
+if(!(ui.item.parent().is('tbody'))){
+   ui.item.parent().find('tbody').append(ui.item);
+}
+return ui;
+   },
+   
+helper: function(e, ui) {
+    ui.children().each(function() {
+        $(this).width($(this).width());
+        
+    });
+    ui.addClass('ui-state-hover');
+    return ui;
+},
+    stop: function(event, ui) {
+        //fix highlight
+        ui.item.removeClass('ui-state-hover');
+        //console.log(ui.item.parent('.cms'));
+        
+        var fieldset = ui.item.parent().parent().parent().parent()[0].id.replace(/[^0-9]/g, '');
+        var id = ui.item[0].id.replace(/[^0-9]/g, '');
+        var position = ui.item.index();
+         $.post('". $this->url(array('controller' => 'field', 'id' => $this->id, 'action' => 'change-order'),'content-admin') ."', {id:id, set:fieldset, order:position },
+            
+            function(data) {
+              console.log('ajax success');
+            });
+       // }
+       // console.log([fieldset,id,position]);
+
+        $('.sortFields tbody').each(function(){
+            $(this).children().each(function(index){
+                if((index % 2) == 1){
+                    $(this).addClass('ui-state-default');
+                } else {
+                    $(this).removeClass('ui-state-default');
+                }
+            });
+        });
+            
+       // console.log(['sort fields change',event, ui]).disableSelection();
+
+    }
+    
+
+});");
+?>
+<div id="sortFieldSets">
+<?php
+$onlyItem = false;
+
+if(count($this->objects) == 1){
+    $onlyItem = true;
+}
+
+foreach($this->objects as $set){
+?>
+    <div id="fieldset-<?php echo $set->id ?>" class="cms ui-widget ui-widget-content ui-corner-all">
+    <div class=" ui-widget-header ui-corner-all handle moveable"><span class="move ui-icon ui-icon-carat-2-n-s"></span> <?php echo $set->title ?> 
+        <span class="buttons">
+        <a class="button" title="Add Field" data-icon="ui-icon-plusthick" data-text="false" 
+           href="<?php echo $this->url(array('controller' => 'field', 'id' => $set->section, 'action' => 'new'),'content-admin-id'); ?>?set=<?php echo $set->id?>">Add</a> 
+        <a class="button" title="Edit FieldSet" data-icon="ui-icon-pencil" data-text="false" 
+           href="<?php echo $this->url(array('controller' => 'field-set', 'id' => $set->id, 'action' => 'edit'),'content-admin-id'); ?>">Edit</a> 
+        <?php  if($onlyItem == false){ ?>
+            <a class="button" title="Delete FieldSet" data-icon="ui-icon-closethick" data-text="false" 
+               href="<?php echo $this->url(array('controller' => 'field-set', 'id' => $set->id, 'action' => 'delete'),'content-admin-id'); ?>">Delete</a>
+        <?php } ?> 
+        </span>
+    </div>
+    <div class="ui-widget-content">
+        
+<table class="sortFields" width="100%">
+    <thead class="ui-widget-header ui-state-hover">
+        <tr><th width="20"></th><th width="200">Label</th><th width="200">Name</th> <th width="100">Element</th> <th width="100">Type</th> <th width="50"></th></tr>
     </thead>
-    <tbody class="ui-widget-content">
+    <tbody>
         <?php
-        foreach ($this->objects as $object) {
+        foreach ($set->fields as $object) {
             /* @var $object Content_Model_Category */
             ?>
-            <tr  class="<?php echo $this->cycle(array("", "ui-state-highlight"))->next() ?>" >
+            <tr id="field-<?php echo $object->id ?>"  class="moveable <?php echo $this->cycle(array("", "ui-state-default"))->next() ?>" >
+                <td><span class="move ui-icon ui-icon-carat-2-n-s"></span></td>
                 <td class="left"><?php echo $object->label ?></td>
                 <td class="left"><?php echo $object->name ?></td>
                 <td class="left"><?php echo $object->element ?></td>
                 <td><?php echo $types[$object->type] ?></td>
-                <td><a href="<?php echo $this->url(array('controller' => 'field', 'id' => $object->id, 'action' => 'edit'),'content-admin-id'); ?>">Edit</a> <a href="<?php echo $this->url(array('controller' => 'field', 'id' => $object->id, 'action' => 'delete'),'content-admin-id'); ?>">Delete</a></td>
+                <td>
+                    <a class="button"  data-icon="ui-icon-pencil" data-text="false"  title="Edit Field &quot;<?php echo $object->label ?>&quot;" 
+                       href="<?php echo $this->url(array('controller' => 'field', 'id' => $object->id, 'action' => 'edit'),'content-admin-id'); ?>">
+                        Edit
+                    </a>
+                    <a class="button" data-icon="ui-icon-close" data-text="false"  title="Delete Field &quot;<?php echo $object->label ?>&quot;" 
+                       href="<?php echo $this->url(array('controller' => 'field', 'id' => $object->id, 'action' => 'delete'),'content-admin-id'); ?>">
+                        Delete
+                    </a>
+
             </tr><?php
+            
         }
         ?>
     </tbody>
 </table>
-<a class="button"  href="<?php echo $this->url(array('controller' => 'field', 'id' => $this->id, 'action' => 'new'),'content-admin-id'); ?>">New</a>
+</div>
+</div>
+<?php
+$this->cycle()->rewind();
+}
+?>
+    </div>
+<div>
+    <a class="button" data-icon="ui-icon-plusthick" href="<?php echo $this->url(array('controller' => 'field', 'id' => $this->id, 'action' => 'new'),'content-admin-id'); ?>">New Field</a> 
+    <a class="button" data-icon="ui-icon-plusthick" href="<?php echo $this->url(array('controller' => 'field-set', 'action' => 'new','id' => $this->id),'content-admin-id'); ?>">Add FieldSet</a>
+</div>
+        
+</div>
+</div>

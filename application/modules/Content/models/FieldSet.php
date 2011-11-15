@@ -42,6 +42,8 @@ class Content_Model_FieldSet implements Content_Model_FieldSet_Interface {
      * @var boolean
      */
     public $visible = true;
+    
+    public $fields = array();
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {

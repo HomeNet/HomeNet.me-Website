@@ -38,7 +38,7 @@ require_once 'Zend/Form/Decorator/Abstract.php';
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Image.php 23775 2011-03-01 17:25:24Z ralph $
  */
-class CMS_Form_Decorator_AjaxHelper extends Zend_Form_Decorator_Abstract
+class CMS_Form_Decorator_JsHelper extends Zend_Form_Decorator_Abstract
 {
     /**
      * Attributes that should not be passed to helper

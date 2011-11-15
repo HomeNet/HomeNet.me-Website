@@ -55,6 +55,7 @@ class Content_Model_Template_DbTableRow extends Zend_Db_Table_Row_Abstract imple
 //        }
         $this->autosave = (bool) $this->autosave;
         $this->visible = (bool) $this->visible;
+        $this->active = (bool) $this->active;
 
 //        if(is_string($this->permissions)){
 //            $this->permissions = unserialize($this->permissions);
@@ -75,7 +76,7 @@ class Content_Model_Template_DbTableRow extends Zend_Db_Table_Row_Abstract imple
 //      $this->compress();
       $this->revision = date('Y-m-d H:i:s');
         if (parent::save()) {
-//            $this->uncompress();
+           $this->uncompress();
             return $this;
         }
     }

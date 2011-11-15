@@ -26,11 +26,11 @@
  *
  * @author Matthew Doll <mdoll at homenet.me>
  */   
-class Content_Plugin_Element_Url_Installer {
+class Content_Plugin_Element_Slug_Installer {
     
     function getDependencies(){
         $dependencies = array(
-            'Zend_Form_Element_File'
+            'Zend_Form_Element_Text'
         );
         return $dependencies;
     }
@@ -41,7 +41,7 @@ class Content_Plugin_Element_Url_Installer {
      * @return string 
      */
     function getMysqlColumn(){
-        return 'text'; //doesnot require a column
+        return 'VARCHAR(255)'; //doesnot require a column
     }
     
     

@@ -25,9 +25,9 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class CMS_View_Helper_FormAjaxFileManager extends CMS_View_Helper_FormAjaxElement {
+class CMS_View_Helper_FormJsFileManager extends CMS_View_Helper_FormJsElement {
 
-    public function formAjaxFileManager($name, $value = null, $attribs = null, $params = null, $options = null) {
+    public function formJsFileManager($name, $value = null, $attribs = null, $params = null, $options = null) {
         extract($this->_prepareArgs($name, $value, $attribs, $params, $options));
 
         //  $options = array('path','title','description','source','sourceUrl','copyright','owner','fullname', 'size', 'width', 'height', 'cropTop','cropLeft','cropWidth','cropHeight');

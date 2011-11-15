@@ -17,13 +17,19 @@
  * You should have received a copy of the GNU General Public License
  * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
-?>
-<?php echo $this->render('header.phtml') ?>
 
-<section>
-    <h1><?php echo $this->layout()->heading ?></h1>
-    <div class="breadcrumbs"><?php echo $this->breadcrumbs(); ?></div>
-<?php echo $this->layout()->content ?>
-</section>
-<?php echo $this->render('footer.phtml') ?>
-  
+/**
+ * @package CMS
+ * @subpackage Form
+ * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
+ */
+class CMS_Form_Element_JsSlug extends CMS_Form_Element_JsElement
+{
+    /**
+     * Default form view helper to use for rendering
+     * @var string
+     */
+    public $helper = 'formJsSlug';
+    
+}

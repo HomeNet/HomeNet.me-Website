@@ -24,12 +24,12 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class CMS_Form_Element_AjaxGallery extends CMS_Form_Element_Ajax
+class CMS_Form_Element_JsGallery extends CMS_Form_Element_JsElement
 {
     /**
      * Default form view helper to use for rendering
      * @var string
      */
-    public $helper = 'formAjaxGallery';
+    public $helper = 'formJsGallery';
     public $wide = true;
 }

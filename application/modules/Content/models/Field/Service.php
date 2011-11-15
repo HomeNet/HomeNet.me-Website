@@ -82,7 +82,7 @@ class Content_Model_Field_Service {
 
     /**
      * @param int $section Content Section Id
-     * @return Content_Model_Field_Interface[]
+     * @return Content_Model_Field[]
      */
     public function getObjectsBySection($section) {
         $results = $this->getMapper()->fetchObjectsBySection($section);
@@ -108,6 +108,22 @@ class Content_Model_Field_Service {
 //        }
         return $fields;
     }
+    
+    public function setObjectOrder($mixed,$set,$order){
+        
+        if ($mixed instanceof Content_Model_Field_Interface) {
+            $object = $mixed;  
+        } elseif (is_numeric($mixed)) {
+            $object = $this->getObjectById($mixed);
+        } elseif (is_array($mixed)) {
+            $object = new Content_Model_Field(array('data' => $mixed));
+        } else {
+            throw new InvalidArgumentException('Invalid Object');
+        }
+        
+        $results = $this->getMapper()->setObjectOrder($object, $set, $order);
+        return $results;
+    }
 
     /**
      * @param Content_Model_Field_Interface|array $mixed
@@ -123,11 +139,15 @@ class Content_Model_Field_Service {
             throw new InvalidArgumentException('Invalid Object');
         }
         $field = $this->getMapper()->save($object);
+        
+       // die(debugArray($field));
 
         // if($field->type != Content_Model_Field::SYSTEM){
         $service = new Content_Model_Content_Service();
         $service->addCustomField($field);
         //  }
+        $this->getMapper()->shiftOrderBySection($field->section, null, $field->set, null, $field->order, $field->id);
+ 
 
         return $field;
     }
@@ -169,6 +189,9 @@ class Content_Model_Field_Service {
             $service = new Content_Model_Content_Service();
             $service->renameCustomField($old, $field);
         }
+        if($old->order != $field->order){
+            $this->getMapper()->shiftOrderBySection($field->section, $old->set, $field->set, $old->order, $field->order, $field->id);
+        }
 
         return $field;
     }
@@ -197,8 +220,18 @@ class Content_Model_Field_Service {
             //die('remove field');
             $service->removeCustomField($object);
         }
+        
+        $section = $object->section;
+        $set = $object->set;
+        $position = $object->order;
+        
+        $result = $this->getMapper()->delete($object);
+        
+        if($result){
+            $this->getMapper()->shiftOrderBySection($section, $set, null, $position);
+        }
 
-        return $this->getMapper()->delete($object);
+        return $result;
     }
 
     public function deleteBySection($section) {

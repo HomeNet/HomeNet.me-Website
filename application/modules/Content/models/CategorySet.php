@@ -35,7 +35,7 @@ class Content_Model_CategorySet implements Content_Model_CategorySet_Interface {
      */
     public $package;
     /**
-     * @var int
+     * @var string
      */
     public $title;
     /**

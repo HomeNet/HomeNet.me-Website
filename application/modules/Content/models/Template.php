@@ -51,6 +51,11 @@ class Content_Model_Template implements Content_Model_Template_Interface {
     public $section;
     
     /**
+     * @var int
+     */
+    public $type;
+    
+    /**
      * @var string
      */
     public $url;
@@ -66,6 +71,10 @@ class Content_Model_Template implements Content_Model_Template_Interface {
     public $content;
     
     public $visible = false;
+    
+    const SYSTEM = 0;
+    const TEMPLATE = 1;
+    const USER = 2;
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {

@@ -29,12 +29,64 @@ class Content_FieldSetController extends Zend_Controller_Action
 
     public function init()
     {
-        $this->view->controllerTitle = 'FieldSet'; //for generic templates
+        $this->view->heading = 'FieldSet'; //for generic templates
+        
+
+        
         $this->view->id = $this->_getParam('id');
+    }
+    
+       private function _loadSection($id){
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Admin',
+            'route'  => 'admin'          
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Content',
+            'route'  => 'content-admin',  
+            'module' => 'Content',
+            'controller' => 'section',
+        ));
+        
+        $sService = new Content_Model_Section_Service();
+        $section = $sService->getObjectById($id);
+       // 
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => $section->title,
+            'route'  => 'content-admin-id',  
+            'module' => 'Content',
+            'controller' => 'section',
+            'params' => array('id'=>$id)
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Fields',
+            'route'  => 'content-admin-id',  
+            'module' => 'Content',
+            'controller' => 'field',
+            'params' => array('id'=>$id)
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'FieldSets',
+            'route'  => 'content-admin-id',  
+            'module' => 'Content',
+            'controller' => 'field-set',
+            'params' => array('id'=>$id)
+        ));
+        
+        $this->view->heading = $section->title.' FieldSet';
+        
+       return $section;
     }
 
     public function indexAction()
     {
+        $section = $this->_loadSection($this->view->id);
+        $this->view->heading = $section->title . ' FieldSets';
+        
         $service = new Content_Model_FieldSet_Service();
         $this->view->objects = $service->getObjectsBySection($this->view->id);
     }
@@ -46,7 +98,7 @@ class Content_FieldSetController extends Zend_Controller_Action
         $form = new Content_Form_FieldSet();
         $form->addElement('submit', 'submit', array('label' => 'Create'));
         $this->view->assign('form',$form);
-        
+        $section = $this->_loadSection($this->view->id);
         
         
         //$this->_helper->viewRenderer('../generic/new');
@@ -71,7 +123,7 @@ class Content_FieldSetController extends Zend_Controller_Action
         $service = new Content_Model_FieldSet_Service();
         $service->create($values);
         
-        return $this->_redirect($this->view->url(array('controller'=>'field-set', 'action'=>'index', 'id'=>$this->view->id),'content-admin-id').'?message=Successfully added new Set');//
+        return $this->_redirect($this->view->url(array('controller'=>'field', 'action'=>'index', 'id'=>$this->view->id),'content-admin-id').'?message=Successfully added new Set');//
     }
 
     public function editAction()
@@ -83,9 +135,12 @@ class Content_FieldSetController extends Zend_Controller_Action
         $form->addElement('submit', 'submit', array('label' => 'Update'));
         $form->addElement('hidden', 'section');
         
+        $object = $service->getObjectById($this->_getParam('id'));
+        $this->_loadSection($object->section);
+        
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
-            $object = $service->getObjectById($this->_getParam('id'));
+            
             
             $values = $object->toArray();
 
@@ -107,7 +162,7 @@ class Content_FieldSetController extends Zend_Controller_Action
          $object->fromArray($values);
         $service->update($object);
 
-        return $this->_redirect($this->view->url(array('controller'=>'field-set', 'action'=>'index', 'id'=>$object->section),'content-admin-id').'?message=Updated');//
+        return $this->_redirect($this->view->url(array('controller'=>'field', 'action'=>'index', 'id'=>$object->section),'content-admin-id').'?message=Updated');//
     }
 
     public function deleteAction()
@@ -116,6 +171,9 @@ class Content_FieldSetController extends Zend_Controller_Action
         
         $service = new Content_Model_FieldSet_Service();
         $object = $service->getObjectById($this->_getParam('id'));
+        
+        $this->_loadSection($object->section);
+        
         $form = new Core_Form_Confirm();
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
@@ -132,9 +190,9 @@ class Content_FieldSetController extends Zend_Controller_Action
         if(!empty($_POST['delete'])){
             
             $service->delete($object);
-            return $this->_redirect($this->view->url(array('controller'=>'field-set', 'action'=>'index', 'id'=>$section),'content-admin-id').'?message=Deleted');
+            return $this->_redirect($this->view->url(array('controller'=>'field', 'action'=>'index', 'id'=>$section),'content-admin-id').'?message=Deleted');
         }
-        return $this->_redirect($this->view->url(array('controller'=>'field-set', 'action'=>'index', 'id'=>$section),'content-admin-id').'?message=Canceled');
+        return $this->_redirect($this->view->url(array('controller'=>'field', 'action'=>'index', 'id'=>$section),'content-admin-id').'?message=Canceled');
     }
 
     public function hideAction()
@@ -145,5 +203,27 @@ class Content_FieldSetController extends Zend_Controller_Action
     public function showAction()
     {
         // action body
+    }
+    
+    public function changeOrderAjaxAction(){
+        
+      //  $section = $this->_getParam('section');
+        $id= $this->_getParam('id');
+        $order = $this->_getParam('order');
+                
+        
+        if(empty($id) || !is_numeric($id)){
+            throw new InvalidArgumentException('Missing FieldSet Id');
+        }
+        if(is_null($order) || !is_numeric($order)){
+            throw new InvalidArgumentException('Invalid Order');
+        }
+        
+        $service = new Content_Model_FieldSet_Service();
+        $service->setObjectOrder($id, $order);
+        
+        $this->_helper->viewRenderer->setNoRender(true);
+       // print_r($this->_getAllParams());
+        echo 'success';
     }
 }

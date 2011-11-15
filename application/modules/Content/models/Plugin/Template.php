@@ -52,7 +52,7 @@ abstract class Content_Model_Plugin_Template {
             'set' => $fieldSets['publish'],
             'order' => 2,
             'type' => Content_Model_Field::SYSTEM,
-            'element' => 'url',
+            'element' => 'slug',
             'name' => 'url',
             'label' => 'Url',
             'value' => '',

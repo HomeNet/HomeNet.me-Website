@@ -27,7 +27,7 @@
  */
 class Content_Model_FieldSet_DbTableRow extends Zend_Db_Table_Row_Abstract implements Content_Model_FieldSet_Interface {
 
-//    public $rooms;
+    public $fields = array();
 
     public function fromArray(array $array){
 

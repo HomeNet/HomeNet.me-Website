@@ -17,7 +17,7 @@
         $this->jQuery()->setUiVersion('1.8.16');
         $this->jQuery()->useUiCdn();
         
-        $this->jquery()->addOnLoad('$( ".button" ).button();
+        $this->jquery()->addOnLoad('$( ".button" ).simplebutton();
             $( \'input[type="submit"]"\' ).button();');
         
         $this->jQuery()->setRenderMode(15);
@@ -25,9 +25,12 @@
 <?php echo $this->jQuery(); ?>
     <script>window.jQuery || document.write('<script src="/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
 <?php 
+
+ $this->headScript()->appendFile('/js/mylibs/jquery.simplebutton.js');
+
  echo $this->headScript();
 ?>
-
+   
     <!-- scripts concatenated and minified via ant build script-->
     <script defer src="/js/plugins.js"></script>
     <script defer src="/js/script.js"></script>

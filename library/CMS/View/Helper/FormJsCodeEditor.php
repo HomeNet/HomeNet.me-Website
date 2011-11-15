@@ -24,9 +24,9 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class CMS_View_Helper_FormAjaxCodeEditor extends CMS_View_Helper_FormAjaxElement
+class CMS_View_Helper_FormJsCodeEditor extends CMS_View_Helper_FormJsElement
 {
-    public function formAjaxCodeEditor($name, $value, $attribs = null, $params = null)
+    public function formJsCodeEditor($name, $value, $attribs = null, $params = null)
     {
         $defaultParams = array('lineNumbers' => true,
                                 'matchBrackets' => true,

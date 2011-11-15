@@ -45,27 +45,88 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
         $this->_table = $table;
     }
 
-    public function fetchObjectById($id){
+    public function fetchObjectById($id) {
         return $this->getTable()->find($id)->current();
     }
 
-   public function fetchObjectsBySection($section){
+    public function fetchObjectsBySection($section) {
 
-       $select = $this->getTable()->select()->where('section = ?',$section)->order('order ASC');
-       return $this->getTable()->fetchAll($select);
-    }  
-    
+        $select = $this->getTable()->select()->where('section = ?', $section)->order('set ASC')->order('order ASC');
+        return $this->getTable()->fetchAll($select);
+    }
+
     /**
      *
      * @param string $url
      * @return 
      */
-    public function fetchObjectBySectionName($section,$name){
+    public function fetchObjectBySectionName($section, $name) {
 
-       $select = $this->getTable()->select()->where('section = ?',$section)->where('name = ?',$name);
-       return $this->getTable()->fetchRow($select);
+        $select = $this->getTable()->select()->where('section = ?', $section)->where('name = ?', $name);
+        return $this->getTable()->fetchRow($select);
     }
 
+    public function shiftOrderBySection($section, $currentSet, $newSet, $currentPosition, $newPosition = null, $id = null) {
+        
+        
+        
+        if($currentSet != $newSet){
+            $this->shiftOrderBySection($section, $currentSet, $currentSet, $currentPosition, null, $id);
+            $this->shiftOrderBySection($section, $newSet, $newSet, null, $newPosition, $id);
+            return true;
+        }
+        echo $section .' '. $currentSet .' '. $newSet .' '.  $currentPosition .' '.  $newPosition .' '. $id.' ';
+        
+        if ($newPosition == $currentPosition) { //same position, do nothing 
+            return true;
+        }
+        if(is_null($currentSet)){
+            $currentSet = $newSet;
+        }
+
+        $where = array();
+        $where[] = $this->getTable()->getAdapter()->quoteInto('`section` = ?', $section);
+        $where[] = $this->getTable()->getAdapter()->quoteInto('`set` = ?', $currentSet);
+        if(!is_null($id)){
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`id` != ?', $id);
+        }
+        
+        if(is_null($newPosition) && !is_null($currentPosition)){ //delete
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`order` > ?', $currentPosition);
+            $data = array('order' => new Zend_Db_Expr('`order` - 1'));
+            
+        } elseif(!is_null($newPosition) && is_null($currentPosition)){ //create
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`order` >= ?', $newPosition);
+            $data = array('order' => new Zend_Db_Expr('`order` + 1'));
+            
+        } elseif($newPosition > $currentPosition) { //moving up
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`order` > ?', $currentPosition);
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`order` <= ?', $newPosition);
+            $data = array('order' => new Zend_Db_Expr('`order` - 1'));
+            
+        } elseif ($newPosition < $currentPosition) { //moving down
+
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`order` < ?', $currentPosition);
+            $where[] = $this->getTable()->getAdapter()->quoteInto('`order` >= ?', $newPosition);
+            $data = array('order' => new Zend_Db_Expr('`order` + 1'));
+        } else { //same position, do nothing 
+            return true;
+        }
+      //  die(debugArray($where));
+        return $this->getTable()->update($data, $where);
+    }
+
+    public function setObjectOrder($object, $set, $newPosition) {
+
+        if (!$this->shiftOrderBySection($object->section, $object->set, $set, $object->order, $newPosition, $object->id)) {
+            throw new Exception('Error Shifting Fields');
+        }
+
+        //update order
+        $object->set = $set;
+        $object->order = $newPosition;
+        return $this->save($object);
+    }
 
 //     public function fetchObjectsByIdHouse($id,$house){
 //
@@ -76,21 +137,20 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
 //    }
 
     public function save(Content_Model_Field_Interface $content) {
-
+        
         if (($content instanceof Content_Model_Field_DbTableRow) && ($content->isConnected())) {
             return $content->save();
         } elseif (!is_null($content->id)) {
             $row = $this->getTable()->find($content->id)->current();
-            if(empty($row)){
-               $row = $this->getTable()->createRow();
+            if (empty($row)) {
+                $row = $this->getTable()->createRow();
             }
-
         } else {
             $row = $this->getTable()->createRow();
         }
 
         $row->fromArray($content->toArray());
-       // die(debugArray($row));
+        // die(debugArray($row));
         $row->save();
 
         return $row;
@@ -99,25 +159,32 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
     public function delete(Content_Model_Field_Interface $content) {
 
         if (($content instanceof Content_Model_Field_DbTableRow) && ($content->isConnected())) {
-            $content->delete();
-            return true;
+            //good
         } elseif (!is_null($content->id)) {
-            $row = $this->getTable()->find($content->id)->current()->delete();
+            $content = $this->getTable()->find($content->id)->current();
             return;
+        } else {
+            throw new Exception('Invalid Content');
         }
+        $section = $content->section;
+        $position = $content->order;
 
-        throw new Exception('Invalid Content');
+        $result = $content->delete();
+
+       
+        return $result;
     }
-    
-     public function deleteBySection($section){
- 
-         $where = $this->getTable()->getAdapter()->quoteInto('section = ?',$section);
-         $this->getTable()->delete($where);
+
+    public function deleteBySection($section) {
+
+        $where = $this->getTable()->getAdapter()->quoteInto('section = ?', $section);
+        $this->getTable()->delete($where);
     }
-    
-    public function deleteAll(){
+
+    public function deleteAll() {
         if (APPLICATION_ENV != 'production') {
-            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `' . $this->getTable()->info('name') . '`');
         }
     }
+
 }

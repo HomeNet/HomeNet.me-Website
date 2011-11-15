@@ -50,7 +50,7 @@ class Content_Form_Field extends CMS_Form
         
         $this->elements2 = $options;
         
-        $type = $this->createElement('ajaxSelect','element');
+        $type = $this->createElement('JsSelect','element');
         $type->setLabel('Element: ');
 //        $type->setMultiOptions(array('Text' => 'Text Field',
 //                                     'Textarea' => 'Text Area',
@@ -71,20 +71,20 @@ class Content_Form_Field extends CMS_Form
       $this->addElement($type);
         
         
-        $set = $this->createElement('select','set');
-        
-        $service = new Content_Model_FieldSet_Service();
-        $results = $service->getObjectsBySection($this->_section);
-        
-        $array = array();
-        foreach($results as $set2){
-            $array[$set2->id] = $set2->title;
-        }
+//        $set = $this->createElement('select','set');
+//        
+//        $service = new Content_Model_FieldSet_Service();
+//        $results = $service->getObjectsBySection($this->_section);
+//        
+//        $array = array();
+//        foreach($results as $set2){
+//            $array[$set2->id] = $set2->title;
+//        }
 
-        $set->setMultiOptions($array);
-        $set->setLabel('Field Set: ');
-        $set->setRequired('true');
-        $this->addElement($set);
+//        $set->setMultiOptions($array);
+//        $set->setLabel('Field Set: ');
+//        $set->setRequired('true');
+//        $this->addElement($set);
         
         
         
@@ -96,11 +96,13 @@ class Content_Form_Field extends CMS_Form
         $this->addElement($label);
         
         //use url fiedl type to format nice system name
-        $name = $this->createElement('text','name');
+        $name = $this->createElement('JsSlug','name');
         $name->setLabel('System Name: ');
         $name->setDescription('This is the name that will be used in templates');
         $name->setRequired('true');
         $name->addFilter('StringToLower');
+        $name->setParam('source','#label');
+        $name->setParam('separator','_');
         $this->addElement($name);
         //@todo check for resevred names
         
@@ -130,10 +132,28 @@ class Content_Form_Field extends CMS_Form
         $this->addElement($required);
         
         
-        $order = $this->createElement('text','order');
-        $order->setLabel('Order: ');
+//        $order = $this->createElement('text','order');
+//        $order->setLabel('Order: ');
+//        $order->setRequired('true');
+//        $order->addFilter('StripTags');
+//        $this->addElement($order);
+        
+        $service = new Content_Model_FieldSet_Service();
+        $sets = $service->getObjectsBySectionWithFields($this->_section);
+        
+        $order = $this->createElement('select', 'location');
+        $order->setLabel('Set/Order: ');
         $order->setRequired('true');
-        $order->addFilter('StripTags');
+      //  die('<pre>'.print_r($sets, 1));
+        $options = array();
+        foreach($sets as $set){
+            $options[$set->title] = array($set->id.'.0' => 'First');
+            foreach($set->fields as $value){
+                $options[$set->title][$set->id.'.'.($value->order+1)] = 'After '.$value->label;
+            }
+        }
+        
+        $order->setMultiOptions($options);
         $this->addElement($order);
 
 
@@ -164,7 +184,7 @@ class Content_Form_Field extends CMS_Form
                 $element = $this->getElement('element');
                 $element->setIgnore(true);
               //  $element->setAttrib('disabled', true);
-                $element->setOption('update', '#none');
+                $element->setParam('update', '#none');
             }
         }
         

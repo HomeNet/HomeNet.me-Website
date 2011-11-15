@@ -25,7 +25,7 @@
  *
  * @author Matthew Doll <mdoll at homenet.me>
  */
-class Content_Plugin_Element_Url_Element extends Content_Model_Plugin_Element {
+class Content_Plugin_Element_Slug_Element extends Content_Model_Plugin_Element {
 
     
     /**
@@ -35,22 +35,39 @@ class Content_Plugin_Element_Url_Element extends Content_Model_Plugin_Element {
      */
     function getSetupForm($options = array()){
         $form = parent::getSetupForm($options);
-        $form->setLegend('Url Options');
+        $form->setLegend('Slug Options');
         
-        $type = $form->createElement('select', 'target');
-        $type->setLabel('Target: ');
-        $type->setRequired('true');
+        $source = $form->createElement('select', 'source');
+        $source->setLabel('Source: ');
+        $source->setRequired('true');
 
         $options = array(
-            'name' => 'Name',
-            'title' => 'Title',
+           // 'name' => 'Name',
+            '#title' => 'Title',
         );
 
-        //$template->addMultiOption('None','');
-        $type->setMultiOptions($options);
-        $form->addElement($type);
+        $source->setMultiOptions($options);
+        $form->addElement($source);
         
+        $separator = $form->createElement('select', 'separator');
+        $separator->setLabel('Separator: ');
+        $separator->setRequired('true');
+
+        $options = array(
+            '-' => '-',
+            '_' => '_',
+            '.' => '.'
+        );
+        $separator->setMultiOptions($options);
+        $form->addElement($separator);
         
+        $length = $form->createElement('text', 'length');
+        $length->setLabel('Max Length: ');
+        $length->setRequired('true');
+        $length->setValue(32);
+        $length->addFilter('Int');
+        $form->addElement($length);
+
         return $form;
     }
     
@@ -62,7 +79,8 @@ class Content_Plugin_Element_Url_Element extends Content_Model_Plugin_Element {
      */
     function getElement(array $config, $options = array()){
         
-        $element = new Zend_Form_Element_Text($config); 
+        $element = new CMS_Form_Element_JsSlug($config); 
+        $element->setParams($options);
         return $element;
     }
 }

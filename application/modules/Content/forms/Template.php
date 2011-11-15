@@ -42,7 +42,7 @@ class Content_Form_Template extends CMS_Form
         $url->addFilter('StripTags');
         $this->addElement($url);
         
-        $content = $this->createElement('AjaxCodeEditor','content');
+        $content = $this->createElement('JsCodeEditor','content');
         $content->setLabel('Template: ');
         $content->setAttrib('rows','35');
         $content->setAttrib('cols','110');

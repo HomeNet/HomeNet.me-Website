@@ -2,12 +2,6 @@
 
 class Content_IndexController extends Zend_Controller_Action
 {
-
-    public function init()
-    {
-        /* Initialize action controller here */
-    }
-
     public function indexAction()
     {       
         //get section
@@ -32,13 +26,13 @@ class Content_IndexController extends Zend_Controller_Action
             $acl->add($cResource);
         }
 
-        $action = 'index';
+       // $action = 'index';
         
         $user = Core_Model_User_Manager::getUser();
         
       //  $uRole = new CMS_Acl_Role_User($_SESSION['User']['id']);
 
-        if (!$acl->isAllowed($user, $cResource, $action)) {
+        if (!$acl->isAllowed($user, $cResource, $template)) {
             
             $dispatcher = Zend_Controller_Front::getInstance()->getDispatcher();
 

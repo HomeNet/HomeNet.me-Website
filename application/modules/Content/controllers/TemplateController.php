@@ -29,18 +29,64 @@ class Content_TemplateController extends Zend_Controller_Action
 
     public function init()
     {
-        $this->view->controllerTitle = 'Template'; //for generic templates
+         //for generic templates
         $this->view->id = $this->_getParam('id');
+    }
+    
+    private function _loadSection($id){
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Admin',
+            'route'  => 'admin'          
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Content',
+            'route'  => 'content-admin',  
+            'module' => 'Content',
+            'controller' => 'section',
+        ));
+        
+        $sService = new Content_Model_Section_Service();
+        $section = $sService->getObjectById($id);
+       // 
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => $section->title,
+            'route'  => 'content-admin-id',  
+            'module' => 'Content',
+            'controller' => 'section',
+            'params' => array('id'=>$id)
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Templates',
+            'route'  => 'content-admin-id',  
+            'module' => 'Content',
+            'controller' => 'template',
+            'params' => array('id'=>$id)
+        ));
+        
+        $this->view->heading = $section->title.' Template';
+        
+       return $section;
     }
 
     public function indexAction()
     {
+        $section = $this->_loadSection($this->view->id);
+        $this->view->heading = $section->title . ' Templates';
+        
         $service = new Content_Model_Template_Service();
         $this->view->objects = $service->getObjectsBySection($this->view->id);
+        
+        
+       
     }
 
     public function newAction()
     {
+        $this->_loadSection($this->view->id);
+        
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         
         $form = new Content_Form_Template();
@@ -68,7 +114,8 @@ class Content_TemplateController extends Zend_Controller_Action
 
         $values = $form->getValues();
         $values['owner'] = Core_Model_User_Manager::getUser()->id; 
-        $values['section'] = $this->_getParam('id');
+        $values['section'] = $this->view->id;
+        $values['type'] = Content_Model_Template::USER;
         $service = new Content_Model_Template_Service();
         $object = $service->create($values);
         
@@ -77,6 +124,9 @@ class Content_TemplateController extends Zend_Controller_Action
 
     public function editAction()
     {
+        
+        
+        
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         
         $service = new Content_Model_Template_Service();
@@ -88,6 +138,7 @@ class Content_TemplateController extends Zend_Controller_Action
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
             $object = $service->getObjectById($this->_getParam('id'));
+            $this->_loadSection($object->section);
             
             $values = $object->toArray();
 
@@ -96,6 +147,8 @@ class Content_TemplateController extends Zend_Controller_Action
             $this->view->form = $form;
             return;
         }
+        
+        $this->_loadSection($_POST['section']);
 
         if (!$form->isValid($_POST)) {
             // Failed validation; redisplay form
@@ -115,10 +168,17 @@ class Content_TemplateController extends Zend_Controller_Action
 
     public function deleteAction()
     {
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Delete',
+            'uri' => '#'
+        ));
+        
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         
         $service = new Content_Model_Template_Service();
         $object = $service->getObjectById($this->_getParam('id'));
+  
+        $this->_loadSection($object->section);
         $form = new Core_Form_Confirm();
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {

@@ -56,7 +56,7 @@ class Content_Plugin_Element_Gallery_Element   extends Content_Model_Plugin_Elem
      */
     function getElement(array $config, $options = array()){
         
-        $element = new CMS_Form_Element_AjaxGallery($config); 
+        $element = new CMS_Form_Element_JsGallery($config); 
         $view = Zend_Registry::get('view');
         $element->setParams($options);
         $element->setParam('rest', $view->url(array('controller'=>'content','action'=>'rest'),'content-admin'));

@@ -29,7 +29,25 @@ class Content_SectionController extends Zend_Controller_Action
 
     public function init()
     {
-        $this->view->controllerTitle = 'Section'; //for generic templates
+        $this->view->heading = 'Section'; //for generic templates
+
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Admin',
+            'route'  => 'admin'          
+        ));
+//        $this->view->breadcrumbs()->addPage(array(
+//            'label'  => 'Content',
+//          //  'route'  => 'content-admin',  
+//          //  'module' => 'Content'
+//            'uri' => '#'
+//        ));
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Content',
+            'route'  => 'content-admin',  
+            'module' => 'Content',
+            'controller' => 'section'
+        ));
+       // echo $this->view->breadcrumbs()->render();
     }
 
     public function indexAction()

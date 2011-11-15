@@ -97,8 +97,8 @@ class CMS_Form extends Zend_Form {
                 $this->addDecorator('UiWidgetElement');
           //  } elseif (in_array($type, $other)) {
            //     $this->addDecorator('HtmlTag', array('tag' => 'div'));
-            }elseif (strstr($type, 'ajax')) {
-                $element->addDecorator('AjaxHelper');
+            }elseif (strstr($type, 'js')) {
+                $element->addDecorator('JsHelper');
             } else {
                 $element->addDecorator('ViewHelper', array());
             }

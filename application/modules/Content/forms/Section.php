@@ -25,6 +25,15 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 class Content_Form_Section extends CMS_Form {
+    
+    public function validateReservedWords($value){
+        $reserved = array('category','categoryset','content','field','fieldset','index','section','template');
+        if(in_array($value, $reserved)){
+            return false;
+        }
+        
+        return true;
+    }
 
     public function init() {
         //@todo change this to a form type that can show more details
@@ -51,10 +60,13 @@ class Content_Form_Section extends CMS_Form {
         $this->addElement($title);
 
         //This needs to be a convert from title special field
-        $url = $this->createElement('text', 'url');
+        $url = $this->createElement('JsSlug', 'url');
         $url->setLabel('Url: ');
         $url->setRequired('true');
-        $url->addFilter('StripTags');
+        $url->setParam('source','#title');
+        $url->setParam('separator','.');
+        $url->addValidator(new Zend_Validate_Callback(array($this, 'validateReservedWords')));
+        
         $this->addElement($url);
 
         $description = $this->createElement('textarea', 'description');

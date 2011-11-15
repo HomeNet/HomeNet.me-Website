@@ -29,22 +29,70 @@ class Content_FieldController extends Zend_Controller_Action
 
     public function init()
     {
-        $this->view->controllerTitle = 'Field'; //for generic templates
+        $this->view->heading = 'Field'; //for generic templates
         $this->view->id = $this->_getParam('id');
+    }
+    
+       private function _loadSection($id){
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Admin',
+            'route'  => 'admin'          
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Content',
+            'route'  => 'content-admin',  
+            'module' => 'Content',
+            'controller' => 'section',
+        ));
+        
+        $sService = new Content_Model_Section_Service();
+        $section = $sService->getObjectById($id);
+       // 
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => $section->title,
+            'route'  => 'content-admin-id',  
+            'module' => 'Content',
+            'controller' => 'section',
+            'params' => array('id'=>$id)
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Fields',
+            'route'  => 'content-admin-id',  
+            'module' => 'Content',
+            'controller' => 'field',
+            'params' => array('id'=>$id)
+        ));
+        
+        $this->view->heading = $section->title.' Field';
+        
+       return $section;
     }
 
     public function indexAction()
     {
-        $service = new Content_Model_Field_Service();
-        $this->view->objects = $service->getObjectsBySection($this->view->id);
+        $section = $this->_loadSection($this->view->id);
+        $this->view->heading = $section->title.' Fields';
+         
+        $service = new Content_Model_FieldSet_Service();
+        $this->view->objects = $service->getObjectsBySectionWithFields($this->view->id);
     }
 
     public function newAction()
     {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        
+        $this->_loadSection($this->view->id);
         $form = new Content_Form_Field($this->view->id);
         $form->addElement('submit', 'submit', array('label' => 'Create'));
+        
+        $set = $this->_getParam('set');
+        if(!empty($set)){
+            $e = $form->getElement('location');
+            $e->setValue($set.'.0');
+        }
+        
         $this->view->assign('form',$form);
         
         
@@ -59,6 +107,7 @@ class Content_FieldController extends Zend_Controller_Action
 
         if (!$form->isValid($_POST)) {
             // Failed validation; redisplay form
+            die('notValid');
             $this->view->form = $form;
             return;
         }
@@ -68,6 +117,11 @@ class Content_FieldController extends Zend_Controller_Action
 
         $values = $form->getValues();
         $values['section'] = $this->_getParam('id');
+        //temp fix @todo select cascade
+        $location = explode('.',$values['location']);
+        $values['set'] = $location[0];
+        $values['order'] = $location[1];
+        
         $service = new Content_Model_Field_Service();
         $service->create($values);
         
@@ -80,16 +134,19 @@ class Content_FieldController extends Zend_Controller_Action
         
         $service = new Content_Model_Field_Service();
         $object = $service->getObjectById($this->_getParam('id'));
-        
+        $this->_loadSection($object->section);
         $form = new Content_Form_Field($object->section);
         $form->addElement('submit', 'submit', array('label' => 'Update'));
         $form->addElement('hidden', 'section');
         
+        
+        
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
-            
-            
             $values = $object->toArray();
+          
+            $e = $form->getElement('location');
+            $e->setValue($values['set'].'.'.$values['order']);
 
             $form->populate($values);
 
@@ -106,6 +163,10 @@ class Content_FieldController extends Zend_Controller_Action
 
         //save
         $values = $form->getValues();
+        //temp fix @todo select cascade
+        $location = explode('.',$values['location']);
+        $values['set'] = $location[0];
+        $values['order'] = $location[1];
        // die(debugArray($values));
          $object = $service->getObjectById($this->_getParam('id'));
          $object->fromArray($values);
@@ -120,6 +181,7 @@ class Content_FieldController extends Zend_Controller_Action
         
         $service = new Content_Model_Field_Service();
         $object = $service->getObjectById($this->_getParam('id'));
+              $this->_loadSection($object->section);
         $form = new Core_Form_Confirm();
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
@@ -151,6 +213,38 @@ class Content_FieldController extends Zend_Controller_Action
     public function showAction()
     {
         // action body
+    }
+    
+    public function changeOrderAjaxAction(){
+        
+      //  $section = $this->_getParam('section');
+        $id= $this->_getParam('id');
+        $set = $this->_getParam('set');
+        $order = $this->_getParam('order');
+                
+        
+        if(empty($id) || !is_numeric($id)){
+            throw new InvalidArgumentException('Missing Field Id');
+        }
+        
+        if(empty($set) || !is_numeric($set)){
+            throw new InvalidArgumentException('Missing FieldSet Id');
+        }
+        
+        if(is_null($order) || !is_numeric($order)){
+            throw new InvalidArgumentException('Invalid Order');
+        }
+        
+        $service = new Content_Model_Field_Service();
+        try{
+        $service->setObjectOrder($id, $set, $order);
+        } catch(Exception $e){
+            echo $e->getMessage();
+        }
+        
+        $this->_helper->viewRenderer->setNoRender(true);
+       // print_r($this->_getAllParams());
+        echo 'success';
     }
     
     public function elementFormAjaxAction(){

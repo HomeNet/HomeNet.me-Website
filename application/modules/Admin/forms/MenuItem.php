@@ -48,7 +48,7 @@ class Admin_Form_MenuItem extends CMS_Form
         
         
         
-        $type = $this->createElement('ajaxSelect', 'type');
+        $type = $this->createElement('JsSelect', 'type');
         $type->setLabel('Type: ');
         $type->setRequired('true');
         $url = $this->getView()->url(array('controller' => 'menu-item', 'action' => 'type-form'), 'admin');

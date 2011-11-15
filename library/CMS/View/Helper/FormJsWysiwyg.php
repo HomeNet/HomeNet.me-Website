@@ -24,17 +24,13 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class CMS_View_Helper_FormAjaxWysiwyg extends CMS_View_Helper_FormAjaxElement
+class CMS_View_Helper_FormJsWysiwyg extends CMS_View_Helper_FormJsElement
 {
-    public function formAjaxWysiwyg($name, $value, $attribs = null, $params = null)
+    public function formJsWysiwyg($name, $value, $attribs = null, $params = null)
     {
      //  die($value);
         extract($this->_prepareArgs($name, $value, $attribs, $params));
       //  $options = array('path','title','description','source','sourceUrl','copyright','owner','fullname', 'size', 'width', 'height', 'cropTop','cropLeft','cropWidth','cropHeight');
-        
-       
-        
-
         
         if(empty($params['folder'])){
             $params['folder'] = '';
