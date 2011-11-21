@@ -6,5 +6,9 @@
             <url>application/modules/HomeNet/models/Node.php</url>
             <line>8</line>
         </file>
+        <file>
+            <url>tests/application/controllers/UserControllerTest.php</url>
+            <line>26</line>
+        </file>
     </editor-bookmarks>
 </project-private>

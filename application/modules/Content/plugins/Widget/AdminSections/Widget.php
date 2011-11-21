@@ -28,6 +28,22 @@
 class Content_Plugin_Widget_AdminSections_Widget extends Core_Model_Plugin_Widget {
     
     
+    private function _template(){
+        
+    }
+    
+    public function render(){
+        $service = new Content_Model_Section_Service();
+        $objects = $service->getObjects();
+        
+        
+        
+        
+      return $this->renderPartial('admin-sections.phtml',array('objects'=>$objects), dirname(__FILE__));
+    }
+    
+    
+   
     
     
 }

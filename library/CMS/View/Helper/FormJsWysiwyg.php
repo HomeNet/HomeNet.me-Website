@@ -28,7 +28,7 @@ class CMS_View_Helper_FormJsWysiwyg extends CMS_View_Helper_FormJsElement
 {
     public function formJsWysiwyg($name, $value, $attribs = null, $params = null)
     {
-     //  die($value);
+        
         extract($this->_prepareArgs($name, $value, $attribs, $params));
       //  $options = array('path','title','description','source','sourceUrl','copyright','owner','fullname', 'size', 'width', 'height', 'cropTop','cropLeft','cropWidth','cropHeight');
         

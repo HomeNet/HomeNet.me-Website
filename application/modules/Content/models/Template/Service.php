@@ -175,6 +175,7 @@ class Content_Model_Template_Service {
         }
         
         //create cache
+        $object->active = true;
 
         return $this->getMapper()->save($object);
     }

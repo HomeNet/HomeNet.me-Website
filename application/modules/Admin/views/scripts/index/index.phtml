@@ -22,3 +22,28 @@ foreach ($this->links as $module => $links) {
     <?php
 }
 ?>
+
+<?php
+foreach ($this->widgets as $widgets) {
+    if(empty($widgets)){
+        continue;
+    }
+    ?>
+  
+    <?php
+    foreach ($widgets as $widget) {
+        ?>
+<div style="width:300px;">
+<?php
+
+       echo  $this->widget($widget['module'],$widget['widget']);
+       ?>
+</div>
+<?php
+    }
+    ?>
+
+
+    <?php
+}
+?>

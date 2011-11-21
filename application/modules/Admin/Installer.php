@@ -34,7 +34,9 @@ class Admin_Installer extends CMS_Installer_Abstract {
     public function getAdminLinks(){
         return array(
             array('title' => 'Routes', 'route'=>'admin', 'options' => array('controller'=>'route')),
-            array('title' => 'Menus',  'route'=>'admin', 'options' =>  array('controller'=>'menu'))
+            array('title' => 'Menus',  'route'=>'admin', 'options' =>  array('controller'=>'menu')),
+            array('title' => 'Groups',    'route'=>'admin', 'options' =>  array('controller'=>'group')),
+            array('title' => 'Users',     'route'=>'admin', 'options' =>  array('controller'=>'user'))
         );
     }
 }

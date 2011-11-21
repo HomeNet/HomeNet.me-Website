@@ -52,6 +52,5 @@ $application = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/config
 $application->bootstrap();
 Zend_Registry::set('cachemanager', $application->getBootstrap()->getResource('cachemanager'));
 $application->run();
-Zend_Registry::set('cachemanager', $application->getBootstrap()->getResource('cachemanager'));
 
 

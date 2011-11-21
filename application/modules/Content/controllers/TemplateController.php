@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -24,131 +25,108 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Content_TemplateController extends Zend_Controller_Action
-{
+class Content_TemplateController extends Zend_Controller_Action {
 
-    public function init()
-    {
-         //for generic templates
-        $this->view->id = $this->_getParam('id');
+    private $_id;
+
+    public function init() {
+        //for generic templates
+        $this->view->id = $this->_id = $this->_getParam('id');
     }
-    
-    private function _loadSection($id){
+
+    private function _loadSection($id) {
         $this->view->breadcrumbs()->addPage(array(
-            'label'  => 'Admin',
-            'route'  => 'admin'          
+            'label' => 'Admin',
+            'route' => 'admin'
         ));
-        
+
         $this->view->breadcrumbs()->addPage(array(
-            'label'  => 'Content',
-            'route'  => 'content-admin',  
+            'label' => 'Content',
+            'route' => 'content-admin',
             'module' => 'Content',
             'controller' => 'section',
         ));
-        
+
         $sService = new Content_Model_Section_Service();
         $section = $sService->getObjectById($id);
-       // 
-        
+        // 
+
         $this->view->breadcrumbs()->addPage(array(
-            'label'  => $section->title,
-            'route'  => 'content-admin-id',  
+            'label' => $section->title,
+            'route' => 'content-admin-id',
             'module' => 'Content',
             'controller' => 'section',
-            'params' => array('id'=>$id)
+            'params' => array('id' => $id)
         ));
-        
+
         $this->view->breadcrumbs()->addPage(array(
-            'label'  => 'Templates',
-            'route'  => 'content-admin-id',  
+            'label' => 'Templates',
+            'route' => 'content-admin-id',
             'module' => 'Content',
             'controller' => 'template',
-            'params' => array('id'=>$id)
+            'params' => array('id' => $id)
         ));
-        
-        $this->view->heading = $section->title.' Template';
-        
-       return $section;
+
+        $this->view->heading = $section->title . ' Template';
+
+        return $section;
     }
 
-    public function indexAction()
-    {
-        $section = $this->_loadSection($this->view->id);
+    public function indexAction() {
+        $section = $this->_loadSection($this->_id);
         $this->view->heading = $section->title . ' Templates';
-        
+
         $service = new Content_Model_Template_Service();
-        $this->view->objects = $service->getObjectsBySection($this->view->id);
-        
-        
-       
+        $this->view->objects = $service->getObjectsBySection($this->_id);
     }
 
-    public function newAction()
-    {
-        $this->_loadSection($this->view->id);
-        
+    public function newAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        
+
+        $this->_loadSection($this->_id);
+
         $form = new Content_Form_Template();
         $form->addElement('submit', 'submit', array('label' => 'Create'));
-        $this->view->assign('form',$form);
-        
-        
-        
-        //$this->_helper->viewRenderer('../generic/new');
+        $this->view->assign('form', $form);
 
-        if (!$this->getRequest()->isPost()) {
-            //first
-            $this->view->form = $form;
-            return;
-        }
-
-        if (!$form->isValid($_POST)) {
+        if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
             // Failed validation; redisplay form
             $this->view->form = $form;
             return;
         }
-        
-        //save
-        //$nodeService = new HomeNet_Model_NodesService();
 
+        //save
         $values = $form->getValues();
-        $values['owner'] = Core_Model_User_Manager::getUser()->id; 
+        $values['owner'] = Core_Model_User_Manager::getUser()->id;
         $values['section'] = $this->view->id;
         $values['type'] = Content_Model_Template::USER;
         $service = new Content_Model_Template_Service();
         $object = $service->create($values);
-        
-        return $this->_redirect($this->view->url(array('controller'=>'template', 'action'=>'index', 'id'=>$object->section),'content-admin-id').'?message=Successfully added new Set');//
+
+        $this->view->messages()->add('Successfully Added Template &quot;' . $object->url . '&quot;');
+        return $this->_redirect($this->view->url(array('controller' => 'template', 'action' => 'index', 'id' => $object->section), 'content-admin-id'));
     }
 
-    public function editAction()
-    {
-        
-        
-        
+    public function editAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        
+
         $service = new Content_Model_Template_Service();
         $form = new Content_Form_Template();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
-        $form->addElement('hidden', 'section');
         $form->addElement('hidden', 'id');
         
+        $object = $service->getObjectById($this->_id);
+        $this->_loadSection($object->section);
+
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
-            $object = $service->getObjectById($this->_getParam('id'));
-            $this->_loadSection($object->section);
-            
-            $values = $object->toArray();
+             $values = $object->toArray();
 
             $form->populate($values);
 
             $this->view->form = $form;
             return;
         }
-        
-        $this->_loadSection($_POST['section']);
 
         if (!$form->isValid($_POST)) {
             // Failed validation; redisplay form
@@ -158,55 +136,39 @@ class Content_TemplateController extends Zend_Controller_Action
 
         //save
         $values = $form->getValues();
-        // $object = $service->getNewestObjectById($this->_getParam('id'));
-         $values['owner'] = $_SESSION['User']['id']; 
-        // $object->fromArray($values);
-        $object = $service->create($values);
+        $values['owner'] = Core_Model_User_Manager::getUser()->id;
+        $object->fromArray($values);
+        $service->update($object);
 
-        return $this->_redirect($this->view->url(array('controller'=>'template', 'action'=>'index', 'id'=>$object->section),'content-admin-id').'?message=Updated');//
+        $this->view->messages()->add('Successfully Updated Template &quot;' . $object->url . '&quot;');
+        return $this->_redirect($this->view->url(array('controller' => 'template', 'action' => 'index', 'id' => $object->section), 'content-admin-id')); //
     }
 
-    public function deleteAction()
-    {
-        $this->view->breadcrumbs()->addPage(array(
-            'label'  => 'Delete',
-            'uri' => '#'
-        ));
-        
+    public function deleteAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        
+
         $service = new Content_Model_Template_Service();
-        $object = $service->getObjectById($this->_getParam('id'));
-  
+        $object = $service->getObjectById($this->_id);
+
         $this->_loadSection($object->section);
         $form = new Core_Form_Confirm();
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
 
-            $form->addDisplayGroup($form->getElements(), 'node', array ('legend' => 'Are you sure you want to delete "'.$object->url.'"?'));
+            $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to delete "' . $object->url . '"?'));
 
             $this->view->form = $form;
             return;
         }
 
-        $values = $form->getValues();
-
-        //need to figure out why this isn't in values
-        if(!empty($_POST['delete'])){
-            
+        $section = $object->section;
+        
+        if (!empty($_POST['delete'])) {
+            $url = $object->url;
             $service->deleteById($object->id);
-            return $this->_redirect($this->view->url(array('controller'=>'template', 'action'=>'index', 'id'=>$object->section),'content-admin-id').'?message=Deleted');
+            $this->view->messages()->add('Successfully Deleted Template &quot;' . $url . '&quot;');
         }
-        return $this->_redirect($this->view->url(array('controller'=>'template', 'action'=>'index', 'id'=>$object->section),'content-admin-id').'?message=Canceled');
+        return $this->_redirect($this->view->url(array('controller' => 'template', 'action' => 'index', 'id' => $section), 'content-admin-id'));
     }
 
-    public function hideAction()
-    {
-        // action body
-    }
-
-    public function showAction()
-    {
-        // action body
-    }
 }

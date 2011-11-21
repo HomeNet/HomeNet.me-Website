@@ -11,14 +11,14 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
     /**
      * @var Content_Model_Category_Service
      */
-    protected $object;
+    protected $service;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new Content_Model_FieldSet_Service();
+        $this->service = new Content_Model_FieldSet_Service();
     }
 
     /**
@@ -26,12 +26,12 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        $this->object->deleteAll();
+        $this->service->deleteAll();
     }
 
     public function testGetMapper() {
 
-        $this->assertInstanceOf('Content_Model_FieldSet_MapperInterface', $this->object->getMapper());
+        $this->assertInstanceOf('Content_Model_FieldSet_MapperInterface', $this->service->getMapper());
     }
 
     /**
@@ -40,20 +40,28 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testSetMapper() {
         
         $mapper = new Content_Model_FieldSet_MapperDbTable();
-         $this->object->setMapper($mapper);
+         $this->service->setMapper($mapper);
         
-        $this->assertInstanceOf('Content_Model_FieldSet_MapperInterface', $this->object->getMapper());
-        $this->assertEquals($mapper, $this->object->getMapper());
+        $this->assertInstanceOf('Content_Model_FieldSet_MapperInterface', $this->service->getMapper());
+        $this->assertEquals($mapper, $this->service->getMapper());
         //$this->ass
     }
 
     private function createValidObject() {
+        
+        $fieldSet = new Content_Model_FieldSet();
+        $fieldSet->section = 1;
+        $fieldSet->title = 'testTitle2';
+        $fieldSet->visible = true;
+
+        $this->service->create($fieldSet);
+        
         $fieldSet = new Content_Model_FieldSet();
         $fieldSet->section = 1;
         $fieldSet->title = 'testTitle';
         $fieldSet->visible = true;
 
-        $result = $this->object->create($fieldSet);
+        $result = $this->service->create($fieldSet);
 
         $this->assertInstanceOf('Content_Model_FieldSet_Interface', $result);
         return $result;
@@ -65,7 +73,7 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
         $fieldSet->title = 'testTitle';
         $fieldSet->visible = true;
         $this->setExpectedException('Exception');
-        $result = $this->object->create($fieldSet);
+        $result = $this->service->create($fieldSet);
 
     }
     
@@ -75,7 +83,7 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
         //$fieldSet->title = 'testTitle';
         $fieldSet->visible = true;
         $this->setExpectedException('Exception');
-        $result = $this->object->create($fieldSet);
+        $result = $this->service->create($fieldSet);
     } 
     
     public function testCreateValidFromObject() {
@@ -95,7 +103,7 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
         'title' => 'testTitle',
         'visible' => false);
 
-        $result = $this->object->create($object);
+        $result = $this->service->create($object);
 
         $this->assertInstanceOf('Content_Model_FieldSet_Interface', $result);
 
@@ -109,7 +117,7 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->create($badObject);
+        $create = $this->service->create($badObject);
     }
 
     public function testGetObjectById() {
@@ -118,7 +126,7 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
         $object = $this->createValidObject();
 
         //test getObject
-        $result = $this->object->getObjectById($object->id);
+        $result = $this->service->getObjectById($object->id);
         
         $this->assertInstanceOf('Content_Model_FieldSet_Interface', $result);
 
@@ -138,7 +146,7 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
         $object->title = 'testTitle2';
         $object->visible = false;
 
-        $result = $this->object->update($object);
+        $result = $this->service->update($object);
 
         $this->assertInstanceOf('Content_Model_FieldSet_Interface', $result);
 
@@ -160,7 +168,7 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
         $array['title'] = 'testTitle2';
         $array['visible'] = false;
 
-        $result = $this->object->update($array);
+        $result = $this->service->update($array);
 
         $this->assertInstanceOf('Content_Model_FieldSet_Interface', $result);
 
@@ -175,7 +183,7 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->update($badObject);
+        $create = $this->service->update($badObject);
     }
 
     public function testDeleteObject() {
@@ -184,11 +192,11 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
         $fieldSet = $this->createValidObject();
 
         //test delete
-        $this->object->delete($fieldSet);
+        $this->service->delete($fieldSet);
 
         //verify that it was deleted
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($fieldSet->id);
+        $result = $this->service->getObjectById($fieldSet->id);
     }
 
     public function testDeleteId() {
@@ -196,10 +204,10 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
         //setup
         $fieldSet = $this->createValidObject();
        // $this->fail("id: ".$fieldSet->id);
-        $this->object->delete((int)$fieldSet->id);
+        $this->service->delete((int)$fieldSet->id);
         
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($fieldSet->id); 
+        $result = $this->service->getObjectById($fieldSet->id); 
     }
     
     public function testDeleteArray() {
@@ -207,10 +215,10 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
         //setup
         $object = $this->createValidObject();
        // $this->fail("id: ".$fieldSet->id);
-        $this->object->delete($object->toArray());
+        $this->service->delete($object->toArray());
         
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($object->id); 
+        $result = $this->service->getObjectById($object->id); 
     }
     
   public function testDeleteBySection() {
@@ -219,22 +227,22 @@ class Content_Model_FieldSet_ServiceTest extends PHPUnit_Framework_TestCase {
         $object = $this->createValidObject();
 
         //test delete
-        $this->object->deleteBySection($object->section);
+        $this->service->deleteBySection($object->section);
 
         //verify that it was deleted
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($object->id);
+        $result = $this->service->getObjectById($object->id);
     }
 
     public function testDeleteException() {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->delete($badObject);
+        $create = $this->service->delete($badObject);
     }
 
     public function testDeleteAll() {
-//        $this->object->deleteAll();
+//        $this->service->deleteAll();
     }
 
 }

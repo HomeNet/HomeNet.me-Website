@@ -151,6 +151,39 @@ class Core_Model_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $badObject = new StdClass();
         $create = $this->object->create($badObject);
     }
+    
+    public function testGetCount() {
+
+        //setup
+        $group = $this->createValidGroup();
+
+        //test
+        $result = $this->object->getCount();
+
+        $this->assertEquals(1, $result);
+    }
+    
+    public function testGetObjects() {
+
+        //setup
+        $group = $this->createValidGroup();
+
+        //test getObjects
+        $result = $this->object->getObjects();
+        $this->assertEquals(1, count($result));
+        $result = $result[0];
+        
+        $this->assertInstanceOf('Core_Model_Group_Interface', $result);
+
+        $this->assertNotNull($result->id);
+        $this->assertEquals(0, $result->parent);
+        $this->assertEquals(1, $result->type);
+        $this->assertEquals('testTitle', $result->title);
+        $this->assertEquals('testDescription', $result->description);
+        $this->assertEquals(true, $result->visible);
+        $this->assertEquals(2, $result->user_count);
+        $this->assertArrayHasKey('system', $result->settings);
+    }
 
     public function testGetObjectById() {
 

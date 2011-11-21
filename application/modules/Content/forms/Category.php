@@ -33,14 +33,14 @@ class Content_Form_Category extends CMS_Form
     
     //controller will load parent items
     $parent = $this->createElement('select','parent');
-    $parent->addMultiOption('None','');
+    $parent->addMultiOption('','None');
 //        $type->setMultiOptions(array('house' => 'House',
 //                                     'apartment' => 'Apartment',
 //                                     'condo' => 'Condo',
 //                                     'other' => 'Other',
 //                                     'na' => 'N/A'));
         $parent->setLabel('Parent: ');
-        $parent->setRequired('true');
+       // $parent->setRequired('true');
         $this->addElement($parent);
     
         $title = $this->createElement('text','title');
@@ -50,10 +50,12 @@ class Content_Form_Category extends CMS_Form
         $this->addElement($title);
         
         //This needs to be a convert from title special field
-        $url = $this->createElement('text','url');
+        $url = $this->createElement('JsSlug','url');
         $url->setLabel('Url: ');
         $url->setRequired('true');
         $url->addFilter('StripTags');
+        $url->setParam('source','#title');
+        $url->setParam('separator','_');
         $this->addElement($url);
         
         $description = $this->createElement('textarea','description');
@@ -63,15 +65,6 @@ class Content_Form_Category extends CMS_Form
         $description->setAttrib('cols','20');
         $this->addElement($description);
 
-
-        $this->addDisplayGroup($this->getElements(), 'category', array('legend' => 'Category'));
-
-        $this->addElement('hash', 'hash', array('salt' => 'unique'));
-    
-        
-        
+        $this->addDisplayGroup($this->getElements(), 'category', array('legend' => 'Category'));  
     }
-
-
 }
-

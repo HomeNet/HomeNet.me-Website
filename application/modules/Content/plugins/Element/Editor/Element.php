@@ -57,7 +57,7 @@ class Content_Plugin_Element_Editor_Element extends Content_Model_Plugin_Element
      * @return Zend
      */
     function getElement(array $config, $options = array()) {
-
+        
         $element = new CMS_Form_Element_JsWysiwyg($config);
         $view = Zend_Registry::get('view');
         $element->setParams($options);
@@ -78,6 +78,11 @@ class Content_Plugin_Element_Editor_Element extends Content_Model_Plugin_Element
     }
 
     private function _processBlocks($render = 'view') {
+        
+        if(empty($this->_value)){
+            return '';
+        }
+        
        // if (APPLICATION_ENV == 'production') {
             libxml_use_internal_errors(true);
        // }

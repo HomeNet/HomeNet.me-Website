@@ -97,8 +97,6 @@ class Content_Model_Section_Manager {
             }
         }
 
-
-
         //create section
         $sService = new Content_Model_Section_Service();
 
@@ -115,9 +113,6 @@ class Content_Model_Section_Manager {
 
         $sObject = $sService->create($section);
 
-
-
-
         //install fieldsets
         $fieldSets = array();
 
@@ -130,9 +125,6 @@ class Content_Model_Section_Manager {
         }
 
         //install fields
-
-
-
         $fsService = new Content_Model_Field_Service();
         $order = 0;
         foreach ($plugin->getFields($fieldSets) as $field) {
@@ -142,13 +134,8 @@ class Content_Model_Section_Manager {
 
             $fsObject = $fsService->create($field);
 
-
-
             $order++;
         }
-
-
-
 
         return $sObject;
     }

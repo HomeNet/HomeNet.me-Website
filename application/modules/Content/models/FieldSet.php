@@ -41,6 +41,12 @@ class Content_Model_FieldSet implements Content_Model_FieldSet_Interface {
     /**
      * @var boolean
      */
+    
+    /**
+     * @var int
+     */
+    public $order = 0;
+    
     public $visible = true;
     
     public $fields = array();

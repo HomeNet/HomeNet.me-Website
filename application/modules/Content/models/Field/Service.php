@@ -211,6 +211,7 @@ class Content_Model_Field_Service {
             $object = $mixed;
         } elseif (is_array($mixed)) {
             $object = new Content_Model_Field(array('data' => $mixed));
+            
         } else {
             throw new InvalidArgumentException('Invalid Object');
         }
@@ -219,19 +220,22 @@ class Content_Model_Field_Service {
             $service = new Content_Model_Content_Service();
             //die('remove field');
             $service->removeCustomField($object);
+        
+            $section = $object->section;
+            $set = $object->set;
+            $position = $object->order;
+           
+            $result = $this->getMapper()->delete($object);
+           
+            if($result){
+                $this->getMapper()->shiftOrderBySection($section, $set, null, $position);
+            }
+            
+            return $result;
         }
+   
+        throw new Exception('Can not delete system field: '.$object->label);
         
-        $section = $object->section;
-        $set = $object->set;
-        $position = $object->order;
-        
-        $result = $this->getMapper()->delete($object);
-        
-        if($result){
-            $this->getMapper()->shiftOrderBySection($section, $set, null, $position);
-        }
-
-        return $result;
     }
 
     public function deleteBySection($section) {

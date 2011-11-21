@@ -29,16 +29,28 @@
 interface Core_Model_User_MapperInterface {
 
     /**
-     * @return Core_Model_User
+     * @return Int
+     */
+    public function fetchCount();
+    
+    /**
+     * @return Core_Model_User_Interface[]
+     */
+    public function fetchObjects();
+    
+    /**
+     * @return Core_Model_User_Interface
      */
     public function fetchObjectById($id);
     
+    /**
+     * @return Core_Model_User_Interface[]
+     */
     public function fetchObjectsByPrimaryGroup($group);
 
-//    public function fetchObjectsBySection($section);
-
-//    public function fetchObjectsByIdHouse($id,$house);
-
+    /**
+     * @return Core_Model_User_Interface
+     */
     public function save(Core_Model_User_Interface $user);
 
     public function delete(Core_Model_User_Interface $user);

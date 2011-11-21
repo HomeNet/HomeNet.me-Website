@@ -74,9 +74,9 @@ class Content_Plugin_Element_Textarea_Element extends Content_Model_Plugin_Eleme
         if(isset($options['rows'])){
             $element->setAttrib('rows', $options['rows']);
         }
-        //if(isset($options['cols'])){
-            //$element->setAttrib('style', 'width:580px;');
-       // }
+        $element->setAttrib('cols', '');
+        $element->setAttrib('style', 'width:300px');
+       
         return $element;
     }
 }

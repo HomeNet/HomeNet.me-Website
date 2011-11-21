@@ -173,8 +173,7 @@ class Content_Model_FieldSet_Service {
      */
     public function delete($mixed) {
         if (is_int($mixed)) {
-            $object = new Content_Model_FieldSet();
-            $object->id = $mixed;
+            $object = $this->getObjectById($mixed);
         } elseif ($mixed instanceof Content_Model_FieldSet_Interface) {
             $object = $mixed;
         } elseif (is_array($mixed)) {
@@ -195,7 +194,7 @@ class Content_Model_FieldSet_Service {
             $this->getMapper()->shiftOrderBySection($section, $order);
         }
 
-        return $this->getMapper()->delete($object);
+        return $result;
     }
 
     /**

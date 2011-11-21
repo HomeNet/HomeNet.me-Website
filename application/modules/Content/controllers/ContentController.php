@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -24,113 +25,100 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Content_ContentController extends Zend_Controller_Action
-{
+class Content_ContentController extends Zend_Controller_Action {
 
     private $_id;
-    
-    public function init()
-    {
+
+    public function init() {
         $this->view->controllerTitle = 'Content'; //for generic templates      
         $this->_id = $this->view->id = $this->_getParam('id');
     }
-    
-      private function _loadSection($id){
+
+    private function _loadSection($id) {
         $this->view->breadcrumbs()->addPage(array(
-            'label'  => 'Admin',
-            'route'  => 'admin'          
+            'label' => 'Admin',
+            'route' => 'admin'
         ));
-        
+
         $this->view->breadcrumbs()->addPage(array(
-            'label'  => 'Content',
-            'route'  => 'content-admin',  
+            'label' => 'Content',
+            'route' => 'content-admin',
             'module' => 'Content',
             'controller' => 'section',
         ));
-        
+
         $sService = new Content_Model_Section_Service();
         $section = $sService->getObjectById($id);
-       // 
-        
+        // 
+
         $this->view->breadcrumbs()->addPage(array(
-            'label'  => $section->title,
-            'route'  => 'content-admin-id',  
+            'label' => $section->title,
+            'route' => 'content-admin-id',
             'module' => 'Content',
             'controller' => 'section',
-            'params' => array('id'=>$id)
+            'params' => array('id' => $id)
         ));
-        
+
         $this->view->breadcrumbs()->addPage(array(
-            'label'  => 'Content',
-            'route'  => 'content-admin-id',  
+            'label' => 'Content',
+            'route' => 'content-admin-id',
             'module' => 'Content',
             'controller' => 'content',
-            'params' => array('id'=>$id)
+            'params' => array('id' => $id)
         ));
-        
-        $this->view->heading = $section->title.' Content';
-        
-       return $section;
+
+        $this->view->heading = $section->title . ' Content';
+
+        return $section;
     }
 
-    public function indexAction()
-    {
+    public function indexAction() {
         $this->_loadSection($this->_id);
         $service = new Content_Model_Content_Service();
         $this->view->assign('objects', $service->getObjectsBySection($this->_id));
     }
 
-    public function newAction()
-    {
+    public function newAction() {
         $this->_loadSection($this->_id);
-        
+
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         $manager = new Content_Model_Section_Manager();
         $form = $manager->getForm($this->_getParam('id'));
         $form->addElement('submit', 'submit', array('label' => 'Create'));
-        $this->view->assign('form',$form);
-        
-        if (!$this->getRequest()->isPost()) {
-            //first
-            $this->view->form = $form;
-            return;
-        }
+        $this->view->assign('form', $form);
 
-        if (!$form->isValid($_POST)) {
+        if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
             // Failed validation; redisplay form
             $this->view->form = $form;
             return;
         }
-        
+
         //save
         $values = $form->getValues();
 
         $service = new Content_Model_Content_Service();
-         $values['owner'] = Core_Model_User_Manager::getUser()->id; 
+        $values['owner'] = Core_Model_User_Manager::getUser()->id;
         $values['section'] = $this->_id;
-        $service->create($values);
-        
-        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$this->_id),'content-admin-id').'?message=Successfully added');//
+        $object = $service->create($values);
+
+        $this->view->messages()->add('Successfully Added Content &quot;' . $object->title . '&quot;');
+        return $this->_redirect($this->view->url(array('controller' => 'content', 'action' => 'index', 'id' => $this->_id), 'content-admin-id')); //
     }
 
-    public function editAction()
-    {
+    public function editAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        
+
         $service = new Content_Model_Content_Service();
         $object = $service->getObjectById($this->_id);
         $this->_loadSection($object->section);
-      //  die(debugArray($object));
+        //  die(debugArray($object));
         $form = $object->getForm();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
-        $form->addElement('hidden', 'section', array('value' =>$object->section));
+        $form->addElement('hidden', 'section', array('value' => $object->section));
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
-            
-            
-          //  $values = $object->toArray();
-
-           // $form->populate($values);
+            //  $values = $object->toArray();
+            // $form->populate($values);
 
             $this->view->form = $form;
             return;
@@ -144,91 +132,72 @@ class Content_ContentController extends Zend_Controller_Action
 
         //save
         $values = $form->getValues();
-         $values['owner'] = Core_Model_User_Manager::getUser()->id; 
-         $object = $service->getObjectById($this->_id);
-         $object->fromArray($values);
+        $values['owner'] = Core_Model_User_Manager::getUser()->id;
+        $object->fromArray($values);
         $service->update($object);
 
-        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$values['section']),'content-admin-id').'?message=Updated');//
+        $this->view->messages()->add('Successfully Updated Content &quot;' . $object->title . '&quot;');
+        return $this->_redirect($this->view->url(array('controller' => 'content', 'action' => 'index', 'id' => $object->section), 'content-admin-id')); //
     }
 
-    public function deleteAction()
-    {
+    public function deleteAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        
+
         $service = new Content_Model_Content_Service();
         $object = $service->getObjectById($this->_id);
-        
+
         $this->_loadSection($object->section);
-        
+
         $form = new Core_Form_Confirm();
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
 
-            $form->addDisplayGroup($form->getElements(), 'node', array ('legend' => 'Are you sure you want to delete "'.$object->title.'"?'));
+            $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to delete "' . $object->title . '"?'));
 
             $this->view->form = $form;
             return;
         }
+        
         $section = $object->section;
-
-        $values = $form->getValues();
-
-        //need to figure out why this isn't in values
-        if(!empty($_POST['delete'])){
+        
+        if (!empty($_POST['delete'])) {
             
+            $title = $object->title;
             $service->delete($object);
-            return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$section),'content-admin-id').'?message=Deleted');
+            $this->view->messages()->add('Successfully Deleted Content &quot;'.$title.'&quot;'); 
         }
-        return $this->_redirect($this->view->url(array('controller'=>'content', 'action'=>'index', 'id'=>$section),'content-admin-id').'?message=Canceled');
+        return $this->_redirect($this->view->url(array('controller' => 'content', 'action' => 'index', 'id' => $section), 'content-admin-id'));
     }
-    
-    public function restAjaxAction(){
+
+    public function restAjaxAction() {
         $this->_helper->viewRenderer->setNoRender(true);
         $element = $this->_getParam('element');
         $method = $this->_getParam('method');
-        
-        $class = 'Content_Plugin_Element_'.ucfirst($element).'_Rest';
 
-        if(!class_exists($class, true)){
-            throw new InvalidArgumentException('Invaild Class: '.$class,500);
+        $class = 'Content_Plugin_Element_' . ucfirst($element) . '_Rest';
+
+        if (!class_exists($class, true)) {
+            throw new InvalidArgumentException('Invaild Class: ' . $class, 500);
         }
-        
+
 //            $server = new Zend_Rest_Server();
 //            $server->setClass($class);
 //            $server->handle();
-            
 //             $server = new Zend_Json_Server();
 //             $server->setClass($class);
 //             $server->handle();
         //Target our class
-$reflector = new ReflectionClass($class);
+        $reflector = new ReflectionClass($class);
 
 //Get the parameters of a method
-$parameters = $reflector->getMethod($method)->getParameters();
-$p = array();
+        $parameters = $reflector->getMethod($method)->getParameters();
+        $p = array();
 //Loop through each parameter and get the type
-foreach($parameters as $param)
-{
-    $p[] = $this->_getParam($param->getname());
-}
-        
-        
-        
-        
-        
+        foreach ($parameters as $param) {
+            $p[] = $this->_getParam($param->getname());
+        }
+
         $server = new $class();
-        echo call_user_func_array(array($server,$method), $p);
-        
-    }
-
-    public function hideAction()
-    {
-        // action body
-    }
-
-    public function showAction()
-    {
-        // action body
+        echo call_user_func_array(array($server, $method), $p);
     }
 }

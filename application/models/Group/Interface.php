@@ -26,6 +26,32 @@
  */
 interface Core_Model_Group_Interface {
 
+    /*
+     * code hints
+     * 
+     * @var public $id int
+     * @var public $parent int   
+     * @var public $type int
+     * @var public $title string
+     * @var public $description string
+     * @var public $visible bool
+     * @var public $user_count int
+     * @var public $settings array
+     */
+    
+        /*
+     * code hints
+     * 
+     * @var $id int
+     * @var $parent int   
+     * @var $type int
+     * @var $title string
+     * @var $description string
+     * @var $visible bool
+     * @var $user_count int
+     * @var $settings array
+     */
+
     /**
      * @return array
      */

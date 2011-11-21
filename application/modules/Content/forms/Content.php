@@ -7,7 +7,4 @@ class Content_Form_Content extends Zend_Form
     {
         /* Form Elements & Other Definitions Here ... */
     }
-
-
 }
-

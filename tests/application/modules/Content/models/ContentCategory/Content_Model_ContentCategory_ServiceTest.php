@@ -11,14 +11,14 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
     /**
      * @var Content_Model_ContentCategory_Service
      */
-    protected $object;
+    protected $service;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new Content_Model_ContentCategory_Service;
+        $this->service = new Content_Model_ContentCategory_Service;
     }
 
     /**
@@ -26,12 +26,12 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        $this->object->deleteAll();
+        $this->service->deleteAll();
     }
 
     public function testGetMapper() {
 
-        $this->assertInstanceOf('Content_Model_ContentCategory_MapperInterface', $this->object->getMapper());
+        $this->assertInstanceOf('Content_Model_ContentCategory_MapperInterface', $this->service->getMapper());
     }
 
     /**
@@ -40,10 +40,10 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
     public function testSetMapper() {
         
         $mapper = new Content_Model_ContentCategory_MapperDbTable();
-         $this->object->setMapper($mapper);
+         $this->service->setMapper($mapper);
         
-        $this->assertInstanceOf('Content_Model_ContentCategory_MapperInterface', $this->object->getMapper());
-        $this->assertEquals($mapper, $this->object->getMapper());
+        $this->assertInstanceOf('Content_Model_ContentCategory_MapperInterface', $this->service->getMapper());
+        $this->assertEquals($mapper, $this->service->getMapper());
         //$this->ass
     }
 
@@ -53,7 +53,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
         $contentCategory->content = 2;
         $contentCategory->category = 3;
 
-        $result = $this->object->create($contentCategory);
+        $result = $this->service->create($contentCategory);
 
         $this->assertInstanceOf('Content_Model_ContentCategory_Interface', $result);
         return $result;
@@ -64,8 +64,8 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
         $contentCategory->section = 1;
         //$contentCategory->content = 2;
         $contentCategory->category = 3;
-        $this->setExpectedException('InvalidArgumentException');
-        $result = $this->object->create($contentCategory);
+        $this->setExpectedException('Exception');
+        $result = $this->service->create($contentCategory);
     }
 //    
 //    public function testDuplicateUrl() {
@@ -93,7 +93,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
         'content' => 2,
         'category' => 3);
  
-        $result = $this->object->create($contentCategory);
+        $result = $this->service->create($contentCategory);
 
         $this->assertInstanceOf('Content_Model_ContentCategory_Interface', $result);
 
@@ -107,7 +107,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->create($badObject);
+        $create = $this->service->create($badObject);
     }
 
     public function testGetObjectById() {
@@ -116,7 +116,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
         $contentCategory = $this->createValidObject();
 
         //test getObject
-        $result = $this->object->getObjectById($contentCategory->id);
+        $result = $this->service->getObjectById($contentCategory->id);
         
         $this->assertInstanceOf('Content_Model_ContentCategory_Interface', $result);
 
@@ -137,7 +137,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
         $contentCategory->content = 5;
         $contentCategory->category = 6;
 
-        $result = $this->object->update($contentCategory);
+        $result = $this->service->update($contentCategory);
 
         $this->assertInstanceOf('Content_Model_ContentCategory_Interface', $result);
 
@@ -159,7 +159,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
         $array['content'] = 5;
         $array['category'] = 6;
 
-        $result = $this->object->update($array);
+        $result = $this->service->update($array);
 
         $this->assertInstanceOf('Content_Model_ContentCategory_Interface', $result);
 
@@ -174,7 +174,7 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->update($badObject);
+        $create = $this->service->update($badObject);
     }
 
     public function testDeleteObject() {
@@ -183,11 +183,11 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
         $contentCategory = $this->createValidObject();
 
         //test delete
-        $this->object->delete($contentCategory);
+        $this->service->delete($contentCategory);
 
         //verify that it was deleted
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($contentCategory->id);
+        $result = $this->service->getObjectById($contentCategory->id);
     }
 
     public function testDeleteId() {
@@ -195,10 +195,10 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
         //setup
         $contentCategory = $this->createValidObject();
        // $this->fail("id: ".$contentCategory->id);
-        $this->object->delete((int)$contentCategory->id);
+        $this->service->delete((int)$contentCategory->id);
         
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($contentCategory->id); 
+        $result = $this->service->getObjectById($contentCategory->id); 
     }
     
     public function testDeleteArray() {
@@ -206,10 +206,10 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
         //setup
         $contentCategory = $this->createValidObject();
        // $this->fail("id: ".$contentCategory->id);
-        $this->object->delete($contentCategory->toArray());
+        $this->service->delete($contentCategory->toArray());
         
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($contentCategory->id); 
+        $result = $this->service->getObjectById($contentCategory->id); 
     }
     
     public function testDeleteBySection() {
@@ -218,22 +218,22 @@ class Content_Model_ContentCategory_ServiceTest extends PHPUnit_Framework_TestCa
         $object = $this->createValidObject();
 
         //test delete
-        $this->object->deleteBySection($object->section);
+        $this->service->deleteBySection($object->section);
 
         //verify that it was deleted
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($object->id);
+        $result = $this->service->getObjectById($object->id);
     }
 
     public function testDeleteException() {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->delete($badObject);
+        $create = $this->service->delete($badObject);
     }
 
     public function testDeleteAll() {
-//        $this->object->deleteAll();
+//        $this->service->deleteAll();
     }
 
 }

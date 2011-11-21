@@ -19,7 +19,9 @@ class Core_Model_User_Manager {
         $this->_service = new Core_Model_User_Service();
     }
     
- 
+    /*
+     * @return Core_Model_User
+     */
     public static function getUser(){
         if(empty(self::$_user)){
 

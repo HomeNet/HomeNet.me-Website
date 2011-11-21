@@ -45,8 +45,7 @@ class Core_Form_Login extends CMS_Form
 
         $group = $this->addDisplayGroup(array('username', 'password'), 'profile',array ( 'legend' => 'Login'));
 
-        $submit = $this->addElement('submit', 'submit', array('label' => 'Submit'));
-        $this->addElement('hash', 'hash', array('salt' => 'unique'));
+        $submit = $this->addElement('submit', 'submit', array('label' => 'Login'));     
     }
 
 }

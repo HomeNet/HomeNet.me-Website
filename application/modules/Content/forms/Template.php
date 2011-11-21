@@ -57,11 +57,5 @@ class Content_Form_Template extends CMS_Form
 
 
         $this->addDisplayGroup($this->getElements(), 'category', array('legend' => 'Template'));
-
-        $this->addElement('hash', 'hash', array('salt' => 'unique'));
-    
     }
-
-
 }
-

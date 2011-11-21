@@ -80,7 +80,9 @@ class Content_Plugin_Element_Slug_Element extends Content_Model_Plugin_Element {
     function getElement(array $config, $options = array()){
         
         $element = new CMS_Form_Element_JsSlug($config); 
-        $element->setParams($options);
+        if(is_array($options)){
+            $element->setParams($options);
+        }
         return $element;
     }
 }

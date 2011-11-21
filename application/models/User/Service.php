@@ -51,6 +51,22 @@ class Core_Model_User_Service {
         $this->_mapper = $mapper;
     }
 
+     /**
+     * @return int number of items in table
+     */
+    public function getCount() {
+        $result = $this->getMapper()->fetchCount();
+        return $result;
+    }
+ 
+    /**
+     * @return Core_Model_User[]
+     */
+    public function getObjects() {
+        $result = $this->getMapper()->fetchObjects();
+        return $result;
+    }
+    
     /**
      * @param int $id
      * @return Core_Model_User_Interface

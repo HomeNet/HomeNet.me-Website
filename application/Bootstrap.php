@@ -132,7 +132,20 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
     protected function _initModifiedFrontController() {
         $this->bootstrap('FrontController');
         $front = $this->getResource('FrontController');
-        $response = new Zend_Controller_Response_Http;
+        if(APPLICATION_ENV == 'testing'){
+   
+            $front->throwExceptions(true);
+            $routes = $front->getRouter()->getRoutes();
+           // $params = $front->get
+            $front->setRouter('CMS_Controller_Router_Test');
+            $front->getRouter()->setRoutes($routes);
+            $front->getRouter()->setFrontController($front);
+
+            
+            $response = new Zend_Controller_Response_HttpTestCase;
+        } else {
+            $response = new Zend_Controller_Response_Http;
+        }
         $response->setHeader('Content-Type', 'text/html; charset=UTF-8', true);
         $front->setResponse($response);
         //$front->setParam('prefixDefaultModule', false);

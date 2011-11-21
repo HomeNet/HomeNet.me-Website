@@ -25,6 +25,7 @@
  */
 
 //based on http://weierophinney.net/matthew/archives/234-Module-Bootstraps-in-Zend-Framework-Dos-and-Donts.html
+require_once 'Installer.php';
 
 class Content_Bootstrap extends Zend_Application_Module_Bootstrap
 {

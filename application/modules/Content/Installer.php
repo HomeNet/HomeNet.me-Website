@@ -26,12 +26,19 @@
 
 class Content_Installer extends CMS_Installer_Abstract
 {
-    static public $testSection; 
+    public $section; 
+    public $categorySet;
+    public $fieldSet;
     
     /*
      * @todo autpo grant privliges
      */
      
+    public function __construct() {
+       $this->section = new stdClass;
+       $this->categorySet = new stdClass;
+       $this->fieldSet = new stdClass;
+    }
     
     public function getAdminBlocks(){
         return array(
@@ -40,7 +47,7 @@ class Content_Installer extends CMS_Installer_Abstract
         );
     } 
     
-    public function getAdminMenu(){
+    public function getAdminLinks(){
         return array(
             array('title' => 'Category Sets',    'route'=>'content-admin', 'options' =>  array('controller'=>'category-set')),
             array('title' => 'Content Sections', 'route'=>'content-admin', 'options' =>  array('controller'=>'section'))
@@ -52,15 +59,32 @@ class Content_Installer extends CMS_Installer_Abstract
     
     function installTest() {
         
+        $this->uninstallTest(); //remove any old data
+        
+        $categorySet = new Content_Model_CategorySet();
+        $categorySet->package = "test";
+        $categorySet->title = 'Test CategorySet';
+        $categorySet->visible = true;
+        
+        $csService = new Content_Model_CategorySet_Service();
+
+        $this->categorySet->test = $csService->create($categorySet);
+        
         $section = new Content_Model_Section();
         $section->title = 'Test Section';
         $section->url = 'test_section';
         $section->visible = false;
         
          $manager = new Content_Model_Section_Manager();
-        $object = $manager->createByTemplate($section, 'Base');
+        $this->section->test = $manager->createByTemplate($section, 'Base');
+        
+        $fsService = new Content_Model_FieldSet_Service();
+        $results = $fsService->getObjectsBySection($this->section->test->id);
+        $this->fieldSet->test = $results[0];
+        
+        
          
-         self::$testSection = $object->id;
+         //self::$testSection = $object->id;
          //die(self::$testSection );
      }
     
@@ -89,6 +113,5 @@ class Content_Installer extends CMS_Installer_Abstract
         
         $service = new Content_Model_Section_Service();
         $service->deleteAll();
-        
     }
 }

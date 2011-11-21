@@ -158,17 +158,12 @@ class Content_Form_Field extends CMS_Form
 
 
         $this->addDisplayGroup($this->getElements(), 'field', array('legend' => 'Section Field'));
-
-        $this->addElement('hash', 'hash', array('salt' => 'unique'));
-        
         
         $sub = new CMS_Form_SubFormDiv();
         $sub->setIsArray(false);
         $this->addSubForm($sub, 'landing');
         
       //  $this->attachSubForm($type->getValue());
-    
-    
     }
      public function populate(array $values) {
         if(isset($values['element'])){

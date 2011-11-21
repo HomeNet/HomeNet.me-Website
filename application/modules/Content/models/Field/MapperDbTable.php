@@ -156,20 +156,19 @@ class Content_Model_Field_MapperDbTable implements Content_Model_Field_MapperInt
         return $row;
     }
 
-    public function delete(Content_Model_Field_Interface $content) {
+    public function delete(Content_Model_Field_Interface $object) {
 
-        if (($content instanceof Content_Model_Field_DbTableRow) && ($content->isConnected())) {
+        if (($object instanceof Content_Model_Field_DbTableRow) && ($object->isConnected())) {
             //good
-        } elseif (!is_null($content->id)) {
-            $content = $this->getTable()->find($content->id)->current();
-            return;
+        } elseif (!is_null($object->id)) {
+            $object = $this->getTable()->find($object->id)->current();
         } else {
             throw new Exception('Invalid Content');
         }
-        $section = $content->section;
-        $position = $content->order;
+        $section = $object->section;
+        $position = $object->order;
 
-        $result = $content->delete();
+        $result = $object->delete();
 
        
         return $result;

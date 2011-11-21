@@ -50,13 +50,20 @@ function getEmailTempFile($transport = null)
 }
 
 require_once 'Zend/Loader/Autoloader.php';
+
 $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->setDefaultAutoloader(create_function('$class', "include str_replace('_', '/', \$class) . '.php';"));
+
+
+
 //require_once 'Zend/Application.php';
 ///** Zend_Application */
 ////require_once 'Zend/Application.php';
 //// Create application, bootstrap, and run
-$application = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini'); //
+$application = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini'); 
+
+require_once APPLICATION_PATH.'/Installer.php';
+
 $application->bootstrap();
 Zend_Registry::set('cachemanager', $application->getBootstrap()->getResource('cachemanager'));
 

@@ -38,7 +38,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return array
      */
-    function getOptionalContent() {
+    public function getOptionalContent() {
         // array('value' => 'Display Title');
         return array();
     }
@@ -48,7 +48,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return void
      */
-    function installPre() {
+    public function installPre() {
         
     }
 
@@ -57,7 +57,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return array
      */
-    function installTables() {
+    public function installTables() {
         /* array('test_table'=>'`id` int(10) unsigned NOT NULL AUTO_INCREMENT, 
           `package` varchar(32) DEFAULT NULL,
           `title` varchar(128) NOT NULL,
@@ -71,7 +71,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return void
      */
-    function installPostTables() {
+    public function installPostTables() {
         
     }
 
@@ -80,7 +80,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return array
      */
-    function installUserAcl() {
+    public function installUserAcl() {
         // return $acl[] = array()
 
 
@@ -92,7 +92,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return array
      */
-    function installGroupAcl() {
+    public function installGroupAcl() {
         return array();
     }
 
@@ -101,7 +101,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return void
      */
-    function installContent() {
+    public function installContent() {
         
     }
 
@@ -110,7 +110,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return void
      */
-    function installOptionalContent(array $list) {
+    public function installOptionalContent(array $list) {
         
     }
 
@@ -119,7 +119,16 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return void
      */
-    function installPost() {
+    public function installPost() {
+        
+    }
+    
+    /**
+     * Execute code to install test
+     * 
+     * @retrun void
+     */
+    public function installTest(){
         
     }
 
@@ -128,7 +137,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return void
      */
-    function uninstallPre() {
+    public function uninstallPre() {
         
     }
 
@@ -136,7 +145,7 @@ abstract class CMS_Installer_Abstract {
      * List of tables to drop from the database
      * @return array
      */
-    function uninstallTables() {
+    public function uninstallTables() {
         //array('test_table', 'test_table2')
         return array();
     }
@@ -146,7 +155,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * return bool; true: autodelete all entries by module | false: custom coded uninstaller
      */
-    function uninstallUserAcl() {
+    public function uninstallUserAcl() {
         return true;
     }
 
@@ -155,7 +164,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * return bool; true: autodelete all entries by module | false: custom coded uninstaller
      */
-    function uninstallGroupAcl() {
+    public function uninstallGroupAcl() {
         return true;
     }
 
@@ -164,7 +173,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return void
      */
-    function uninstallPost() {
+    public function uninstallPost() {
         
     }
     
@@ -173,7 +182,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return void
      */
-    function uninstallTest() {
+    public function uninstallTest() {
         
     }
     /**
@@ -182,6 +191,9 @@ abstract class CMS_Installer_Abstract {
      * @return array
      */
     public function getAdminLinks(){
+        return array();
+    } 
+    public function getAdminBlocks(){
         return array();
     } 
 

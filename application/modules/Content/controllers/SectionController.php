@@ -27,6 +27,8 @@
 class Content_SectionController extends Zend_Controller_Action
 {
 
+    private $_id;
+    
     public function init()
     {
         $this->view->heading = 'Section'; //for generic templates
@@ -64,13 +66,7 @@ class Content_SectionController extends Zend_Controller_Action
         $form->addElement('submit', 'submit', array('label' => 'Create'));
         $this->view->assign('form',$form);
 
-        if (!$this->getRequest()->isPost()) {
-            //first
-            $this->view->form = $form;
-            return;
-        }
-
-        if (!$form->isValid($_POST)) {
+        if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
             // Failed validation; redisplay form
             $this->view->form = $form;
             return;
@@ -80,9 +76,10 @@ class Content_SectionController extends Zend_Controller_Action
         $values = $form->getValues();
 
         $service = new Content_Model_Section_Manager();
-        $service->createByTemplate($values);
+        $object = $service->createByTemplate($values);
         
-        return $this->_redirect($this->view->url(array('controller'=>'section', 'action'=>'index'),'content-admin').'?message=Successfully added new Set');//
+        $this->view->messages()->add('Successfully Added Section &quot;' . $object->title . '&quot;');
+        return $this->_redirect($this->view->url(array('controller'=>'section', 'action'=>'index'),'content-admin'));//
     }
 
     public function editAction()
@@ -91,6 +88,7 @@ class Content_SectionController extends Zend_Controller_Action
         
         $service = new Content_Model_Section_Service();
         $form = new Content_Form_Section();
+        $form->removeElement('template');
         $form->addElement('submit', 'submit', array('label' => 'Update'));
         
         if (!$this->getRequest()->isPost()) {
@@ -117,7 +115,8 @@ class Content_SectionController extends Zend_Controller_Action
          $object->fromArray($values);
         $service->update($object);
 
-        return $this->_redirect($this->view->url(array('controller'=>'section'),'content-admin').'?message=Updated');//
+        $this->view->messages()->add('Successfully Updated Section &quot;' . $object->title . '&quot;');
+        return $this->_redirect($this->view->url(array('controller'=>'section'),'content-admin'));//
     }
 
     public function deleteAction()
@@ -136,24 +135,12 @@ class Content_SectionController extends Zend_Controller_Action
             return;
         }
 
-        $values = $form->getValues();
-
-        //need to figure out why this isn't in values
         if(!empty($_POST['delete'])){
-            
+            $title = $object->title;
             $csService->delete($object);
-            return $this->_redirect($this->view->url(array('controller'=>'section'),'content-admin').'?message=Deleted');
+            $this->view->messages()->add('Successfully Added Section &quot;' . $title . '&quot;');
+
         }
-        return $this->_redirect($this->view->url(array('controller'=>'section'),'content-admin').'?message=Canceled');
-    }
-
-    public function hideAction()
-    {
-        // action body
-    }
-
-    public function showAction()
-    {
-        // action body
+        return $this->_redirect($this->view->url(array('controller'=>'section'),'content-admin'));
     }
 }

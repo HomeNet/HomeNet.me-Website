@@ -624,13 +624,15 @@ fieldset {
     padding: 0px !important;
 }*/
 
-.cms .ui-button{
+.ui-widget-content > .button{
     margin-top: 5px;
 }
 
-.cms .ui-button-text-icon-only{
-    margin-top: 0px;
+td > .button{
+    margin-top: 0px !important;
 }
+
+
 
 .ui-widget-content.buttonfix {
     background: none !important;
@@ -1072,9 +1074,11 @@ input[type=checkbox] {
 .errors {
     color: #EE5757;
     font-style: italic;
-    margin-top: 2px;
+    margin: 2px 0;
+    padding: 0;
     list-style:none;
-    margin-left: .5em;
+
+  
 }
 
 .cms-button-icon-right {
@@ -1094,12 +1098,13 @@ input[type=checkbox] {
 
 .cms-message {
     position: relative;
-    padding: 5px 20px 5px 5px;
+    padding: 5px 5px 5px 25px;
+    margin: 5px 0;
 }
 
 .cms-message > .ui-icon {
     position: absolute;
-    top: 5px;
+    top: 7px;
     left: 5px;
 }
 

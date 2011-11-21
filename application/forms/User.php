@@ -106,9 +106,7 @@ class Core_Form_User extends CMS_Form
 
 
 
-        $submit = $this->addElement('submit', 'submit', array('label' => 'Submit'));
-        $this->addElement('hash', 'hash', array('salt' => 'unique'));
-        
+        $submit = $this->addElement('submit', 'submit', array('label' => 'Submit'));        
     }
 }
 

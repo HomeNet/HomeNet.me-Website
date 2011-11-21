@@ -34,45 +34,28 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
 
         $user = Core_Model_User_Manager::getUser();
 
-
-//        if (!$auth->hasIdentity()) {  //guest
-//            //check to see if guest profile is loaded
-//            if (empty($_SESSION['User'])) {
-//                $uService = new Core_Model_Acl_User_Service();
-//                $guest = $uService->getObjectById($config->site->user->guest);
-//                $_SESSION['User'] = $guest->toArray();
-//            }
-//        }
-//        } else {
-//            $user = $_SESSION['User'];
-//        }
-
-        //$uRole = new CMS_Acl_Role_User($_SESSION['User']['id']);
-
-        $module = strtolower($request->module);
+        $module =     strtolower($request->getModuleName());
+        $controller = strtolower($request->getControllerName());
+        $action =     strtolower($request->getActionName());
 
         //framework may not list the module
         //@todo verify if this is still needed
         if (empty($module) || ($module == 'default')) {
             $module = 'core';
-        }
-        
+        }      
 
         $aManager = Core_Model_Acl_Manager::getInstance();
 
         $acl = $aManager->getUserAcl($module);
-
-
-
-
-        $cResource = new CMS_Acl_Resource_Controller($request->controller);
+       
+        $cResource = new CMS_Acl_Resource_Controller($controller);
 
         //check to see if resource exists, if it doesn't add it and let it inhert the default rules
         if (!$acl->has($cResource)) {
             $acl->add($cResource);
         }
 
-        $action = strtolower($request->action);
+
         //die('Failed Acl: ' . $module . ' > ' . $request->controller . ' > ' . $action);
        // die(debugArray($_SESSION));
        // die('User: ' . $uRole . '; Resource: ' . $cResource . '; Action: ' . $action);
@@ -96,7 +79,7 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
 //            echo 'Not Allowed';
 //        }
 //       echo "<br>";
-//        die('Failed Acl: ' . $module . ' > ' . $request->controller . ' > ' . $action);
+//       die('Failed Acl: '.$user->name.', ' . $module . ' > ' . $controller . ' > ' . $action);
         if (!$acl->isAllowed($user, $cResource, $action)) {
             
             $dispatcher = Zend_Controller_Front::getInstance()->getDispatcher();
@@ -106,7 +89,7 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
                $request->setControllerName('error');
                $request->setActionName('not-found');
    
-               $request->setParam('error_message', 'Could not find route ' . $module . ' > ' . $request->controller . ' > ' . $action);            
+               $request->setParam('error_message', 'Could not find route ' . $module . ' > ' . $controller . ' > ' . $action);            
            
                 // $request->setParam('forward', true);
 
@@ -115,7 +98,9 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
             } elseif ($user->id == $config->site->user->guest) { //if guest
                 
               //  die('Route to Login: ' . $module . ' > ' . $request->controller . ' > ' . $action);
-                $_SESSION['login_redirect'] = $_SERVER['REQUEST_URI'];
+                if(isset($_SERVER['REQUEST_URI'])){
+                    $_SESSION['login_redirect'] = $_SERVER['REQUEST_URI'];
+                }
               //  $view = Zend_Registry::get('view');
                 
                 
@@ -133,3 +118,17 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
     }
 
 }
+
+//        if (!$auth->hasIdentity()) {  //guest
+//            //check to see if guest profile is loaded
+//            if (empty($_SESSION['User'])) {
+//                $uService = new Core_Model_Acl_User_Service();
+//                $guest = $uService->getObjectById($config->site->user->guest);
+//                $_SESSION['User'] = $guest->toArray();
+//            }
+//        }
+//        } else {
+//            $user = $_SESSION['User'];
+//        }
+
+        //$uRole = new CMS_Acl_Role_User($_SESSION['User']['id']);

@@ -38,10 +38,5 @@ class Content_Form_FieldSet extends CMS_Form
         $this->addElement($title);
         
         $this->addDisplayGroup($this->getElements(), 'house', array('legend' => 'Field Set'));
-
-        $this->addElement('hash', 'hash', array('salt' => 'unique'));
     }
-
-
 }
-

@@ -88,9 +88,5 @@ class Content_Form_Section extends CMS_Form {
 
 
         $this->addDisplayGroup($this->getElements(), 'field', array('legend' => 'Section'));
-
-        $this->addElement('hash', 'hash', array('salt' => 'unique'));
     }
-
 }
-

@@ -111,9 +111,10 @@ class Content_CategoryController extends Zend_Controller_Action
         $values['set'] = $this->_id;
 
         $service = new Content_Model_Category_Service();
-        $service->create($values);
+        $object = $service->create($values);
         
-        return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $this->_id),'content-admin-id').'?message=Successfully added new Set');//
+        $this->view->messages()->add('Successfully added Category &quot;'.$object->title.'&quot;');
+        return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $this->_id),'content-admin-id'));//
     }
 
     public function editAction()
@@ -147,6 +148,7 @@ class Content_CategoryController extends Zend_Controller_Action
         $object->fromArray($values);
         $service->update($object);
 
+        $this->view->messages()->add('Successfully Updated Category &quot;'.$object->title.'&quot;');
         return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $object->set),'content-admin-id').'?message=Updated');//
     }
 
@@ -171,15 +173,15 @@ class Content_CategoryController extends Zend_Controller_Action
         
         //@todo also delete amy categories in this set 
 
-        $values = $form->getValues();
-        $id = $object->set;
-        //need to figure out why this isn't in values
+        $set = $object->set;
+        
         if(!empty($_POST['delete'])){
             
+            $title = $object->title;
             $service->delete($object);
-            return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $id),'content-admin-id').'?message=Deleted');
+            $this->view->messages()->add('Successfully Deleted Category &quot;'.$title.'&quot;');
         }
-        return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $id),'content-admin-id').'?message=Canceled');
+        return $this->_redirect($this->view->url(array('controller'=>'category', 'action'=>'index', 'id' => $set),'content-admin-id'));
     }
 
     public function hideAction()

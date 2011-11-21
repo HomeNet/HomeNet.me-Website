@@ -30,17 +30,37 @@
 interface Core_Model_Group_MapperInterface {
 
     /**
+     * @return Int
+     */
+    public function fetchCount();
+    
+    /**
+     * @return Core_Model_Group_Interface[]
+     */
+    public function fetchObjects();
+    
+    /**
      * @return Core_Model_Group_Interface
      */
     public function fetchObjectById($id);
 
+    /**
+     * @return Core_Model_Group_Interface
+     */
     public function fetchObjectsByType($type);
 
-//    public function fetchObjectsByIdHouse($id,$house);
-
+    /**
+     * @return Core_Model_Group_Interface
+     */
     public function save(Core_Model_Group_Interface $group);
 
+    /**
+     * @return Bool Success
+     */
     public function delete(Core_Model_Group_Interface $group);
 
+    /**
+     * @return Bool Success
+     */
     public function deleteAll();
 }

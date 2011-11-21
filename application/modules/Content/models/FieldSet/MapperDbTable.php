@@ -150,14 +150,14 @@ class Content_Model_FieldSet_MapperDbTable implements Content_Model_FieldSet_Map
         return $row;
     }
 
-    public function delete(Content_Model_FieldSet_Interface $content) {
+    public function delete(Content_Model_FieldSet_Interface $object) {
 
-        if (($content instanceof Content_Model_FieldSet_DbTableRow) && ($content->isConnected())) {
-            $content->delete();
+        if (($object instanceof Content_Model_FieldSet_DbTableRow) && ($object->isConnected())) {
+            $object->delete();
             return true;
-        } elseif (!is_null($content->id)) {
-            $row = $this->getTable()->find($content->id)->current()->delete();
-            return;
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current()->delete();
+            return true;
         }
 
         throw new Exception('Invalid Content');

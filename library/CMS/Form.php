@@ -39,6 +39,9 @@ class CMS_Form extends Zend_Form {
 
 
         parent::__construct($options);
+        if(APPLICATION_ENV != 'testing'){
+            $this->addElement('hash', 'hash', array('salt' => 'unique'));
+        }
     }
 
     public function loadDefaultDecorators() {

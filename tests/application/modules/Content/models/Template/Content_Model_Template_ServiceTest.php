@@ -11,14 +11,14 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
     /**
      * @var Content_Model_Template_Service
      */
-    protected $object;
+    protected $service;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new Content_Model_Template_Service;
+        $this->service = new Content_Model_Template_Service;
     }
 
     /**
@@ -26,12 +26,12 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-//      $this->object->deleteAll();
+//      $this->service->deleteAll();
     }
 
     public function testGetMapper() {
 
-        $this->assertInstanceOf('Content_Model_Template_MapperInterface', $this->object->getMapper());
+        $this->assertInstanceOf('Content_Model_Template_MapperInterface', $this->service->getMapper());
     }
 
     /**
@@ -40,10 +40,10 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testSetMapper() {
         
         $mapper = new Content_Model_Template_MapperDbTable();
-         $this->object->setMapper($mapper);
+         $this->service->setMapper($mapper);
         
-        $this->assertInstanceOf('Content_Model_Template_MapperInterface', $this->object->getMapper());
-        $this->assertEquals($mapper, $this->object->getMapper());
+        $this->assertInstanceOf('Content_Model_Template_MapperInterface', $this->service->getMapper());
+        $this->assertEquals($mapper, $this->service->getMapper());
         //$this->ass
     }
 
@@ -61,7 +61,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $object->active = true;
         $object->content = 'testContent';
    
-        $result = $this->object->create($object);
+        $result = $this->service->create($object);
 
         $this->assertInstanceOf('Content_Model_Template_Interface', $result);
         return $result;
@@ -78,7 +78,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $object->active = true;
         $object->content = '';
         $this->setExpectedException('Exception');
-        $result = $this->object->create($content);
+        $result = $this->service->create($content);
     }
 //    
 //    public function testDuplicateUrl() {
@@ -150,7 +150,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         
         
 
-        $result = $this->object->create($content);
+        $result = $this->service->create($content);
 
         $this->assertInstanceOf('Content_Model_Template_Interface', $result);
 
@@ -170,7 +170,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->create($badObject);
+        $create = $this->service->create($badObject);
     }
 
     public function testGetObjectById() {
@@ -179,7 +179,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $content = $this->createValidObject();
 
         //test getObject
-        $result = $this->object->getObjectByIdRevision($content->id,$content->revision);
+        $result = $this->service->getObjectByIdRevision($content->id,$content->revision);
         
         $this->assertInstanceOf('Content_Model_Template_Interface', $result);
 
@@ -201,7 +201,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
 //        $content = $this->createValidContent();
 //
 //        //test getObject
-//        $result = $this->object->getObjectByUrl($content->url);
+//        $result = $this->service->getObjectByUrl($content->url);
 //        
 //        $this->assertInstanceOf('Content_Model_Template_Interface', $result);
 //
@@ -217,7 +217,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
 //     public function testGetInvalidObjectByUrl() {
 //
 //        $this->setExpectedException('NotFoundException');
-//        $result = $this->object->getObjectByUrl("testnotindatabase");
+//        $result = $this->service->getObjectByUrl("testnotindatabase");
 //
 //    }
 
@@ -237,7 +237,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $object->content = 'testContent2';
 
 
-        $result = $this->object->update($object);
+        $result = $this->service->update($object);
 
         $this->assertInstanceOf('Content_Model_Template_Interface', $result);
 
@@ -270,7 +270,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $array['active'] = false;   
         $array['content'] = 'testContent2';
 
-        $result = $this->object->update($array);
+        $result = $this->service->update($array);
 
         $this->assertInstanceOf('Content_Model_Template_Interface', $result);
 
@@ -291,7 +291,7 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->update($badObject);
+        $create = $this->service->update($badObject);
     }
 
     public function testDeleteObject() {
@@ -300,11 +300,11 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $content = $this->createValidObject();
 
         //test delete
-        $this->object->delete($content);
+        $this->service->delete($content);
 
         //verify that it was deleted
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectByIdRevision($content->id,$content->revision);
+        $result = $this->service->getObjectByIdRevision($content->id,$content->revision);
     }
     
     public function testDeleteBySection() {
@@ -313,11 +313,11 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $content = $this->createValidObject();
 
         //test delete
-        $this->object->deleteBySection($content->section);
+        $this->service->deleteBySection($content->section);
 
         //verify that it was deleted
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectByIdRevision($content->id,$content->revision);
+        $result = $this->service->getObjectByIdRevision($content->id,$content->revision);
     }
 
 //    public function testDeleteId() {
@@ -325,10 +325,10 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
 //        //setup
 //        $content = $this->createValidContent();
 //       // $this->fail("id: ".$content->id);
-//        $this->object->delete((int)$content->id);
+//        $this->service->delete((int)$content->id);
 //        
 //        $this->setExpectedException('NotFoundException');
-//        $result = $this->object->getObjectByIdRevision($content->id,$content->revision); 
+//        $result = $this->service->getObjectByIdRevision($content->id,$content->revision); 
 //    }
     
     public function testDeleteArray() {
@@ -336,10 +336,10 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         //setup
         $content = $this->createValidObject();
        // $this->fail("id: ".$content->id);
-        $this->object->delete($content->toArray());
+        $this->service->delete($content->toArray());
         
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectByIdRevision($content->id,$content->revision); 
+        $result = $this->service->getObjectByIdRevision($content->id,$content->revision); 
 //        $this->fail(debugArray($result));
     }
 
@@ -347,11 +347,11 @@ class Content_Model_Template_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->delete($badObject);
+        $create = $this->service->delete($badObject);
     }
 
     public function testDeleteAll() {
-//        $this->object->deleteAll();
+//        $this->service->deleteAll();
     }
 
 }

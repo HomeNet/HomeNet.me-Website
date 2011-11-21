@@ -50,6 +50,32 @@ class Core_Model_Group_Service {
     public function setMapper(Core_Model_Group_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
+    
+    /**
+     * @return int number of items in table
+     */
+    public function getCount() {
+        $result = $this->getMapper()->fetchCount();
+
+//        if (empty($result)) {
+//            throw new NotFoundException('Id: '.$id.' Not Found', 404);
+//        }
+        return $result;
+    }
+ 
+    /**
+     * @return Core_Model_Group[]
+     */
+    public function getObjects() {
+        $result = $this->getMapper()->fetchObjects();
+
+//        if (empty($result)) {
+//            throw new NotFoundException('Id: '.$id.' Not Found', 404);
+//        }
+        return $result;
+    }
+    
+    
 
     /**
      * @param int $id   Group Id
@@ -112,7 +138,6 @@ class Core_Model_Group_Service {
     }
 
     /**
-     *
      * @param integer $type Group Type
      * @return Core_Model_Group[] 
      */

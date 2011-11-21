@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -24,126 +25,108 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Content_FieldSetController extends Zend_Controller_Action
-{
+class Content_FieldSetController extends Zend_Controller_Action {
 
-    public function init()
-    {
-        $this->view->heading = 'FieldSet'; //for generic templates
-        
+    private $_id;
 
-        
-        $this->view->id = $this->_getParam('id');
+    public function init() {
+        $this->view->heading = 'Field Set'; //for generic templates
+
+        $this->view->id = $this->_id = $this->_getParam('id');
     }
-    
-       private function _loadSection($id){
+
+    private function _loadSection($id) {
         $this->view->breadcrumbs()->addPage(array(
-            'label'  => 'Admin',
-            'route'  => 'admin'          
+            'label' => 'Admin',
+            'route' => 'admin'
         ));
-        
+
         $this->view->breadcrumbs()->addPage(array(
-            'label'  => 'Content',
-            'route'  => 'content-admin',  
+            'label' => 'Content',
+            'route' => 'content-admin',
             'module' => 'Content',
             'controller' => 'section',
         ));
-        
+
         $sService = new Content_Model_Section_Service();
         $section = $sService->getObjectById($id);
-       // 
-        
+        // 
+
         $this->view->breadcrumbs()->addPage(array(
-            'label'  => $section->title,
-            'route'  => 'content-admin-id',  
+            'label' => $section->title,
+            'route' => 'content-admin-id',
             'module' => 'Content',
             'controller' => 'section',
-            'params' => array('id'=>$id)
+            'params' => array('id' => $id)
         ));
-        
+
         $this->view->breadcrumbs()->addPage(array(
-            'label'  => 'Fields',
-            'route'  => 'content-admin-id',  
+            'label' => 'Fields',
+            'route' => 'content-admin-id',
             'module' => 'Content',
             'controller' => 'field',
-            'params' => array('id'=>$id)
+            'params' => array('id' => $id)
         ));
-        
+
         $this->view->breadcrumbs()->addPage(array(
-            'label'  => 'FieldSets',
-            'route'  => 'content-admin-id',  
+            'label' => 'FieldSets',
+            'route' => 'content-admin-id',
             'module' => 'Content',
             'controller' => 'field-set',
-            'params' => array('id'=>$id)
+            'params' => array('id' => $id)
         ));
-        
-        $this->view->heading = $section->title.' FieldSet';
-        
-       return $section;
+
+        $this->view->heading = $section->title . ' Field Set';
+
+        return $section;
     }
 
-    public function indexAction()
-    {
-        $section = $this->_loadSection($this->view->id);
-        $this->view->heading = $section->title . ' FieldSets';
-        
+    public function indexAction() {
+        $section = $this->_loadSection($this->_id);
+        $this->view->heading = $section->title . ' Field Sets';
+
         $service = new Content_Model_FieldSet_Service();
-        $this->view->objects = $service->getObjectsBySection($this->view->id);
+        $this->view->objects = $service->getObjectsBySection($this->_id);
     }
 
-    public function newAction()
-    {
+    public function newAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        
+
         $form = new Content_Form_FieldSet();
         $form->addElement('submit', 'submit', array('label' => 'Create'));
-        $this->view->assign('form',$form);
-        $section = $this->_loadSection($this->view->id);
-        
-        
-        //$this->_helper->viewRenderer('../generic/new');
+        $this->view->assign('form', $form);
+        $section = $this->_loadSection($this->_id);
 
-        if (!$this->getRequest()->isPost()) {
-            //first
-            $this->view->form = $form;
-            return;
-        }
-
-        if (!$form->isValid($_POST)) {
+        if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
             // Failed validation; redisplay form
             $this->view->form = $form;
             return;
         }
-        
-        //save
-        //$nodeService = new HomeNet_Model_NodesService();
 
+        //save
         $values = $form->getValues();
-        $values['section'] = $this->view->id;
+        $values['section'] = $this->_id;
         $service = new Content_Model_FieldSet_Service();
-        $service->create($values);
-        
-        return $this->_redirect($this->view->url(array('controller'=>'field', 'action'=>'index', 'id'=>$this->view->id),'content-admin-id').'?message=Successfully added new Set');//
+        $object = $service->create($values);
+
+        $this->view->messages()->add('Successfully Added Field Set &quot;' . $object->title . '&quot;');
+        return $this->_redirect($this->view->url(array('controller' => 'field', 'action' => 'index', 'id' => $object->section), 'content-admin-id'));
     }
 
-    public function editAction()
-    {
+    public function editAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        
+
         $service = new Content_Model_FieldSet_Service();
         $form = new Content_Form_FieldSet();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
         $form->addElement('hidden', 'section');
-        
-        $object = $service->getObjectById($this->_getParam('id'));
+
+        $object = $service->getObjectById($this->_id);
         $this->_loadSection($object->section);
-        
+
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
-            
-            
             $values = $object->toArray();
-
             $form->populate($values);
 
             $this->view->form = $form;
@@ -158,72 +141,62 @@ class Content_FieldSetController extends Zend_Controller_Action
 
         //save
         $values = $form->getValues();
-         $object = $service->getObjectById($this->_getParam('id'));
-         $object->fromArray($values);
+        $object = $service->getObjectById($this->_id);
+        $object->fromArray($values);
         $service->update($object);
 
-        return $this->_redirect($this->view->url(array('controller'=>'field', 'action'=>'index', 'id'=>$object->section),'content-admin-id').'?message=Updated');//
+        $this->view->messages()->add('Successfully Updated Field Set &quot;' . $object->title . '&quot;');
+        return $this->_redirect($this->view->url(array('controller' => 'field', 'action' => 'index', 'id' => $object->section), 'content-admin-id')); //
     }
 
-    public function deleteAction()
-    {
+    public function deleteAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        
+
         $service = new Content_Model_FieldSet_Service();
-        $object = $service->getObjectById($this->_getParam('id'));
-        
+        $object = $service->getObjectById($this->_id);
+
         $this->_loadSection($object->section);
-        
+
         $form = new Core_Form_Confirm();
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
 
-            $form->addDisplayGroup($form->getElements(), 'node', array ('legend' => 'Are you sure you want to delete "'.$object->title.'"?'));
+            $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to delete "' . $object->title . '"?'));
 
             $this->view->form = $form;
             return;
         }
 
-        $values = $form->getValues();
         $section = $object->section;
+        
         //need to figure out why this isn't in values
-        if(!empty($_POST['delete'])){
-            
+        if (!empty($_POST['delete'])) {
+            $title = $object->title;
             $service->delete($object);
-            return $this->_redirect($this->view->url(array('controller'=>'field', 'action'=>'index', 'id'=>$section),'content-admin-id').'?message=Deleted');
+            $this->view->messages()->add('Successfully Deleted Field Set &quot;' . $title . '&quot;');
         }
-        return $this->_redirect($this->view->url(array('controller'=>'field', 'action'=>'index', 'id'=>$section),'content-admin-id').'?message=Canceled');
+        return $this->_redirect($this->view->url(array('controller' => 'field', 'action' => 'index', 'id' => $section), 'content-admin-id'));
     }
 
-    public function hideAction()
-    {
-        // action body
-    }
+    public function changeOrderAjaxAction() {
 
-    public function showAction()
-    {
-        // action body
-    }
-    
-    public function changeOrderAjaxAction(){
-        
-      //  $section = $this->_getParam('section');
-        $id= $this->_getParam('id');
+        //  $section = $this->_getParam('section');
+        $id = $this->_id;
         $order = $this->_getParam('order');
-                
-        
-        if(empty($id) || !is_numeric($id)){
+
+        if (empty($id) || !is_numeric($id)) {
             throw new InvalidArgumentException('Missing FieldSet Id');
         }
-        if(is_null($order) || !is_numeric($order)){
+        if (is_null($order) || !is_numeric($order)) {
             throw new InvalidArgumentException('Invalid Order');
         }
-        
+
         $service = new Content_Model_FieldSet_Service();
         $service->setObjectOrder($id, $order);
-        
+
         $this->_helper->viewRenderer->setNoRender(true);
-       // print_r($this->_getAllParams());
+
         echo 'success';
     }
+
 }

@@ -47,8 +47,8 @@ class Core_Model_Reflection_Service {
             //fix default
             $paths['Core'] = $paths['default'];
             unset($paths['default']);
-            
-            foreach($paths as $key => $value){
+
+            foreach ($paths as $key => $value) {
                 $paths[$key] = dirname($value);
             }
             $this->_modules = $paths;
@@ -56,19 +56,19 @@ class Core_Model_Reflection_Service {
 
         return $this->_modules;
     }
-    
+
     /**
      * Get Module Path
      * 
      * @param type $module 
      * @return string path
      */
-    public function getModulePath($module){
+    public function getModulePath($module) {
         $paths = $this->getModulePaths();
-        if(!array_key_exists($module, $paths)){
-            throw new Exception('Module: '.$module.' Not Found');
+        if (!array_key_exists($module, $paths)) {
+            throw new Exception('Module: ' . $module . ' Not Found');
         }
-        
+
         return $paths[$module];
     }
 
@@ -103,7 +103,11 @@ class Core_Model_Reflection_Service {
 
             include_once $path . '/Installer.php';
 
-            $class = $module . '_Installer';
+            if ($module == 'Core') {
+                $class = 'Installer';
+            } else {
+                $class = $module . '_Installer';
+            }
 
             $installers[$module] = new $class();
         }
@@ -119,7 +123,12 @@ class Core_Model_Reflection_Service {
 
         include_once $paths[$module] . '/Installer.php';
 
-        $class = $module . '_Installer';
+        if ($module == 'Core') {
+            $class = 'Installer';
+        } else {
+            $class = $module . '_Installer';
+        }
+
 
         Zend_Loader::loadClass($class);
         $installer = new $class();
@@ -144,7 +153,7 @@ class Core_Model_Reflection_Service {
     }
 
     public function getPluginTypesByModule($module) {
-        
+
         $plugins = array();
 
         $path = $this->getModulePath($module);
@@ -159,16 +168,16 @@ class Core_Model_Reflection_Service {
         }
         return $plugins;
     }
-    
+
     public function getPluginConfigsByModuleType($module = null, $type) {
         $configs = array();
 
         $path = $this->getModulePath($module);
 
-        $path .= '/plugins/'.ucfirst($type);
-        
-        if(!is_dir($path)){
-            throw new Exception('Module: '.$module.' Type: '.$type.' Not Found');
+        $path .= '/plugins/' . ucfirst($type);
+
+        if (!is_dir($path)) {
+            throw new Exception('Module: ' . $module . ' Type: ' . $type . ' Not Found');
         }
 
         foreach (scandir($path) as $file) {
@@ -189,7 +198,6 @@ class Core_Model_Reflection_Service {
             }
         }
         return $configs;
-        
     }
 
     public function getActionsByModuleController($module, $controller) {

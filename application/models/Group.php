@@ -40,7 +40,7 @@ class Core_Model_Group implements Core_Model_Group_Interface {
     /**
      * @var int
      */
-    public $type = -1;
+    public $type = 2;
 
     /**
      * @var string

@@ -30,6 +30,6 @@ class CMS_Form_Element_JsWysiwyg extends CMS_Form_Element_JsElement
      * Default form view helper to use for rendering
      * @var string
      */
-    public $helper = 'formAjaxWysiwyg';
+    public $helper = 'formJsWysiwyg';
     public $wide = true;
 }

@@ -95,9 +95,9 @@ class Content_CategorySetController extends Zend_Controller_Action
         $values = $form->getValues();
 
         $csService = new Content_Model_CategorySet_Service();
-        $csService->create($values);
-        
-        return $this->_redirect($this->view->url(array('controller'=>'category-set', 'action'=>'index'),'content-admin').'?message=Successfully added new Set');//
+        $object = $csService->create($values);
+        $this->view->messages()->add('Successfully added new Category Set &quot;'.$object->title.'&quot;');
+        return $this->_redirect($this->view->url(array('controller'=>'category-set', 'action'=>'index'),'content-admin'));//
     }
 
     public function editAction()
@@ -130,9 +130,10 @@ class Content_CategorySetController extends Zend_Controller_Action
         $values = $form->getValues();
          $object = $csService->getObjectById($this->_getParam('id'));
          $object->fromArray($values);
-        $csService->update($object);
-
-        return $this->_redirect($this->view->url(array('controller'=>'category-set'),'content-admin').'?message=Updated');//
+        $object = $csService->update($object);
+        
+        $this->view->messages()->add('Successfully Updated Category Set &quot;'.$object->title.'&quot;');
+        return $this->_redirect($this->view->url(array('controller'=>'category-set'),'content-admin'));//
     }
 
     public function deleteAction()
@@ -153,22 +154,11 @@ class Content_CategorySetController extends Zend_Controller_Action
 
         $values = $form->getValues();
 
-        //need to figure out why this isn't in values
         if(!empty($_POST['delete'])){
-            
+            $title = $object->title;
             $csService->delete($object);
-            return $this->_redirect($this->view->url(array('controller'=>'category-set'),'content-admin').'?message=Deleted');
+            $this->view->messages()->add('Successfully Deleted Category Set &quot;'.$title.'&quot;');
         }
-        return $this->_redirect($this->view->url(array('controller'=>'category-set'),'content-admin').'?message=Canceled');
-    }
-
-    public function hideAction()
-    {
-        // action body
-    }
-
-    public function showAction()
-    {
-        // action body
+        return $this->_redirect($this->view->url(array('controller'=>'category-set'),'content-admin'));
     }
 }

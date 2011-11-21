@@ -320,7 +320,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
     public function removeCustomTable($section) {
         //drop table
         //DROP TABLE `content_section_5`
-        $result = $this->getTable()->getAdapter()->query('DROP TABLE `content_custom_' . mysql_real_escape_string($section));
+        $result = $this->getTable()->getAdapter()->query('DROP TABLE IF EXISTS `content_custom_' . mysql_real_escape_string($section));
         $this->cleanCache(); //reset metadata cache
         return $result;
     }

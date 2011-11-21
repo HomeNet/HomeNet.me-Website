@@ -50,11 +50,13 @@ class Core_Model_Group_DbTableRow extends Zend_Db_Table_Row_Abstract implements 
 
     public function init(){
         $this->uncompress();
-        $this->visible = (bool)$this->visible;
+        if(isset($this->visible)){
+            $this->visible = (bool)$this->visible;
+        }
     }
     
     public function uncompress(){
-        if(is_string($this->settings)){
+        if(isset($this->settings) && is_string($this->settings)){
             $this->settings = unserialize($this->settings);
         }
 
@@ -64,7 +66,7 @@ class Core_Model_Group_DbTableRow extends Zend_Db_Table_Row_Abstract implements 
     }
     
     public function compress(){
-        if(is_array($this->settings)){
+        if(isset($this->settings) && is_array($this->settings)){
             $this->settings = serialize($this->settings);
         }
 //

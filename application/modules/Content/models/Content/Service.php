@@ -262,7 +262,7 @@ class Content_Model_Content_Service {
 
         $fields = $object->getSection()->getFields();
         foreach ($fields as $key => $value) {
-            $o = $this->$key;
+            $o = $object->$key;
             if ($o instanceof Content_Model_Plugin_Element) {
                 $o->delete($object);
             }
