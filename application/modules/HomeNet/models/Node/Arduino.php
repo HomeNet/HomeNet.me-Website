@@ -164,7 +164,7 @@ void loop() {
             }
         }
         
-        for($i = 0; $i <= $position; $i++){
+        for($i = 0; $i < count($code); $i++){
             if(empty($code[$i])){
                 $this->_deviceVariables[$i] = 'placeholder'.$i;
                 $code[$i] = 'HomeNetDevicePlaceholder placeholder'.$i.'(stack);';

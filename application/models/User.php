@@ -95,38 +95,38 @@ class Core_Model_User extends Zend_Db_Table_Row_Abstract {
     }
     
     
-    public function login() {
-
-        if(!$this->isConnected() || empty($this->id)){
-            throw new Zend_Exception("User Not Loaded");
-        }
-
-        $_SESSION['User'] = $this->toArray();
-        $_SESSION['User']['settings'] = $this->getSettings();
-
-         if($this->status == -1){
-             $this->logout();
-            throw new CMS_Exception("Account Not Activated", self::ERROR_NOT_ACTIVATED);
-        } elseif($this->status < -1){
-            $this->logout();
-            throw new CMS_Exception("User Banned", self::ERROR_BANNED);
-        }
-
-        
-        $_SESSION['User'] = $this->toArray();
-        $_SESSION['User']['settings'] = $this->getSettings();
-
-    }
-/**
- * @todo move this to an auth model
- */
-    public function logout() {
-
-        //Zend_Session::destroy(true);
-
-        $authAdapter = Zend_Auth::getInstance();
-        $authAdapter->clearIdentity();
-    }
+//    public function login() {
+//
+//        if(!$this->isConnected() || empty($this->id)){
+//            throw new Zend_Exception("User Not Loaded");
+//        }
+//
+//        $_SESSION['User'] = $this->toArray();
+//        $_SESSION['User']['settings'] = $this->getSettings();
+//
+//         if($this->status == -1){
+//             $this->logout();
+//            throw new CMS_Exception("Account Not Activated", self::ERROR_NOT_ACTIVATED);
+//        } elseif($this->status < -1){
+//            $this->logout();
+//            throw new CMS_Exception("User Banned", self::ERROR_BANNED);
+//        }
+//
+//        
+//        $_SESSION['User'] = $this->toArray();
+//        $_SESSION['User']['settings'] = $this->getSettings();
+//
+//    }
+///**
+// * @todo move this to an auth model
+// */
+//    public function logout() {
+//
+//        //Zend_Session::destroy(true);
+//
+//        $authAdapter = Zend_Auth::getInstance();
+//        $authAdapter->clearIdentity();
+//    }
 
     /**
      * @param Array $values User Info
