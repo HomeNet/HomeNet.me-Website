@@ -1,0 +1,45 @@
+<?php echo $this->heading('Groups'); 
+$types = array('Core','System','Custom');
+?>
+
+<div class="cms ui-widget ui-widget-content ui-corner-all">
+<div class="ui-widget-content">
+    <table width="100%">
+        <thead class="ui-widget-header">
+            <tr><th>Id</th><th>Name</th><th>Type</th><th>Visible</th><th>Permissions</th><th width="50"></th></tr>
+        </thead>
+        <tbody>
+            <?php
+            foreach ($this->objects as $object) {
+                /* @var $object Content_Model_Category */
+            ?>
+            <tr  class="<?php echo $this->cycle(array("", "ui-state-default"))->next() ?>" >
+                <td><?php echo $object->id ?></td>
+                <td><?php echo $object->title ?></td>
+                <td><?php echo array_key_exists($object->type, $types)?$types[$object->type]:'Unknown: '.$object->type ?></td>
+                <td><?php echo $object->visible?'Visible':'Hidden'; ?></td>
+                <td><a title="Edit <?php echo $object->title ?> Permissions " 
+                       href="<?php echo $this->url(array('controller' => 'group-permission', 'id' => $object->id, 'action' => 'index'), 'admin-id'); ?>">
+                       Permissions
+                    </a>
+                </td>
+                <td>
+                    <a class="button" data-text="false" data-icon="ui-icon-pencil" title="Edit Group &quot;<?php echo $object->title ?>&quot;" 
+                       href="<?php echo $this->url(array('controller' => 'group', 'id' => $object->id, 'action' => 'edit'), 'admin-id'); ?>">
+                        Edit
+                    </a> 
+                    <?php if($object->type == 2){ ?>
+                    <a class="button"  data-text="false" data-icon="ui-icon-close" title="Delete Group &quot;<?php echo $object->title ?>&quot;" 
+                       href="<?php echo $this->url(array('controller' => 'group', 'id' => $object->id, 'action' => 'delete'), 'admin-id'); ?>">
+                        Delete
+                    </a>
+                    <?php } ?>
+                </td>
+            </tr><?php
+            }
+            ?>
+        </tbody>
+    </table>
+    <a class="button" data-icon="ui-icon-plusthick" href="<?php echo $this->url(array('controller' => 'group', 'action' => 'new'), 'admin'); ?>">New</a>
+</div>
+</div>

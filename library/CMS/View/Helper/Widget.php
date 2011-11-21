@@ -16,26 +16,37 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 /**
- * @package Core
- * @subpackage Login
+ * @package CMS
+ * @subpackage View
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Form_Confirm extends Zend_Form 
+class CMS_View_Helper_Widget extends Zend_View_Helper_Abstract
 {
-
-    public function init()
+	/**
+	 * Render a Color Picker in an FormText field.
+	 *
+	 * @link   http://docs.jquery.com/UI/ColorPicker
+	 * @param  string $id
+	 * @param  string $value
+	 * @param  array  $params
+	 * @param  array  $attribs
+	 * @return string
+	 */
+    public function widget($module,$widgetName, $options = array())
     {
-        $this->setMethod('post');
-        $this->setElementDecorators( array( 'ViewHelper' ) );
-        $this->addElement('submit', 'delete', array('label' => 'Delete'));
-        $this->addElement('submit', 'cancel', array('label' => 'Cancel'));
-
-        $this->addElement('hash', 'hash', array('salt' => 'unique'));
+        $class = ucfirst($module).'_Plugin_Widget_'.ucfirst($widgetName).'_Widget';
+        if(!class_exists($class,true)){
+            throw new Exception('Widget Not Found: '.$class);
+        }
+        $object = new $class(array('view'=>$this->view,'options'=>$options));
+        return $object->render();
     }
-
+    
+    
+    
+    
 }
-
