@@ -27,7 +27,22 @@
  */
 class ErrorController extends Zend_Controller_Action {
 
+    public function notFoundAction(){
+        $message = $this->_getParam('error_message');
+
+        $this->view->message = 'Unknown Error';
+        if (!empty($message)) {
+            $this->view->message = $message;
+        }
+        
+        $this->getResponse()->setHttpResponseCode(404);
+        $this->view->title = '404 Page not found';
+    }
+    
     public function errorAction() {
+        if(APPLICATION_ENV == 'testing'){
+            die(debugArray($this->_getParam('error_handler')));
+        }
         $errors = $this->_getParam('error_handler');
 
         if (!$errors) {

@@ -25,26 +25,34 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Model_User extends Zend_Db_Table_Row_Abstract {
+class Core_Model_User implements Core_Model_User_Interface {
 
-    const ERROR_BANNED = 2;
-    const ERROR_NOT_ACTIVATED = 1;
+    /**
+     * @var int
+     */
+    public $id;
 
-    private $_settings = null;
+    /**
+     * @var int
+     */
+    public $status = 0;
 
-    public function getSetting($setting, $module = 'Core'){
+    /**
+     * @var int
+     */
+    public $primary_group = null;
 
-        if(is_null($this->_settings)){
-            $this->loadSettings();
-        }
+    /**
+     * @var string
+     */
+    public $username;
 
-        if(!empty($this->_settings[$module][$setting])){
-            return $this->_settings[$module][$setting];
-        }
-        return null;
-    }
+    /**
+     * @var string
+     */
+    public $name;
 
-    public function setSetting($setting, $value, $module = 'Core'){
+<<<<<<< .mine    public function setSetting($setting, $value, $module = 'Core'){
 
         if(is_null($this->_settings)){
             $this->loadSettings();
@@ -128,153 +136,98 @@ class Core_Model_User extends Zend_Db_Table_Row_Abstract {
 //        $authAdapter->clearIdentity();
 //    }
 
-    /**
-     * @param Array $values User Info
-     * @return boolean
+=======>>>>>>> .theirs    /**
+     * @var string
      */
-    public function add($values = null) {
-        
-        if(!$this->isConnected() || !empty($this->id)){
-            throw new Zend_Exception("User Not Loaded");
-        }       
-        
-        if(is_array($values)){
-            $this->importArray($values);
+    public $location;
+
+    /**
+     * @var string
+     */
+    public $email;
+
+    /**
+     * @var Zend_Date
+     */
+    public $created = null;
+
+    /**
+     * @var CMS_ACL
+     */
+    public $permissions;
+
+    /**
+     * @var array
+     */
+    public $settings = array();
+
+    /**
+     * @var array
+     */
+    public $memberships;
+
+    public function __construct(array $config = array()) {
+        if (isset($config['data'])) {
+            $this->fromArray($config['data']);
         }
-        
-        /**
-         * @todo check to make sure username doesn't exsist
-         */
-        $this->save();
+    }
 
-        $auth = new Core_Model_AuthInternal();
-        $auth->add($this->id, $this->username, $values['password']);
+    public function fromArray(array $array) {
 
-        $this->sendActivationEmail();
+        $vars = get_object_vars($this);
+
+        // die(debugArray($vars));
+
+        foreach ($array as $key => $value) {
+            if (array_key_exists($key, $vars)) {
+                $this->$key = $value;
+            }
+        }
     }
 
     /**
-     * @param int $id User ID
-     * @param Array $user User Info
-     * @return boolean
+     * @return array
      */
-    public function update($values = null) {
+    public function toArray() {
 
-        if(!$this->isConnected() || empty($this->id)){
-            throw new Zend_Exception("User Not Loaded");
-        }
-
-        if(is_array($values)){
-            $this->importArray($values);
-        }
-
-        $this->save();
+        return get_object_vars($this);
     }
 
-    /**
-     * @param string $oldpassword
-     * @param string $newpassword
-     * @return boolean
-     */
-    public function changePassword($oldpassword, $newpassword) {
-/*
-        if(!$this->isConnected() || empty($this->id)){
-            throw new Zend_Exception("User Not Loaded");
+    public function getSetting($setting) {
+        if (isset($this->settings[$setting])) {
+            return $this->settings[$setting];
         }
-
-        if($this->password !== $this->hashPassword($oldpassword)){
-            throw new CMS_Exception("Old password doesn't match");
-        }
-
-        $this->password = $this->hashPassword($newpassword);
-        $this->save();*/
+        return null;
     }
 
-
-    /**
-     * @param int $id User ID
-     */
-    public function save() {
-        $this->saveSettings();
-        parent::save();
-
-    }
-
-    /**
-     * @param int $id User ID
-     */
-    public function delete() {
-        /**
-         * @todo also delete auth table entries
-         * probably should setup the zend_table to cascade deletes
-         */
-        parent::delete();
-        
-    }
-
-    /**
-     * @param string $key
-     * @throw CMS_Exception
-     */
-    public function sendActivationEmail() {
-
-        if (!$this->isConnected() || empty($this->id)) {
-            throw new Zend_Exception("User Not Loaded");
-        }
-
-        if ($this->status > 0) {
-            // throw new CMS_Exception("User Already Activated");
-        }
-
-        $key = uniqid('', true);
-
-        $this->setSetting('activationKey', $key);
-        $this->save();
-
-        //send email
-        $mail = new CMS_HtmlEmail();
-        $mail->setSubject('Activate your HomeNet.me Account');
-        $mail->addTo($this->email, $this->name);
-
-        $mail->setViewParam('id', $this->id);
-        $mail->setViewParam('name', $this->name);
-        $mail->setViewParam('email', $this->email);
-        $mail->setViewParam('username', $this->username);
-
-        $url = Zend_Layout::getMvcInstance()->getView()->url(array('user' => $this->id, 'action'=>'activate', 'key' => $key), 'core-user');
-
-        $mail->setViewParam('activationUrl', $url);
-
-        $mail->sendHtmlTemplate('activate.phtml');
-
-
-
-    }
-
-
-    /**
-     * @param string $key
-     * @throw CMS_Exception
-     */
-    public function activate($key) {
-
-        if(!$this->isConnected() || empty($this->id)){
-            throw new Zend_Exception("User Not Loaded");
-        }
-
-        if($this->status > 0){
-            throw new CMS_Exception("User Already Activated");
-        }
-
-        $userkey = $this->getSetting('activationKey');
-
-        if($userkey === $key){
-            $this->status = 1;
-            $this->save();
+    public function setSetting($setting, $value) {
+        if (is_null($this->settings)) {
+            $this->settings = array($setting => $value);
             return;
         }
+        //die(debugArray($this->settings));
 
-        throw new CMS_Exception("Invalid Activation Key");
+        $this->settings = array_merge($this->settings, array($setting => $value));
+    }
+
+    public function clearSetting($setting) {
+        unset($this->settings[$setting]);
+    }
+
+    public function getMemberships() {
+        if (is_null($this->memberships)) {
+            $mService = new Core_Model_User_Membership_Service();
+            $this->memberships = $mService->getGroupIdsByUser($this->id);
+
+            //add 'everyone' group to the membership list
+            $config = Zend_Registry::get('config');
+            array_unshift($this->memberships, $config->site->group->everyone);
+        }
+        return $this->memberships;
+    }
+    
+    public function getRoleId(){
+        return 'u'.(string) $this->id;
     }
 
 }

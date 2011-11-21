@@ -1,0 +1,43 @@
+<?php echo $this->heading($this->heading); ?>
+
+<?php $types = array(0 => 'System', 1 => 'Template', 2 => 'User'); ?>
+<div class="ui-widget-content buttonfix">
+    <a class="button"  data-icon="ui-icon-circle-arrow-w" 
+       href="<?php echo $this->url(array('controller' => 'section', 'action' => 'index'), 'content-admin'); ?>">Back to Section</a>
+</div>
+<div class="cms ui-widget ui-widget-content ui-corner-all">
+<div class="ui-widget-content">
+    <table class="ui-widget" width="100%">
+        <thead class="ui-widget-header">
+            <tr><th>Name</th><th>Last Revision</th><th width="100">Type</th> <th width="50"></th></tr>
+        </thead>
+        <tbody class="ui-widget-content">
+            <?php
+            foreach ($this->objects as $object) {
+                /* @var $object Content_Model_Category */ //*
+                ?>
+            <tr  class="<?php echo $this->cycle(array("", "ui-state-default"))->next() ?>" >
+                <td class="left"><?php echo $object->url ?></td>
+                <td><?php echo $object->revision ?></td>
+                <td><?php echo  $types[$object->type]  ?></td>
+                <td>
+                    <a class="button" data-text="false" data-icon="ui-icon-pencil" title="Edit Template &quot;<?php echo $object->url ?>&quot;" 
+                       href="<?php echo $this->url(array('controller' => 'template', 'id' => $object->id, 'action' => 'edit'), 'content-admin-id'); ?>">
+                        Edit
+                    </a> 
+                    <a class="button" data-text="false" data-icon="ui-icon-close" title="Delete Template &quot;<?php echo $object->url ?>&quot;" 
+                       href="<?php echo $this->url(array('controller' => 'template', 'id' => $object->id, 'action' => 'delete'), 'content-admin-id'); ?>">
+                        Delete
+                    </a>
+                </td>
+
+            </tr><?php
+        }
+            ?>
+        </tbody>
+    </table>
+    <a class="button" data-icon="ui-icon-plusthick"  href="<?php echo $this->url(array('controller' => 'template', 'id' => $this->id, 'action' => 'new'), 'content-admin-id'); ?>">New</a>
+</div>
+</div>
+
+

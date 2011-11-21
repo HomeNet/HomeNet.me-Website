@@ -1,0 +1,44 @@
+<?php
+/*
+if(!empty($_POST)){
+    echo debugArray($_POST);
+}
+
+?>
+<form action="" method="post">
+<?php
+echo $this->formAjaxGallery('image', null, null, array(
+    'rest'=>$this->url(array('controller'=>'content','action'=>'rest'),'content-admin'),
+    'folder' => 'content/projects'));
+
+?>
+    <input type="submit" value="submit">
+</form>
+ */
+$this->headScript()->appendFile('/js/libs/jquery.wrapselection.js');
+$this->headScript()->appendFile('/js/mylibs/jquery.wysiwyg.js');
+$this->headScript()->appendFile('/js/mylibs/jquery.wysiwyg.block.js');
+$this->headScript()->appendFile('/js/mylibs/jquery.imageeditor.js');
+    $this->headScript()->appendFile('/js/mylibs/jquery.filemanager.js');
+        $this->headScript()->appendFile('/js/libs/jquery.fileupload.js');
+        $this->headScript()->appendFile('/js/libs/jquery.fileupload-ui.js');
+        $this->headScript()->appendFile('/js/mylibs/jquery.fileupload.js');
+        $this->headScript()->appendFile('/js/libs/jquery.iframe-transport.js');
+        $this->headLink()->appendStylesheet('/css/jquery.fileupload-ui.css');
+$this->jquery()->addOnLoad("$('#myeditor').wysiwyg();");
+?>
+<h1>Test Page</h1>
+<section>
+    <div id="myeditor" data-folder="content/projects" data-rest="<?php echo $this->url(array('controller'=>'content','action'=>'rest'),'content-admin') ?>" data-hash="<?php echo securityHash('content/projects'); ?>">
+    <section>
+        <h2>Heading H2</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin gravida rhoncus nisl a pharetra. Nullam blandit eros in quam varius pellentesque. Maecenas pellentesque aliquam egestas. Mauris pharetra viverra condimentum. Donec augue justo, pulvinar a egestas porttitor, fringilla non nulla. Nam consequat, nisl sed auctor mollis, velit lectus rutrum sapien, vitae congue nibh nisl eget orci. Sed semper pretium augue, id condimentum lacus semper ac. Donec eget tortor a libero rutrum venenatis et in sapien. Praesent at ullamcorper augue. Curabitur at molestie nisl. Fusce purus dui, ullamcorper quis placerat a, interdum nec odio. Nulla faucibus nulla massa. </p>
+    <p>Donec nibh nisi, aliquet varius ullamcorper a, mattis quis mi. Duis ut facilisis sapien. Praesent tristique risus sit amet tellus malesuada hendrerit. Proin congue interdum nunc placerat laoreet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ac lacinia tortor. Suspendisse potenti. Curabitur sapien sapien, convallis vitae pharetra feugiat, euismod at ligula. Vivamus nibh nibh, pellentesque id vestibulum quis, blandit id libero. In tincidunt, ante vitae ultricies consequat, lectus velit bibendum risus, et mattis nisi metus at est. Fusce porttitor vulputate nunc ut iaculis. Curabitur erat erat, eleifend ut ullamcorper dapibus, vestibulum eu augue. </p>
+   </section>
+
+    <p>Pellentesque ornare volutpat massa, et congue nulla vehicula ut. Nullam consequat vulputate nisi, quis malesuada neque accumsan vel. Aenean nibh sem, elementum id iaculis nec, cursus sit amet elit. Donec mi elit, commodo non dignissim a, tincidunt eu elit. Ut diam ante, malesuada quis ultrices vel, molestie eu ipsum. Morbi ultricies, libero in condimentum suscipit, nibh nisi laoreet tortor, nec lacinia diam lectus non velit. Cras sodales erat vitae tellus rhoncus vitae consectetur augue commodo. Proin sodales dignissim augue, eu tincidunt orci sodales quis. Fusce eget lectus quis dui fringilla vulputate. Quisque mollis nisl id enim molestie fringilla aliquet erat sollicitudin. Vivamus suscipit mattis velit a aliquet. Suspendisse a libero quis tellus tempor pellentesque eget viverra sem. Sed vitae magna id risus viverra iaculis. Fusce quis arcu est. Morbi porta consequat turpis non pellentesque. Quisque pretium arcu sed sem sollicitudin vestibulum venenatis tellus ornare. </p>
+    <ul><li>orem non enim varius suscipit sit amet pellent</li><li>esque turpis. Ut orci purus, ultrices nec aliquet sit amet, aliq</li><li>et vitae tellus. In hac habitasse platea dictumst</li><li>. Donec porta lacus et purus commodo sit amet mattis dolor cursus. Aliquam sed mauris vel </li><li>nisi feugiat pharetra a at purus. Sed ornare lorem et nisl s</li><li>emper vel laoreet massa mattis.</li></ul> 
+    <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Praesent sapien justo, auctor eu cursus mattis, placerat non erat. Aenean nisl erat, varius ac ultrices at, accumsan id libero. Donec ut ipsum justo. Ut dignissim, risus eget ultrices porttitor, metus nibh vulputate tortor, vitae aliquet nunc felis eget nunc. Vivamus elementum auctor ligula, id adipiscing felis gravida at. Donec neque metus, luctus non luctus id, mollis sit amet dui. Nunc sodales varius justo, sed pharetra turpis consequat at. Phasellus tempor pellentesque est quis tempor. </p>
+    <ol><li>orem non enim varius suscipit sit amet pellent</li><li>esque turpis. Ut orci purus, ultrices nec aliquet sit amet, aliq</li><li>et vitae tellus. In hac habitasse platea dictumst</li><li>. Donec porta lacus et purus commodo sit amet mattis dolor cursus. Aliquam sed mauris vel </li><li>nisi feugiat pharetra a at purus. Sed ornare lorem et nisl s</li><li>emper vel laoreet massa mattis.</li></ol> 
+    </div>
+</section>

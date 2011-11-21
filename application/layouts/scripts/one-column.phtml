@@ -20,9 +20,13 @@
 ?>
 <?php echo $this->render('header.phtml') ?>
 
-    <div id="main" class="transparent">
-<?php echo $this->layout()->content ?>
-    </div>
-<div class="clearfix" ></div>
+<section>
+    <h1><?php echo $this->layout()->heading ?></h1>
+    <div class="breadcrumbs"><?php echo $this->breadcrumbs(); ?></div>
+    
+<?php 
+echo $this->messages();
+echo $this->layout()->content ?>
+</section>
 <?php echo $this->render('footer.phtml') ?>
   

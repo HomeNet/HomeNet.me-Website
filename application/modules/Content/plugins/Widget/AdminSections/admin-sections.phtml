@@ -1,0 +1,22 @@
+<div class="cms ui-widget ui-widget-content ui-corner-all">
+    <div class="ui-widget-header ui-corner-all">
+        Content
+    </div>
+    <div class="ui-widget-content">
+        <table width="100%">
+            <?php
+            foreach($this->objects as $object){
+                /*@var $object Content_Model_Section */
+            ?>
+            <tr style="border-bottom: 1px solid #999;">
+                <td class="left" style="vertical-align: middle;"><?php echo $object->title?></td>
+                <td width="75" style="vertical-align: middle;"><a class="button" data-icon="ui-icon-plusthick" href="<?php echo $this->url(array('controller' => 'content', 'id' => $object->id, 'action' => 'new'),'content-admin-id'); ?>">New</a></td>
+                <td width="75" style="vertical-align: middle;"><a class="button" data-icon="ui-icon-pencil" href="<?php echo $this->url(array('controller' => 'content', 'id' => $object->id, 'action' => 'index'),'content-admin-id'); ?>">Edit</a></td>
+            </tr>
+             <?php
+             }
+            ?>
+        </table>
+        <a class="button" data-icon="ui-icon-gear" href="<?php echo $this->url(array('controller' => 'section', 'action' => 'index'),'content-admin'); ?>">Configure</a>
+    </div>
+</div>

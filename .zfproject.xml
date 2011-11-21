@@ -13,7 +13,6 @@
           <actionMethod actionName="default"/>
           <actionMethod actionName="contact"/>
           <actionMethod actionName="comingSoon"/>
-          <actionMethod actionName="index"/>
         </controllerFile>
         <controllerFile controllerName="Error">
           <actionMethod actionName="noauth"/>
@@ -35,12 +34,81 @@
           <actionMethod actionName="new"/>
           <actionMethod actionName="edit"/>
         </controllerFile>
-        <controllerFile controllerName="Index"/>
+        <controllerFile controllerName="Content">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="add"/>
+          <actionMethod actionName="edit"/>
+          <actionMethod actionName="delete"/>
+          <actionMethod actionName="flag"/>
+          <actionMethod actionName="save"/>
+          <actionMethod actionName="new"/>
+        </controllerFile>
+        <controllerFile controllerName="Admin">
+          <actionMethod actionName="index"/>
+        </controllerFile>
+        <controllerFile controllerName="Section">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="new"/>
+          <actionMethod actionName="edit"/>
+          <actionMethod actionName="remove"/>
+          <actionMethod actionName="delete"/>
+          <actionMethod actionName="hide"/>
+          <actionMethod actionName="show"/>
+        </controllerFile>
+        <controllerFile controllerName="Category">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="new"/>
+          <actionMethod actionName="edit"/>
+          <actionMethod actionName="delete"/>
+          <actionMethod actionName="show"/>
+          <actionMethod actionName="hide"/>
+        </controllerFile>
+        <controllerFile controllerName="CategorySets">
+          <actionMethod actionName="index"/>
+        </controllerFile>
+        <controllerFile controllerName="CategorySet">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="new"/>
+          <actionMethod actionName="edit"/>
+          <actionMethod actionName="delete"/>
+          <actionMethod actionName="hide"/>
+          <actionMethod actionName="show"/>
+        </controllerFile>
+        <controllerFile controllerName="System">
+          <actionMethod actionName="index"/>
+        </controllerFile>
+        <controllerFile controllerName="Search">
+          <actionMethod actionName="index"/>
+        </controllerFile>
+        <controllerFile controllerName="Menu">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="new"/>
+          <actionMethod actionName="edit"/>
+          <actionMethod actionName="delete"/>
+          <actionMethod actionName="hide"/>
+          <actionMethod actionName="show"/>
+        </controllerFile>
+        <controllerFile controllerName="MenuSet">
+          <actionMethod actionName="index"/>
+        </controllerFile>
+        <controllerFile controllerName="MenuItem">
+          <actionMethod actionName="index"/>
+          <actionMethod actionName="new"/>
+          <actionMethod actionName="edit"/>
+          <actionMethod actionName="delete"/>
+          <actionMethod actionName="hide"/>
+          <actionMethod actionName="show"/>
+        </controllerFile>
       </controllersDirectory>
       <formsDirectory>
         <formFile formName="Login"/>
         <formFile formName="User"/>
         <formFile formName="Test"/>
+        <formFile formName="CategorySet"/>
+        <formFile formName="Category"/>
+        <formFile formName="Section"/>
+        <formFile formName="Field"/>
+        <formFile formName="Content"/>
       </formsDirectory>
       <layoutsDirectory enabled="false"/>
       <modelsDirectory>
@@ -57,6 +125,7 @@
         </dbTableDirectory>
         <modelFile modelName="AuthInternal"/>
         <modelFile modelName="AuthFacebook"/>
+        <modelFile modelName="Category"/>
       </modelsDirectory>
       <modulesDirectory>
         <moduleDirectory moduleName="Users">
@@ -98,7 +167,7 @@
             <viewFiltersDirectory/>
           </viewsDirectory>
         </moduleDirectory>
-        <moduleDirectory moduleName="HomeNet">
+        <moduleDirectory moduleName="Content">
           <apisDirectory enabled="false"/>
           <configsDirectory enabled="false"/>
           <controllersDirectory>
@@ -179,6 +248,7 @@
             <formFile formName="Room"/>
             <formFile formName="Node"/>
           </formsDirectory>
+
           <layoutsDirectory enabled="false"/>
           <modelsDirectory>
             <dbTableDirectory>
@@ -218,6 +288,7 @@
             <modelFile modelName="Alert"/>
             <modelFile modelName="ParsePacket"/>
             <modelFile modelName="Navigation"/>
+
           </modelsDirectory>
           <viewsDirectory>
             <viewScriptsDirectory>
@@ -379,7 +450,7 @@
             <viewFiltersDirectory/>
           </viewsDirectory>
         </moduleDirectory>
-        <moduleDirectory moduleName="Articles">
+        <moduleDirectory moduleName="Admin">
           <apisDirectory enabled="false"/>
           <configsDirectory enabled="false"/>
           <controllersDirectory>
@@ -405,37 +476,42 @@
           <configsDirectory enabled="false"/>
           <controllersDirectory>
             <controllerFile controllerName="Categories">
+            <controllerFile controllerName="Group">
               <actionMethod actionName="index"/>
               <actionMethod actionName="new"/>
               <actionMethod actionName="edit"/>
               <actionMethod actionName="delete"/>
             </controllerFile>
-            <controllerFile controllerName="Index">
+            <controllerFile controllerName="User">
+              <actionMethod actionName="index"/>
+            </controllerFile>
+            <controllerFile controllerName="AclUser">
+              <actionMethod actionName="index"/>
+            </controllerFile>
+            <controllerFile controllerName="AclGroup">
               <actionMethod actionName="index"/>
             </controllerFile>
           </controllersDirectory>
           <formsDirectory enabled="false"/>
           <layoutsDirectory enabled="false"/>
           <modelsDirectory>
-            <dbTableDirectory>
-              <dbTableFile dbTableName="Categories"/>
-            </dbTableDirectory>
+            <dbTableDirectory enabled="false"/>
           </modelsDirectory>
           <viewsDirectory>
             <viewScriptsDirectory>
-              <viewControllerScriptsDirectory forControllerName="Categories">
+              <viewControllerScriptsDirectory forControllerName="Index">
                 <viewScriptFile forActionName="index"/>
               </viewControllerScriptsDirectory>
-              <viewControllerScriptsDirectory forControllerName="Categories">
-                <viewScriptFile forActionName="new"/>
+              <viewControllerScriptsDirectory forControllerName="Group">
+                <viewScriptFile forActionName="index"/>
               </viewControllerScriptsDirectory>
-              <viewControllerScriptsDirectory forControllerName="Categories">
-                <viewScriptFile forActionName="edit"/>
+              <viewControllerScriptsDirectory forControllerName="User">
+                <viewScriptFile forActionName="index"/>
               </viewControllerScriptsDirectory>
-              <viewControllerScriptsDirectory forControllerName="Categories">
-                <viewScriptFile forActionName="delete"/>
+              <viewControllerScriptsDirectory forControllerName="AclUser">
+                <viewScriptFile forActionName="index"/>
               </viewControllerScriptsDirectory>
-              <viewControllerScriptsDirectory forControllerName="Index">
+              <viewControllerScriptsDirectory forControllerName="AclGroup">
                 <viewScriptFile forActionName="index"/>
               </viewControllerScriptsDirectory>
             </viewScriptsDirectory>

@@ -1,1 +1,49 @@
-<h1>Admin Tools</h1>
+<?php echo $this->heading('Admin Options')?>
+
+<?php
+foreach ($this->links as $module => $links) {
+    if(empty($links)){
+        continue;
+    }
+    ?>
+    <section>
+    <h2><?php echo $module ?></h2>
+
+
+        <ul>
+            <?php
+            foreach ($links as $link) {
+                ?><li><a href="<?php echo $this->url($link['options'], $link['route']); ?>"><?php echo $link['title']; ?></a></li><?php
+            }
+            ?>
+        </ul>
+    </section>
+
+    <?php
+}
+?>
+
+<?php
+foreach ($this->widgets as $widgets) {
+    if(empty($widgets)){
+        continue;
+    }
+    ?>
+  
+    <?php
+    foreach ($widgets as $widget) {
+        ?>
+<div style="width:300px;">
+<?php
+
+       echo  $this->widget($widget['module'],$widget['widget']);
+       ?>
+</div>
+<?php
+    }
+    ?>
+
+
+    <?php
+}
+?>

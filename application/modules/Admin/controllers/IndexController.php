@@ -1,29 +1,5 @@
 <?php
-/*
- * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
- *
- * This file is part of HomeNet.
- *
- * HomeNet is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * HomeNet is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
- */
 
-/**
- * @category Admin
- * @package Admin_Index
- * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
- * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
- */
 class Admin_IndexController extends Zend_Controller_Action
 {
 
@@ -34,9 +10,22 @@ class Admin_IndexController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        // action body
+        $service = new Core_Model_Reflection_Service();
+        $installers = $service->getModuleInstallers();
+        
+        $links = array();
+        $widgets = array();
+       
+        
+        foreach($installers as $key => $installer){
+            /**
+             * @var $installer CMS_Installer_Abstract 
+             */
+            $links[$key] = $installer->getAdminLinks();
+            $widgets[$key] = $installer->getAdminBlocks();
+        }
+        
+        $this->view->links = $links;
+        $this->view->widgets = $widgets;
     }
-
-
 }
-

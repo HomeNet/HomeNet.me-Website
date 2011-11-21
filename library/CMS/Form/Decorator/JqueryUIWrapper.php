@@ -1,41 +1,30 @@
 <?php
-/**
- * Zend Framework
+/*
+ * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
- * LICENSE
+ * This file is part of HomeNet.
  *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://framework.zend.com/license/new-bsd
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@zend.com so we can send you a copy immediately.
+ * HomeNet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * @category   Zend
- * @package    Zend_Form
- * @subpackage Decorator
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * HomeNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** Zend_Form_Decorator_Abstract */
-require_once 'Zend/Form/Decorator/Abstract.php';
-
 /**
- * Zend_Form_Decorator_DtDdWrapper
- *
- * Creates an empty <dt> item, and wraps the content in a <dd>. Used as a
- * default decorator for subforms and display groups.
- *
- * @category   Zend
- * @package    Zend_Form
- * @subpackage Decorator
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DtDdWrapper.php 22128 2010-05-06 11:18:02Z alab $
+ * @package CMS
+ * @subpackage Form
+ * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Mcd_Form_Decorator_JqueryUIWrapper extends Zend_Form_Decorator_Abstract
+class CMS_Form_Decorator_JqueryUIWrapper extends Zend_Form_Decorator_Abstract
 {
     /**
      * Default placement: surround content

@@ -1,0 +1,34 @@
+<?php echo $this->heading('Category Sets'); ?>
+<div class="cms ui-widget ui-widget-content ui-corner-all">
+<div class="ui-widget-content">
+<table width="100%">
+    <thead class="ui-widget-header">
+        <tr><th width="50">ID</th><th>Name</th><th width="50"></th></tr>
+    </thead>
+    <tbody>
+        <?php
+        foreach ($this->objects as $object) {
+            /* @var $object Content_Model_Category */
+        ?>
+        <tr  class="<?php echo $this->cycle(array("", "ui-state-default"))->next() ?>" >
+            <td><?php echo $object->id ?></td>
+            <td class="left"><a href="<?php echo $this->url(array('controller' => 'category', 'id' => $object->id),'content-admin-id'); ?>"><?php echo $object->title ?></a></td>
+            <td>
+                <a class="button" data-text="false" data-icon="ui-icon-pencil" title="Edit Category &quot;<?php echo $object->title ?>&quot;" 
+                   href="<?php echo $this->url(array('controller' => 'category-set', 'id' => $object->id, 'action' => 'edit'),'content-admin-id'); ?>">
+                    Edit
+                </a> 
+                <a class="button" data-text="false" data-icon="ui-icon-close" title="Delete Category &quot;<?php echo $object->title ?>&quot;" 
+                   href="<?php echo $this->url(array('controller' => 'category-set', 'id' => $object->id, 'action' => 'delete'),'content-admin-id'); ?>">
+                    Delete
+                </a>
+           </td>
+        </tr>
+        <?php
+        }
+        ?>
+    </tbody>
+</table>
+<a class="button" data-icon="ui-icon-plusthick" href="<?php echo $this->url(array('controller' => 'category-set', 'action' => 'new'),'content-admin'); ?>">New</a>
+</div>
+</div>

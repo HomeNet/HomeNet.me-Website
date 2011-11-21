@@ -1,4 +1,5 @@
-<h1>Next Steps</h1>
+<?php echo $this->heading('Next Steps'); ?>
+
 <h2>Please Check you Email for an activation Email and Click the Link it contains before continuing</h2>
 <a href="<?php echo $this->url(array('user'=>$this->user,'action'=>'send-activation'),'core-user')  ?>" class="button">Resend Activation Email</a>
 

@@ -1,29 +1,28 @@
 <?php
-/* 
- * HtmlEmail.php
- * 
+/*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
- * 
+ *
  * This file is part of HomeNet.
- * 
+ *
  * HomeNet is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * HomeNet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
+ * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
- * Description of HtmlEmail
- *
- * @author Matthew Doll <mdoll at homenet.me>
+ * @package CMS
+ * @subpackage HtmlEmail
+ * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 class CMS_HtmlEmail extends Zend_Mail {
     protected $_view;
@@ -57,9 +56,20 @@ class CMS_HtmlEmail extends Zend_Mail {
         $this->module = $module;
 
         //get application config
-        $bootstrap = Zend_Controller_Front::getInstance()->getParam('bootstrap');
-        $options = $bootstrap->getOptions();
-
+       // $bootstrap = Zend_Controller_Front::getInstance()->getParam('bootstrap');
+       // $options = $bootstrap->getOptions();
+         
+//        if(APPLICATION_ENV != 'production'){
+//
+//        $options = new Zend_Config_Ini(APPLICATION_PATH.'/configs/application.ini', APPLICATION_ENV);
+//        } else {
+//            $bootstrap = Zend_Controller_Front::getInstance()->getParam('bootstrap');
+//       $options = $bootstrap->getOptions();
+//        }
+//        $options = $options->toArray();
+        
+        $config = Zend_Registry::get('config');
+        $options = $config->toArray();
 //die(debugArray($options));
 
         $this->_layout = new Zend_Layout();

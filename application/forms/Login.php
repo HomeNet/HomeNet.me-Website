@@ -43,10 +43,9 @@ class Core_Form_Login extends CMS_Form
         $password->setRequired('true');
         $this->addElement($password);
 
-        $group = $this->addDisplayGroup(array('username', 'password'), 'profile',array ( 'legend' => 'HomeNet Login'));
+        $group = $this->addDisplayGroup(array('username', 'password'), 'profile',array ( 'legend' => 'Login'));
 
-        $submit = $this->addElement('submit', 'submit', array('label' => 'Submit'));
-        $this->addElement('hash', 'hash', array('salt' => 'unique'));
+        $submit = $this->addElement('submit', 'submit', array('label' => 'Login'));     
     }
 
 }

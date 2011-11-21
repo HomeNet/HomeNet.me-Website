@@ -33,7 +33,7 @@ class LoginController extends Zend_Controller_Action {
 
     public function indexAction() {
         $form = new Core_Form_Login();
-        $form->setAction('/login/');
+        $form->setAction($this->view->url(array( 'action'=>'index'),'login'));
 
         if (!$this->getRequest()->isPost()) {
             $this->view->form = $form;
@@ -48,14 +48,15 @@ class LoginController extends Zend_Controller_Action {
 
         // now try and authenticate....
         $values = $form->getValues();
-        $auth = new Core_Model_AuthInternal();
+        
+        $manager = new Core_Model_User_Manager();
 
         try {
-            $auth->login($values['username'], $values['password']);
-        } catch (CMS_Exception $e) {
-
-            if($e->getCode() == Core_Model_User::ERROR_NOT_ACTIVATED){
-                $this->_setParam('user',$_SESSION['User']['id']);
+            $manager->login($values);
+        } catch (Exception $e) {
+            $user = Core_Model_User_Manager::getUser();
+            if($e->getCode() == Core_Model_User_Manager::ERROR_NOT_ACTIVATED){
+                $this->_setParam('user',$user->id);
                 $this->_forward('next-steps', 'User');
             }
             
@@ -66,10 +67,13 @@ class LoginController extends Zend_Controller_Action {
         }
 
         $request = $this->getRequest();
-        if ($request->getParam('forward')) {
-            $this->_redirect($_SERVER['REQUEST_URI']);
+        if (isset($_SESSION['login_redirect'])) {
+            $path = $_SESSION['login_redirect'];
+            unset($_SESSION['login_redirect']);
+            $this->_redirect($path);
         }
-
+        
+       // die(debugArray($_SESSION));
 
         $this->_redirect('/');
 
@@ -86,7 +90,22 @@ class LoginController extends Zend_Controller_Action {
     }
 
     public function twitterAction() {
-        // action body
+        //show login button
+        
+        //submit for key
+        
+        //redirect user
+        
+        //validate key
+        
+        //store key
+        
+        //check account
+           
+        //if new redirect to setup account
+        
+        
+        
     }
 
     public function googleAction() {
@@ -119,8 +138,8 @@ class LoginController extends Zend_Controller_Action {
     }
 
     public function logoutAction() {
-        $user = new Core_Model_AuthInternal();
-        $user->logout();
+        $manager = new Core_Model_User_Manager();
+        $manager->logout();
     }
 
 }
