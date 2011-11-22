@@ -35,7 +35,7 @@ class HomeNet_Model_Datapoint_MapperDbTable implements HomeNet_Model_Datapoint_M
 
 
     public function  __construct($type) {
-       $this->_type = $type ;
+       $this->_type = strtolower($type) ;
     }
 
 
@@ -48,19 +48,21 @@ class HomeNet_Model_Datapoint_MapperDbTable implements HomeNet_Model_Datapoint_M
         if (is_null($this->_table)) {
             
             switch($this->_type){
-                case 'Boolean':
+                case 'bool':
+                case 'boolean':
                     $table = 'homenet_datapoints_boolean';
                     break;
-                case 'Byte':
+                case 'byte':
                     $table = 'homenet_datapoints_byte';
                     break;
-                case 'Float':
+                case 'float':
                     $table = 'homenet_datapoints_float';
                     break;
-                case 'Int':
+                case 'int':
+                case 'integer':
                     $table = 'homenet_datapoints_int';
                     break;
-                 case 'Long':
+                 case 'long':
                     $table = 'homenet_datapoints_long';
                     break;
             }

@@ -26,6 +26,16 @@ class HomeNet_Model_Apikey_ServiceTest extends PHPUnit_Framework_TestCase {
     protected function tearDown() {
         
     }
+    
+    private function createValidObject(){
+        /*
+public $id = null;
+    public $house;
+    public $user;
+    public $created;
+    public $permissions = '';
+    */
+    }
 
     public function testGetMapper() {
        $this->assertInstanceOf('HomeNet_Model_Apikey_MapperInterface', $this->service->getMapper());

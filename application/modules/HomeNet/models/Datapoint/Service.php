@@ -27,16 +27,22 @@
 class HomeNet_Model_Datapoint_Service {
 
     /**
+     * Storage mapper
+     * 
      * @var HomeNet_Model_DatapointsMapperInterface
      */
     protected $_mapper;
     
     /**
+     * Datapoint type
+     * 
      * @var string
      */
     protected $_type;
 
     /**
+     * Get storage mapper
+     * 
      * @return HomeNet_Model_DatapointsMapperInterface
      */
     public function getMapper() {
@@ -53,6 +59,8 @@ class HomeNet_Model_Datapoint_Service {
     }
 
     /**
+     * Set storage mapper
+     * 
      * @param HomeNet_Model_DatapointsMapperInterface $mapper
      */
     public function setMapper(HomeNet_Model_Datapoint_MapperInterface $mapper) {
@@ -60,6 +68,8 @@ class HomeNet_Model_Datapoint_Service {
     }
 
     /**
+     * Set datapoint type: int, byte etc.
+     * 
      * @param string $type Datapoint type. Determines which table to use 
      */
     public function setType($type) {
@@ -68,10 +78,12 @@ class HomeNet_Model_Datapoint_Service {
     }
 
     /**
+     * Get the last datapoint of a subdevice
+     * 
      * @param int $id
      * @return HomeNet_Model_Datapoint (HomeNet_Model_Datapoint_Interface)
      */
-    public function getNewestDatapointBySubdevice($subdevice) {
+    public function getLastObjectBySubdevice($subdevice) {
         $result = $this->getMapper()->fetchNewestDatapointBySubdevice($subdevice);
 
         if (empty($result)) {
@@ -81,6 +93,8 @@ class HomeNet_Model_Datapoint_Service {
     }
 
     /**
+     * Get average values over a period of time
+     * 
      * @param integer $subdevice  Subdevice Id
      * @param Zend_Date $start
      * @param Zend_Date $end
@@ -97,12 +111,14 @@ class HomeNet_Model_Datapoint_Service {
     }
 
     /**
+     * Get all datapoints over a time period
+     * 
      * @param integer $subdevice
      * @param Zend_Date $start
      * @param Zend_Date $end
      * @return HomeNet_Model_Datapoint[] (HomeNet_Model_Datapoint_Interface[])  
      */
-    public function getDatapointsBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end) {
+    public function getObjectsBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end) {
         $results = $this->getMapper()->fetchDatapointsBySubdeviceTimespan($subdevice, $start, $end);
 
         if (empty($results)) {
@@ -112,6 +128,8 @@ class HomeNet_Model_Datapoint_Service {
     }
 
     /**
+     * Add datapoint helper
+     * 
      * @param string $type
      * @param integer $subdevice
      * @param mixed $value
@@ -127,6 +145,8 @@ class HomeNet_Model_Datapoint_Service {
     }
 
     /**
+     * Create Datapoint
+     * 
      * @param HomeNet_Model_Datapoint_Interface|array $mixed
      * @return HomeNet_Model_Datapoint (HomeNet_Model_Datapoint_Interface)
      * @throws InvalidArgumentException 
@@ -144,6 +164,8 @@ class HomeNet_Model_Datapoint_Service {
     }
 
     /**
+     * Update an existing Datapoint
+     * 
      * @param HomeNet_Model_Datapoint_Interface|array $mixed
      * @return HomeNet_Model_Datapoint (HomeNet_Model_Datapoint_Interface)
      * @throws InvalidArgumentException 
@@ -161,6 +183,8 @@ class HomeNet_Model_Datapoint_Service {
     }
 
     /**
+     * Delete Datapoint
+     * 
      * @param HomeNet_Model_Datapoint_Interface|array|integer $mixed
      * @return boolean Success
      * @throws InvalidArgumentException 
@@ -181,7 +205,7 @@ class HomeNet_Model_Datapoint_Service {
     }
 
     /**
-     * Delete all data. Used for unit testing/Will not work in production 
+     * Delete all Datapoints. Used for unit testing/Will not work in production 
      *
      * @return boolean Success
      * @throws NotAllowedException
