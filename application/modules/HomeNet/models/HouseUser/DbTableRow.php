@@ -21,13 +21,13 @@
 
 /**
  * @package HomeNet
- * @subpackage Nodes
+ * @subpackage HouseUser
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_DbTableRow_NodeModel extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_NodeModel_Interface {
+class HomeNet_Model_HouseUser_DbTableRow extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_HouseUser_Interface {
 
-//    public $rooms;
+    public $rooms;
 
     public function fromArray(array $array){
 
@@ -47,22 +47,24 @@ class HomeNet_Model_DbTableRow_NodeModel extends Zend_Db_Table_Row_Abstract impl
     }
     
     public function uncompress(){
-        if(is_string($this->settings)){
-            $this->settings = unserialize($this->settings);
-        }
-        if(empty($this->settings)){
-            $this->settings = array();
+//        if(is_string($this->settings)){
+//            $this->settings = unserialize($this->settings);
+//        }
+
+        if(is_string($this->permissions)){
+            $this->permissions = unserialize($this->permissions);
         }
     }
     
     public function compress(){
-        if(is_array($this->settings)){
-            $this->settings = serialize($this->settings);
+//        if(is_array($this->settings)){
+//            $this->settings = serialize($this->settings);
+//        }
+
+        if(is_array($this->permissions)){
+            $this->permissions = serialize($this->permissions);
         }
     }
-
-
-
 
     public function save(){
       $this->compress();
@@ -96,7 +98,7 @@ class HomeNet_Model_DbTableRow_NodeModel extends Zend_Db_Table_Row_Abstract impl
 //        }
 //
 //        $service = new HomeNet_Model_RoomsService();
-//        $rooms = $service->getRoomsByNodeModel($this->id);
+//        $rooms = $service->getRoomsByHouseUser($this->id);
 //        $this->rooms = $rooms;
 //
 //        return $rooms;
@@ -115,12 +117,11 @@ class HomeNet_Model_DbTableRow_NodeModel extends Zend_Db_Table_Row_Abstract impl
             $this->settings = array($setting => $value);
             return;
         }
+
         $this->settings = array_merge($this->settings,array($setting => $value));
     }
 
     public function clearSetting($setting){
         unset($this->settings[$setting]);
     }
-
 }
-

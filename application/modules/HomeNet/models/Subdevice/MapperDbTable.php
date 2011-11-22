@@ -31,12 +31,12 @@ class HomeNet_Model_Subdevice_MapperDbTable implements HomeNet_Model_Subdevice_M
     protected $_table = null;
 
     /**
-     *
-     * @return HomeNet_Model_DbTable_Rooms;
+     * @return Zend_Db_Table;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new HomeNet_Model_DbTable_Subdevices();
+            $this->_table = new Zend_Db_Table('homenet_subdevice_models');
+            $this->_table->setRowClass('HomeNet_Model_Subdevice_DbTableRow');
         }
         return $this->_table;
     }
@@ -45,31 +45,29 @@ class HomeNet_Model_Subdevice_MapperDbTable implements HomeNet_Model_Subdevice_M
         $this->_table = $table;
     }
 
+    protected function _getDriver($subdevice) {
 
-     protected function _getDriver($subdevice){
+        $driver = $subdevice->driver;
 
-         $driver = $subdevice->driver;
-
-        if(empty($driver)){
+        if (empty($driver)) {
             throw new HomeNet_Model_Exception('Missing Subdevice Driver');
         }
 
-        if(!class_exists($driver)){
-            throw new HomeNet_Model_Exception('Subdevice Driver '.$subdevice->driver.' Doesn\'t Exist');
+        if (!class_exists($driver)) {
+            throw new HomeNet_Model_Exception('Subdevice Driver ' . $subdevice->driver . ' Doesn\'t Exist');
         }
 
         return new $driver(array('data' => $subdevice->toArray()));
     }
 
-    protected function _getDrivers($subdevices){
+    protected function _getDrivers($subdevices) {
         $objects = array();
-        foreach($subdevices as $subdevice){
+        foreach ($subdevices as $subdevice) {
             $objects[] = $this->_getDriver($subdevice);
         }
 
         return $objects;
     }
-
 
     public function fetchObjectById($id) {
 
@@ -79,14 +77,13 @@ class HomeNet_Model_Subdevice_MapperDbTable implements HomeNet_Model_Subdevice_M
                 ->join('homenet_subdevice_models', 'homenet_subdevice_models.id = homenet_subdevices.model', array('driver', 'name AS modelName'))
                 ->order('order ASC');
 
-        $row =  $this->getTable()->fetchRow($select);
-        if(empty($row)){
+        $row = $this->getTable()->fetchRow($select);
+        if (empty($row)) {
             return null;
         }
 
         return $this->_getDriver($row);
-
-     }
+    }
 
     public function fetchObjectsByDevice($device) {
 
@@ -98,12 +95,11 @@ class HomeNet_Model_Subdevice_MapperDbTable implements HomeNet_Model_Subdevice_M
 
         $rows = $this->getTable()->fetchAll($select);
 
-        if(empty($rows)){
+        if (empty($rows)) {
             return array();
         }
 
         return $this->_getDrivers($rows);
-
     }
 
     public function fetchObjectsByRoom($room) {
@@ -114,17 +110,14 @@ class HomeNet_Model_Subdevice_MapperDbTable implements HomeNet_Model_Subdevice_M
                 ->join('homenet_subdevice_models', 'homenet_subdevice_models.id = homenet_subdevices.model', array('driver', 'name AS modelName'))
                 ->order('order ASC');
 
-       $rows = $this->getTable()->fetchAll($select);
+        $rows = $this->getTable()->fetchAll($select);
 
-        if(empty($rows)){
+        if (empty($rows)) {
             return array();
         }
 
         return $this->_getDrivers($rows);
     }
-
-
-
 
     public function save(HomeNet_Model_Subdevice_Interface $subdevice) {
 
@@ -138,10 +131,10 @@ class HomeNet_Model_Subdevice_MapperDbTable implements HomeNet_Model_Subdevice_M
             $row = $this->getTable()->createRow();
         }
 
-      // die(debugArray($subdevice));
+        // die(debugArray($subdevice));
 
         $row->fromArray($subdevice->toArray());
-     //  die(debugArray($row));
+        //  die(debugArray($row));
         $row->save();
 
         return $row;
@@ -159,4 +152,11 @@ class HomeNet_Model_Subdevice_MapperDbTable implements HomeNet_Model_Subdevice_M
 
         throw new HomeNet_Model_Exception('Invalid Subdevice');
     }
+
+    public function deleteAll() {
+        if (APPLICATION_ENV != 'production') {
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `' . $this->getTable()->info('name') . '`');
+        }
+    }
+
 }

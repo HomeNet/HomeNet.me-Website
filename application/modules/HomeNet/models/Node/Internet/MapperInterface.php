@@ -1,8 +1,6 @@
 <?php
 
 /*
- * NodeMapperInterface.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -23,7 +21,7 @@
 
 /**
  * @package HomeNet
- * @subpackage Node
+ * @subpackage Node_Internet
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
@@ -31,15 +29,9 @@ interface HomeNet_Model_Node_Internet_MapperInterface {
 
     public function fetchObjectById($id);
 
-//    public function fetchObjectsByHouse($house);
-//
-//    public function fetchObjectByHouseNode($house,$node);
-//
-//    public function fetchNextIdByHouse($house);
-//
-//    public function fetchInternetIdsByHouse($house);
+    public function save(HomeNet_Model_Node_Interface $object);
 
-    public function save(HomeNet_Model_Node_Interface $room);
-
-    public function delete(HomeNet_Model_Node_Interface $room);
+    public function delete(HomeNet_Model_Node_Interface $object);
+    
+    public function deleteAll();
 }

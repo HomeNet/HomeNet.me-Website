@@ -31,13 +31,13 @@ class HomeNet_Model_Room_MapperDbTable implements HomeNet_Model_Room_MapperInter
 
     protected $_table = null;
 
-    /**
-     *
-     * @return HomeNet_Model_DbTable_Rooms;
+     /**
+     * @return Zend_Db_Table;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new HomeNet_Model_DbTable_Rooms();
+            $this->_table = new Zend_Db_Table('homenet_rooms');
+            $this->_table->setRowClass('HomeNet_Model_Room_DbTableRow');
         }
         return $this->_table;
     }
@@ -46,58 +46,57 @@ class HomeNet_Model_Room_MapperDbTable implements HomeNet_Model_Room_MapperInter
         $this->_table = $table;
     }
 
-    public function fetchRoomById($id) {
+    public function fetchObjectById($id) {
 
         return $this->getTable()->find($id)->current();
     }
 
-    public function fetchRoomsByHouse($id) {
+    public function fetchObjectsByHouse($id) {
 
         $select = $this->getTable()->select()->where('house = ?', $id);
         return $this->getTable()->fetchAll($select);
     }
 
-    public function fetchRoomsByHouses($ids) {
+    public function fetchObjectsByHouses($ids) {
 
         $select = $this->getTable()->select()->where('house in (?)', $ids);
         return $this->getTable()->fetchAll($select);
     }
 
-    public function fetchRoomsByRegion($id) {
+    public function fetchObjectsByRegion($id) {
 
         $select = $this->getTable()->select()->where('region = ?', $id);
         return $this->getTable()->fetchAll($select);
     }
 
-    public function save(HomeNet_Model_Room_Interface $room) {
+    public function save(HomeNet_Model_Room_Interface $object) {
 
-
-        if (($room instanceof HomeNet_Model_DbTableRow_Room) && ($room->isConnected())) {
-            $room->save();
-            return;
-        } elseif (!is_null($room->id)) {
-            $row = $this->getTable()->find($room->id);
+        if (($object instanceof HomeNet_Model_DbTableRow_Room) && ($object->isConnected())) {
+            return $object->save();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id);
         } else {
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($room->toArray());
-       // die(debugArray($row));
-        $row->save();
-
-        return $row;
+        $row->fromArray($object->toArray());
+        return $row->save();
     }
 
-    public function delete(HomeNet_Model_Room_Interface $room) {
+    public function delete(HomeNet_Model_Room_Interface $object) {
 
-        if (($room instanceof HomeNet_Model_DbTableRow_Room) && ($room->isConnected())) {
-            $room->delete();
-            return true;
-        } elseif (!is_null($room->id)) {
-            $row = $this->getTable()->find($room->id)->current()->delete();
-            return;
+        if (($object instanceof HomeNet_Model_DbTableRow_Room) && ($object->isConnected())) {
+            return $object->delete();
+        } elseif (!is_null($object->id)) {
+            return $this->getTable()->find($object->id)->current()->delete();
         }
 
         throw new HomeNet_Model_Exception('Invalid Room');
+    }
+    
+    public function deleteAll() {
+        if (APPLICATION_ENV != 'production') {
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `' . $this->getTable()->info('name') . '`');
+        }
     }
 }

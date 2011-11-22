@@ -1,8 +1,6 @@
 <?php
 
 /*
- * RoomMapperInterface.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -29,11 +27,13 @@
  */
 interface HomeNet_Model_HouseUser_MapperInterface {
     
-    public function fetchHousesbyUser($user);
+    public function fetchObjectsbyUser($user);
 
-    public function fetchHouseUserbyId($id);
+    public function fetchObjectbyId($id);
 
-    public function save(HomeNet_Model_HouseUser_Interface $houseUser);
+    public function save(HomeNet_Model_HouseUser_Interface $object);
 
-    public function delete(HomeNet_Model_HouseUser_Interface $houseUser);
+    public function delete(HomeNet_Model_HouseUser_Interface $object);
+    
+    public function deleteAll();
 }

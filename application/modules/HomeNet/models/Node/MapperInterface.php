@@ -39,7 +39,9 @@ interface HomeNet_Model_Node_MapperInterface {
 
     public function fetchInternetIdsByHouse($house);
 
-    public function save(HomeNet_Model_Node_Interface $room);
+    public function save(HomeNet_Model_Node_Interface $object);
 
-    public function delete(HomeNet_Model_Node_Interface $room);
+    public function delete(HomeNet_Model_Node_Interface $object);
+    
+    public function deleteAll();
 }

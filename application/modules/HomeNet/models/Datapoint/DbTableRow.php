@@ -21,11 +21,13 @@
 
 /**
  * @package HomeNet
- * @subpackage Rooms
+ * @subpackage Datapoint
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_DbTableRow_Room extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_Room_Interface {
+class HomeNet_Model_Datapoint_DbTableRow extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_Datapoint_Interface {
+
+//    public $rooms;
 
     public function fromArray(array $array){
 
@@ -33,34 +35,23 @@ class HomeNet_Model_DbTableRow_Room extends Zend_Db_Table_Row_Abstract implement
             if(array_key_exists($key, $this->_data)){
                 $this->$key = $value;
             }
-
         }
     }
 
     public function toArray(){
-
         return parent::toArray();
-/*
-        $array = array();
-
-        $array['id'] = $this->id;
-        $array['house'] = $this->house;
-        $array['region'] = $this->region;
-        $array['name'] =  $this->name;
-        $array['description'] = $this->description;
-        $array['permissions'] = $this->permissions;
-
-        return $array;*/
     }
 
-    public function init() {
-       // $this->fromArray($this->_data);
+    public function init(){
+//        $this->uncompress();
     }
-
+    
     public function save(){
-      //  $this->_data = $this->toArray();
+      
         if (parent::save()) {
-            return $this->_data['id'];
+
+            return $this;
         }
     }
 }
+

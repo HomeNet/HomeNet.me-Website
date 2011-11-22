@@ -29,13 +29,15 @@
  */
 interface HomeNet_Model_NodeModel_MapperInterface {
 
-    public function  fetchNodeModelById($id);
+    public function fetchObjects();
 
-    public function fetchNodeModels();
+    public function fetchObjectsByStatus($status);
+    
+    public function fetchObjectById($id);
 
-    public function fetchNodeModelsByStatus($status);
+    public function save(HomeNet_Model_NodeModel_Interface $object);
 
-    public function save(HomeNet_Model_NodeModel_Interface $nodeModels);
-
-    public function delete(HomeNet_Model_NodeModel_Interface $nodeModels);
+    public function delete(HomeNet_Model_NodeModel_Interface $object);
+    
+    public function deleteAll();
 } 

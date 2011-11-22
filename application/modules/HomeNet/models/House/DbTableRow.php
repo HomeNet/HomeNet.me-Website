@@ -21,13 +21,13 @@
 
 /**
  * @package HomeNet
- * @subpackage Subdevices
+ * @subpackage House
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_DbTableRow_Subdevice extends Zend_Db_Table_Row_Abstract { // implements HomeNet_Model_Subdevice_Interface
+class HomeNet_Model_House_DbTableRow extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_House_Interface {
 
-//    public $rooms;
+    public $rooms;
 
     public function fromArray(array $array){
 
@@ -54,6 +54,10 @@ class HomeNet_Model_DbTableRow_Subdevice extends Zend_Db_Table_Row_Abstract { //
         if(is_string($this->permissions)){
             $this->permissions = unserialize($this->permissions);
         }
+
+        if(is_string($this->regions)){
+            $this->regions = unserialize($this->regions);
+        }
     }
     
     public function compress(){
@@ -64,7 +68,16 @@ class HomeNet_Model_DbTableRow_Subdevice extends Zend_Db_Table_Row_Abstract { //
         if(is_array($this->permissions)){
             $this->permissions = serialize($this->permissions);
         }
+
+        if(is_array($this->regions)){
+            $this->regions = serialize($this->regions);
+        } else {
+            $this->regions = '';
+        }
     }
+
+
+
 
     public function save(){
       $this->compress();
@@ -74,35 +87,36 @@ class HomeNet_Model_DbTableRow_Subdevice extends Zend_Db_Table_Row_Abstract { //
         }
     }
 
-//    /**
-//     * @param int $id
-//     * @return HomeNet_Model_RoomInterface
-//     */
-//    public function getRoomById($id){
-//
-//        if(!empty($this->rooms[$id])){
-//            return $this->rooms[$id];
-//        }
-//
-//        $service = new HomeNet_Model_RoomsService();
-//        $room = $service->getRoomById($id);
-//        $this->rooms[$room->id] = $room;
-//
-//        return $room;
-//    }
-//
-//    public function getRooms(){
-//
-//        if(!is_null($this->rooms)){
-//            return $this->rooms;
-//        }
-//
-//        $service = new HomeNet_Model_RoomsService();
-//        $rooms = $service->getRoomsBySubdevice($this->id);
-//        $this->rooms = $rooms;
-//
-//        return $rooms;
-//    }
+    /**
+     * @param int $id
+     * @return HomeNet_Model_RoomInterface
+     */
+    public function getRoomById($id){
+
+        if(!empty($this->rooms[$id])){
+            return $this->rooms[$id];
+        }
+
+        $service = new HomeNet_Model_Room_Service();
+        $room = $service->getObjectById($id);
+        $this->rooms[$room->id] = $room;
+
+        return $room;
+    }
+
+    public function getRooms(){
+
+        if(!is_null($this->rooms)){
+            return $this->rooms;
+        }
+
+        $service = new HomeNet_Model_Room_Service();
+        $rooms = $service->getObjectsByHouse($this->id);
+        $this->rooms = $rooms;
+
+        return $rooms;
+    }
+
 
     public function getSetting($setting){
         if(isset($this->settings[$setting])){
@@ -126,3 +140,4 @@ class HomeNet_Model_DbTableRow_Subdevice extends Zend_Db_Table_Row_Abstract { //
     }
 
 }
+

@@ -30,11 +30,15 @@
 class HomeNet_Model_Apikey_Service {
 
     /**
+     * Storage mapper
+     * 
      * @var HomeNet_Model_Apikey_MapperInterface
      */
     protected $_mapper;
 
     /**
+     * Get storage mapper
+     * 
      * @return HomeNet_Model_Apikey_MapperInterface
      */
     public function getMapper() {
@@ -46,116 +50,217 @@ class HomeNet_Model_Apikey_Service {
         return $this->_mapper;
     }
 
+    /**
+     * Set storage mapper
+     * 
+     * @param HomeNet_Model_Apikey_MapperInterface $mapper 
+     */
     public function setMapper(HomeNet_Model_Apikey_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
-    public function getObjectById($id){
-        $apikey = $this->getMapper()->fetchObjectById($id);
-
-        if (empty($apikey)) {
-            throw new HomeNet_Model_Exception('Apikey not found', 404);
+    /**
+     * Get ApiKey by id
+     * 
+     * @param int $id   Apikey id
+     * @return HomeNet_Model_ApiKey  (HomeNet_Model_ApiKey_Interface) 
+     * @throws InvalidArgumentException
+     * @throws NotFoundException
+     */
+    public function getObjectById($id) {
+        
+        if (empty($id) || !is_numeric($id)) {
+            throw new InvalidArgumentException('Invalid Id');
         }
-        return $apikey;
+        
+        $result = $this->getMapper()->fetchObjectById($id);
+
+        if (empty($result)) {
+            throw new NotFoundException('Apikey not found', 404);
+        }
+        return $result;
     }
 
-    public function getObjectsByHouseUser($house,$user = null){
-        $apikey = $this->getMapper()->fetchObjectsByHouseUser($house,$user);
-
-        if (empty($apikey)) {
-            throw new HomeNet_Model_Exception('Apikey not found', 404);
+    /**
+     * Get Apikeys by house id, user id
+     * 
+     * @param int $house    House Id
+     * @param int $user     User Id
+     * @return HomeNet_Model_ApiKey[] (HomeNet_Model_ApiKey_Interface[]) 
+     * @throws InvalidArgumentException
+     * @throws NotFoundException
+     */
+    public function getObjectsByHouseUser($house, $user = null) {
+        
+        if (empty($house) || !is_numeric($house)) {
+            throw new InvalidArgumentException('Invalid House');
         }
-        return $apikey;
+        
+        if (!is_null($user) && !is_numeric($id)) {
+            throw new InvalidArgumentException('Invalid User');
+        }
+        
+        $results = $this->getMapper()->fetchObjectsByHouseUser((int) $house, $user);
+
+        if (empty($results)) {
+            throw new NotFoundException('No Apikeys found', 404);
+        }
+        return $results;
     }
 
-    public function getObjectsByIdHouse($id,$house){
-        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
+    /**
+     * Get Apikeys by id, house
+     * 
+     * @param int $id       Apikey id
+     * @param int $house    House id
+     * @return HomeNet_Model_ApiKey[] (HomeNet_Model_ApiKey_Interface[]) 
+     * @throws InvalidArgumentException
+     */
+    public function getObjectsByIdHouse($id, $house) {
+        
+        if (empty($id) || !is_numeric($id)) {
+            throw new InvalidArgumentException('Invalid Id');
+        }
+        
+        if (empty($house) || !is_numeric($house)) {
+            throw new InvalidArgumentException('Invalid House');
+        }
+        
+        $results = $this->getMapper()->fetchObjectsByIdHouse($id, $house);
 
-        if (empty($apikeys)) {
+        if (empty($results)) {
             return array();
-            //throw new HomeNet_Model_Exception('Apikey not found', 404);
+            //throw new NotFoundException('Apikey not found', 404);
         }
-        return $apikeys;
+        return $results;
     }
 
+    /**
+     * Generate a new Apikey for a house and current user
+     * 
+     * @param HomeNet_Model_House_Interface|int $house House id
+     * @return HomeNet_Model_ApiKey (HomeNet_Model_ApiKey_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function createApikeyForHouse($house) {
 
-    public function createApikeyForHouse($house){
-
-        if($house instanceof HomeNet_Model_House_Interface){
+        if ($house instanceof HomeNet_Model_House_Interface) {
             $house = $house->id;
+        } elseif (empty($house) || !is_numeric($house)) {
+            throw new InvalidArgumentException('Invalid House');
         }
+
+        $user = Core_Model_User_Manager::getUser();
 
         $apikey = new HomeNet_Model_Apikey();
-        $apikey->id = sha1('saltsaddsf'.microtime().$house.$_SESSION['User']['id']);
+        $apikey->id = sha1('saltsaddsf' . microtime() . $house . $user->id);
         $apikey->house = $house;
-        $apikey->user = $_SESSION['User']['id'];
+        $apikey->user = $user->id;
 
         return $this->create($apikey);
     }
 
-
-    public function validate($key,$house = null){
-       $count= 0;
-        if(!preg_match('/\b([a-f0-9]{40})\b/', $key)){
+    /**
+     * Validate Apikey
+     * 
+     * @param string $key   Apikey
+     * @param int $house    House id
+     * @return string key
+     * @throws InvalidArgumentException 
+     */
+    public function validate($key, $house = null) {
+        $count = 0;
+        if (!preg_match('/\b([a-f0-9]{40})\b/', $key)) {
             //return false;
-            throw new HomeNet_Model_Exception('Invalid Api Key Format');
+            throw new InvalidArgumentException('Invalid Api Key Format');
         }
 
         $keys = array();
 
-       if(!is_null($house)){
+        if (!is_null($house)) {
             $keys = $this->getObjectsByIdHouse($key, $house);
-//die(debugArray($house));
-
-       } else {
+        } else {
             $keys[0] = $this->getObjectById($key);
-       }
+        }
 
         $count = count($keys);
 
-        if($count == 0) {
-           throw new HomeNet_Model_Exception('Invalid API Key');
+        if ($count == 0) {
+            throw new Exception('Invalid API Key');
         }
         return $keys[0];
     }
 
-    public function create($apikey) {
-        if ($apikey instanceof HomeNet_Model_Apikey_Interface) {
-            $h = $apikey;
-        } elseif (is_array($apikey)) {
-            $h = new HomeNet_Model_Apikey(array('data' => $apikey));
+    /**
+     * Create new Apikey
+     * 
+     * @param HomeNet_Model_Apikey_Interface|array $mixed
+     * @return HomeNet_Model_Apikey (HomeNet_Model_Apikey_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function create($mixed) {
+        if ($mixed instanceof HomeNet_Model_Apikey_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Apikey(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Apikey');
+            throw new InvalidArgumentException('Invalid Apikey');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
-    public function update($apikey) {
-        if ($apikey instanceof HomeNet_Model_Apikey_Interface) {
-            $h = $apikey;
-        } elseif (is_array($apikey)) {
-            $h = new HomeNet_Model_Apikey(array('data' => $apikey));
+    /**
+     * Update an existing Apikey
+     * 
+     * @param HomeNet_Model_Apikey_Interface|array $mixed
+     * @return HomeNet_Model_Apikey (HomeNet_Model_Apikey_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function update($mixed) {
+        if ($mixed instanceof HomeNet_Model_Apikey_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Apikey(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Apikey');
+            throw new InvalidArgumentException('Invalid Apikey');
         }
-        
-        return $this->getMapper()->save($h);
+
+        return $this->getMapper()->save($object);
     }
 
-    public function delete($apikey) {
-        if (is_int($apikey)) {
-            $h = new HomeNet_Model_Apikey();
-            $h->id = $apikey;
-        } elseif ($apikey instanceof HomeNet_Model_Apikey_Interface) {
-            $h = $apikey;
-        } elseif (is_array($apikey)) {
-            $h = new HomeNet_Model_Apikey(array('data' => $apikey));
+    /**
+     * Delete Apikey
+     * 
+     * @param HomeNet_Model_SubdeviceModel_Interface|array|integer $mixed
+     * @return boolean Success
+     * @throws InvalidArgumentException 
+     */
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = $this->getObjectById($mixed);
+        } elseif ($mixed instanceof HomeNet_Model_Apikey_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Apikey(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Apikey');
+            throw new InvalidArgumentException('Invalid ApiKey');
         }
 
-        return $this->getMapper()->delete($h);
+        return $this->getMapper()->delete($object);
+    }
+
+    /**
+     * Delete all Apikeys. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
     }
 
 }

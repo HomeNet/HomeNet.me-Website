@@ -38,5 +38,7 @@ interface HomeNet_Model_DeviceModel_MapperInterface {
     public function save(HomeNet_Model_DeviceModel_Interface $deviceModel);
 
     public function delete(HomeNet_Model_DeviceModel_Interface $deviceModel);
+    
+    public function deleteAll();
 }
 

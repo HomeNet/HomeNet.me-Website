@@ -31,12 +31,13 @@ class HomeNet_Model_DeviceModel_MapperDbTable implements HomeNet_Model_DeviceMod
 
     protected $_table = null;
 
-    /**
-     * @return HomeNet_Model_DbTable_Devices;
+     /**
+     * @return Zend_Db_Table;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new HomeNet_Model_DbTable_DeviceModels();
+            $this->_table = new Zend_Db_Table('homenet_device_models');
+            $this->_table->setRowClass('HomeNet_Model_DeviceModels_DbTableRow');
         }
         return $this->_table;
     }
@@ -85,17 +86,21 @@ class HomeNet_Model_DeviceModel_MapperDbTable implements HomeNet_Model_DeviceMod
         return $row;
     }
 
-    public function delete(HomeNet_Model_DeviceModel_Interface $deviceModel) {
+    public function delete(HomeNet_Model_DeviceModel_Interface $object) {
 
-        if (($deviceModel instanceof HomeNet_Model_DbTableRow_DeviceModel) && ($deviceModel->isConnected())) {
-            $deviceModel->delete();
-            return true;
-        } elseif (!is_null($deviceModel->id)) {
-            $row = $this->getTable()->find($deviceModel->id)->current()->delete();
-            return;
+        if (($object instanceof HomeNet_Model_DbTableRow_DeviceModel) && ($object->isConnected())) {
+            return $object->delete();
+        } elseif (!is_null($object->id)) {
+            return $this->getTable()->find($object->id)->current()->delete();
         }
 
-        throw new HomeNet_Model_Exception('Invalid DeviceModel');
+        throw new InvalidArgumentException('Invalid DeviceModel');
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'production'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 
 }

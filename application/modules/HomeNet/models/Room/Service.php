@@ -1,8 +1,6 @@
 <?php
 
 /*
- * RoomService.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -30,11 +28,15 @@
 class HomeNet_Model_Room_Service {
 
     /**
+     * Storage mapper
+     * 
      * @var HomeNet_Model_Room_MapperInterface
      */
     protected $_mapper;
 
     /**
+     * Get storage mapper
+     * 
      * @return HomeNet_Model_Room_MapperInterface
      */
     public function getMapper() {
@@ -46,67 +48,111 @@ class HomeNet_Model_Room_Service {
         return $this->_mapper;
     }
 
+    /**
+     * Set storage mapper
+     * 
+     * @param HomeNet_Model_Room_MapperInterface $mapper 
+     */
     public function setMapper(HomeNet_Model_Room_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
     /**
+     * Get Room by id
+     * 
      * @param int $id
-     * @return HomeNet_Model_Room_Interface
+     * @return HomeNet_Model_Room (HomeNet_Model_Room_Interface)
+     * @throw InvalidArgumentException
+     * @throw NotFoundException
      */
     public function getObjectById($id) {
-        $room = $this->getMapper()->fetchRoomById($id);
-
-        if (empty($room)) {
-            throw new HomeNet_Model_Exception('Room not found', 404);
+        if (empty($id) || !is_numeric($id)) {
+            throw new InvalidArgumentException('Invalid Id');
         }
-        return $room;
+
+        $result = $this->getMapper()->fetchObjectById((int) $id);
+
+        if (empty($result)) {
+            throw new NotFoundException('Room: ' . $id . ' Not Found', 404);
+        }
+        return $result;
     }
 
-    public function getObjectsByHouse($house){
-        $rooms = $this->getMapper()->fetchRoomsByHouse($house);
-
-        if (empty($rooms)) {
-            throw new HomeNet_Model_Exception('house not found', 404);
+    /**
+     * Get all Rooms by house id
+     * 
+     * @param int $house
+     * @return HomeNet_Model_Room (HomeNet_Model_Room_Interface)
+     * @throw InvalidArgumentException
+     */
+    public function getObjectsByHouse($house) {
+        if (empty($house) || !is_numeric($house)) {
+            throw new InvalidArgumentException('Invalid House');
         }
-        return $rooms;
+        $results = $this->getMapper()->fetchObjectsByHouse($house);
+
+//        if (empty($results)) { //will only return
+//            throw new HomeNet_Model_Exception('House: '.$house.' Not Found', 404);
+//        }
+        return $results;
     }
 
-    public function getObjectsByHouses($houses){
-        $room = $this->getMapper()->fetchRoomsByHouses($houses);
-
-        if (empty($room)) {
-            throw new HomeNet_Model_Exception('Room not found', 404);
+    /**
+     * Get all Rooms by for an array of house ids
+     * 
+     * @param array $houses House Ids
+     * @return HomeNet_Model_Room (HomeNet_Model_Room_Interface)
+     * @throw InvalidArgumentException
+     */
+    public function getObjectsByHouses(array $houses) {
+        if (empty($houses)) {
+            throw new InvalidArgumentException('Invalid Houses');
         }
-        return $room;
+        $results = $this->getMapper()->fetchObjectsByHouses($houses);
+
+        return $results;
     }
 
-    public function getObjectsByRegion($region){
-        $rooms = $this->getMapper()->fetchRoomsByRegion($region);
-
-        if (empty($room)) {
-            throw new HomeNet_Model_Exception('Room not found', 404);
+    /**
+     * Get all Rooms for House in a specific region 
+     * 
+     * @param int $id
+     * @return HomeNet_Model_Room (HomeNet_Model_Room_Interface)
+     * @throw InvalidArgumentException
+     */
+    public function getObjectsByHouseRegion($region) {
+        if (empty($region) || !is_numeric($region)) {
+            throw new InvalidArgumentException('Invalid Houses');
         }
-        return $rooms;
+        $results = $this->getMapper()->fetchObjectsByRegion($region);
+
+//        if (empty($room)) {
+//            throw new HomeNet_Model_Exception('Room not found', 404);
+//        }
+        return $results;
     }
 
-
-
-
-    public function create($room) {
-        if ($room instanceof HomeNet_Model_Room_Interface) {
-            $h = $room;
-        } elseif (is_array($room)) {
-            $h = new HomeNet_Model_Room(array('data' => $room));
+    /**
+     * Create a new Room
+     * 
+     * @param HomeNet_Model_Room_Interface|array $mixed
+     * @return HomeNet_Model_Room (HomeNet_Model_Room_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function create($mixed) {
+        if ($mixed instanceof HomeNet_Model_Room_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Room(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Room');
+            throw new InvalidArgumentException('Invalid Room');
         }
-        unset($room);
-        $room = $this->getMapper()->save($h);
+
+        $result = $this->getMapper()->save($object);
 
         $houseService = new HomeNet_Model_House_Service();
-        $house = $houseService->getObjectById($room->house);
-        $houseService->clearCacheById($room->house);
+        $house = $houseService->getObjectById($result->house);
+        $houseService->clearCacheById($result->house);
 
         $types = array('house' => 'House',
             'apartment' => 'Apartment',
@@ -114,51 +160,75 @@ class HomeNet_Model_Room_Service {
             'other' => '',
             'na' => '');
 
-      //  $mService = new HomeNet_Model_Message_Service();
-
+        //  $mService = new HomeNet_Model_Message_Service();
         //$table->add(HomeNet_Model_Alert::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added a new room ' . $room->name . ' to their ' . $types[$this->house->type] . ' ' . $this->house->name . ' to HomeNet', null, $id);
-      //  $mService->add(HomeNet_Model_Message::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added a new room ' . $room->name . ' to ' . $house->name . ' to HomeNet', null, $room->id);
-        $mService = new HomeNet_Model_Message_Service();
-        $mService->add(HomeNet_Model_Message::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added &quot;' . $room->name . '&quot; to ' . $house->name . '', null, $house->id);
-
+        //  $mService->add(HomeNet_Model_Message::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added a new room ' . $room->name . ' to ' . $house->name . ' to HomeNet', null, $room->id);
+        // $mService = new HomeNet_Model_Message_Service();
+        // $mService->add(HomeNet_Model_Message::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added &quot;' . $result->name . '&quot; to ' . $house->name . '', null, $house->id);
         //die('add message');
-        return $room;
+        return $result;
     }
 
-    public function update($room) {
-        if ($room instanceof HomeNet_Model_Room_Interface) {
-            $h = $room;
-        } elseif (is_array($room)) {
-            $h = new HomeNet_Model_Room(array('data' => $room));
+    /**
+     * Update an existing Room
+     * 
+     * @param HomeNet_Model_Room_Interface|array $mixed
+     * @return HomeNet_Model_Room (HomeNet_Model_Room_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function update($mixed) {
+        if ($mixed instanceof HomeNet_Model_Room_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Room(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Room');
-        }
-        $row = $this->getMapper()->save($h);
-
-        $houseService = new HomeNet_Model_House_Service();
-        $houseService->clearCacheById($h->house);
-
-        return $row;
-    }
-
-    public function delete($room) {
-        if (is_int($room)) {
-            $h = new HomeNet_Model_Room();
-            $h->id = $room;
-        } elseif ($room instanceof HomeNet_Model_Room_Interface) {
-            $h = $room;
-        } elseif (is_array($room)) {
-            $h = new HomeNet_Model_Room(array('data' => $room));
-        } else {
-            throw new HomeNet_Model_Exception('Invalid Room');
+            throw new InvalidArgumentException('Invalid Room');
         }
 
-        $row = $this->getMapper()->delete($room);
+        $result = $this->getMapper()->save($object);
 
         $houseService = new HomeNet_Model_House_Service();
-        $houseService->clearCacheById($row->house);
+        $houseService->clearCacheById($result->house);
 
-        return $row;
+        return $result;
     }
 
+    /**
+     * Delete a Room
+     * 
+     * @param HomeNet_Model_Room_Interface|array|integer $mixed
+     * @return boolean Success
+     * @throws InvalidArgumentException 
+     */
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = $this->getObjectbyId($mixed);
+        } elseif ($mixed instanceof HomeNet_Model_Room_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Room(array('data' => $mixed));
+        } else {
+            throw new InvalidArgumentException('Invalid Room');
+        }
+
+        $result = $this->getMapper()->delete($object);
+
+        $houseService = new HomeNet_Model_House_Service();
+        $houseService->clearCacheById($result->house);
+
+        return $result;
+    }
+
+    /**
+     * Delete all Rooms. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
+    }
 }

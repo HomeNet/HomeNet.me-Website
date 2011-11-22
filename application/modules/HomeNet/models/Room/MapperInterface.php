@@ -28,16 +28,18 @@
  */
 interface HomeNet_Model_Room_MapperInterface {
 
-    public function fetchRoomById($id);
+    public function fetchObjectById($id);
 
-    public function fetchRoomsByHouse($house);
+    public function fetchObjectsByHouse($house);
 
-    public function fetchRoomsByHouses($houses);
+    public function fetchObjectsByHouses($houses);
 
-    public function fetchRoomsByRegion($region);
+    public function fetchObjectsByRegion($region);
 
-    public function save(HomeNet_Model_Room_Interface $room);
+    public function save(HomeNet_Model_Room_Interface $object);
 
-    public function delete(HomeNet_Model_Room_Interface $room);
+    public function delete(HomeNet_Model_Room_Interface $object);
+    
+    public function deleteAll();
 
 }

@@ -31,12 +31,13 @@ class HomeNet_Model_NodeModel_MapperDbTable implements HomeNet_Model_NodeModel_M
 
     protected $_table = null;
 
-    /**
-     * @return HomeNet_Model_DbTable_Nodes;
+     /**
+     * @return Zend_Db_Table;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new HomeNet_Model_DbTable_NodeModels();
+            $this->_table = new Zend_Db_Table('homenet_node_models');
+            $this->_table->setRowClass('HomeNet_Model_NodeModel_DbTableRow');
         }
         return $this->_table;
     }
@@ -44,53 +45,54 @@ class HomeNet_Model_NodeModel_MapperDbTable implements HomeNet_Model_NodeModel_M
     public function setTable($table) {
         $this->_table = $table;
     }
-
-    public function fetchNodeModelById($id) {
-        return $this->getTable()->find($id)->current();
-    }
-
-    public function fetchNodeModels() {
+    
+    public function fetchObjects() {
         $select = $this->getTable()->select()
                         ->order(array('type', 'name asc'));
         return $this->getTable()->fetchAll($select);
     }
 
-    public function fetchNodeModelsByStatus($status) {
+    public function fetchObjectById($id) {
+        return $this->getTable()->find($id)->current();
+    }
+
+    public function fetchObjectsByStatus($status) {
         $select = $this->getTable()->select()->where('status = ?', $status)
                         ->order(array('type', 'name asc'));
         return $this->getTable()->fetchAll($select);
     }
 
-    public function save(HomeNet_Model_NodeModel_Interface $node) {
+    public function save(HomeNet_Model_NodeModel_Interface $object) {
 
 
-        if (($node instanceof HomeNet_Model_DbTableRow_Node) && ($node->isConnected())) {
-            $node->save();
-            return;
-        } elseif (!is_null($node->id)) {
-            $row = $this->getTable()->find($node->id)->current();
+        if (($object instanceof HomeNet_Model_DbTableRow_Node) && ($object->isConnected())) {
+            return $object->save();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current();
         } else {
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($node->toArray());
-        // die(debugArray($row));
-        $row->save();
+        $row->fromArray($object->toArray());
 
-        return $row;
+       return $row->save();
     }
 
-    public function delete(HomeNet_Model_NodeModel_Interface $node) {
+    public function delete(HomeNet_Model_NodeModel_Interface $object) {
 
-        if (($node instanceof HomeNet_Model_DbTableRow_NodeModel) && ($node->isConnected())) {
-            $node->delete();
-            return true;
-        } elseif (!is_null($node->id)) {
-            $row = $this->getTable()->find($node->id)->current()->delete();
-            return;
+        if (($object instanceof HomeNet_Model_DbTableRow_NodeModel) && ($object->isConnected())) {
+            return $object->delete();
+        } elseif (!is_null($object->id)) {
+            return $this->getTable()->find($object->id)->current()->delete();
         }
 
         throw new HomeNet_Model_Exception('Invalid NodeModel');
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'production'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 
 }

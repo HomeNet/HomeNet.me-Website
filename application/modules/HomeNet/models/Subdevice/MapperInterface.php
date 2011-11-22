@@ -34,7 +34,9 @@ interface HomeNet_Model_Subdevice_MapperInterface {
 
     public function fetchObjectsByRoom($room);
 
-    public function save(HomeNet_Model_Subdevice_Interface $subdevice);
+    public function save(HomeNet_Model_Subdevice_Interface $object);
 
-    public function delete(HomeNet_Model_Subdevice_Interface $subdevice);
+    public function delete(HomeNet_Model_Subdevice_Interface $object);
+    
+    public function deleteAll();
 }

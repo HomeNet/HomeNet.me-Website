@@ -32,12 +32,12 @@ class HomeNet_Model_Apikey_MapperDbTable implements HomeNet_Model_Apikey_MapperI
     protected $_table = null;
 
     /**
-     *
      * @return HomeNet_Model_DbTable_Apikeys;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new HomeNet_Model_DbTable_Apikeys();
+            $this->_table = new Zend_Db_Table('homenet_apikey');
+            $this->_table->setRowClass('HomeNet_Model_Apikey_DbTableRow');
         }
         return $this->_table;
     }
@@ -45,12 +45,6 @@ class HomeNet_Model_Apikey_MapperDbTable implements HomeNet_Model_Apikey_MapperI
     public function setTable($table) {
         $this->_table = $table;
     }
-
-
-
-
-
-
 
     public function fetchObjectById($id){
         return $this->getTable()->find($id)->current();
@@ -80,38 +74,40 @@ class HomeNet_Model_Apikey_MapperDbTable implements HomeNet_Model_Apikey_MapperI
 
 
 
-    public function save(HomeNet_Model_Apikey_Interface $apikey) {
+    public function save(HomeNet_Model_Apikey_Interface $object) {
 
-        if (($apikey instanceof HomeNet_Model_DbTableRow_Apikey) && ($apikey->isConnected())) {
-            $apikey->save();
-            return;
-        } elseif (!is_null($apikey->id)) {
-            $row = $this->getTable()->find($apikey->id)->current();
+        if (($object instanceof HomeNet_Model_DbTableRow_Apikey) && ($object->isConnected())) {
+            return $object->save();
+
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current();
             if(empty($row)){
                $row = $this->getTable()->createRow();
             }
-
         } else {
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($apikey->toArray());
-       // die(debugArray($row));
-        $row->save();
+        $row->fromArray($object->toArray());
 
-        return $row;
+        return $row->save();
     }
 
-    public function delete(HomeNet_Model_Apikey_Interface $apikey) {
+    public function delete(HomeNet_Model_Apikey_Interface $object) {
 
-        if (($apikey instanceof HomeNet_Model_DbTableRow_Apikey) && ($apikey->isConnected())) {
-            $apikey->delete();
-            return true;
-        } elseif (!is_null($apikey->id)) {
-            $row = $this->getTable()->find($apikey->id)->current()->delete();
-            return;
+        if (($object instanceof HomeNet_Model_DbTableRow_Apikey) && ($object->isConnected())) {
+            return $object->delete();
+
+        } elseif (!is_null($object->id)) {
+            return $this->getTable()->find($object->id)->current()->delete();
         }
 
         throw new HomeNet_Model_Exception('Invalid Apikey');
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'production'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 }

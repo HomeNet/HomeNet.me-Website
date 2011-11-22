@@ -31,13 +31,13 @@ class HomeNet_Model_HouseUser_MapperDbTable implements HomeNet_Model_HouseUser_M
 
     protected $_table = null;
 
-    /**
-     *
-     * @return HomeNet_Model_DbTable_HouseUsers;
+     /**
+     * @return Zend_Db_Table;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new HomeNet_Model_DbTable_HouseUsers();
+            $this->_table = new Zend_Db_Table('homenet_house_users');
+            $this->_table->setRowClass('HomeNet_Model_HouseUser_DbTableRow');
         }
         return $this->_table;
     }
@@ -46,46 +46,48 @@ class HomeNet_Model_HouseUser_MapperDbTable implements HomeNet_Model_HouseUser_M
         $this->_table = $table;
     }
 
-    public function fetchHousesbyUser($user) {
+    public function fetchObjectsbyUser($user) {
         $select = $this->getTable()->select()->where('user = ?', $user);
         return $this->getTable()->fetchAll($select);
     }
 
-     public function fetchHouseUserbyId($id) {
+     public function fetchObjectbyId($id) {
         return $this->getTable()->find($id)->current();
     }
 
-    public function save(HomeNet_Model_HouseUser_Interface $houseUser) {
+    public function save(HomeNet_Model_HouseUser_Interface $object) {
 
 
-        if (($houseUser instanceof HomeNet_Model_DbTableRow_HouseUser) && ($houseUser->isConnected())) {
-            $houseUser->save();
-            return;
-        } elseif (!is_null($houseUser->id)) {
-            $row = $this->fetchHouseUserbyId($houseUser->id);
+        if (($object instanceof HomeNet_Model_DbTableRow_HouseUser) && ($object->isConnected())) {
+            return $object->save();
+        } elseif (!is_null($object->id)) {
+            $row = $this->fetchHouseUserbyId($object->id);
         } else {
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($houseUser->toArray());
-        // die(debugArray($row));
-        $row->save();
+        $row->fromArray($object->toArray());
 
-        return $row;
+       return $row->save();
     }
 
     public function delete(HomeNet_Model_HouseUser_Interface $houseUser) {
 
         if (($houseUser instanceof HomeNet_Model_DbTableRow_HouseUser) && ($houseUser->isConnected())) {
-            $houseUser->delete();
+            return $houseUser->delete();
             return true;
         } elseif (!is_null($houseUser->id)) {
             $where = $this->getTable()->getAdapter()->quoteInto('id = ?', $houseUser->id);
-            $row = $this->getTable()->delete($where);
-            return;
+            return $this->getTable()->delete($where);
         }
 
-        throw new HomeNet_Model_Exception('Invalid HouseUser');
+        throw new InvalidArgumentException('Invalid HouseUser');
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'production'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 
 }

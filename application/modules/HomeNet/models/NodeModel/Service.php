@@ -30,11 +30,15 @@
 class HomeNet_Model_NodeModel_Service {
 
     /**
+     * Storage mapper
+     * 
      * @var HomeNet_Model_NodesMapperInterface  
      */
     protected $_mapper;
 
     /**
+     * Get storage mapper
+     * 
      * @return HomeNet_Model_NodesMapper_Interface
      */
     public function getMapper() {
@@ -46,85 +50,131 @@ class HomeNet_Model_NodeModel_Service {
         return $this->_mapper;
     }
 
+    /**
+     * Set storage mapper
+     * 
+     * @param HomeNet_Model_NodeModel_MapperInterface $mapper 
+     */
     public function setMapper(HomeNet_Model_NodeModel_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
     /**
+     * Get NodeModel by id
+     * 
      * @param int $id
-     * @return HomeNet_Model_NodeModel_Interface
+     * @return HomeNet_Model_NodeModel (HomeNet_Model_NodeModel_Interface)
+     * @throw InvalidArgumentException
+     * @throw NotFoundException
      */
     public function getObjectById($id) {
-        $nodeModel = $this->getMapper()->fetchNodeModelById($id);
-
-        if (empty($nodeModel)) {
-            throw new HomeNet_Model_Exception('NodeModel not found', 404);
+        if (empty($id) || !is_numeric($id)) {
+            throw new InvalidArgumentException('Invalid Id');
         }
-        return $nodeModel;
+        
+        $result = $this->getMapper()->fetchObjectById($id);
+
+        if (empty($result)) {
+            throw new NotFoundException('NodeModel: '.$id.' Not Found', 404);
+        }
+        return $result;
     }
 
+    /**
+     * Get all NodelModels
+     * 
+     * @return HomeNet_Model_NodeModel (HomeNet_Model_NodeModel_Interface) 
+     */
     public function getObjects() {
-        $nodeModels = $this->getMapper()->fetchNodeModels();
-
-        if (empty($nodeModels)) {
-            throw new HomeNet_Model_Exception('House not found', 404);
-        }
-        return $nodeModels;
+        $results = $this->getMapper()->fetchObjects();
+        return $results;
     }
 
+    /**
+     * Get NodelModel by status
+     * 
+     * @param integer $status
+     * @return HomeNet_Model_NodeModel (HomeNet_Model_NodeModel_Interface)
+     * @throw InvalidArgumentException
+     */
     public function getObjectsByStatus($status) {
-        $nodeModels = $this->getMapper()->fetchNodeModelsByStatus($status);
-
-        if (empty($nodeModels)) {
-            throw new HomeNet_Model_Exception('Node not found', 404);
+        if (empty($status)  || !is_numeric($status)) {
+            throw new InvalidArgumentException('Invalid Status');
         }
-        return $nodeModels;
+        return $this->getMapper()->fetchObjectsByStatus($status);
+    }
+    
+     /**
+     * Create a new NodeModel
+     * 
+     * @param HomeNet_Model_Message_Interface|array $mixed
+     * @return HomeNet_Model_Message (HomeNet_Model_NodeModel_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function create($mixed) {
+        if ($mixed instanceof HomeNet_Model_NodeModel_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Message(array('data' => $mixed));
+        } else {
+            throw new InvalidArgumentException('Invalid NodeModel');
+        }
+
+        return $this->getMapper()->save($object);
+    }
+    
+    /**
+     * Update an existing NodeModel
+     * 
+     * @param HomeNet_Model_NodeModel_Interface|array $mixed
+     * @return HomeNet_Model_NodeModel (HomeNet_Model_NodeModel_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function update($mixed) {
+        if ($mixed instanceof HomeNet_Model_NodeModel_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_NodeModel(array('data' => $mixed));
+        } else {
+            throw new InvalidArgumentException('Invalid NodeModel');
+        }
+
+        return $this->getMapper()->save($object);
     }
 
     /**
-     * @param mixed $nodeModel
-     * @return HomeNet_Model_NodeModel_Interface
+     * Delete a NodeModel
+     * 
+     * @param HomeNet_Model_NodeModel_Interface|array|integer $mixed
+     * @return boolean Success
+     * @throws InvalidArgumentException 
      */
-    public function create($nodeModel) {
-        if ($nodeModel instanceof HomeNet_Model_NodeModel_Interface) {
-            $h = $nodeModel;
-        } elseif (is_array($nodeModel)) {
-            $h = new HomeNet_Model_NodeModel(array('data' => $nodeModel));
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = $this->getObjectbyId($mixed);
+        } elseif ($mixed instanceof HomeNet_Model_NodeModel_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_NodeModel(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Node');
+            throw new InvalidArgumentException('Invalid NodeModel');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->delete($object);
     }
 
     /**
-     * @param mixed $nodeModel
-     * @return HomeNet_Model_NodeModel_Interface
+     * Delete all NodeModel. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
      */
-    public function update($nodeModel) {
-        if ($nodeModel instanceof HomeNet_Model_NodeModel_Interface) {
-            $h = $nodeModel;
-        } elseif (is_array($nodeModel)) {
-            $h = new HomeNet_Model_NodeModel(array('data' => $nodeModel));
-        } else {
-            throw new HomeNet_Model_Exception('Invalid Node');
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
+            throw new Exception("Not Allowed");
         }
-        return $this->getMapper()->save($h);
+        $this->getMapper()->deleteAll();
     }
 
-    public function delete($nodeModel) {
-        if (is_int($nodeModel)) {
-            $h = new HomeNet_Model_NodeModel();
-            $h->id = $nodeModel;
-        } elseif ($nodeModel instanceof HomeNet_Model_NodeModel_Interface) {
-            $h = $nodeModel;
-        } elseif (is_array($nodeModel)) {
-            $h = new HomeNet_Model_Node(array('data' => $nodeModel));
-        } else {
-            throw new HomeNet_Model_Exception('Invalid Node');
-        }
-
-        return $this->getMapper()->delete($nodeModel);
-    }
 
 }

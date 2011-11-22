@@ -23,7 +23,7 @@
 
 /**
  * @package HomeNet
- * @subpackage Node
+ * @subpackage Node_Internet
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
@@ -50,137 +50,6 @@ class HomeNet_Model_Node_Internet_MapperDbTable implements HomeNet_Model_Node_In
      public function fetchObjectById($id){
        return $this->getTable()->find($id)->current();
   }
-
-
-
-
-
-//
-//
-//
-//
-//
-////    public function fetchNodeById($id){
-////        return $this->getTable()->find($id)->current();
-////    }
-////
-//    public function fetchObjectById($id) {
-//
-//        //= array('name','driver', 'max_devices')
-//
-//        $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
-//        $select->setIntegrityCheck(false)
-//               ->where('homenet_nodes.id = ?', $id)
-//               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type'))
-//                ->limit(1);
-//
-//        $row =  $this->getTable()->fetchRow($select);
-//        if(empty($row)){
-//            return null;
-//        }
-//
-//        return $this->_getDriver($row);
-//    }
-//
-//
-//
-////    public function fetchNodesByHouse($house){
-////
-////        $select = $this->getTable()->select()->where('house = ?', $house);
-////        return $this->getTable()->fetchAll($select);
-////    }
-////
-////    public function fetchNodesByRoom($room){
-////
-////        $select = $this->getTable()->select()->where('room = ?', $room);
-////        return $this->getTable()->fetchAll($select);
-////    }
-//
-//    public function fetchObjectsByHouse($house){
-//
-//        $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
-//        $select->setIntegrityCheck(false)
-//               ->where('house = ?', $house)
-//               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type'));
-//
-//        $rows = $this->getTable()->fetchAll($select);
-//
-//        if(empty($rows)){
-//            return array();
-//        }
-//
-//        return $this->_getDrivers($rows);
-//    }
-//
-//    public function fetchObjectByHouseNode($house,$node){
-//
-//        $select = $this->getTable()->select()->where('house = ?', $house)
-//                                 ->where('node = ?', $node)
-//                                 ->order('node DESC')
-//                                 ->limit(1);
-//
-//        $row =  $this->getTable()->fetchRow($select);
-//        if(empty($row)){
-//            return null;
-//        }
-//
-//        return $this->_getDriver($row);
-//    }
-//
-//
-//
-//
-//    public function fetchNextIdByHouse($house){
-//
-//        $select = $this->getTable()->select()->where('house = ?', $house)
-//                                  ->where('node NOT IN(?)', array(255,4095))
-//                                  ->order('node DESC')
-//                                  ->limit(1);
-//       $row = $this->getTable()->fetchRow($select);
-//        $next = $row['node'] + 1;
-//        return $next;
-//    }
-//
-//    public function fetchInternetIdsByHouse($house){
-//
-//        $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
-//        $select->setIntegrityCheck(false)
-//               ->where('homenet_nodes.house = ?', $house)
-//               ->join('homenet_nodes_internet', 'homenet_nodes.id = homenet_nodes_internet.id');
-//               // ->limit(1);
-//
-//        $rows = $this->getTable()->fetchAll($select);
-//
-//        if(empty($rows)){
-//            return array();
-//        }
-//
-//        $ids = array();
-//
-//        foreach($rows as $row){
-//            $ids[$row->node] = $row->id;
-//        }
-//
-//        return $ids;
-//    }
-//
-//
-//
-//
-//
-//
-
-
-
-
-
-
-
-
-
-
-
-
 
     public function save(HomeNet_Model_Node_Interface $node) {
 
@@ -215,5 +84,11 @@ class HomeNet_Model_Node_Internet_MapperDbTable implements HomeNet_Model_Node_In
         }
 
         throw new HomeNet_Model_Exception('Invalid Room');
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'production'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 }

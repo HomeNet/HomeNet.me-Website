@@ -21,11 +21,11 @@
 
 /**
  * @package HomeNet
- * @subpackage Device
+ * @subpackage SubdeviceModel
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_DbTableRow_Device extends Zend_Db_Table_Row_Abstract { // implements HomeNet_Model_Device_Interface
+class HomeNet_Model_SubdeviceModel_DbTableRow extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_SubdeviceModel_Interface {
 
 //    public $rooms;
 
@@ -50,20 +50,12 @@ class HomeNet_Model_DbTableRow_Device extends Zend_Db_Table_Row_Abstract { // im
         if(is_string($this->settings)){
             $this->settings = unserialize($this->settings);
         }
-
-//        if(is_string($this->permissions)){
-//            $this->permissions = unserialize($this->permissions);
-//        }
     }
     
     public function compress(){
         if(is_array($this->settings)){
             $this->settings = serialize($this->settings);
         }
-
-//        if(is_array($this->permissions)){
-//            $this->permissions = serialize($this->permissions);
-//        }
     }
 
     public function save(){
@@ -98,7 +90,7 @@ class HomeNet_Model_DbTableRow_Device extends Zend_Db_Table_Row_Abstract { // im
 //        }
 //
 //        $service = new HomeNet_Model_RoomsService();
-//        $rooms = $service->getRoomsByDevice($this->id);
+//        $rooms = $service->getRoomsBySubdeviceModel($this->id);
 //        $this->rooms = $rooms;
 //
 //        return $rooms;

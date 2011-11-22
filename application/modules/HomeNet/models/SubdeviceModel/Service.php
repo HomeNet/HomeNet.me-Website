@@ -1,8 +1,6 @@
 <?php
 
 /*
- * RoomService.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -30,11 +28,15 @@
 class HomeNet_Model_SubdeviceModel_Service {
 
     /**
+     * Storage mapper
+     * 
      * @var HomeNet_Model_SubdeviceModel_MapperInterface
      */
     protected $_mapper;
 
     /**
+     * Get storage mapper
+     * 
      * @return HomeNet_Model_SubdeviceModel_MapperInterface
      */
     public function getMapper() {
@@ -46,126 +48,164 @@ class HomeNet_Model_SubdeviceModel_Service {
         return $this->_mapper;
     }
 
+    /**
+     * Set storage mapper
+     * 
+     * @param HomeNet_Model_SubdeviceModel_MapperInterface $mapper 
+     */
     public function setMapper(HomeNet_Model_SubdeviceModel_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
+    
+    /**
+     * Get all SubdeviceModels
+     * 
+     * @return HomeNet_Model_SubdeviceModel[] (HomeNet_Model_SubdeviceModel_Interface[]) 
+     */
+    public function getObjects(){
+        return $this->getMapper()->fetchObjects();
+    }
 
     /**
+     * Get SubdeviceModel by id
+     * 
      * @param int $id
-     * @return HomeNet_Model_SubdeviceModel_Interface
+     * @return HomeNet_Model_SubdeviceModel (HomeNet_Model_SubdeviceModel_Interface)
+     * @throws InvalidArgumentException
+     * @throws NotFoundException
      */
     public function getObjectById($id) {
-        $subdevice = $this->getMapper()->fetchSubdeviceModelById($id);
-
-        if (empty($subdevice)) {
-            throw new HomeNet_Model_Exception('Subdevice Model not found', 404);
+        if (empty($id) || !is_numeric($id)) {
+            throw new InvalidArgumentException('Invalid Id');
         }
-        return $subdevice;
+        $result = $this->getMapper()->fetchObjectById((int) $id);
+
+        if (empty($result)) {
+            throw new NotFoundException('Subdevice Model not found', 404);
+        }
+        return $result;
     }
 
-    public function getObjectsByIds($ids){
-        $subdevices = $this->getMapper()->fetchSubdeviceModelsByIds($ids);
-
-        if (empty($subdevices)) {
-            throw new HomeNet_Model_Exception('Subdevice not found', 404);
+    /**
+     * Get SubdeviceModels by Ids
+     * 
+     * @param array $ids
+     * @return HomeNet_Model_SubdeviceModel[] (HomeNet_Model_SubdeviceModel_Interface[]) 
+     * @throws InvalidArgumentException
+     * @throws NotFoundException
+     */
+    public function getObjectsByIds(array $ids){
+        if (empty($id) || !is_numeric($id)) {
+            throw new InvalidArgumentException('Invalid Id');
         }
-        return $subdevices;
+        $results = $this->getMapper()->fetchObjectsByIds($ids);
+
+        if (empty($results)) {
+            throw new NotFoundException('Subdevice: not found', 404);
+        }
+        return $results;
     }
 
-    public function getObjects(){
-        $subdevices = $this->getMapper()->fetchSubdeviceModels();
-
-        if (empty($subdevices)) {
-            throw new HomeNet_Model_Exception('Subdevice not found', 404);
+    /**
+     * Get SubdeviceModel Plugins by ids
+     * 
+     * @param array $ids
+     * @return driver 
+     * @throws InvalidArgumentException
+     */
+    public function getPluginsByIds(array $ids){
+        if (empty($id)) {
+            throw new InvalidArgumentException('Invalid Id');
         }
-        return $subdevices;
-    }
+        
+        $results = $this->getObjectsByIds($ids);
+        
+        $objects = array();
 
-    public function getSubdevicesByIds($ids){
-        $m = $this->getObjectsByIds($ids);
-        $models = array();
-
-        foreach($m as $value){
-            $models[$value->id] = $value;
+        foreach($results as $value){
+            $objects[$value->id] = $value;
         }
 
         $subdevices = array();
         foreach($ids as $key => $value){
-            $driver = $models[$value]->driver;
-            $subdevices[] = new $driver(array('data' => array('position'=> $key),'model'=>$models[$value]));
+            $driver = $objects[$value]->driver;
+            $subdevices[] = new $driver(array('data' => array('position'=> $key),'model'=>$objects[$value]));
         }
 
         return $subdevices;
     }
-
-
-    public function create($subdeviceModel) {
-        if ($subdeviceModel instanceof HomeNet_Model_SubdeviceModel_Interface) {
-            $h = $subdeviceModel;
-        } elseif (is_array($subdeviceModel)) {
-            $h = new HomeNet_Model_SubdeviceModel(array('data' => $subdeviceModel));
+    
+    /**
+     * Create a new SubdeviceModel
+     * 
+     * @param HomeNet_Model_SubdeviceModel_Interface|array $mixed
+     * @return HomeNet_Model_SubdeviceModel (HomeNet_Model_SubdeviceModel_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function create($mixed) {
+        if ($mixed instanceof HomeNet_Model_SubdeviceModel_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_SubdeviceModel(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Subdevice');
+            throw new InvalidArgumentException('Invalid SubdeviceModel');
         }
-        unset($subdeviceModel);
-        $subdeviceModel = $this->getMapper()->save($h);
 
-//        $houseService = new HomeNet_Model_HousesService();
-//        $house = $houseService->getHouseById($subdevice->house);
-//        $houseService->clearCacheById($subdevice->house);
-
-//        $types = array('house' => 'House',
-//            'apartment' => 'Apartment',
-//            'condo' => 'Condo',
-//            'other' => '',
-//            'na' => '');
-
-       // $table = new HomeNet_Model_DbTable_Alerts();
-
-        //$table->add(HomeNet_Model_Alert::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added a new room ' . $subdevice->name . ' to their ' . $types[$this->house->type] . ' ' . $this->house->name . ' to HomeNet', null, $id);
-       // $table->add(HomeNet_Model_Alert::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added a new room ' . $subdevice->name . ' to ' . $house->name . ' to HomeNet', null, $subdevice->id);
-
-
-        return $subdeviceModel;
+        return $this->getMapper()->save($object);
     }
 
-    public function update($subdeviceModel) {
-        if ($subdeviceModel instanceof HomeNet_Model_SubdeviceModel_Interface) {
-            $h = $subdeviceModel;
-        } elseif (is_array($subdeviceModel)) {
-            $h = new HomeNet_Model_SubdeviceModel(array('data' => $subdeviceModel));
+    /**
+     * Update an existing SubdeviceModel
+     * 
+     * @param HomeNet_Model_SubdeviceModel_Interface|array $mixed
+     * @return HomeNet_Model_SubdeviceModel (HomeNet_Model_SubdeviceModel_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function update($mixed) {
+        if ($mixed instanceof HomeNet_Model_SubdeviceModel_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_SubdeviceModel(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Room');
+            throw new InvalidArgumentException('Invalid SubdeviceModel');
         }
-        $row = $this->getMapper()->save($h);
 
-        //$houseService = new HomeNet_Model_HousesService();
-        //$houseService->clearCacheById($this->house);
-
-        return $row;
+        return $this->getMapper()->save($object);
     }
 
-    public function delete($subdeviceModel) {
-        //if is id
-        if (is_int($subdeviceModel)) {
-            $h = new HomeNet_Model_Subdevice();
-            $h->id = $subdeviceModel;
-        //if object
-        } elseif ($subdeviceModel instanceof HomeNet_Model_SubdeviceModel_Interface) {
-            $h = $subdeviceModel;
-        //if is array
-        } elseif (is_array($subdeviceModel)) {
-            $h = new HomeNet_Model_SubdeviceModel(array('data' => $subdeviceModel));
+    /**
+     * Delete a SubdeviceModel
+     * 
+     * @param HomeNet_Model_SubdeviceModel_Interface|array|integer $mixed
+     * @return boolean Success
+     * @throws InvalidArgumentException 
+     */
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = new HomeNet_Model_SubdeviceModel();
+            $object->id = $mixed;
+        } elseif ($mixed instanceof HomeNet_Model_SubdeviceModel_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_SubdeviceModel(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Room');
+            throw new InvalidArgumentException('Invalid Subdevice');
         }
 
-        $row = $this->getMapper()->delete($subdeviceModel);
+        return $this->getMapper()->delete($object);
+    }
 
-        //$houseService = new HomeNet_Model_HousesService();
-        //$houseService->clearCacheById($this->house);
-
-        return $row;
+    /**
+     * Delete all data. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
     }
 
 }

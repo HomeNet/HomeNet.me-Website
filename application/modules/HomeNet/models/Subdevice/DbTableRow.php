@@ -21,13 +21,13 @@
 
 /**
  * @package HomeNet
- * @subpackage HouseUser
+ * @subpackage Subdevices
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_DbTableRow_HouseUser extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_HouseUser_Interface {
+class HomeNet_Model_Subdevice_DbTableRow extends Zend_Db_Table_Row_Abstract { // implements HomeNet_Model_Subdevice_Interface
 
-    public $rooms;
+//    public $rooms;
 
     public function fromArray(array $array){
 
@@ -47,9 +47,9 @@ class HomeNet_Model_DbTableRow_HouseUser extends Zend_Db_Table_Row_Abstract impl
     }
     
     public function uncompress(){
-//        if(is_string($this->settings)){
-//            $this->settings = unserialize($this->settings);
-//        }
+        if(is_string($this->settings)){
+            $this->settings = unserialize($this->settings);
+        }
 
         if(is_string($this->permissions)){
             $this->permissions = unserialize($this->permissions);
@@ -57,9 +57,9 @@ class HomeNet_Model_DbTableRow_HouseUser extends Zend_Db_Table_Row_Abstract impl
     }
     
     public function compress(){
-//        if(is_array($this->settings)){
-//            $this->settings = serialize($this->settings);
-//        }
+        if(is_array($this->settings)){
+            $this->settings = serialize($this->settings);
+        }
 
         if(is_array($this->permissions)){
             $this->permissions = serialize($this->permissions);
@@ -98,12 +98,11 @@ class HomeNet_Model_DbTableRow_HouseUser extends Zend_Db_Table_Row_Abstract impl
 //        }
 //
 //        $service = new HomeNet_Model_RoomsService();
-//        $rooms = $service->getRoomsByHouseUser($this->id);
+//        $rooms = $service->getRoomsBySubdevice($this->id);
 //        $this->rooms = $rooms;
 //
 //        return $rooms;
 //    }
-
 
     public function getSetting($setting){
         if(isset($this->settings[$setting])){
@@ -117,6 +116,7 @@ class HomeNet_Model_DbTableRow_HouseUser extends Zend_Db_Table_Row_Abstract impl
             $this->settings = array($setting => $value);
             return;
         }
+        //die(debugArray($this->settings));
 
         $this->settings = array_merge($this->settings,array($setting => $value));
     }
@@ -124,4 +124,5 @@ class HomeNet_Model_DbTableRow_HouseUser extends Zend_Db_Table_Row_Abstract impl
     public function clearSetting($setting){
         unset($this->settings[$setting]);
     }
+
 }

@@ -34,18 +34,14 @@ class HomeNet_Model_House_MapperDbTable implements HomeNet_Model_House_MapperInt
      * @var HomeNet_Model_Room_MapperInterface
      */
     protected $_roomsMapper = null;
-
-    
-
-
-    
-/**
- *
- * @return HomeNet_Model_DbTable_Houses;
- */
-    public function getTable(){
-        if(is_null($this->_table)){
-            $this->_table = new HomeNet_Model_DbTable_Houses();
+ 
+    /**
+     * @return Zend_Db_Table;
+     */
+    public function getTable() {
+        if (is_null($this->_table)) {
+            $this->_table = new Zend_Db_Table('homenet_houses');
+            $this->_table->setRowClass('HomeNet_Model_House_DbTableRow');
         }
         return $this->_table;
     }
@@ -70,26 +66,26 @@ class HomeNet_Model_House_MapperDbTable implements HomeNet_Model_House_MapperInt
     }
 
 
-    public function fetchHouseById($id){
-        $row = $this->getTable()->find($id)->current();
-        return $row;
+    public function fetchObjectById($id){
+        $result = $this->getTable()->find($id)->current();
+        return $result;
 
     }
 
-     public function fetchHousesByIds($ids){
+     public function fetchObjectsByIds($ids){
         $select = $this->getTable()->select()->where('id in (?)', $ids);
-        $rows = $this->getTable()->fetchAll($select);
+        $result = $this->getTable()->fetchAll($select);
         
         $houses = array();
 
-         foreach($rows as $key => $house){
+         foreach($result as $key => $house){
             $houses[$house->id] = $house;
         }
 
         return $houses;
     }
 
-    public function fetchHouseByIdWithRooms($id){
+    public function fetchObjectByIdWithRooms($id){
         $house = $this->getTable()->find($id)->current();
         
         $rooms = $this->getRoomsMapper()->fetchRoomsByHouse($id);
@@ -102,7 +98,7 @@ class HomeNet_Model_House_MapperDbTable implements HomeNet_Model_House_MapperInt
         return $house;
     }
 
-     public function fetchHousesByIdsWithRooms($ids){
+     public function fetchObjectsByIdsWithRooms($ids){
 
         $houses = $this->fetchHousesByIds($ids);
      
@@ -116,32 +112,34 @@ class HomeNet_Model_House_MapperDbTable implements HomeNet_Model_House_MapperInt
         return $houses;
     }
 
-    public function save(HomeNet_Model_House_Interface $house){
+    public function save(HomeNet_Model_House_Interface $object){
         
-        if(($house instanceof HomeNet_Model_DbTableRow_Room) && ($house->isConnected())){
-            $house->save();
-            return;
+        if(($object instanceof HomeNet_Model_DbTableRow_Room) && ($object->isConnected())){
+            return $object->save();
         }
-        elseif(!is_null($house->id)){
-            $row = $this->getTable()->find($house->id)->current();
+        elseif(!is_null($object->id)){
+            $row = $this->getTable()->find($object->id)->current();
         } else {
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($house->toArray());
-        $row->save();
-        return $row;
+        $row->fromArray($object->toArray());
+        return $row->save();
     }
 
-    public function delete(HomeNet_Model_House_Interface $house){
-        if (($house instanceof HomeNet_Model_DbTableRow_House) && ($house->isConnected())) {
-            $house->delete();
-            return true;
-        } elseif (!is_null($house->id)) {
-            $row = $this->getTable()->find($house->id)->current()->delete();
-            return;
+    public function delete(HomeNet_Model_House_Interface $object){
+        if (($object instanceof HomeNet_Model_DbTableRow_House) && ($object->isConnected())) {
+            return $object->delete();
+        } elseif (!is_null($object->id)) {
+            return $this->getTable()->find($object->id)->current()->delete();
         }
 
-        throw new HomeNet_Model_Exception('Invalid House');
+        throw new InvalidArgumentException('Invalid House');
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'production'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 }

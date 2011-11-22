@@ -30,11 +30,15 @@
 class HomeNet_Model_HouseUser_Service {
 
     /**
+     * Storage mapper
+     * 
      * @var HomeNet_Model_HouseUsersMapperInterface
      */
     protected $_mapper;
 
     /**
+     * Get storage mapper
+     * 
      * @return HomeNet_Model_HouseUsersMapperInterface
      */
     public function getMapper() {
@@ -46,47 +50,79 @@ class HomeNet_Model_HouseUser_Service {
         return $this->_mapper;
     }
 
+    /**
+     * Set storage mapper
+     * 
+     * @param HomeNet_Model_HouseUser_MapperInterface $mapper 
+     */
     public function setMapper(HomeNet_Model_HouseUser_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
-
+/**
+ * Get HouseUsers by user id
+ * 
+ * @param integer $user
+ * @return HomeNet_Model_HouseUser (HomeNet_Model_HouseUser_Interface)
+ * @throws InvalidArgumentException
+ * @throws NotFoundException
+ */
     public function getObjectsbyUser($user){
-        $houseUser = $this->getMapper()->fetchHousesbyUser($user);
-
-        if (empty($houseUser)) {
-            throw new HomeNet_Model_Exception('HouseUser not found', 404);
+        if(empty($user) || !is_numeric($user)){
+            throw new InvalidArgumentException('Invalid User');
         }
-        return $houseUser;
+        
+        $result = $this->getMapper()->fetchObjectsbyUser($user);
+
+        if (empty($result)) {
+            throw new NotFoundException('HouseUser not found', 404);
+        }
+        return $result;
     }
 
+/**
+ * Get HouseUsers by id
+ * 
+ * @param integer $user
+ * @return HomeNet_Model_HouseUser (HomeNet_Model_HouseUser_Interface)
+ * @throws InvalidArgumentException
+ * @throws NotFoundException
+ */
     public function getObjectbyId($id){
-        $houseUsers = $this->getMapper()->fetchHouseUserbyId($id);
-
-        if (empty($houseUsers)) {
-            throw new HomeNet_Model_Exception('HouseUser not found', 404);
+        
+        if(empty($id) || !is_numeric($id)){
+            throw new InvalidArgumentException('Invalid HouseUser Id');
         }
-        return $houseUsers;
+        
+        $result = $this->getMapper()->fetchObjectbyId($id);
+
+        if (empty($result)) {
+            throw new NotFoundException('HouseUser not found', 404);
+        }
+        return $result;
     }
 
-
-
-
-
-    public function create($houseUser) {
-        if ($houseUser instanceof HomeNet_Model_HouseUser_Interface) {
-            $h = $houseUser;
-        } elseif (is_array($houseUser)) {
-            $h = new HomeNet_Model_HouseUser(array('data' => $houseUser));
+/**
+     * Create a new HouseUser
+     * 
+     * @param HomeNet_Model_HouseUser_Interface|array $mixed
+     * @return HomeNet_Model_HouseUser (HomeNet_Model_HouseUser_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function create($mixed) {
+        if ($mixed instanceof HomeNet_Model_HouseUser_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_HouseUser(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid HouseUser');
+            throw new InvalidArgumentException('Invalid HouseUser');
         }
-        unset($houseUser);
-        $houseUser = $this->getMapper()->save($h);
+
+        $result = $this->getMapper()->save($object);
 
         $houseService = new HomeNet_Model_House_Service();
-        $house = $houseService->getHouseById($houseUser->house);
-        $houseService->clearCacheById($houseUser->house);
+        $house = $houseService->getHouseById($result->house);
+        $houseService->clearCacheById($result->house);
 
         $types = array('house' => 'House',
             'apartment' => 'Apartment',
@@ -97,46 +133,74 @@ class HomeNet_Model_HouseUser_Service {
         $table = new HomeNet_Model_DbTable_Alerts();
 
         //$table->add(HomeNet_Model_Alert::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added a new houseUser ' . $houseUser->name . ' to their ' . $types[$this->house->type] . ' ' . $this->house->name . ' to HomeNet', null, $id);
-        $table->add(HomeNet_Model_Alert::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added a new houseUser ' . $houseUser->name . ' to ' . $house->name . ' to HomeNet', null, $houseUser->id);
+        $table->add(HomeNet_Model_Alert::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added a new houseUser ' . $result->name . ' to ' . $house->name . ' to HomeNet', null, $result->id);
 
-
-        return $houseUser;
+        return $result;
     }
 
-    public function update($houseUser) {
-        if ($houseUser instanceof HomeNet_Model_HouseUser_Interface) {
-            $h = $houseUser;
-        } elseif (is_array($houseUser)) {
-            $h = new HomeNet_Model_HouseUser(array('data' => $houseUser));
+    /**
+     * Update an existing HouseUser
+     * 
+     * @param HomeNet_Model_HouseUser_Interface|array $mixed
+     * @return HomeNet_Model_HouseUser (HomeNet_Model_HouseUser_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function update($mixed) {
+        if ($mixed instanceof HomeNet_Model_HouseUser_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_HouseUser(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid HouseUser');
+            throw new InvalidArgumentException('Invalid HouseUser');
         }
-        $row = $this->getMapper()->save($h);
+
+        $result = $this->getMapper()->save($object);
 
         $houseService = new HomeNet_Model_House_Service();
-        $houseService->clearCacheById($this->house);
+        $houseService->clearCacheById($result->house);
 
-        return $row;
+        return $result;
+    }
+    
+     /**
+     * Delete a HouseUser
+     * 
+     * @param HomeNet_Model_HouseUser_Interface|array|integer $mixed
+     * @return boolean Success
+     * @throws InvalidArgumentException 
+     */
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = $this->getObjectbyId($mixed);
+        } elseif ($mixed instanceof HomeNet_Model_HouseUser_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_HouseUser(array('data' => $mixed));
+        } else {
+            throw new InvalidArgumentException('Invalid DeviceModel');
+        }
+
+        return $this->getMapper()->delete($object);
+
+        $result = $this->getMapper()->delete($houseUser);
+
+        $houseService = new HomeNet_Model_House_Service();
+        $houseService->clearCacheById($result->house);
+
+        return $result;
     }
 
-    public function delete($houseUser) {
-        if (is_int($houseUser)) {
-            $h = new HomeNet_Model_HouseUser();
-            $h->id = $houseUser;
-        } elseif ($houseUser instanceof HomeNet_Model_HouseUser_Interface) {
-            $h = $houseUser;
-        } elseif (is_array($houseUser)) {
-            $h = new HomeNet_Model_HouseUser(array('data' => $houseUser));
-        } else {
-            throw new HomeNet_Model_Exception('Invalid HouseUser');
+    /**
+     * Delete all HouseUsers. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
+            throw new Exception("Not Allowed");
         }
-
-        $row = $this->getMapper()->delete($houseUser);
-
-        $houseService = new HomeNet_Model_House_Service();
-        $houseService->clearCacheById($this->house);
-
-        return $row;
+        $this->getMapper()->deleteAll();
     }
 
 }

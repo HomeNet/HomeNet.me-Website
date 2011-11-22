@@ -1,8 +1,5 @@
 <?php
-
 /*
- * DatapointService.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -33,7 +30,10 @@ class HomeNet_Model_Datapoint_Service {
      * @var HomeNet_Model_DatapointsMapperInterface
      */
     protected $_mapper;
-
+    
+    /**
+     * @var string
+     */
     protected $_type;
 
     /**
@@ -41,10 +41,9 @@ class HomeNet_Model_Datapoint_Service {
      */
     public function getMapper() {
 
-        if(empty($this->_type)){
-            throw new Zend_Exception('Set Type First');
+        if (empty($this->_type)) {
+            throw new Exception('Set Type First');
         }
-
 
         if (empty($this->_mapper)) {
             $this->_mapper = new HomeNet_Model_Datapoint_MapperDbTable($this->_type);
@@ -60,47 +59,65 @@ class HomeNet_Model_Datapoint_Service {
         $this->_mapper = $mapper;
     }
 
-    public function setType($type){
+    /**
+     * @param string $type Datapoint type. Determines which table to use 
+     */
+    public function setType($type) {
+        //@todo validate type
         $this->_type = $type;
     }
 
-
-
-
-
     /**
      * @param int $id
-     * @return HomeNet_Model_Datapoint_Interface
+     * @return HomeNet_Model_Datapoint (HomeNet_Model_Datapoint_Interface)
      */
     public function getNewestDatapointBySubdevice($subdevice) {
-        $datapoint = $this->getMapper()->fetchNewestDatapointBySubdevice($subdevice);
+        $result = $this->getMapper()->fetchNewestDatapointBySubdevice($subdevice);
 
-        if (empty($datapoint)) {
-           // throw new HomeNet_Model_Exception('Datapoint not found', 404);
+        if (empty($result)) {
+            // throw new HomeNet_Model_Exception('Datapoint not found', 404);
         }
-        return $datapoint;
+        return $result;
     }
 
-    public function getAveragesBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end, $points = null){
-       $datapoints = $this->getMapper()->fetchAveragesBySubdeviceTimespan($subdevice, $start, $end, $points);
+    /**
+     * @param integer $subdevice  Subdevice Id
+     * @param Zend_Date $start
+     * @param Zend_Date $end
+     * @param int $points number of points to return
+     * @return HomeNet_Model_Datapoint[] (HomeNet_Model_Datapoint_Interface[]) 
+     */
+    public function getAveragesBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end, $points = null) {
+        $results = $this->getMapper()->fetchAveragesBySubdeviceTimespan($subdevice, $start, $end, $points);
 
-        if (empty($datapoints)) {
-           // throw new HomeNet_Model_Exception('Datapoint not found', 404);
+        if (empty($results)) {
+            // throw new HomeNet_Model_Exception('Datapoint not found', 404);
         }
-        return $datapoints;
+        return $results;
     }
 
-    public function getDatapointsBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end){
-        $datapoint = $this->getMapper()->fetchDatapointsBySubdeviceTimespan($subdevice, $start, $end);
+    /**
+     * @param integer $subdevice
+     * @param Zend_Date $start
+     * @param Zend_Date $end
+     * @return HomeNet_Model_Datapoint[] (HomeNet_Model_Datapoint_Interface[])  
+     */
+    public function getDatapointsBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end) {
+        $results = $this->getMapper()->fetchDatapointsBySubdeviceTimespan($subdevice, $start, $end);
 
-        if (empty($datapoint)) {
-          //  throw new HomeNet_Model_Exception('Datapoint not found', 404);
+        if (empty($results)) {
+            //  throw new HomeNet_Model_Exception('Datapoint not found', 404);
         }
-        return $datapoint;
+        return $results;
     }
 
-
-    public function add($type,$subdevice,$value,$timestamp){
+    /**
+     * @param string $type
+     * @param integer $subdevice
+     * @param mixed $value
+     * @param type $timestamp 
+     */
+    public function add($type, $subdevice, $value, $timestamp) {
         $this->setType($type);
         $datapoint = new HomeNet_Model_Datapoint();
         $datapoint->subdevice = $subdevice;
@@ -109,57 +126,70 @@ class HomeNet_Model_Datapoint_Service {
         $this->create($datapoint);
     }
 
-
-
-
     /**
-     * @param mixed $datapoint
-     * @return HomeNet_Model_DatapointInterface
+     * @param HomeNet_Model_Datapoint_Interface|array $mixed
+     * @return HomeNet_Model_Datapoint (HomeNet_Model_Datapoint_Interface)
+     * @throws InvalidArgumentException 
      */
-    public function create($datapoint) {
-        if ($datapoint instanceof HomeNet_Model_Datapoint_Interface) {
-            $h = $datapoint;
-        } elseif (is_array($datapoint)) {
-            $h = new HomeNet_Model_Datapoint(array('data' => $datapoint));
+    public function create($mixed) {
+        if ($mixed instanceof HomeNet_Model_Datapoint_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Datapoint(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Datapoint');
+            throw new InvalidArgumentException('Invalid Datapoint');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
     /**
-     * @param mixed $datapoint
-     * @return HomeNet_Model_DatapointInterface
+     * @param HomeNet_Model_Datapoint_Interface|array $mixed
+     * @return HomeNet_Model_Datapoint (HomeNet_Model_Datapoint_Interface)
+     * @throws InvalidArgumentException 
      */
-    public function update($datapoint) {
-        if ($datapoint instanceof HomeNet_Model_Datapoint_Interface) {
-            $h = $datapoint;
-        } elseif (is_array($datapoint)) {
-            $h = new HomeNet_Model_Datapoint(array('data' => $datapoint));
+    public function update($mixed) {
+        if ($mixed instanceof HomeNet_Model_Datapoint_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Datapoint(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Datapoint');
+            throw new InvalidArgumentException('Invalid Apikey');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
     /**
-     * @param mixed $datapoint
-     * @return HomeNet_Model_DatapointInterface
+     * @param HomeNet_Model_Datapoint_Interface|array|integer $mixed
+     * @return boolean Success
+     * @throws InvalidArgumentException 
      */
-    public function delete($datapoint) {
-        if (is_int($datapoint)) {
-            $h = new HomeNet_Model_Datapoint();
-            $h->id = $datapoint;
-        } elseif ($datapoint instanceof HomeNet_Model_Datapoint_Interface) {
-            $h = $datapoint;
-        } elseif (is_array($datapoint)) {
-            $h = new HomeNet_Model_Datapoint(array('data' => $datapoint));
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = new HomeNet_Model_Datapoint();
+            $object->id = $mixed;
+        } elseif ($mixed instanceof HomeNet_Model_Datapoint_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Datapoint(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Datapoint');
+            throw new InvalidArgumentException('Invalid Datapoint');
         }
 
-        return $this->getMapper()->delete($datapoint);
+        return $this->getMapper()->delete($object);
+    }
+
+    /**
+     * Delete all data. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
     }
 }

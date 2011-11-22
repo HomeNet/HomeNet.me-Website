@@ -1,8 +1,6 @@
 <?php
 
 /*
- * NodeService.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -29,18 +27,16 @@
  */
 class HomeNet_Model_Node_Service {
 
-    const INTERNET = 3;
-    const BASESTATION = 2;
-    const SENSOR = 1;
-
-
     /**
+     * Storage mapper
+     * 
      * @var HomeNet_Model_Node_MapperInterface
      */
     protected $_mapper;
 
-
     /**
+     * Storage mapper for Internet Nodes
+     * 
      * @var HomeNet_Model_Node_Internet_MapperInterface
      */
     protected $_internetMapper;
@@ -61,7 +57,7 @@ class HomeNet_Model_Node_Service {
         $this->_mapper = $mapper;
     }
 
-     /**
+    /**
      * @return HomeNet_Model_Node_MapperInterface
      */
     public function getInternetMapper() {
@@ -77,89 +73,138 @@ class HomeNet_Model_Node_Service {
         $this->_internetMapper = $mapper;
     }
 
-
-
     /**
+     * Get Node by id
+     * 
      * @param int $id
-     * @return HomeNet_Model_Node_Abstract
+     * @return HomeNet_Model_Node[] (HomeNet_Model_Node_Abstract[])
+     * @throws InvalidArgumentException
+     * @throws NotFoundException
      */
     public function getObjectById($id) {
-        $node = $this->getMapper()->fetchObjectById($id);
-
-        if (empty($node)) {
-            throw new HomeNet_Model_Exception('Node not found', 404);
+        if (empty($house)) {
+            throw new InvalidArgumentException('Invalid Node');
         }
 
-        if($node->type == HomeNet_Model_Node_Service::INTERNET){
+        $result = $this->getMapper()->fetchObjectById($id);
+
+        if (empty($result)) {
+            throw new NotFoundException('Node: ' . $id . ' Not Found', 404);
+        }
+
+        if ($result->type == HomeNet_Model_Node::INTERNET) {
             $internet = $this->getInternetMapper()->fetchObjectById($id);
-            
-            $node->fromArray($internet->toArray());
+
+            $result->fromArray($internet->toArray());
         }
 
-        return $node;
+        return $result;
     }
 
     /**
+     * Get Node by house id
+     * 
      * @param int $house
-     * @return HomeNet_Model_Node_Abstract[]
+     * @return HomeNet_Model_Node[] (HomeNet_Model_Node_Interface[])
+     * @throws InvalidArgumentException
      */
-    public function getObjectsByHouse($house){
-        $nodes = $this->getMapper()->fetchObjectsByHouse($house);
-
-        if (empty($nodes)) {
-            throw new HomeNet_Model_Exception('House not found', 404);
+    public function getObjectsByHouse($house) {
+        if (empty($house)) {
+            throw new InvalidArgumentException('Invalid House Id');
         }
-        return $nodes;
+
+        $results = $this->getMapper()->fetchObjectsByHouse($house);
+
+//        if (empty($result)) {
+//            throw new NotFoundException('House: '.$house.' Not Found', 404);
+//        }
+        return $results;
     }
-/**
- * @param int $room
- * @return HomeNet_Model_Node_Abstract[]
- */
-    public function getObjectsByRoom($room){
+
+    /**
+     * Get Nodes by room id
+     * 
+     * @param int $room
+     * @return HomeNet_Model_Node[] (HomeNet_Model_Node_Abstract[])
+     * @throws InvalidArgumentException
+     */
+    public function getObjectsByRoom($room) {
+        if (empty($room)) {
+            throw new InvalidArgumentException('Invalid Room Id');
+        }
+
         $nodes = $this->getMapper()->fetchObjectsByRoom($room);
 
-        if (empty($nodes)) {
-            throw new HomeNet_Model_Exception('Node not found', 404);
-        }
+//        if (empty($nodes)) {
+//            throw new NotFoundException('Node not found', 404);
+//        }
         return $nodes;
-    }    
-    /**
-     * @param int $house
-     * @param int $node
-     * @return HomeNet_Model_Node_Abstract
-     */
-    public function getObjectByHouseNode($house, $node){
-        $node = $this->getMapper()->fetchObjectByHouseNode($house, $node);
-        if (empty($node)) {
-            throw new HomeNet_Model_Exception('Node not found', 404);
-        }
-
-         if($node->type == HomeNet_Model_Node_Service::INTERNET){
-            $internet = $this->getInternetMapper()->fetchObjectById($id);
-            $node->fromArray($internet->toArray());
-        }
-
-        return $node;
     }
 
     /**
+     * Get Node by house and node id
+     * 
      * @param int $house
-     * @return int Next Id
+     * @param int $node
+     * @return HomeNet_Model_Node (HomeNet_Model_Node_Abstract)
+     * @throws InvalidArgumentException
+     * @throws NotFoundException
      */
-    public function getNextIdByHouse($house){
+    public function getObjectByHouseNode($house, $node) {
+        if (empty($house)) {
+            throw new InvalidArgumentException('Invalid House Id');
+        }
+        if (empty($node)) {
+            throw new InvalidArgumentException('Invalid Node Id');
+        }
+
+        $result = $this->getMapper()->fetchObjectByHouseNode($house, $node);
+
+        if (empty($result)) {
+            throw new NotFoundException('Node: ' . $node . ' not found', 404);
+        }
+
+        if ($result->type == HomeNet_Model_Node::INTERNET) {
+            $internet = $this->getInternetMapper()->fetchObjectById($id);
+            $result->fromArray($internet->toArray());
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the next Node id by house
+     * 
+     * @todo might be beter to do this with a SQL expression/subquery to prevent any concurrecy issues
+     * 
+     * @param int $house house id
+     * @return int Next Id
+     * @throws InvalidArgumentException
+     * @throws NotFoundException
+     */
+    public function getNextIdByHouse($house) {
+        if (empty($house)) {
+            throw new InvalidArgumentException('Invalid House Id');
+        }
         $id = $this->getMapper()->fetchNextIdByHouse($house);
 
         if (empty($id)) {
-            throw new HomeNet_Model_Exception('Node not found', 404);
+            throw new NotFoundException('House not found', 404);
         }
         return $id;
     }
-    
+
     /**
+     * Get the Id's of Internet nodes by house
+     * 
      * @param int $house
      * @return int[]
+     * @throws InvalidArgumentException
      */
-    public function getInternetIdsByHouse($house){
+    public function getInternetIdsByHouse($house) {
+        if (empty($house)) {
+            throw new InvalidArgumentException('Invalid House Id');
+        }
         $nodes = $this->getMapper()->fetchInternetIdsByHouse($house);
 
         if (empty($nodes)) {
@@ -167,7 +212,7 @@ class HomeNet_Model_Node_Service {
         }
         return $nodes;
     }
-    
+
 //    public function geObjectByIdWithModel($id, $columns){
 //        $node = $this->getMapper()->fetchNodeByIdWithModel($id, $columns);
 //
@@ -176,17 +221,25 @@ class HomeNet_Model_Node_Service {
 //        }
 //        return $node;
 //    }
-
 //     public function getDriverById($id) {
 //        $node = $this->getNodeByIdWithModel($id, array('name','driver', 'max_devices'));
 //
 //        return $this->_getDriver($node);
 //    }
 
-    public function newObjectByModel($id){
+    /**
+     * Get new Node by model
+     * 
+     * @param type $id
+     * @return driver 
+     * @throws InvalidArgumentException
+     */
+    public function newObjectByModel($id) {
+        if (empty($house)) {
+            throw new InvalidArgumentException('Invalid House Id');
+        }
 
         $nmService = new HomeNet_Model_NodeModel_Service();
-
         $model = $nmService->getObjectById($id);
 
         $driver = $model->driver;
@@ -194,27 +247,27 @@ class HomeNet_Model_Node_Service {
         return new $driver(array('model' => $model));
     }
 
-
-
-
-
-
-
-    public function create($node) {
-
-        if ($node instanceof HomeNet_Model_Node_Interface) {
-            $h = $node;
-        } elseif (is_array($node)) {
-            $h = new HomeNet_Model_Node(array('data' => $node));
+    /**
+     * Create a new Node
+     * 
+     * @param HomeNet_Model_Node_Interface|array $mixed
+     * @return HomeNet_Model_Node (HomeNet_Model_Node_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function create($mixed) {
+        if ($mixed instanceof HomeNet_Model_Node_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Node(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Node');
+            throw new InvalidArgumentException('Invalid Node');
         }
-        unset($node);
-        $node = $this->getMapper()->save($h);
-        $h->id = $node->id; //patch to fix null id, $node missing some parameters
-        if($h->type == HomeNet_Model_Node_Service::INTERNET){
-            
-            $this->getInternetMapper()->save($h);
+
+        $node = $this->getMapper()->save($object);
+        $object->id = $node->id; //patch to fix null id, $node missing some parameters
+        if ($object->type == HomeNet_Model_Node::INTERNET) {
+
+            $this->getInternetMapper()->save($object);
         }
 
 //        $houseService = new HomeNet_Model_HousesService();
@@ -233,52 +286,79 @@ class HomeNet_Model_Node_Service {
 //        $table->add(HomeNet_Model_Alert::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added a new node ' . $node->name . ' to ' . $house->name . ' to HomeNet', null, $node->id);
 
 
-        return $h;
+        return $object;
     }
 
-    public function update($node) {
-        if ($node instanceof HomeNet_Model_Node_Interface) {
-            $h = $node;
-        } elseif (is_array($node)) {
-            $h = new HomeNet_Model_Node(array('data' => $node));
+    /**
+     * Update an existing Node
+     * 
+     * @param HomeNet_Model_Node_Interface|array $mixed
+     * @return HomeNet_Model_Node (HomeNet_Model_Node_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function update($mixed) {
+        if ($mixed instanceof HomeNet_Model_Node_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Node(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Node');
-        }
-        $row = $this->getMapper()->save($h);
-
-        if($h->type == HomeNet_Model_Node_Service::INTERNET){
-            $this->getInternetMapper()->save($h);
+            throw new InvalidArgumentException('Invalid Node');
         }
 
-/* @todo add message */
+        $result = $this->getMapper()->save($object);
 
-        return $row;
-    }
-
-    public function delete($node) {
-        if (is_int($node)) {
-            $h = new HomeNet_Model_Node();
-            $h->id = $node;
-        } elseif ($node instanceof HomeNet_Model_Node_Interface) {
-            $h = $node;
-        } elseif (is_array($node)) {
-            $h = new HomeNet_Model_Node(array('data' => $node));
-        } else {
-            throw new HomeNet_Model_Exception('Invalid Node');
+        if ($object->type == HomeNet_Model_Node::INTERNET) {
+            $this->getInternetMapper()->save($object);
         }
-
-        $row = $this->getMapper()->delete($h);
-
-         if($h->type == HomeNet_Model_Node_Service::INTERNET){
-            $this->getInternetMapper()->delete($h);
-        }
-
-       // $houseService = new HomeNet_Model_House_Service();
-       // $houseService->clearCacheById($this->house);
 
         /* @todo add message */
 
-        return $row;
+        return $result;
+    }
+
+    /**
+     * Delete a Node
+     * 
+     * @param HomeNet_Model_Node_Interface|array|integer $mixed
+     * @return boolean Success
+     * @throws InvalidArgumentException 
+     */
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = $this->getObjectbyId($mixed);
+        } elseif ($mixed instanceof HomeNet_Model_Node_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Node(array('data' => $mixed));
+        } else {
+            throw new InvalidArgumentException('Invalid Node');
+        }
+
+        $result = $this->getMapper()->delete($object);
+
+        if ($object->type == HomeNet_Model_Node::INTERNET) {
+            $this->getInternetMapper()->delete($object);
+        }
+
+        // $houseService = new HomeNet_Model_House_Service();
+        // $houseService->clearCacheById($this->house);
+
+        /* @todo add message */
+
+        return $result;
+    }
+
+    /**
+     * Delete all Nodes. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
     }
 
 }

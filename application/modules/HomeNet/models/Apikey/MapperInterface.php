@@ -37,5 +37,7 @@ interface HomeNet_Model_Apikey_MapperInterface {
     public function save(HomeNet_Model_Apikey_Interface $apikey);
 
     public function delete(HomeNet_Model_Apikey_Interface $apikey);
+    
+    public function deleteAll();
 
 }

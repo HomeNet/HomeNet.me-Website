@@ -1,8 +1,6 @@
 <?php
 
 /*
- * DeviceService.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -30,11 +28,15 @@
 class HomeNet_Model_DeviceModel_Service {
 
     /**
+     * Storage mapper
+     * 
      * @var HomeNet_Model_DevicesMapper_Interface
      */
     protected $_mapper;
 
     /**
+     * Get storage mapper
+     * 
      * @return HomeNet_Model_DevicesMapper_Interface
      */
     public function getMapper() {
@@ -46,49 +48,71 @@ class HomeNet_Model_DeviceModel_Service {
         return $this->_mapper;
     }
 
+    /**
+     * Set get mapper
+     * 
+     * @param HomeNet_Model_DeviceModel_MapperInterface $mapper 
+     */
     public function setMapper(HomeNet_Model_DeviceModel_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
-
-
-
-
- 
-
-
-
-
-    
+    /**
+     * Get DeviceModel by id
+     * 
+     * @param integer $id
+     * @return HomeNet_Model_DeviceModel (HomeNet_Model_DeviceModel_Inteface)
+     * @throws InvalidArgumentException
+     * @throws NotFoundException
+     */
     public function getObjectById($id) {
-        $deviceModel = $this->getMapper()->fetchObjectById($id);
-
-        if (empty($deviceModel)) {
-            throw new HomeNet_Model_Exception('DeviceModel not found', 404);
+        if (empty($id) || !is_numeric($id)) {
+            throw new InvalidArgumentException('Invalid Id');
         }
-        return $deviceModel;
+        $result = $this->getMapper()->fetchObjectById($id);
+
+        if (empty($result)) {
+            throw new NotFoundException('DeviceModel: '.$id.' not found', 404);
+        }
+        return $result;
     }
 
+    /**
+     * Get all DeviceModels
+     * 
+     * @return HomeNet_Model_DeviceModel[] (HomeNet_Model_DeviceModel_Inteface[])
+     */
     public function getObjects() {
-        $deviceModel = $this->getMapper()->fetchObjects();
+        $result = $this->getMapper()->fetchObjects();
 
-        if (empty($deviceModel)) {
-            throw new HomeNet_Model_Exception('DeviceModel not found', 404);
-        }
-        return $deviceModel;
+        return $result;
     }
 
+    /**
+     * Get DeviceModels by status
+     * 
+     * @param integer $status
+     * @return HomeNet_Model_DeviceModel (HomeNet_Model_DeviceModel_Inteface) 
+     */
     public function getObjectsByStatus($status = 1) {
-        $deviceModel = $this->getMapper()->fetchObjectsByStatus($status);
-
-        if (empty($deviceModel)) {
-            throw new HomeNet_Model_Exception('DeviceModel not found', 404);
+        if (empty($status) || !is_numeric($status)) {
+            throw new InvalidArgumentException('Invalid Status');
         }
-        return $deviceModel;
+        $result = $this->getMapper()->fetchObjectsByStatus($status);
+//
+//        if (empty($deviceModel)) {
+//            throw new NotFoundException('DeviceModel not found', 404);
+//        }
+        return $result;
     }
 
-    public function getCategories(){
-         $array = array(
+    /**
+     * Get the list of device categories 
+     * 
+     * @return array  
+     */
+    public function getCategories() {
+        $array = array(
             0 => 'Code Stubs',
             1 => 'Temperature Sensors',
             2 => 'Humidity Sensors',
@@ -101,47 +125,78 @@ class HomeNet_Model_DeviceModel_Service {
 
         // die(debugArray($array));
 
-         return $array;
-
-    } 
-
-    public function create($deviceModel) {
-        if ($deviceModel instanceof HomeNet_Model_DeviceModel_Interface) {
-            $h = $deviceModel;
-        } elseif (is_array($deviceModel)) {
-            $h = new HomeNet_Model_DeviceModel(array('data' => $deviceModel));
-        } else {
-            throw new HomeNet_Model_Exception('Invalid DeviceModel');
-        }
-
-        return $this->getMapper()->save($h);
+        return $array;
     }
 
-    public function update($deviceModel) {
-        if ($deviceModel instanceof HomeNet_Model_DeviceModel_Interface) {
-            $h = $deviceModel;
-        } elseif (is_array($deviceModel)) {
-            $h = new HomeNet_Model_DeviceModel(array('data' => $deviceModel));
+    /**
+     * Create a new DeviceModel
+     * 
+     * @param HomeNet_Model_DeviceModel_Interface|array $mixed
+     * @return HomeNet_Model_DeviceModel (HomeNet_Model_DeviceModel_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function create($mixed) {
+        if ($mixed instanceof HomeNet_Model_DeviceModel_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_DeviceModel(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid DeviceModel');
+            throw new InvalidArgumentException('Invalid DeviceModel');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
-    public function delete($deviceModel) {
-        if (is_int($deviceModel)) {
-            $h = new HomeNet_Model_DeviceModel();
-            $h->id = $deviceModel;
-        } elseif ($deviceModel instanceof HomeNet_Model_DeviceModel_Interface) {
-            $h = $deviceModel;
-        } elseif (is_array($deviceModel)) {
-            $h = new HomeNet_Model_Device(array('data' => $deviceModel));
+    /**
+     * Update an existing DeviceModel
+     * 
+     * @param HomeNet_Model_DeviceModel_Interface|array $mixed
+     * @return HomeNet_Model_DeviceModel (HomeNet_Model_DeviceModel_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function update($mixed) {
+        if ($mixed instanceof HomeNet_Model_DeviceModel_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_DeviceModel(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid DeviceModel');
+            throw new InvalidArgumentException('Invalid DeviceModel');
         }
 
-        return $this->getMapper()->delete($h);
+        return $this->getMapper()->save($object);
     }
 
+    /**
+     * Delete a DeviceModel
+     * 
+     * @param HomeNet_Model_DeviceModel_Interface|array|integer $mixed
+     * @return boolean Success
+     * @throws InvalidArgumentException 
+     */
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = $this->getObjectbyId($mixed);
+        } elseif ($mixed instanceof HomeNet_Model_DeviceModel_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_DeviceModel(array('data' => $mixed));
+        } else {
+            throw new InvalidArgumentException('Invalid DeviceModel');
+        }
+
+        return $this->getMapper()->delete($object);
+    }
+
+    /**
+     * Delete all DeviceModels. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
+    }
 }

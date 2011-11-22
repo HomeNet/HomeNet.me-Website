@@ -37,10 +37,12 @@ interface HomeNet_Model_Device_MapperInterface {
 
     public function fetchObjectByHouseNodeDevice($house, $node, $device);
 
-    public function fetchDeviceByIdWithNode($id);
+    public function fetchObjectByIdWithNode($id);
 
-    public function save(HomeNet_Model_Device_Interface $device);
+    public function save(HomeNet_Model_Device_Interface $object);
 
-    public function delete(HomeNet_Model_Device_Interface $device);
+    public function delete(HomeNet_Model_Device_Interface $object);
+    
+    public function deleteAll();
 }
 

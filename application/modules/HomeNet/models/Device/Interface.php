@@ -34,5 +34,5 @@ interface HomeNet_Model_Device_Interface {
 
     public function loadModel(HomeNet_Model_DeviceModel_Interface $model);
 
-    public function getDriver();
+    public function getPlugin();
 }

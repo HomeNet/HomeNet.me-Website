@@ -32,12 +32,12 @@ class HomeNet_Model_SubdeviceModel_MapperDbTable implements HomeNet_Model_Subdev
     protected $_table = null;
 
     /**
-     *
-     * @return HomeNet_Model_DbTable_SubdeviceModels;
+     * @return Zend_Db_Table;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new HomeNet_Model_DbTable_SubdeviceModels();
+            $this->_table = new Zend_Db_Table('homenet_subdevice_models');
+            $this->_table->setRowClass('HomeNet_Model_SubdeviceModel_DbTableRow');
         }
         return $this->_table;
     }
@@ -46,19 +46,19 @@ class HomeNet_Model_SubdeviceModel_MapperDbTable implements HomeNet_Model_Subdev
         $this->_table = $table;
     }
 
-    public function fetchSubdeviceModels() {
+    public function fetchObjects() {
 
         $select = $this->getTable()->select()
                         ->order('id ASC');//array('id ', 'name asc')
         return $this->getTable()->fetchAll($select);
     }
 
-    public function fetchSubdeviceModelById($id) {
+    public function fetchObjectById($id) {
 
         return $this->getTable()->find($id)->current();
     }
 
-    public function fetchSubdeviceModelsByIds($ids) {
+    public function fetchObjectsByIds($ids) {
        // die(debugArray($ids));
         $select = $this->getTable()->select('settings')->where('id in (?)', array_unique($ids));
         $rows = $this->getTable()->fetchAll($select);
@@ -69,38 +69,35 @@ class HomeNet_Model_SubdeviceModel_MapperDbTable implements HomeNet_Model_Subdev
         return $array;
     }
 
+    public function save(HomeNet_Model_SubdeviceModel_Interface $object) {
 
-
-
-    public function save(HomeNet_Model_SubdeviceModel_Interface $subdeviceModel) {
-
-
-        if (($subdeviceModel instanceof HomeNet_Model_DbTableRow_SubdeviceModel) && ($subdeviceModel->isConnected())) {
-            $subdeviceModel->save();
+        if (($object instanceof HomeNet_Model_DbTableRow_SubdeviceModel) && ($object->isConnected())) {
+            $object->save();
             return;
-        } elseif (!is_null($subdeviceModel->id)) {
-            $row = $this->getTable()->find($subdeviceModel->id)->current();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current();
         } else {
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($subdeviceModel->toArray());
+        $row->fromArray($object->toArray());
        // die(debugArray($row));
-        $row->save();
-
-        return $row;
+        return $row->save();
     }
 
-    public function delete(HomeNet_Model_SubdeviceModel_Interface $subdeviceModel) {
+    public function delete(HomeNet_Model_SubdeviceModel_Interface $object) {
 
-        if (($subdeviceModel instanceof HomeNet_Model_DbTableRow_SubdeviceModel) && ($subdeviceModel->isConnected())) {
-            $subdeviceModel->delete();
-            return true;
-        } elseif (!is_null($subdeviceModel->id)) {
-            $row = $this->getTable()->find($subdeviceModel->id)->current()->delete();
-            return;
+        if (($object instanceof HomeNet_Model_DbTableRow_SubdeviceModel) && ($object->isConnected())) {
+            return $object->delete();
+        } elseif (!is_null($object->id)) {
+            return $this->getTable()->find($object->id)->current()->delete();
         }
 
         throw new HomeNet_Model_Exception('Invalid SubdeviceModel');
+    }
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'production'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 }

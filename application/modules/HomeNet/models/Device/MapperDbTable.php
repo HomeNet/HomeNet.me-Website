@@ -31,12 +31,13 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
 
     protected $_table = null;
 
-    /**
-     * @return HomeNet_Model_DbTable_Devices;
+     /**
+     * @return Zend_Db_Table;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new HomeNet_Model_DbTable_Devices();
+            $this->_table = new Zend_Db_Table('homenet_devices');
+            $this->_table->setRowClass('HomeNet_Model_Device_DbTableRow');
         }
         return $this->_table;
     }
@@ -45,7 +46,7 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
         $this->_table = $table;
     }
 
-     protected function _getDriver($subdevice){
+     protected function _getPlugin($subdevice){
 
         if(empty($subdevice->driver)){
             throw new HomeNet_Model_Exception('Missing Subdevice Driver');
@@ -58,10 +59,10 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
         return new $subdevice->driver(array('data' => $subdevice->toArray()));
     }
 
-    protected function _getDrivers($subdevices){
+    protected function _getPlugins($subdevices){
         $objects = array();
         foreach($subdevices as $subdevice){
-            $objects[] = $this->_getDriver($subdevice);
+            $objects[] = $this->_getPlugin($subdevice);
         }
 
         return $objects;
@@ -173,7 +174,7 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
         return $this->_getDriver($row);
     }
 
-    public function fetchDeviceByIdWithNode($id) {
+    public function fetchObjectByIdWithNode($id) {
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->from(null, array('homenet_devices.position AS device'))
@@ -184,35 +185,35 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
         return $this->getTable()->fetchRow($select);
     }
 
-    public function save(HomeNet_Model_Device_Interface $device) {
+    public function save(HomeNet_Model_Device_Interface $object) {
 
-        if (($device instanceof HomeNet_Model_DbTableRow_Device) && ($device->isConnected())) {
-            $device->save();
-            return;
-        } elseif (!is_null($device->id)) {
-            $row = $this->getTable()->find($device->id)->current();
+        if (($object instanceof HomeNet_Model_DbTableRow_Device) && ($object->isConnected())) {
+            return $object->save();
+        } elseif (!is_null($object->id)) {
+            $row = $this->getTable()->find($object->id)->current();
         } else {
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($device->toArray());
-        //die(debugArray($row));
-        $row->save();
+        $row->fromArray($object->toArray());
 
-        return $row;
+        return $row->save();
     }
 
-    public function delete(HomeNet_Model_Device_Interface $device) {
+    public function delete(HomeNet_Model_Device_Interface $object) {
 
-        if (($device instanceof HomeNet_Model_DbTableRow_Device) && ($device->isConnected())) {
-            $device->delete();
-            return true;
-        } elseif (!is_null($device->id)) {
-            $row = $this->getTable()->find($device->id)->current()->delete();
-            return;
+        if (($object instanceof HomeNet_Model_DbTableRow_Device) && ($object->isConnected())) {
+            return $object->delete();
+        } elseif (!is_null($object->id)) {
+            return $this->getTable()->find($object->id)->current()->delete();
         }
 
-        throw new HomeNet_Model_Exception('Invalid Device');
+        throw new InvalidArgumentException('Invalid Device');
+    }
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'production'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 
 }

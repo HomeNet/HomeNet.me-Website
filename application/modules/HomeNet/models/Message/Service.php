@@ -30,11 +30,15 @@
 class HomeNet_Model_Message_Service {
 
     /**
+     * Storage mapper
+     * 
      * @var HomeNet_Model_Message_MapperInterface
      */
     protected $_mapper;
 
     /**
+     * Get storage mapper
+     * 
      * @return HomeNet_Model_Message_MapperInterface
      */
     public function getMapper() {
@@ -46,27 +50,60 @@ class HomeNet_Model_Message_Service {
         return $this->_mapper;
     }
 
+    /**
+     * Set storage mapper
+     * 
+     * @param HomeNet_Model_Message_MapperInterface $mapper 
+     */
     public function setMapper(HomeNet_Model_Message_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
 
     /**
-     * @param int $id
-     * @return HomeNet_Model_MessageInterface
+     * Get messages by user
+     * 
+     * @param int $user
+     * @return HomeNet_Model_Message[] (HomeNet_Model_Message_Interface[])
+     * @throws InvalidArgumentException
      */
     public function getObjectsByUser($user) {
-        $messages = $this->getMapper()->fetchMessagesByUser($user);
-
-        if (empty($messages)) {
-           // throw new HomeNet_Model_Exception('User not found', 404);
+        if (empty($user) || !is_numeric($user)) {
+            throw new InvalidArgumentException('Invalid User');
         }
-        return $messages;
+
+        $results = $this->getMapper()->fetchMessagesByUser($user);
+        return $results;
     }
 
+    /**
+     * Get all messages relevant to the user or to the house
+     * 
+     * @param integer $house House id
+     * @param integer $user User id
+     * @return HomeNet_Model_Message[] (HomeNet_Model_Message_Interface[])
+     * @throws InvalidArgumentException
+     */
     public function getObjectsByHouseOrUser($house, $user) {
+        if (empty($house) || !is_numeric($user)) {
+            throw new InvalidArgumentException('Invalid House');
+        }
+        if (empty($user) || !is_numeric($user)) {
+            throw new InvalidArgumentException('Invalid User');
+        }
         return $this->getMapper()->fetchMessagesByHouseOrUser($house, $user);
     }
 
+    /**
+     * Shortcut for creating a new message
+     * 
+     * @param integer $level
+     * @param string $message 
+     * @param integer $user User is
+     * @param integer $house House id
+     * @param integer $room Room id
+     * @param integer $subdevice Subdevice id
+     * @return HomeNet_Model_Message (HomeNet_Model_Message_Interface)
+     */
     public function add($level, $message, $user = null, $house =null, $room = null, $subdevice = null) {
 
         $row = new HomeNet_Model_Message();
@@ -76,46 +113,79 @@ class HomeNet_Model_Message_Service {
         $row->house = $house;
         $row->subdevice = $subdevice;
 
-        $this->create($row);
+        return $this->create($row);
     }
 
-    public function create($message) {
-        if ($message instanceof HomeNet_Model_Message_Interface) {
-            $h = $message;
-        } elseif (is_array($message)) {
-            $h = new HomeNet_Model_Message(array('data' => $message));
+    /**
+     * Create a new Message
+     * 
+     * @param HomeNet_Model_Message_Interface|array $mixed
+     * @return HomeNet_Model_Message (HomeNet_Model_Message_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function create($mixed) {
+        if ($mixed instanceof HomeNet_Model_Message_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Message(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Room');
+            throw new InvalidArgumentException('Invalid Message');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
-    public function update($message) {
-        if ($message instanceof HomeNet_Model_Message_Interface) {
-            $h = $message;
-        } elseif (is_array($message)) {
-            $h = new HomeNet_Model_Message(array('data' => $message));
+    /**
+     * Update an existing Message
+     * 
+     * @param HomeNet_Model_Message_Interface|array $mixed
+     * @return HomeNet_Model_Message (HomeNet_Model_Message_Interface)
+     * @throws InvalidArgumentException 
+     */
+    public function update($mixed) {
+        if ($mixed instanceof HomeNet_Model_Message_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Message(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Room');
+            throw new InvalidArgumentException('Invalid Message');
         }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
-    public function delete($message) {
-        if (is_int($message)) {
-            $h = new HomeNet_Model_Message();
-            $h->id = $message;
-        } elseif ($message instanceof HomeNet_Model_Message_Interface) {
-            $h = $message;
-        } elseif (is_array($message)) {
-            $h = new HomeNet_Model_Message(array('data' => $message));
+    /**
+     * Delete a Message
+     * 
+     * @param HomeNet_Model_Message_Interface|array|integer $mixed
+     * @return boolean Success
+     * @throws InvalidArgumentException 
+     */
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = $this->getObjectbyId($mixed);
+        } elseif ($mixed instanceof HomeNet_Model_Message_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new HomeNet_Model_Message(array('data' => $mixed));
         } else {
-            throw new HomeNet_Model_Exception('Invalid Room');
+            throw new InvalidArgumentException('Invalid Message');
         }
 
-        return $this->getMapper()->delete($h);
+        return $this->getMapper()->delete($object);
+    }
+
+    /**
+     * Delete all Messages. Used for unit testing/Will not work in production 
+     *
+     * @return boolean Success
+     * @throws NotAllowedException
+     */
+    public function deleteAll() {
+        if (APPLICATION_ENV == 'production') {
+            throw new Exception("Not Allowed");
+        }
+        $this->getMapper()->deleteAll();
     }
 
 }

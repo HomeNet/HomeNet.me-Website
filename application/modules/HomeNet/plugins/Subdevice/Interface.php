@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -21,37 +20,17 @@
 
 /**
  * @package HomeNet
- * @subpackage Datapoint
+ * @subpackage Subdevices
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_DbTableRow_Datapoint extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_Datapoint_Interface {
+interface HomeNet_Model_Subdevice_Interface {
 
-//    public $rooms;
+    public function __construct(array $config = array());
 
-    public function fromArray(array $array){
+    public function toArray();
 
-        foreach($array as $key => $value){
-            if(array_key_exists($key, $this->_data)){
-                $this->$key = $value;
-            }
-        }
-    }
+    public function fromArray(array $array);
 
-    public function toArray(){
-        return parent::toArray();
-    }
-
-    public function init(){
-//        $this->uncompress();
-    }
-    
-    public function save(){
-      
-        if (parent::save()) {
-
-            return $this;
-        }
-    }
+    public function loadModel(HomeNet_Model_SubdeviceModel_Interface $model);
 }
-

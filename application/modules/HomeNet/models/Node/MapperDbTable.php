@@ -31,16 +31,18 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
 
     protected $_table = null;
 
-    /**
-     *
-     * @return HomeNet_Model_DbTable_Nodes;
+     /**
+     * @return Zend_Db_Table;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new HomeNet_Model_DbTable_Nodes();
+            $this->_table = new Zend_Db_Table('homenet_nodes');
+            $this->_table->setRowClass('HomeNet_Model_Node_DbTableRow');
         }
         return $this->_table;
     }
+    
+    
 
     public function setTable($table) {
         $this->_table = $table;
@@ -236,5 +238,11 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
         }
 
         throw new HomeNet_Model_Exception('Invalid Room');
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'production'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 }

@@ -1,7 +1,5 @@
 <?php
 /* 
- * HouseMapperInterface.php
- * 
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * 
  * This file is part of HomeNet.
@@ -28,16 +26,18 @@
  */
 interface HomeNet_Model_House_MapperInterface {
 
-    public function fetchHouseById($id);
+    public function fetchObjectById($id);
 
-    public function fetchHousesByIds($ids);
+    public function fetchObjectsByIds($ids);
 
-    public function fetchHouseByIdWithRooms($id);
+    public function fetchObjectByIdWithRooms($id);
 
-    public function fetchHousesByIdsWithRooms($ids);
+    public function fetchObjectsByIdsWithRooms($ids);
 
-    public function save(HomeNet_Model_House_Interface $house);
+    public function save(HomeNet_Model_House_Interface $object);
 
-    public function delete(HomeNet_Model_House_Interface $house);
+    public function delete(HomeNet_Model_House_Interface $object);
+    
+    public function deleteAll();
 
 }

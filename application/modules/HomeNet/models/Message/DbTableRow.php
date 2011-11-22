@@ -21,11 +21,11 @@
 
 /**
  * @package HomeNet
- * @subpackage SubdeviceModel
+ * @subpackage Message
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_DbTableRow_SubdeviceModel extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_SubdeviceModel_Interface {
+class HomeNet_Model_Message_DbTableRow extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_Message_Interface {
 
 //    public $rooms;
 
@@ -43,25 +43,13 @@ class HomeNet_Model_DbTableRow_SubdeviceModel extends Zend_Db_Table_Row_Abstract
     }
 
     public function init(){
-        $this->uncompress();
+       // $this->uncompress();
     }
     
-    public function uncompress(){
-        if(is_string($this->settings)){
-            $this->settings = unserialize($this->settings);
-        }
-    }
-    
-    public function compress(){
-        if(is_array($this->settings)){
-            $this->settings = serialize($this->settings);
-        }
-    }
-
-    public function save(){
-      $this->compress();
+   public function save(){
+//      $this->compress();
         if (parent::save()) {
-            $this->uncompress();
+//            $this->uncompress();
             return $this;
         }
     }
@@ -90,33 +78,11 @@ class HomeNet_Model_DbTableRow_SubdeviceModel extends Zend_Db_Table_Row_Abstract
 //        }
 //
 //        $service = new HomeNet_Model_RoomsService();
-//        $rooms = $service->getRoomsBySubdeviceModel($this->id);
+//        $rooms = $service->getRoomsByMessage($this->id);
 //        $this->rooms = $rooms;
 //
 //        return $rooms;
 //    }
-
-
-    public function getSetting($setting){
-        if(isset($this->settings[$setting])){
-            return $this->settings[$setting];
-        }
-        return null;
-    }
-
-    public function setSetting($setting, $value){
-        if(is_null($this->settings)){
-            $this->settings = array($setting => $value);
-            return;
-        }
-        //die(debugArray($this->settings));
-
-        $this->settings = array_merge($this->settings,array($setting => $value));
-    }
-
-    public function clearSetting($setting){
-        unset($this->settings[$setting]);
-    }
 
 }
 

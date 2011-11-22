@@ -33,7 +33,9 @@ interface HomeNet_Model_Message_MapperInterface {
 
     public function fetchMessagesByHouseOrUser($house, $user);
 
-    public function save(HomeNet_Model_Message_Interface $message);
+    public function save(HomeNet_Model_Message_Interface $object);
 
-    public function delete(HomeNet_Model_Message_Interface $message);
+    public function delete(HomeNet_Model_Message_Interface $object);
+    
+    public function deleteAll();
 }

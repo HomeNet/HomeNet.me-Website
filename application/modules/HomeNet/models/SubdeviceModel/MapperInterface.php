@@ -28,13 +28,15 @@
  */
 interface HomeNet_Model_SubdeviceModel_MapperInterface {
 
-    public function fetchSubdeviceModels();
+    public function fetchObjects();
 
-    public function fetchSubdeviceModelById($id);
+    public function fetchObjectById($id);
 
-    public function fetchSubdeviceModelsByIds($ids);
+    public function fetchObjectsByIds($ids);
 
-    public function save(HomeNet_Model_SubdeviceModel_Interface $subdeviceModel);
+    public function save(HomeNet_Model_SubdeviceModel_Interface $object);
 
-    public function delete(HomeNet_Model_SubdeviceModel_Interface $subdeviceModel);
+    public function delete(HomeNet_Model_SubdeviceModel_Interface $object);
+    
+    public function deleteAll();
 }

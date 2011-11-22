@@ -32,11 +32,12 @@ class HomeNet_Model_Message_MapperDbTable implements HomeNet_Model_Message_Mappe
     protected $_table = null;
 
     /**
-     * @return HomeNet_Model_DbTable_Rooms;
+     * @return Zend_Db_Table;
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new HomeNet_Model_DbTable_Messages();
+            $this->_table = new Zend_Db_Table('homenet_messages');
+            $this->_table->setRowClass('HomeNet_Model_Message_DbTableRow');
         }
         return $this->_table;
     }
@@ -99,5 +100,11 @@ class HomeNet_Model_Message_MapperDbTable implements HomeNet_Model_Message_Mappe
 
         throw new HomeNet_Model_Exception('Invalid Room');
     }
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'production'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
+    }
+    
 
 }

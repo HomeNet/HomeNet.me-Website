@@ -21,11 +21,11 @@
 
 /**
  * @package HomeNet
- * @subpackage Message
+ * @subpackage Apikey
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_DbTableRow_Message extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_Message_Interface {
+class HomeNet_Model_Apikey_DbTableRow extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_Apikey_Interface {
 
 //    public $rooms;
 
@@ -43,10 +43,30 @@ class HomeNet_Model_DbTableRow_Message extends Zend_Db_Table_Row_Abstract implem
     }
 
     public function init(){
-       // $this->uncompress();
+//        $this->uncompress();
     }
     
-   public function save(){
+//    public function uncompress(){
+//        if(is_string($this->settings)){
+//            $this->settings = unserialize($this->settings);
+//        }
+//
+//        if(is_string($this->permissions)){
+//            $this->permissions = unserialize($this->permissions);
+//        }
+//    }
+    
+    public function compress(){
+//        if(is_array($this->settings)){
+//            $this->settings = serialize($this->settings);
+//        }
+//
+//        if(is_array($this->permissions)){
+//            $this->permissions = serialize($this->permissions);
+//        }
+    }
+
+    public function save(){
 //      $this->compress();
         if (parent::save()) {
 //            $this->uncompress();
@@ -54,34 +74,25 @@ class HomeNet_Model_DbTableRow_Message extends Zend_Db_Table_Row_Abstract implem
         }
     }
 
-//    /**
-//     * @param int $id
-//     * @return HomeNet_Model_RoomInterface
-//     */
-//    public function getRoomById($id){
-//
-//        if(!empty($this->rooms[$id])){
-//            return $this->rooms[$id];
+//    public function getSetting($setting){
+//        if(isset($this->settings[$setting])){
+//            return $this->settings[$setting];
 //        }
-//
-//        $service = new HomeNet_Model_RoomsService();
-//        $room = $service->getRoomById($id);
-//        $this->rooms[$room->id] = $room;
-//
-//        return $room;
+//        return null;
 //    }
 //
-//    public function getRooms(){
-//
-//        if(!is_null($this->rooms)){
-//            return $this->rooms;
+//    public function setSetting($setting, $value){
+//        if(is_null($this->settings)){
+//            $this->settings = array($setting => $value);
+//            return;
 //        }
+//        //die(debugArray($this->settings));
 //
-//        $service = new HomeNet_Model_RoomsService();
-//        $rooms = $service->getRoomsByMessage($this->id);
-//        $this->rooms = $rooms;
+//        $this->settings = array_merge($this->settings,array($setting => $value));
+//    }
 //
-//        return $rooms;
+//    public function clearSetting($setting){
+//        unset($this->settings[$setting]);
 //    }
 
 }

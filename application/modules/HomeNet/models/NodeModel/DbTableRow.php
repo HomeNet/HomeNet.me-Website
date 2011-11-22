@@ -25,19 +25,17 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_DbTableRow_Node extends Zend_Db_Table_Row_Abstract { //implements HomeNet_Model_Node_Interface 
+class HomeNet_Model_NodeModel_DbTableRow extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_NodeModel_Interface {
 
 //    public $rooms;
 
     public function fromArray(array $array){
 
-       
         foreach($array as $key => $value){
             if(array_key_exists($key, $this->_data)){
                 $this->$key = $value;
             }
         }
-        // die(debugArray($this));
     }
 
     public function toArray(){
@@ -49,32 +47,27 @@ class HomeNet_Model_DbTableRow_Node extends Zend_Db_Table_Row_Abstract { //imple
     }
     
     public function uncompress(){
-        if(isset($this->settings) && is_string($this->settings)){
+        if(is_string($this->settings)){
             $this->settings = unserialize($this->settings);
         }
-
-//        if(is_string($this->permissions)){
-//            $this->permissions = unserialize($this->permissions);
-//        }
+        if(empty($this->settings)){
+            $this->settings = array();
+        }
     }
-
+    
     public function compress(){
-//        if(is_array($this->settings)){
-//            $this->settings = serialize($this->settings);
-//        }
-
-//        if(is_array($this->permissions)){
-//            $this->permissions = serialize($this->permissions);
-//        }
+        if(is_array($this->settings)){
+            $this->settings = serialize($this->settings);
+        }
     }
 
 
 
 
     public function save(){
-//      $this->compress();
+      $this->compress();
         if (parent::save()) {
-//            $this->uncompress();
+            $this->uncompress();
             return $this;
         }
     }
@@ -103,11 +96,12 @@ class HomeNet_Model_DbTableRow_Node extends Zend_Db_Table_Row_Abstract { //imple
 //        }
 //
 //        $service = new HomeNet_Model_RoomsService();
-//        $rooms = $service->getRoomsByNode($this->id);
+//        $rooms = $service->getRoomsByNodeModel($this->id);
 //        $this->rooms = $rooms;
 //
 //        return $rooms;
 //    }
+
 
     public function getSetting($setting){
         if(isset($this->settings[$setting])){
@@ -121,8 +115,6 @@ class HomeNet_Model_DbTableRow_Node extends Zend_Db_Table_Row_Abstract { //imple
             $this->settings = array($setting => $value);
             return;
         }
-        //die(debugArray($this->settings));
-
         $this->settings = array_merge($this->settings,array($setting => $value));
     }
 

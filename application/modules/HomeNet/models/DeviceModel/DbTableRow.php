@@ -25,7 +25,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_DbTableRow_DeviceModel extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_DeviceModel_Interface {
+class HomeNet_Model_DeviceModel_DbTableRow extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_DeviceModel_Interface {
 
 //    public $rooms;
 

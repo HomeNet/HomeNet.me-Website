@@ -43,12 +43,29 @@ class HomeNet_Model_Datapoint_MapperDbTable implements HomeNet_Model_Datapoint_M
      *
      * @return HomeNet_Model_DbTable_Datapoints;
      */
+    
     public function getTable() {
         if (is_null($this->_table)) {
-
-            $class = 'HomeNet_Model_DbTable_Datapoints'.ucfirst($this->_type);
-           // die($class);
-            $this->_table = new $class();
+            
+            switch($this->_type){
+                case 'Boolean':
+                    $table = 'homenet_datapoints_boolean';
+                    break;
+                case 'Byte':
+                    $table = 'homenet_datapoints_byte';
+                    break;
+                case 'Float':
+                    $table = 'homenet_datapoints_float';
+                    break;
+                case 'Int':
+                    $table = 'homenet_datapoints_int';
+                    break;
+                 case 'Long':
+                    $table = 'homenet_datapoints_long';
+                    break;
+            }
+            $this->_table = new Zend_Db_Table($table);
+            $this->_table->setRowClass('HomeNet_Model_Datapoint_DbTableRow');
         }
         return $this->_table;
     }
@@ -57,7 +74,7 @@ class HomeNet_Model_Datapoint_MapperDbTable implements HomeNet_Model_Datapoint_M
         $this->_table = $table;
     }
 
-    public function fetchNewestDatapointBySubdevice($subdevice) {
+    public function fetchLastObjectBySubdevice($subdevice) {
 
         $select = $this->getTable()->select()
                         //->from($this,array('datetime','value'))
@@ -163,7 +180,7 @@ $table = $this->getTable();
         return $datapoints;
     }
 
-    public function fetchDatapointsBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end) {
+    public function fetchObjectsBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end) {
 
         $select = $this->getTable()->select()
                         //->from($this,array('datetime','value'))
@@ -177,10 +194,8 @@ $table = $this->getTable();
 
     public function save(HomeNet_Model_Datapoint_Interface $room) {
 
-
         if (($room instanceof HomeNet_Model_DbTableRow_Datapoint) && ($room->isConnected())) {
-            $room->save();
-            return;
+            return $room->save();
         } elseif (!is_null($room->id)) {
             $row = $this->getTable()->find($room->id);
         } else {
@@ -188,23 +203,25 @@ $table = $this->getTable();
         }
 
         $row->setFromArray($room->toArray());
-        // die(debugArray($row));
-        $row->save();
-
-        return $row;
+        
+        return $row->save();
     }
 
     public function delete(HomeNet_Model_Datapoint_Interface $room) {
 
         if (($room instanceof HomeNet_Model_DbTableRow_Datapoint) && ($room->isConnected())) {
-            $room->delete();
-            return true;
+            return $room->delete();
         } elseif (!is_null($room->id)) {
-            $row = $this->getTable()->find($room->id)->current()->delete();
-            return;
+            return $this->getTable()->find($room->id)->current()->delete();
         }
 
         throw new HomeNet_Model_Exception('Invalid Datapoint');
+    }
+    
+    public function deleteAll(){
+        if(APPLICATION_ENV != 'production'){
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+        }
     }
 
 }
