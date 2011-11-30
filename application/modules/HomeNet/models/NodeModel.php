@@ -29,13 +29,20 @@ class HomeNet_Model_NodeModel implements HomeNet_Model_NodeModel_Interface {
     public $id = null;
     public $status;
     public $type;
-    public $driver;
+    public $plugin;
     public $name;
     public $description;
     public $image;
     public $max_devices;
     public $settings;
     public $created;
+    
+    const NORMAL = 0;
+    const INTERNET = 1;
+    
+    const INACTIVE = -1;
+    const TESTING = 0;
+    const LIVE = 1;
 
     public function  __construct(array $config = array()) {
         if(isset($config['data'])){

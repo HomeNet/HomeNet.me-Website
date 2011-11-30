@@ -25,7 +25,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_SubdeviceModelsController extends Zend_Controller_Action {
+class HomeNet_ComponentModelsController extends Zend_Controller_Action {
 
     public function init() {
         $this->view->id = $this->_getParam('model');
@@ -33,12 +33,12 @@ class HomeNet_SubdeviceModelsController extends Zend_Controller_Action {
 
     public function indexAction() {
 
-        $smService = new HomeNet_Model_SubdeviceModel_Service();
+        $smService = new HomeNet_Model_ComponentModel_Service();
         $this->view->models = $smService->getObjects();
     }
 
     public function addAction() {
-        $form = new HomeNet_Form_SubdeviceModels();
+        $form = new HomeNet_Form_ComponentModels();
 
         $form->addElement('submit', 'submit', array('label' => 'Add'));
 
@@ -55,8 +55,8 @@ class HomeNet_SubdeviceModelsController extends Zend_Controller_Action {
 
         $values = $form->getValues();
 
-        $smService = new HomeNet_Model_SubdeviceModel_Service();
-        $subdeviceModel = new HomeNet_Model_SubdeviceModel();
+        $smService = new HomeNet_Model_ComponentModel_Service();
+        $subdeviceModel = new HomeNet_Model_ComponentModel();
 
         $values['settings'] = unflattenArray($values['settings']);
 
@@ -69,13 +69,13 @@ class HomeNet_SubdeviceModelsController extends Zend_Controller_Action {
     }
 
     public function editAction() {
-        $form = new HomeNet_Form_SubdeviceModels();
+        $form = new HomeNet_Form_ComponentModels();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
 
         if (!$this->getRequest()->isPost()) {
 
             //load exsiting values
-            $smService = new HomeNet_Model_SubdeviceModel_Service();
+            $smService = new HomeNet_Model_ComponentModel_Service();
             $subdeviceModel = $smService->getObjectById($this->view->id);
             $values = $subdeviceModel->toArray();
             $values['settings'] = flattenArray($values['settings']);
@@ -94,7 +94,7 @@ class HomeNet_SubdeviceModelsController extends Zend_Controller_Action {
 
         $values = $form->getValues();
 
-        $smService = new HomeNet_Model_SubdeviceModel_Service();
+        $smService = new HomeNet_Model_ComponentModel_Service();
         $subdeviceModel = $smService->getObjectById($this->view->id);
 
         $values['settings'] = unflattenArray($values['settings']);
@@ -113,7 +113,7 @@ class HomeNet_SubdeviceModelsController extends Zend_Controller_Action {
         $form = new Core_Form_Confirm();
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
-            $smService = new HomeNet_Model_SubdeviceModel_Service();
+            $smService = new HomeNet_Model_ComponentModel_Service();
         $subdeviceModel = $smService->getObjectById($this->view->id);
 
             $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to remove "' . $subdeviceModel->name . '"?'));
@@ -126,7 +126,7 @@ class HomeNet_SubdeviceModelsController extends Zend_Controller_Action {
 
         //need to figure out why this isn't in values
         if (!empty($_POST['delete'])) {
-            $smService = new HomeNet_Model_SubdeviceModel_Service();
+            $smService = new HomeNet_Model_ComponentModel_Service();
         $subdeviceModel = $smService->getObjectById($this->view->id);
             $smService->delete($subdeviceModel);
             return $this->_redirect($this->view->url(array('action'=>'index'),'homenet-subdevicemodels') . '?message=Deleted');

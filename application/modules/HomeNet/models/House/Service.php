@@ -164,7 +164,7 @@ class HomeNet_Model_House_Service {
     public function getObjectByIdWithRooms($id) {
 
         if (empty($id) || !is_numeric($id)) {
-            throw new InvalidArgumentException('Missing House');
+            throw new InvalidArgumentException('Missing Id');
         }
 
         $result = $this->getMapper()->fetchObjectByIdWithRooms($id);
@@ -190,9 +190,15 @@ class HomeNet_Model_House_Service {
 
         $results = $this->getMapper()->fetchObjectsByIds($ids);
 
-        if (empty($results)) {
-            // throw new HomeNet_Model_Exception('House not found', 404);
-        }
+        /* $houses = array();
+
+          foreach($result as $key => $house){
+          $houses[$house->id] = $house;
+          }
+
+          return $houses;
+         */
+
         return $results;
     }
 
@@ -224,21 +230,56 @@ class HomeNet_Model_House_Service {
      * @todo find a better home for this
      */
     public function getHouseIdsByUser($user = null) {
-
-        if (!isset($_SESSION['HomeNet']['houses'])) {
-
-            $user = new Zend_Session_Namespace('User');
-
-            $service = new HomeNet_Model_HouseUser_Service();
-            $rows = $service->getObjectsbyUser($user->id);
-
-            $_SESSION['HomeNet']['houses'] = array();
-
-            foreach ($rows as $row) {
-                $_SESSION['HomeNet']['houses'][] = $row->house;
+        if (!is_null($user)) {
+            if (!is_numeric($user)) {
+                throw new InvalidArgumentException('Invaild User');
             }
+            $service = new HomeNet_Model_HouseUser_Service();
+            $results = $service->getObjectsbyUser($user);
+            $ids = array();
+            foreach ($results as $value) {
+                $ids[] = $value->house;
+            }
+            return $ids;
         }
-        return $_SESSION['HomeNet']['houses'];
+        //else load from session
+        if (isset($_SESSION['HomeNet']['houses'])) {
+            return $_SESSION['HomeNet']['houses'];
+        }
+
+        $user = Core_Model_User_Manager::getUser();
+
+        $service = new HomeNet_Model_HouseUser_Service();
+        $results = $service->getObjectsbyUser($user->id);
+
+        $ids = array();
+        foreach ($results as $value) {
+            $ids[] = $value->house;
+        }
+
+        $_SESSION['HomeNet']['houses'] = $ids;
+
+        return $ids;
+    }
+
+    public function getTypes() {
+        return array('house' => 'House',
+            'apartment' => 'Apartment',
+            'condo' => 'Condo',
+            'other' => '',
+            'na' => '');
+    }
+
+    public function getRegions() {
+        return array(
+            '1' => 'First Floor',
+            '2' => 'Second Floor',
+            '3' => 'Third Floor',
+            '4' => 'Forth Floor',
+            '5' => 'Fifth Floor',
+            'B' => 'Basement',
+            'A' => 'Attic',
+            'O' => 'Outdoors');
     }
 
     /**
@@ -249,21 +290,15 @@ class HomeNet_Model_House_Service {
      * @throws InvalidArgumentException 
      * @throws NotFoundException 
      */
-    public function getHouseRegionNames($id) {
+    public function getRegionsById($id) {
+
+        //@todo move to House Manager
 
         if (empty($id)) {
             throw new InvalidArgumentException('Missing House');
         }
 
-        $regions = array(
-            '1' => 'First Floor',
-            '2' => 'Second Floor',
-            '3' => 'Third Floor',
-            '4' => 'Forth Floor',
-            '5' => 'Fifth Floor',
-            'B' => 'Basement',
-            'A' => 'Attic',
-            'O' => 'Outdoors');
+        $regions = $this->getRegions();
 
         $r = $this->getObjectById($id)->regions;
 
@@ -276,10 +311,6 @@ class HomeNet_Model_House_Service {
             $r[$key] = array('id' => $key, 'name' => $regions[$key]);
         }
         return $r;
-    }
-
-    public function clearCacheById($id) {
-        
     }
 
     /**
@@ -319,14 +350,15 @@ class HomeNet_Model_House_Service {
 
         //add to house user
         //create user perrmissions
-        $table2 = new HomeNet_Model_DbTable_HouseUsers();
-        $houseUser = $table2->createRow();
-        $user = new Zend_Session_Namespace('User');
+        $service = new HomeNet_Model_HouseUser_Service();
+
+        $houseUser = new HomeNet_Model_HouseUser;
+        $user = Core_Model_User_Manager::getUser();
+
         $houseUser->user = $user->id;
         $houseUser->house = $result->id;
-        $houseUser->permissions = '';
 
-        $houseUser->save();
+        $service->create($houseUser);
 
         //reset session cache
         unset($_SESSION['HomeNet']['houses']);
@@ -358,10 +390,10 @@ class HomeNet_Model_House_Service {
         }
 
         $result = $this->getMapper()->save($object);
-        $this->clearCacheById($result->id);
+        //  $this->clearCacheById($result->id);
         return $result;
     }
-    
+
     /**
      * Delete a House
      * 
@@ -370,20 +402,20 @@ class HomeNet_Model_House_Service {
      * @throws InvalidArgumentException 
      */
     public function delete($mixed) {
-        if (is_int($mixed)) {
-            $object = $this->getObjectById($mixed);
-        } elseif ($mixed instanceof HomeNet_Model_House_Interface) {
+        if ($mixed instanceof HomeNet_Model_House_Interface) {
             $object = $mixed;
         } elseif (is_array($mixed)) {
             $object = new HomeNet_Model_House(array('data' => $mixed));
+        } elseif (is_numeric($mixed)) {
+            $object = $this->getObjectById((int) $mixed);
         } else {
             throw new InvalidArgumentException('Invalid HOuse');
         }
 
         $id = $object->id;
 
-        $result = $$this->getMapper()->delete($object);
-        $this->clearCacheById($id);
+        $result = $this->getMapper()->delete($object);
+        //$this->clearCacheById($id);
         return $result;
     }
 

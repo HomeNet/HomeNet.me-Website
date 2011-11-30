@@ -46,22 +46,22 @@ class HomeNet_Model_HouseUser_MapperDbTable implements HomeNet_Model_HouseUser_M
         $this->_table = $table;
     }
 
-    public function fetchObjectsbyUser($user) {
+    public function fetchObjectsByUser($user) {
         $select = $this->getTable()->select()->where('user = ?', $user);
         return $this->getTable()->fetchAll($select);
     }
 
-     public function fetchObjectbyId($id) {
+     public function fetchObjectById($id) {
         return $this->getTable()->find($id)->current();
     }
 
     public function save(HomeNet_Model_HouseUser_Interface $object) {
 
 
-        if (($object instanceof HomeNet_Model_DbTableRow_HouseUser) && ($object->isConnected())) {
+        if (($object instanceof HomeNet_Model_HouseUser_DbTableRow) && ($object->isConnected())) {
             return $object->save();
         } elseif (!is_null($object->id)) {
-            $row = $this->fetchHouseUserbyId($object->id);
+            $row = $this->fetchObjectById($object->id);
         } else {
             $row = $this->getTable()->createRow();
         }
@@ -73,7 +73,7 @@ class HomeNet_Model_HouseUser_MapperDbTable implements HomeNet_Model_HouseUser_M
 
     public function delete(HomeNet_Model_HouseUser_Interface $houseUser) {
 
-        if (($houseUser instanceof HomeNet_Model_DbTableRow_HouseUser) && ($houseUser->isConnected())) {
+        if (($houseUser instanceof HomeNet_Model_HouseUser_DbTableRow) && ($houseUser->isConnected())) {
             return $houseUser->delete();
             return true;
         } elseif (!is_null($houseUser->id)) {

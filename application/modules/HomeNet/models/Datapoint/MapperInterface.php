@@ -28,11 +28,11 @@
  */
 interface HomeNet_Model_Datapoint_MapperInterface {
 
-    public function fetchLastObjectBySubdevice($subdevice);
+    public function fetchLastObjectByComponent($subdevice);
 
-    public function fetchAveragesBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end, $points = null);
+    public function fetchAveragesByComponentTimespan($subdevice, Zend_Date $start, Zend_Date $end, $points = null);
 
-    public function fetchObjectsBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end);
+    public function fetchObjectsByComponentTimespan($subdevice, Zend_Date $start, Zend_Date $end);
 
     public function save(HomeNet_Model_Datapoint_Interface $object);
 

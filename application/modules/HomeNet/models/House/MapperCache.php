@@ -27,7 +27,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_House_MapperCache {
+class HomeNet_Model_House_MapperCache implements HomeNet_Model_House_MapperInterface {
 
     static $_houses;
 
@@ -45,22 +45,21 @@ class HomeNet_Model_House_MapperCache {
 
             $front = Zend_Controller_Front::getInstance();
 
-            $manager = $front->getParam('bootstrap')
-                            ->getResource('cachemanager');
+            $manager = Zend_Registry::get('cachemanager');
 
             $this->_houseCache = $manager->getCache('homenet-houses');
 
         }
     }
 
-    public function fetchHouseById($id) {
+    public function fetchObjectById($id) {
         if(isset(self::$_houses[$id])){
             return self::$_houses[$id];
         }
 
-        if (!$this->_houseCache->test($id)) {
+        if (!$this->_houseCache->test((string)$id)) {
             //Not found in Cache
-            $row = $this->_mapper->fetchHouseById($id);
+            $row = $this->_mapper->fetchObjectById($id);
             if(empty($row)){
                 return array();
             }
@@ -69,13 +68,13 @@ class HomeNet_Model_House_MapperCache {
             self::$_houses[$id] = $house;
             $this->_houseCache->save($house,$id);
         } else {
-            $house = $this->_houseCache->load($id);
+            $house = $this->_houseCache->load((string) $id);
         }
 
         return $house;
     }
 
-    public function fetchHousesByIds(array $ids) {
+    public function fetchObjectsByIds(array $ids) {
         $houses = array();
 
         //die(debugArray($ids));
@@ -87,15 +86,15 @@ class HomeNet_Model_House_MapperCache {
                 unset($ids[$key]);
             }
             //check cache nexted
-            elseif ($this->_houseCache->test($id)) {
-                $houses[$id] = $this->_houseCache->load($id);
+            elseif ($this->_houseCache->test((string)$id)) {
+                $houses[$id] = $this->_houseCache->load((string) $id);
                 unset($ids[$key]);
             }
         }
 
         if(!empty($ids)){
 
-            $rows = $this->_mapper->fetchHousesByIds($ids);
+            $rows = $this->_mapper->fetchObjectsByIds($ids);
             if(empty($rows)){
                 return $houses;
             }
@@ -113,33 +112,34 @@ class HomeNet_Model_House_MapperCache {
         return $houses;
     }
 
-    public function fetchHouseByIdWithRooms($id) {
+    public function fetchObjectByIdWithRooms($id) {
+        //@todo what the hell was I thinking
          //get existing house cache
-        $house = $this->fetchHouseById($id);
-
-        if(isset($house->rooms)){
-            //rooms has already be cached
-            return $house;
-        }
-
-        //get rooms
-        $rows = $this->_mapper->fetchHouseByIdWithRooms($id);
+       // $house = $this->fetchObjectById($id);
+//
+//        if(isset($house->rooms)){
+//            //rooms has already be cached
+//            return $house;
+//        }
+//
+//        //get rooms
+      $result = $this->_mapper->fetchObjectByIdWithRooms($id);
         
-        foreach($rows as $row){
-            $house->rooms[$row->id] = $row;
-        }
+//        foreach($rows as $row){
+//            $house->rooms[$row->id] = $row;
+//        }
 
         //update cache
-        self::$_houses[$id] = $house;
-        $this->_houseCache->save($house,$id);
+        self::$_houses[$id] = $result;
+        $this->_houseCache->save($result,(string) $id);
 
-        return $house;
+        return $result;
     }
 
-    public function fetchHousesByIdsWithRooms($ids) {      
+    public function fetchObjectsByIdsWithRooms($ids) {      
 
         //get existing house cache
-        $houses = $this->fetchHousesByIds($ids);
+        $houses = $this->fetchObjectsByIds($ids);
 
         foreach ($ids as $key => $id) {
             //check to see if it is already loaded
@@ -156,7 +156,7 @@ class HomeNet_Model_House_MapperCache {
 
         if(!empty($ids)){
 
-            $rows = $this->_mapper->fetchHousesByIdsWithRooms($ids);
+            $rows = $this->_mapper->fetchObjectsByIdsWithRooms($ids);
             if(empty($rows)){
                 return $houses;
             }
@@ -181,13 +181,19 @@ class HomeNet_Model_House_MapperCache {
     }
 
     public function delete(HomeNet_Model_House_Interface $house) {
-        $this->_mapper->delete($house);
-        $this->clearCacheById($house->id);
+        $id = $house->id;
+        $result = $this->_mapper->delete($house);
+        $this->clearCacheById($id);
+        return $result;
     }
 
     public function clearCacheById($id) {
         unset(self::$_houses[$id]);
-        $this->_houseCache->remove($id);
+        $this->_houseCache->remove((string) $id);
+    }
+    
+    public function deleteAll() {
+       return $this->_mapper->deleteAll();
     }
 
 }

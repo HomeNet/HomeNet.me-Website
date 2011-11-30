@@ -28,10 +28,12 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 interface HomeNet_Model_Message_MapperInterface {
+    
+    public function fetchObjectById($id);
    
-    public function fetchMessagesByUser($user);
+    public function fetchObjectsByUser($user);
 
-    public function fetchMessagesByHouseOrUser($house, $user);
+    public function fetchObjectsByHouseOrUser($house, $user);
 
     public function save(HomeNet_Model_Message_Interface $object);
 

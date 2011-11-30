@@ -59,21 +59,39 @@ class HomeNet_Model_Device_Service {
     /**
      * Get plugin helper
      * 
-     * @param HomeNet_Model_Device $device
-     * @return driver 
+     * @param HomeNet_Model_Device $object
+     * @return HomeNet_Model_Device
      * @throws InvalidArgumentException
      */
-    protected function _getPlugin(HomeNet_Model_Device $device) {
+     protected function _getPlugin($object){
 
-        if (empty($device->driver)) {
-            throw new InvalidArgumentException('Missing Subdevice Driver');
+        if(empty($object->plugin)){
+            throw new InvalidArgumentException('Missing Device Plugin');
+        }
+        
+        $class = 'HomeNet_Plugin_Device_'.$object->plugin.'_Device';
+
+        if(!class_exists($class,true)){
+            throw new Exception('Device Plugin: '.$object->plugin.' Doesn\'t Exist');
         }
 
-        if (!class_exists($device->driver)) {
-            throw new InvalidArgumentException('Subdevice Driver ' . $device->driver . ' Doesn\'t Exist');
+        return new $class(array('data' => $object->toArray()));
+    }
+
+    /**
+     * Get plugin helpers
+     * 
+     * @param HomeNet_Model_Device[] $objects
+     * @return HomeNet_Model_Device 
+     * @throws InvalidArgumentException
+     */
+    protected function _getPlugins($objects){
+        $plugins = array();
+        foreach($objects as $object){
+            $plugins[] = $this->_getPlugin($object);
         }
 
-        return new $device->driver(array('data' => $device->toArray()));
+        return $plugins;
     }
 
     /**
@@ -127,7 +145,7 @@ class HomeNet_Model_Device_Service {
      * @return driver 
      * @throws InvalidArgumentException
      */
-    public function getPluginByModel($id) {
+    public function newObjectFromModel($id) {
         if (empty($id) || !is_numeric($id)) {
             throw new InvalidArgumentException('Invalid Id');
         }
@@ -135,9 +153,13 @@ class HomeNet_Model_Device_Service {
 
         $model = $dmService->getObjectById($id);
 
-        $driver = $model->driver;
+        $class = 'HomeNet_Plugin_Device_'.$model->plugin.'_Device';
 
-        return new $driver(array('model' => $model));
+        if(!class_exists($class,true)){
+            throw new Exception('Device Plugin: '.$model->plugin.' Doesn\'t Exist');
+        }
+
+        return new $class(array('model' => $model->toArray()));
     }
 
 //    public function getDriverByNodePosition($node, $position){
@@ -192,26 +214,26 @@ class HomeNet_Model_Device_Service {
      * Get Device by house, node, device
      * 
      * @param integer $house house id
-     * @param integer $node Node id
-     * @param integer $device device id
+     * @param integer $nodeAddress Node address
+     * @param integer $position device id
      * @return HomeNet_Model_Device (HomeNet_Model_Device_Interface) 
      * @throws InvalidArgumentException
      * @throws NotFoundException
      */
-    public function getObjectByHouseNodeDevice($house, $node, $device) {
+    public function getObjectByHouseNodeaddressPosition($house, $nodeAddress, $position) {
         if (empty($house) || !is_numeric($house)) {
             throw new InvalidArgumentException('Invalid House');
         }
-        if (empty($node) || !is_numeric($node)) {
-            throw new InvalidArgumentException('Invalid Node');
+        if (empty($nodeAddress) || !is_numeric($nodeAddress)) {
+            throw new InvalidArgumentException('Invalid Node Address');
         }
-        if (empty($device) || !is_numeric($device)) {
+        if (empty($position) || !is_numeric($position)) {
             throw new InvalidArgumentException('Invalid Device');
         }
-        $object = $this->getMapper()->fetchObjectByHouseNodeDevice((int)$house, (int)$node, (int)$device);
+        $object = $this->getMapper()->fetchObjectByHouseNodeaddressPosition((int)$house, (int)$nodeAddress, (int)$position);
 
         if (empty($object)) {
-            throw new NotFoundException('Device not found ' . "$house, $node, $device", 404);
+            throw new NotFoundException('Device not found ' . "$house, $nodeAddress, $position", 404);
         }
         return $object;
     }
@@ -255,17 +277,17 @@ class HomeNet_Model_Device_Service {
 
         $device = $this->getMapper()->save($object);
 
-        $subdevices = $h->getSubdevices(false);
+        $component = $object->getComponents(false);
+//
+       if (!empty($component)) {
 
-        if (!empty($subdevices)) {
-
-            $sService = new HomeNet_Model_Subdevice_Service();
-            foreach ($subdevices as $subdevice) {
-                $subdevice->device = $device->id;
+            $sService = new HomeNet_Model_Component_Service();
+            foreach ($component as $component) {
+                $component->device = $device->id;
                 // die(debugArray($subdevice));
-                $sService->create($subdevice);
+                $sService->create($component);
             }
-        }
+       }
 
         return $device;
     }
@@ -288,13 +310,13 @@ class HomeNet_Model_Device_Service {
 
         $device = $this->getMapper()->save($object);
 
-        $subdevices = $object->getSubdevices(false);
+        $components = $object->getComponents(false);
 
-        if (!empty($subdevices)) {
+        if (!empty($components)) {
 
-            $sService = new HomeNet_Model_Subdevice_Service();
-            foreach ($subdevices as $subdevice) {
-                $sService->update($subdevice);
+            $sService = new HomeNet_Model_Component_Service();
+            foreach ($components as $component) {
+                $sService->update($component);
             }
         }
         return $device;
@@ -308,25 +330,27 @@ class HomeNet_Model_Device_Service {
      * @throws InvalidArgumentException 
      */
     public function delete($mixed) {
-        if (is_int($mixed)) {
-            $object = $this->getObjectById($mixed);
-        } elseif ($mixed instanceof HomeNet_Model_Device_Interface) {
+        if ($mixed instanceof HomeNet_Model_Device_Interface) {
             $object = $mixed;
         } elseif (is_array($mixed)) {
             $object = new HomeNet_Model_Device(array('data' => $mixed));
+        } elseif (is_numeric($mixed)) {
+            $object = $this->getObjectById((int)$mixed);
         } else {
-            throw new InvalidArgumentException('Invalid Datapoint');
+            throw new InvalidArgumentException('Invalid Device');
         }
+        
+        $components = $object->getComponents();
 
         $result = $this->getMapper()->delete($object);
 
-        $subdevices = $object->getSubdevices();
+        
 
-        if (!empty($subdevices)) {
+        if (!empty($components)) {
 
-            $sService = new HomeNet_Model_Subdevice_Service();
-            foreach ($subdevices as $subdevice) {
-                $sService->delete($subdevice);
+            $sService = new HomeNet_Model_Component_Service();
+            foreach ($components as $component) {
+                $sService->delete($component);
             }
         }
 

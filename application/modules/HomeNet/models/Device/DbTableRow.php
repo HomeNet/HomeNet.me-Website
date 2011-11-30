@@ -25,7 +25,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_Device_DbTableRow extends Zend_Db_Table_Row_Abstract { // implements HomeNet_Model_Device_Interface
+class HomeNet_Model_Device_DbTableRow extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_Device_Interface { 
 
 //    public $rooms;
 
@@ -124,6 +124,12 @@ class HomeNet_Model_Device_DbTableRow extends Zend_Db_Table_Row_Abstract { // im
 
     public function clearSetting($setting){
         unset($this->settings[$setting]);
+    }
+    
+    public function getComponents($search = true) {
+
+        $service = new HomeNet_Model_Component_Service();
+        return $service->getObjectsByDevice($this->id);
     }
 
 }

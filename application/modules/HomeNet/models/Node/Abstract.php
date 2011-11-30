@@ -29,7 +29,7 @@
 abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interface {
 
     public $id = null;
-    public $node = null;
+    public $address = null;
     public $model = null;
     public $uplink = null;
     public $house = null;
@@ -44,7 +44,7 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
     public $direction = 1;
 
     public $modelName = null;
-    public $driver = null;
+    public $plugin = null;
     public $type = null;
 
     protected $_devices;
@@ -64,7 +64,7 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
 
    public function fromArray(array $array) {
 
-        $vars = array('id', 'node', 'model', 'uplink', 'house', 'room', 'description', 'created', 'modelName', 'driver', 'type', 'ipaddress', 'status','direction');
+        $vars = array('id', 'address', 'model', 'uplink', 'house', 'room', 'description', 'created', 'modelName', 'driver', 'type', 'ipaddress', 'status','direction');
 
         foreach ($array as $key => $value) {
             if (in_array($key, $vars)) {
@@ -84,7 +84,7 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
 
         return array(
             'id' => $this->id,
-            'node' => $this->node,
+            'address' => $this->address,
             'model' => $this->model,
             'uplink' => $this->uplink,
             'house' => $this->house,
@@ -98,7 +98,7 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
     public function loadModel(HomeNet_Model_NodeModel_Interface $model){
 
         $this->modelName = $model->name;
-        $this->driver = $model->driver;
+        $this->plugin = $model->plugin;
         $this->model = $model->id;
         $this->type = $model->type;
         $this->settings = array_merge($this->settings, $model->settings);

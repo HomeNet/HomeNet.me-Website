@@ -20,11 +20,11 @@
 
 /**
  * @package HomeNet
- * @subpackage Subdevice
+ * @subpackage Component
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_Subdevice extends Zend_Db_Table_Row_Abstract {
+class HomeNet_Model_Component extends Zend_Db_Table_Row_Abstract {
 
     function importArray($array) {
         if (!empty($array['id'])) {

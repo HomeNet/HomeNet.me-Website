@@ -46,7 +46,7 @@ public $type = HomeNet_Model_Node_Service::INTERNET;
 //            $this->fromArray($config['data']);
 //        }
 //        //load model
-//        if (isset($config['model']) && $config['model'] instanceof HomeNet_Model_SubdeviceModel_Interface) {
+//        if (isset($config['model']) && $config['model'] instanceof HomeNet_Model_ComponentModel_Interface) {
 //            $this->loadModel($config['model']);
 //        }
 //    }

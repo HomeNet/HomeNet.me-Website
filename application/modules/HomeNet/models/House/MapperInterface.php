@@ -28,7 +28,7 @@ interface HomeNet_Model_House_MapperInterface {
 
     public function fetchObjectById($id);
 
-    public function fetchObjectsByIds($ids);
+    public function fetchObjectsByIds(array $ids);
 
     public function fetchObjectByIdWithRooms($id);
 

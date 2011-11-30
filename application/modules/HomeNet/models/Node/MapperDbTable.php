@@ -42,42 +42,14 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
         return $this->_table;
     }
     
-    
-
     public function setTable($table) {
         $this->_table = $table;
     }
 
-    protected function _getDriver($subdevice){
-
-        if(empty($subdevice->driver)){
-            throw new HomeNet_Model_Exception('Missing Subdevice Driver');
-        }
-
-        if(!class_exists($subdevice->driver)){
-            throw new HomeNet_Model_Exception('Subdevice Driver '.$subdevice->driver.' Doesn\'t Exist');
-        }
-
-        return new $subdevice->driver(array('data' => $subdevice->toArray()));
-    }
-
-    protected function _getDrivers($subdevices){
-        $objects = array();
-        foreach($subdevices as $subdevice){
-            $objects[] = $this->_getDriver($subdevice);
-        }
-
-        return $objects;
-
-    }
-
-
-
-    
-//    public function fetchNodeById($id){
+//    public function fetchObjectById($id) {
 //        return $this->getTable()->find($id)->current();
 //    }
-//
+    
     public function fetchObjectById($id) {
 
         //= array('name','driver', 'max_devices')
@@ -85,15 +57,10 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                ->where('homenet_nodes.id = ?', $id)
-               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings'))
+               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS modelName', 'type', 'settings'))
                 ->limit(1);
 
-        $row =  $this->getTable()->fetchRow($select);
-        if(empty($row)){
-            return null;
-        }
-
-        return $this->_getDriver($row);
+        return $this->getTable()->fetchRow($select);
     }
     
 
@@ -115,18 +82,22 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                ->where('house = ?', $house)
-               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings'));
+               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS modelName', 'type', 'settings'));
 
-        $rows = $this->getTable()->fetchAll($select);
+        return $this->getTable()->fetchAll($select);
+    }
+    
+        public function fetchObjectsByRoom($room){
 
-        if(empty($rows)){
-            return array();
-        }
+        $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
+        $select->setIntegrityCheck(false)
+               ->where('room = ?', $room)
+               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS modelName', 'type', 'settings'));
 
-        return $this->_getDrivers($rows);
+        return $this->getTable()->fetchAll($select);
     }
 
-    public function fetchObjectByHouseNode($house,$node){
+    public function fetchObjectByHouseAddress($house,$address){
 
 //        $select = $this->getTable()->select()->where('house = ?', $house)
 //                                 ->where('node = ?', $node)
@@ -136,30 +107,21 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                ->where('house = ?', $house)
-               ->where('node = ?', $node)
-               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings'))
+               ->where('address = ?', $address)
+               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS modelName', 'type', 'settings'))
                 ->limit(1);
 
-        $row =  $this->getTable()->fetchRow($select);
-
-        if(empty($row)){
-            return null;
-        }
-
-        return $this->_getDriver($row);
+        return $this->getTable()->fetchRow($select);
     }
 
-
-
-
-    public function fetchNextIdByHouse($house){
+    public function fetchNextAddressByHouse($house){
 
         $select = $this->getTable()->select()->where('house = ?', $house)
-                                  ->where('node NOT IN(?)', array(255,4095))
-                                  ->order('node DESC')
+                                  ->where('address NOT IN(?)', array(255,4095))
+                                  ->order('address DESC')
                                   ->limit(1);
        $row = $this->getTable()->fetchRow($select);
-        $next = $row['node'] + 1;
+        $next = $row['address'] + 1;
         return $next;
     }
 
@@ -171,45 +133,14 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
                ->join('homenet_nodes_internet', 'homenet_nodes.id = homenet_nodes_internet.id');
                // ->limit(1);
         
-        $rows = $this->getTable()->fetchAll($select);
-
-        if(empty($rows)){
-            return array();
-        }
-
-        $ids = array();
-
-        foreach($rows as $row){
-            $ids[$row->node] = $row->id;
-        }
-
-        return $ids;
+        return $this->getTable()->fetchAll($select);
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public function save(HomeNet_Model_Node_Interface $node) {
 
 
-        if (($node instanceof HomeNet_Model_DbTableRow_Node) && ($node->isConnected())) {
-            $node->save();
-            return;
+        if (($node instanceof HomeNet_Model_Node_DbTableRow) && ($node->isConnected())) {
+            return $node->save();
         } elseif (!is_null($node->id)) {
             $row = $this->getTable()->find($node->id)->current();
         } else {
@@ -218,23 +149,15 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
 
         $row->fromArray($node->toArray());
 
-//        if(empty($row->settings)){
-//            $row->settings = '';
-//        }
-
-        $row->save();
-//die(debugArray($row));
-        return $row;
+        return $row->save();
     }
 
     public function delete(HomeNet_Model_Node_Interface $node) {
 
-        if (($node instanceof HomeNet_Model_DbTableRow_Node) && ($node->isConnected())) {
-            $node->delete();
-            return true;
+        if (($node instanceof HomeNet_Model_Node_DbTableRow) && ($node->isConnected())) {
+            return $node->delete();
         } elseif (!is_null($node->id)) {
-            $row = $this->getTable()->find($node->id)->current()->delete();
-            return;
+           return $this->getTable()->find($node->id)->current()->delete();
         }
 
         throw new HomeNet_Model_Exception('Invalid Room');

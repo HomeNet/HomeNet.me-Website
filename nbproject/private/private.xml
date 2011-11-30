@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <coverage xmlns="http://www.netbeans.org/ns/code-coverage/1" enabled="false"/>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1">
+        <file>
+            <url>tests/application/controllers/UserControllerTest.php</url>
+            <line>26</line>
+        </file>
         <file>
             <url>application/modules/HomeNet/models/Node.php</url>
             <line>8</line>

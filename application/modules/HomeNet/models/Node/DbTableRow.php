@@ -25,7 +25,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_Node_DbTableRow extends Zend_Db_Table_Row_Abstract { //implements HomeNet_Model_Node_Interface 
+class HomeNet_Model_Node_DbTableRow extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_Node_Interface { // 
 
 //    public $rooms;
 
@@ -128,6 +128,15 @@ class HomeNet_Model_Node_DbTableRow extends Zend_Db_Table_Row_Abstract { //imple
 
     public function clearSetting($setting){
         unset($this->settings[$setting]);
+    }
+    
+    public function loadModel(HomeNet_Model_NodeModel_Interface $model){
+
+        $this->modelName = $model->name;
+        $this->plugin = $model->plugin;
+        $this->model = $model->id;
+        $this->type = $model->type;
+        $this->settings = array_merge($this->settings, $model->settings);
     }
 
 }

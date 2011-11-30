@@ -5,10 +5,11 @@
  */
 class HomeNet_Model_HouseUser_ServiceTest extends PHPUnit_Framework_TestCase {
 
-    /**
-     * @var HomeNet_Model_HouseUser_Service
+     /**
+     * @var HomeNet_Model_Room_Service
      */
     protected $service;
+    protected $homenetInstaller;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -16,6 +17,8 @@ class HomeNet_Model_HouseUser_ServiceTest extends PHPUnit_Framework_TestCase {
      */
     protected function setUp() {
         $this->service = new HomeNet_Model_HouseUser_Service;
+        $this->homenetInstaller = new HomeNet_Installer();
+        $this->homenetInstaller->installTest();
     }
 
     /**
@@ -26,10 +29,31 @@ class HomeNet_Model_HouseUser_ServiceTest extends PHPUnit_Framework_TestCase {
         
     }
 
+    private function createValidObject() {
+
+        $object = new HomeNet_Model_HouseUser();
+        
+        $object->user = 1;
+        $object->house = $this->homenetInstaller->house->test->id;
+
+        $result = $this->service->create($object);
+
+        $this->assertInstanceOf('HomeNet_Model_HouseUser_Interface', $result);
+        return $result;
+    }
+
+    private function validateResult($result) {
+        $this->assertNotNull($result->id);
+        $this->assertEquals(1, $result->user);
+        $this->assertEquals($this->homenetInstaller->house->test->id, $result->house);
+    }
+    
+//$this->service->getMapper()///////////////////////////////////////////////////
     public function testGetMapper() {
        $this->assertInstanceOf('HomeNet_Model_HouseUser_MapperInterface', $this->service->getMapper());
     }
-
+    
+//$this->service->setMapper($mapper)////////////////////////////////////////////
     public function testSetMapper() {
         $mapper = new HomeNet_Model_HouseUser_MapperDbTable();
          $this->service->setMapper($mapper);
@@ -37,40 +61,158 @@ class HomeNet_Model_HouseUser_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('HomeNet_Model_HouseUser_MapperInterface', $this->service->getMapper());
         $this->assertEquals($mapper, $this->service->getMapper());
     }
+    
+//$this->service->getObjectById($id)////////////////////////////////////////////
+    public function testGetObjectById_valid() {
+        $object = $this->createValidObject();
 
-    public function testGetObjectsbyUser() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $result = $this->service->getObjectById($object->id);
+
+        $this->validateResult($result);
     }
 
-    public function testGetObjectbyId() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testGetObjectById_invalid() {
+        $this->setExpectedException('NotFoundException');
+        $this->service->getObjectById(1000);
     }
 
-    public function testCreate() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testGetObjectById_null() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->getObjectById(null);
+    }
+    
+    
+    public function testGetObjectsByUser_valid() {
+        $object = $this->createValidObject();
+
+        $results = $this->service->getObjectsByUser($object->user);
+
+        $this->validateResult($results[0]);
     }
 
-    public function testUpdate() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testGetObjectsByUser_invalid() {
+        $this->markTestIncomplete('More Validation required');
+        $this->setExpectedException('NotFoundException');
+        $this->service->getObjectsByUser(1000);
     }
 
-    public function testDelete() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testGetObjectsByUser_null() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->getObjectsByUser(null);
+    }
+
+//$this->service->create($mixed)////////////////////////////////////////////////
+    public function testCreate_validObject() {
+        $result = $this->createValidObject();
+
+        $this->assertNotNull($result->id);
+        $this->validateResult($result);
+    }
+
+    public function testCreate_validArray() {
+        $array = array(
+            'user' => 1,
+        'house' => $this->homenetInstaller->house->test->id);
+
+        $result = $this->service->create($array);
+        $this->validateResult($result);
+    }
+
+    public function testCreate_invalidObject() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $badObject = new StdClass();
+        $this->service->create($badObject);
+    }
+    
+//$this->service->update($mixed)////////////////////////////////////////////////
+    public function testUpdate_validObject() {
+        //setup
+        $object = $this->createValidObject();
+
+        //update values
+        $object->user = 2;
+        $object->house = $this->homenetInstaller->house->test2->id;
+
+        $result = $this->service->update($object);
+
+        $this->assertInstanceOf('HomeNet_Model_HouseUser_Interface', $result);
+
+        $this->assertNotNull($result->id);
+        $this->assertEquals(2, $result->user);
+        $this->assertEquals($this->homenetInstaller->house->test2->id, $result->house);
+    }
+
+    public function testUpdate_validArray() {
+        //setup
+        $object = $this->createValidObject();
+        $array = $object->toArray();
+
+        //update values
+        $array['user'] = 2;
+        $array['house'] = $this->homenetInstaller->house->test2->id;
+
+        $result = $this->service->update($array);
+
+        $this->assertInstanceOf('HomeNet_Model_HouseUser_Interface', $result);
+
+        $this->assertNotNull($result->id);
+        $this->assertEquals(2, $result->user);
+        $this->assertEquals($this->homenetInstaller->house->test2->id, $result->house);
+    }
+
+    public function testUpdate_invalidObject() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $badObject = new StdClass();
+        $create = $this->service->update($badObject);
+    }
+    
+//$this->service->delete($mixed)////////////////////////////////////////////////
+    public function testDelete_validObject() {
+        //setup
+        $object = $this->createValidObject();
+
+        //test delete
+        $id = $object->id;
+        $this->service->delete($object);
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($id);
+    }
+
+    public function testDelete_validArray() {
+        //setup
+        $object = $this->createValidObject();
+
+        //test delete
+        $id = $object->id;
+        $this->service->delete($object->toArray());
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($id);
+    }
+
+    public function testDelete_validId() {
+        //setup
+        $object = $this->createValidObject();
+
+        //test delete
+        $id = $object->id;
+        $this->service->delete($object->id);
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($id);
+    }
+
+    public function testDelete_invalidObject() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $badObject = new StdClass();
+        $create = $this->service->delete($badObject);
     }
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-class HomeNet_SubdeviceController extends Zend_Controller_Action
+class HomeNet_ComponentController extends Zend_Controller_Action
 {
 
     public function init()
@@ -19,7 +19,7 @@ class HomeNet_SubdeviceController extends Zend_Controller_Action
     {
         $this->_helper->layout()->disableLayout();
 
-        $sService = new HomeNet_Model_Subdevice_Service();
+        $sService = new HomeNet_Model_Component_Service();
         $driver = $sService->getObjectById($this->_getParam('subdevice'));
 
         $start = new Zend_Date($this->_getParam('start'),Zend_Date::TIMESTAMP);
@@ -32,7 +32,7 @@ class HomeNet_SubdeviceController extends Zend_Controller_Action
     {
         $this->_helper->layout()->disableLayout();
 
-        $sService = new HomeNet_Model_Subdevice_Service();
+        $sService = new HomeNet_Model_Component_Service();
         $driver = $sService->getObjectById($this->_getParam('subdevice'));
 
         $start = new Zend_Date($this->_getParam('start'),Zend_Date::TIMESTAMP);

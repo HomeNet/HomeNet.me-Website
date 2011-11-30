@@ -130,18 +130,18 @@ class Content_Model_CategorySet_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testUpdateFromObject() {
 
         //setup
-        $categorySet = $this->createValidObject();
+        $object = $this->createValidObject();
 
         //update values
-        $categorySet->package = "test2";
-        $categorySet->title = 'testTitle2';
-        $categorySet->visible = false;
+        $object->package = "test2";
+        $object->title = 'testTitle2';
+        $object->visible = false;
 
-        $result = $this->service->update($categorySet);
+        $result = $this->service->update($object);
 
         $this->assertInstanceOf('Content_Model_CategorySet_Interface', $result);
 
-        $this->assertEquals($categorySet->id, $result->id);
+        $this->assertEquals($object->id, $result->id);
         $this->assertEquals('test2', $result->package);
         $this->assertEquals('testTitle2', $result->title);
         $this->assertEquals(false, $result->visible);
@@ -150,9 +150,9 @@ class Content_Model_CategorySet_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testUpdateFromArray() {
 
         //setup
-        $categorySet = $this->createValidObject();
+        $object = $this->createValidObject();
 
-        $array = $categorySet->toArray();
+        $array = $object->toArray();
         
         //update values
         $array['package'] = "test2";
@@ -163,7 +163,7 @@ class Content_Model_CategorySet_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertInstanceOf('Content_Model_CategorySet_Interface', $result);
 
-        $this->assertEquals($categorySet->id, $result->id);
+        $this->assertEquals($object->id, $result->id);
         $this->assertEquals('test2', $result->package);
         $this->assertEquals('testTitle2', $result->title);
         $this->assertEquals(false, $result->visible);
@@ -180,36 +180,36 @@ class Content_Model_CategorySet_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testDeleteObject() {
 
         //setup
-        $categorySet = $this->createValidObject();
+        $object = $this->createValidObject();
 
         //test delete
-        $this->service->delete($categorySet);
+        $this->service->delete($object);
 
         //verify that it was deleted
         $this->setExpectedException('NotFoundException');
-        $result = $this->service->getObjectById($categorySet->id);
+        $result = $this->service->getObjectById($object->id);
     }
 
     public function testDeleteId() {
 
         //setup
-        $categorySet = $this->createValidObject();
+        $object = $this->createValidObject();
        // $this->fail("id: ".$categorySet->id);
-        $this->service->delete((int)$categorySet->id);
+        $this->service->delete((int)$object->id);
         
         $this->setExpectedException('NotFoundException');
-        $result = $this->service->getObjectById($categorySet->id); 
+        $result = $this->service->getObjectById($object->id); 
     }
     
     public function testDeleteArray() {
 
         //setup
-        $categorySet = $this->createValidObject();
+        $object = $this->createValidObject();
        // $this->fail("id: ".$categorySet->id);
-        $this->service->delete($categorySet->toArray());
+        $this->service->delete($object->toArray());
         
         $this->setExpectedException('NotFoundException');
-        $result = $this->service->getObjectById($categorySet->id); 
+        $result = $this->service->getObjectById($object->id); 
     }
 
     public function testDeleteException() {

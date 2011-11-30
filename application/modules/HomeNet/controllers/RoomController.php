@@ -46,7 +46,7 @@ class HomeNet_RoomController extends Zend_Controller_Action {
 
         $this->view->roomName = $room->name;
 
-        $sService = new HomeNet_Model_Subdevice_Service();
+        $sService = new HomeNet_Model_Component_Service();
         $this->view->subdevices = $sService->getObjectsByRoom($this->view->room);
     }
 
@@ -57,7 +57,7 @@ class HomeNet_RoomController extends Zend_Controller_Action {
 
         $this->view->roomName = $room->name;
 
-        $sService = new HomeNet_Model_Subdevice_Service();
+        $sService = new HomeNet_Model_Component_Service();
         $this->view->subdevices = $sService->getObjectsByRoom($this->view->room);
 
         if (!$this->getRequest()->isPost()) {

@@ -16,6 +16,10 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        
+        $homnetInstaller = new HomeNet_Installer();
+        $homnetInstaller->uninstallTest();
+        
         $this->service = new HomeNet_Model_House_Service;
     }
 
@@ -26,11 +30,48 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
     protected function tearDown() {
         
     }
+    
+    private function createValidObject() {
+        $object = new HomeNet_Model_House();
+        $object->status = 1;
+        $object->url = 'my-house';
+        $object->name = 'My House';
+        $object->description = 'My Description';
+        $object->location = 'My Location';
+        $object->gps = '0, 0';
+        $object->type = 'house';
+        $object->regions = array(1,2,3);
+        $object->settings = array('key'=>'value');
+   // $object->permissions;
+    //$object->rooms;
 
+        $result = $this->service->create($object);
+
+        $this->assertInstanceOf('HomeNet_Model_House_Interface', $result);
+        return $result;
+    }
+    
+    private function validateResult($result){
+        $this->assertNotNull($result->id);
+        $this->assertEquals(1, $result->status);
+        $this->assertEquals('my-house', $result->url);
+        $this->assertEquals('My House', $result->name);
+        $this->assertEquals('My Description', $result->description);
+        $this->assertEquals('My Location', $result->location);
+        $this->assertEquals('0, 0', $result->gps);
+        $this->assertEquals('house', $result->type);
+        $this->assertTrue(is_array($result->regions));
+        $this->assertEquals(3, count($result->regions),print_r($result->regions,true));
+        $this->assertTrue(is_array($result->settings));
+        $this->assertEquals('value', $result->settings['key']);
+    }
+
+//$this->service->getMapper()///////////////////////////////////////////////////    
     public function testGetMapper() {
        $this->assertInstanceOf('HomeNet_Model_House_MapperInterface', $this->service->getMapper());
     }
 
+//$this->service->setMapper($mapper)////////////////////////////////////////////
     public function testSetMapper() {
         $mapper = new HomeNet_Model_House_MapperDbTable();
          $this->service->setMapper($mapper);
@@ -40,108 +81,263 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGetCacheMapper() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->assertInstanceOf('HomeNet_Model_House_MapperInterface', $this->service->getCacheMapper());
     }
 
     public function testSetCacheMapper() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $parent = new HomeNet_Model_House_MapperDbTable();
+        $mapper = new HomeNet_Model_House_MapperCache($parent);
+         $this->service->setCacheMapper($mapper);
+        
+        $this->assertInstanceOf('HomeNet_Model_House_MapperInterface', $this->service->getCacheMapper());
+        $this->assertEquals($mapper, $this->service->getCacheMapper());
     }
 
     public function testEnableCache() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->service->enableCache();
     }
 
     public function testDisableCache() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+       $this->service->disableCache();
     }
 
     public function testCacheEnabled() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->service->enableCache();
+        $this->assertTrue($this->service->cacheEnabled());
+        $this->service->disableCache();
+        $this->assertFalse($this->service->cacheEnabled());
+    }
+    
+//$this->service->getObjectById($id)////////////////////////////////////////////
+    public function testGetObjectById_valid() {
+        $object = $this->createValidObject();
+
+        $result = $this->service->getObjectById($object->id);
+
+        $this->validateResult($result);
     }
 
-    public function testGetObjectById() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testGetObjectById_invalid() {
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById(1000);
     }
 
-    public function testGetObjectByIdWithRooms() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testGetObjectById_null() {
+        $this->setExpectedException('InvalidArgumentException');
+        $result = $this->service->getObjectById(null);
     }
 
-    public function testGetObjectsByIds() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testGetObjectByIdWithRooms_valid() {
+        $object = $this->createValidObject();
+
+        $result = $this->service->getObjectByIdWithRooms($object->id);
+
+        $this->validateResult($result);
+    }
+    
+    public function testGetObjectByIdWithRooms_invalid() {
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectByIdWithRooms(1000);
+    }
+    
+    public function testGetObjectByIdWithRooms_null() {
+        $this->setExpectedException('InvalidArgumentException');
+        $result = $this->service->getObjectByIdWithRooms(null);
+    }
+
+    public function testGetObjectsByIds_valid() {
+        $object = $this->createValidObject();
+
+        $results = $this->service->getObjectsByIds(array($object->id));
+
+        $this->validateResult(reset($results));
+    }
+    
+    public function testGetObjectsByIds_invalid() {
+        $this->service->getObjectsByIds(array(1000,1001));
     }
 
     public function testGetObjectsByIdsWithRooms() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        
+        $object = $this->createValidObject();
+        $results = $this->service->getObjectsByIdsWithRooms(array($object->id));
+
+        $this->validateResult(reset($results));
+
     }
 
-    public function testGetHouseIdsByUser() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testGetHouseIdsByUser_valid() {
+        $object = $this->createValidObject();
+        $user = Core_Model_User_Manager::getUser();
+        $result = $this->service->getHouseIdsByUser($user->id);
+    }
+    public function testGetHouseIdsByUser_invalidArgument() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->getHouseIdsByUser('StringUser');
     }
 
-    public function testGetHouseRegionNames() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testGetRegionsById_valid() {
+        $object = $this->createValidObject();
+        $result = $this->service->getRegionsById($object->id);
+    }
+    public function testGetRegionsById_invalid() {
+        $this->setExpectedException('NotFoundException');
+        $this->service->getRegionsById(1000);
+    }
+    public function testGetRegionsById_null() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->getRegionsById(null);
+    }
+//$this->service->create($mixed)////////////////////////////////////////////////
+    public function testCreate_validObject() {
+        $result = $this->createValidObject();
+
+        $this->assertNotNull($result->id);
+        $this->validateResult($result);
     }
 
-    public function testClearCacheById() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testCreate_validArray() {
+        $array = array(
+            'status' => 1,
+        'url' => 'my-house',
+        'name' => 'My House',
+        'description' => 'My Description',
+        'location' => 'My Location',
+        'gps' => '0, 0',
+        'type' => 'house',
+        'regions' => array(1,2,3),
+        'settings' => array('key'=>'value'));
+
+        $result = $this->service->create($array);
+        $this->validateResult($result);
     }
 
-    public function testCreate() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testCreate_invalidObject() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $badObject = new StdClass();
+        $this->service->create($badObject);
+    }
+    
+//$this->service->update($mixed)////////////////////////////////////////////////
+    public function testUpdate_validObject() {
+        //setup
+        $object = $this->createValidObject();
+
+        //update values
+        $object->status = 2;
+        $object->url = 'my-house2';
+        $object->name = 'My House2';
+        $object->description = 'My Description2';
+        $object->location = 'My Location2';
+        $object->gps = '1, 1';
+        $object->type = 'apartment';
+        $object->regions = array(1,2);
+        $object->settings = array('key'=>'value2');
+
+        $result = $this->service->update($object);
+
+        $this->assertInstanceOf('HomeNet_Model_House_Interface', $result);
+
+        $this->assertNotNull($result->id);
+        $this->assertEquals(2, $result->status);
+        $this->assertEquals('my-house2', $result->url);
+        $this->assertEquals('My House2', $result->name);
+        $this->assertEquals('My Description2', $result->description);
+        $this->assertEquals('My Location2', $result->location);
+        $this->assertEquals('1, 1', $result->gps);
+        $this->assertEquals('apartment', $result->type);
+        $this->assertTrue(is_array($result->regions));
+        $this->assertEquals(2, count($result->regions));
+        $this->assertTrue(is_array($result->settings));
+        $this->assertEquals('value2', $result->settings['key']);
     }
 
-    public function testUpdate() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testUpdate_validArray() {
+        //setup
+        $object = $this->createValidObject();
+        $array = $object->toArray();
+
+        //update values
+        $array['status'] = 2;
+        $array['url'] = 'my-house2';
+        $array['name'] = 'My House2';
+        $array['description'] = 'My Description2';
+        $array['location'] = 'My Location2';
+        $array['gps'] = '1, 1';
+        $array['type'] = 'apartment';
+        $array['regions'] = array(1,2);
+        $array['settings'] = array('key'=>'value2');
+
+        $result = $this->service->update($array);
+
+        $this->assertInstanceOf('HomeNet_Model_House_Interface', $result);
+
+        $this->assertNotNull($result->id);
+        $this->assertEquals(2, $result->status);
+        $this->assertEquals('my-house2', $result->url);
+        $this->assertEquals('My House2', $result->name);
+        $this->assertEquals('My Description2', $result->description);
+        $this->assertEquals('My Location2', $result->location);
+        $this->assertEquals('1, 1', $result->gps);
+        $this->assertEquals('apartment', $result->type);
+        $this->assertTrue(is_array($result->regions));
+        $this->assertEquals(2, count($result->regions));
+        $this->assertTrue(is_array($result->settings));
+        $this->assertEquals('value2', $result->settings['key']);
     }
 
-    public function testDelete() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testUpdate_invalidObject() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $badObject = new StdClass();
+        $create = $this->service->update($badObject);
+    }
+    
+//$this->service->delete($mixed)////////////////////////////////////////////////
+    public function testDelete_validObject() {
+        //setup
+        $object = $this->createValidObject();
+
+        //test delete
+        $id = $object->id;
+        $this->service->delete($object);
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($id);
     }
 
+    public function testDelete_validArray() {
+        //setup
+        $object = $this->createValidObject();
+
+        //test delete
+        $id = $object->id;
+        $this->service->delete($object->toArray());
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($id);
+    }
+
+    public function testDelete_validId() {
+        //setup
+        $object = $this->createValidObject();
+
+        //test delete
+        $id = $object->id;
+        $this->service->delete($object->id);
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($id);
+    }
+
+    public function testDelete_invalidObject() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $badObject = new StdClass();
+        $create = $this->service->delete($badObject);
+    }
 }

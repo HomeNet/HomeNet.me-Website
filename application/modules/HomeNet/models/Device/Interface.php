@@ -32,7 +32,7 @@ interface HomeNet_Model_Device_Interface {
 
     public function fromArray(array $array);
 
-    public function loadModel(HomeNet_Model_DeviceModel_Interface $model);
+    //public function loadModel(HomeNet_Model_DeviceModel_Interface $model);
 
-    public function getPlugin();
+  //  public function getPlugin();
 }

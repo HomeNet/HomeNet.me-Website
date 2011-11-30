@@ -72,6 +72,30 @@ class HomeNet_Model_Node_Service {
     public function setInternetMapper(HomeNet_Model_Node_Internet_MapperInterface $mapper) {
         $this->_internetMapper = $mapper;
     }
+    
+     protected function _getPlugin($object){
+
+        if(empty($object->plugin)){
+            throw new InvalidArgumentException('Missing Node Plugin');
+        }
+        
+        $class = 'HomeNet_Plugin_Node_'.$object->plugin.'_Node';
+
+        if(!class_exists($class,true)){
+            throw new Exception('Node Plugin: '.$object->plugin.' Doesn\'t Exist');
+        }
+
+        return new $class(array('data' => $object->toArray()));
+    }
+
+    protected function _getPlugins($nodes){
+        $objects = array();
+        foreach($nodes as $object){
+            $objects[] = $this->_getPlugin($object);
+        }
+
+        return $objects;
+    }
 
     /**
      * Get Node by id
@@ -82,7 +106,7 @@ class HomeNet_Model_Node_Service {
      * @throws NotFoundException
      */
     public function getObjectById($id) {
-        if (empty($house)) {
+        if (empty($id) || !is_numeric($id)) {
             throw new InvalidArgumentException('Invalid Node');
         }
 
@@ -98,18 +122,18 @@ class HomeNet_Model_Node_Service {
             $result->fromArray($internet->toArray());
         }
 
-        return $result;
+        return $this->_getPlugin($result);
     }
 
     /**
-     * Get Node by house id
+     * Get Nodes by house id
      * 
      * @param int $house
      * @return HomeNet_Model_Node[] (HomeNet_Model_Node_Interface[])
      * @throws InvalidArgumentException
      */
     public function getObjectsByHouse($house) {
-        if (empty($house)) {
+        if (empty($house) || !is_numeric($house)) {
             throw new InvalidArgumentException('Invalid House Id');
         }
 
@@ -118,7 +142,7 @@ class HomeNet_Model_Node_Service {
 //        if (empty($result)) {
 //            throw new NotFoundException('House: '.$house.' Not Found', 404);
 //        }
-        return $results;
+        return $this->_getPlugins($results);
     }
 
     /**
@@ -129,39 +153,39 @@ class HomeNet_Model_Node_Service {
      * @throws InvalidArgumentException
      */
     public function getObjectsByRoom($room) {
-        if (empty($room)) {
+        if (empty($room) || !is_numeric($room)) {
             throw new InvalidArgumentException('Invalid Room Id');
         }
 
-        $nodes = $this->getMapper()->fetchObjectsByRoom($room);
+        $results = $this->getMapper()->fetchObjectsByRoom($room);
 
 //        if (empty($nodes)) {
 //            throw new NotFoundException('Node not found', 404);
 //        }
-        return $nodes;
+        return $this->_getPlugins($results);
     }
 
     /**
-     * Get Node by house and node id
+     * Get Node by house and node address
      * 
      * @param int $house
-     * @param int $node
+     * @param int $address
      * @return HomeNet_Model_Node (HomeNet_Model_Node_Abstract)
      * @throws InvalidArgumentException
      * @throws NotFoundException
      */
-    public function getObjectByHouseNode($house, $node) {
-        if (empty($house)) {
+    public function getObjectByHouseAddress($house, $address) {
+        if (empty($house) || !is_numeric($house)) {
             throw new InvalidArgumentException('Invalid House Id');
         }
-        if (empty($node)) {
+        if (empty($address) || !is_numeric($address)) {
             throw new InvalidArgumentException('Invalid Node Id');
         }
 
-        $result = $this->getMapper()->fetchObjectByHouseNode($house, $node);
+        $result = $this->getMapper()->fetchObjectByHouseAddress($house, $address);
 
         if (empty($result)) {
-            throw new NotFoundException('Node: ' . $node . ' not found', 404);
+            throw new NotFoundException('Node Address: ' . $address . ' not found', 404);
         }
 
         if ($result->type == HomeNet_Model_Node::INTERNET) {
@@ -182,16 +206,16 @@ class HomeNet_Model_Node_Service {
      * @throws InvalidArgumentException
      * @throws NotFoundException
      */
-    public function getNextIdByHouse($house) {
-        if (empty($house)) {
+    public function getNextAddressByHouse($house) {
+        if (empty($house) || !is_numeric($house)) {
             throw new InvalidArgumentException('Invalid House Id');
         }
-        $id = $this->getMapper()->fetchNextIdByHouse($house);
+        $result = $this->getMapper()->fetchNextAddressByHouse($house);
 
-        if (empty($id)) {
+        if (empty($result)) {
             throw new NotFoundException('House not found', 404);
         }
-        return $id;
+        return $result;
     }
 
     /**
@@ -202,15 +226,16 @@ class HomeNet_Model_Node_Service {
      * @throws InvalidArgumentException
      */
     public function getInternetIdsByHouse($house) {
-        if (empty($house)) {
+        if (empty($house) || !is_numeric($house)) {
             throw new InvalidArgumentException('Invalid House Id');
         }
-        $nodes = $this->getMapper()->fetchInternetIdsByHouse($house);
+        
+        $results = $this->getMapper()->fetchInternetIdsByHouse($house);
 
-        if (empty($nodes)) {
+        if (empty($results)) {
             //throw new HomeNet_Model_Exception('Node not found', 404);
         }
-        return $nodes;
+        return $results;
     }
 
 //    public function geObjectByIdWithModel($id, $columns){
@@ -228,23 +253,31 @@ class HomeNet_Model_Node_Service {
 //    }
 
     /**
-     * Get new Node by model
+     * Get new Node Based on a NodeModel
      * 
      * @param type $id
      * @return driver 
      * @throws InvalidArgumentException
      */
-    public function newObjectByModel($id) {
-        if (empty($house)) {
+    public function newObjectFromModel($id) {
+        if (empty($id) || !is_numeric($id)) {
             throw new InvalidArgumentException('Invalid House Id');
         }
 
         $nmService = new HomeNet_Model_NodeModel_Service();
-        $model = $nmService->getObjectById($id);
+        $object = $nmService->getObjectById($id);
 
-        $driver = $model->driver;
+        if(empty($object->plugin)){
+            throw new HomeNet_Model_Exception('Missing Component Driver');
+        }
+        
+        $class = 'HomeNet_Plugin_Node_'.$object->plugin.'_Node';
 
-        return new $driver(array('model' => $model));
+        if(!class_exists($class, true)){
+            throw new HomeNet_Model_Exception('Node Plugin: '.$object->plugin.' Doesn\'t Exist');
+        }
+
+        return new $class(array('model' => $object));
     }
 
     /**
@@ -312,8 +345,8 @@ class HomeNet_Model_Node_Service {
         }
 
         /* @todo add message */
-
-        return $result;
+        //@todo determine if we need to return the actual result or will this do
+        return $object;
     }
 
     /**
@@ -324,12 +357,12 @@ class HomeNet_Model_Node_Service {
      * @throws InvalidArgumentException 
      */
     public function delete($mixed) {
-        if (is_int($mixed)) {
-            $object = $this->getObjectbyId($mixed);
-        } elseif ($mixed instanceof HomeNet_Model_Node_Interface) {
+        if ($mixed instanceof HomeNet_Model_Node_Interface) {
             $object = $mixed;
         } elseif (is_array($mixed)) {
             $object = new HomeNet_Model_Node(array('data' => $mixed));
+        } elseif (is_numeric($mixed)) {
+            $object = $this->getObjectbyId((int) $mixed);
         } else {
             throw new InvalidArgumentException('Invalid Node');
         }

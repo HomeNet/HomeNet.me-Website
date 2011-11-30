@@ -120,11 +120,14 @@ class HomeNet_Model_Room_Service {
      * @return HomeNet_Model_Room (HomeNet_Model_Room_Interface)
      * @throw InvalidArgumentException
      */
-    public function getObjectsByHouseRegion($region) {
-        if (empty($region) || !is_numeric($region)) {
+    public function getObjectsByHouseRegion($house, $region) {
+        if (empty($house) || !is_numeric($house)) {
             throw new InvalidArgumentException('Invalid Houses');
         }
-        $results = $this->getMapper()->fetchObjectsByRegion($region);
+        if (empty($region) || !is_numeric($region)) {
+            throw new InvalidArgumentException('Invalid Region');
+        }
+        $results = $this->getMapper()->fetchObjectsByHouseRegion($house, $region);
 
 //        if (empty($room)) {
 //            throw new HomeNet_Model_Exception('Room not found', 404);
@@ -149,16 +152,11 @@ class HomeNet_Model_Room_Service {
         }
 
         $result = $this->getMapper()->save($object);
-
         $houseService = new HomeNet_Model_House_Service();
         $house = $houseService->getObjectById($result->house);
-        $houseService->clearCacheById($result->house);
+        //$houseService->clearCacheById($result->house);
 
-        $types = array('house' => 'House',
-            'apartment' => 'Apartment',
-            'condo' => 'Condo',
-            'other' => '',
-            'na' => '');
+        $types = $houseService->getTypes();
 
         //  $mService = new HomeNet_Model_Message_Service();
         //$table->add(HomeNet_Model_Alert::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added a new room ' . $room->name . ' to their ' . $types[$this->house->type] . ' ' . $this->house->name . ' to HomeNet', null, $id);
@@ -188,7 +186,7 @@ class HomeNet_Model_Room_Service {
         $result = $this->getMapper()->save($object);
 
         $houseService = new HomeNet_Model_House_Service();
-        $houseService->clearCacheById($result->house);
+       // $houseService->clearCacheById($result->house);
 
         return $result;
     }
@@ -201,12 +199,12 @@ class HomeNet_Model_Room_Service {
      * @throws InvalidArgumentException 
      */
     public function delete($mixed) {
-        if (is_int($mixed)) {
-            $object = $this->getObjectbyId($mixed);
-        } elseif ($mixed instanceof HomeNet_Model_Room_Interface) {
+        if ($mixed instanceof HomeNet_Model_Room_Interface) {
             $object = $mixed;
         } elseif (is_array($mixed)) {
             $object = new HomeNet_Model_Room(array('data' => $mixed));
+        } elseif (is_numeric($mixed)) {
+            $object = $this->getObjectbyId((int) $mixed);
         } else {
             throw new InvalidArgumentException('Invalid Room');
         }
@@ -214,7 +212,7 @@ class HomeNet_Model_Room_Service {
         $result = $this->getMapper()->delete($object);
 
         $houseService = new HomeNet_Model_House_Service();
-        $houseService->clearCacheById($result->house);
+        //$houseService->clearCacheById($result->house);
 
         return $result;
     }

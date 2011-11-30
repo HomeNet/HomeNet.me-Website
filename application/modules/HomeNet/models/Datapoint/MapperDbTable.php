@@ -76,7 +76,7 @@ class HomeNet_Model_Datapoint_MapperDbTable implements HomeNet_Model_Datapoint_M
         $this->_table = $table;
     }
 
-    public function fetchLastObjectBySubdevice($subdevice) {
+    public function fetchLastObjectByComponent($subdevice) {
 
         $select = $this->getTable()->select()
                         //->from($this,array('datetime','value'))
@@ -87,7 +87,7 @@ class HomeNet_Model_Datapoint_MapperDbTable implements HomeNet_Model_Datapoint_M
         return $this->getTable()->fetchRow($select);
     }
 
-    public function fetchAveragesBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end, $points = null) {
+    public function fetchAveragesByComponentTimespan($subdevice, Zend_Date $start, Zend_Date $end, $points = null) {
         /*
          * @todo check that are in order
          */
@@ -182,7 +182,7 @@ $table = $this->getTable();
         return $datapoints;
     }
 
-    public function fetchObjectsBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end) {
+    public function fetchObjectsByComponentTimespan($subdevice, Zend_Date $start, Zend_Date $end) {
 
         $select = $this->getTable()->select()
                         //->from($this,array('datetime','value'))
@@ -196,7 +196,7 @@ $table = $this->getTable();
 
     public function save(HomeNet_Model_Datapoint_Interface $room) {
 
-        if (($room instanceof HomeNet_Model_DbTableRow_Datapoint) && ($room->isConnected())) {
+        if (($room instanceof HomeNet_Model_Datapoint_DbTableRow) && ($room->isConnected())) {
             return $room->save();
         } elseif (!is_null($room->id)) {
             $row = $this->getTable()->find($room->id);
@@ -211,7 +211,7 @@ $table = $this->getTable();
 
     public function delete(HomeNet_Model_Datapoint_Interface $room) {
 
-        if (($room instanceof HomeNet_Model_DbTableRow_Datapoint) && ($room->isConnected())) {
+        if (($room instanceof HomeNet_Model_Datapoint_DbTableRow) && ($room->isConnected())) {
             return $room->delete();
         } elseif (!is_null($room->id)) {
             return $this->getTable()->find($room->id)->current()->delete();

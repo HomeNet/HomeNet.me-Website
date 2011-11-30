@@ -63,35 +63,36 @@ class HomeNet_Model_Room_MapperDbTable implements HomeNet_Model_Room_MapperInter
         return $this->getTable()->fetchAll($select);
     }
 
-    public function fetchObjectsByRegion($id) {
+    public function fetchObjectsByHouseRegion($house, $region) {
 
-        $select = $this->getTable()->select()->where('region = ?', $id);
+        $select = $this->getTable()->select()->where('house = ?', $house)->where('region = ?', $region);
         return $this->getTable()->fetchAll($select);
     }
 
     public function save(HomeNet_Model_Room_Interface $object) {
 
-        if (($object instanceof HomeNet_Model_DbTableRow_Room) && ($object->isConnected())) {
+        if (($object instanceof HomeNet_Model_Room_DbTableRow) && ($object->isConnected())) {
             return $object->save();
         } elseif (!is_null($object->id)) {
-            $row = $this->getTable()->find($object->id);
+            $row = $this->getTable()->find($object->id)->current();
         } else {
             $row = $this->getTable()->createRow();
         }
 
         $row->fromArray($object->toArray());
+        
         return $row->save();
     }
 
     public function delete(HomeNet_Model_Room_Interface $object) {
 
-        if (($object instanceof HomeNet_Model_DbTableRow_Room) && ($object->isConnected())) {
+        if (($object instanceof HomeNet_Model_Room_DbTableRow) && ($object->isConnected())) {
             return $object->delete();
         } elseif (!is_null($object->id)) {
             return $this->getTable()->find($object->id)->current()->delete();
         }
 
-        throw new HomeNet_Model_Exception('Invalid Room');
+        throw new InvalidArgumentException('Invalid Room');
     }
     
     public function deleteAll() {

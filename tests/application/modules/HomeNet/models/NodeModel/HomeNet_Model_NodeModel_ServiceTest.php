@@ -24,13 +24,45 @@ class HomeNet_Model_NodeModel_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        
+        $this->service->deleteAll();
+    }
+    
+    private function createValidObject() {
+        $object = new HomeNet_Model_NodeModel();
+        $object->type = HomeNet_Model_Node::SENSOR;
+        $object->status = HomeNet_Model_NodeModel::LIVE;
+        $object->plugin = 'Jeenode';
+        $object->name = 'testModel';
+        $object->description = 'test description';
+        $object->image = 'test.jpg';
+        $object->max_devices = 4;
+        $object->settings = array('key' => 'value');
+
+        $result = $this->service->create($object);
+
+        $this->assertInstanceOf('HomeNet_Model_NodeModel_Interface', $result);
+        return $result;
+    }
+    
+    private function validateResult($result){
+        $this->assertNotNull($result->id);
+        $this->assertEquals(HomeNet_Model_Node::SENSOR, $result->type);
+        $this->assertEquals(HomeNet_Model_ComponentModel::LIVE, $result->status);
+        $this->assertEquals('Jeenode', $result->plugin);
+        $this->assertEquals('testModel', $result->name);
+        $this->assertEquals('test description', $result->description);
+        $this->assertEquals('test.jpg', $result->image);
+        $this->assertEquals(4, $result->max_devices);
+        $this->assertTrue(is_array($result->settings));
+        $this->assertEquals('value', $result->settings['key']);
     }
 
+//$this->service->getMapper()///////////////////////////////////////////////////
      public function testGetMapper() {
        $this->assertInstanceOf('HomeNet_Model_NodeModel_MapperInterface', $this->service->getMapper());
     }
 
+//$this->service->setMapper($mapper)////////////////////////////////////////////
     public function testSetMapper() {
         $mapper = new HomeNet_Model_NodeModel_MapperDbTable();
          $this->service->setMapper($mapper);
@@ -38,39 +70,196 @@ class HomeNet_Model_NodeModel_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('HomeNet_Model_NodeModel_MapperInterface', $this->service->getMapper());
         $this->assertEquals($mapper, $this->service->getMapper());
     }
+    
+//$this->service->getObjectById($id)////////////////////////////////////////////
+    public function testGetObjectById_valid() {
+        $object = $this->createValidObject();
+
+        $result = $this->service->getObjectById($object->id);
+
+        $this->validateResult($result);
+    }
+
+    public function testGetObjectById_invalid() {
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById(1000);
+    }
+
+    public function testGetObjectById_null() {
+        $this->setExpectedException('InvalidArgumentException');
+        $result = $this->service->getObjectById(null);
+    }
 
     public function testGetObjects() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $object = $this->createValidObject();
+        $object2 = $this->createValidObject();
+
+        $results = $this->service->getObjects();
+
+        $this->assertEquals(2, count($results));
+
+        $result = $results[0];
+        $this->validateResult($result);
     }
 
-    public function testGetObjectsByStatus() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testGetObjectsByStatus_valid() {
+        $object = $this->createValidObject();
+
+        $results = $this->service->getObjectsByStatus(HomeNet_Model_ComponentModel::LIVE);
+        $this->assertEquals(1, count($results));
+
+        $result = $results[0];
+        $this->validateResult($result);
+    }
+    
+    public function testGetObjectsByStatus_null() {
+       
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->getObjectsByStatus(null);
+    }
+    
+//$this->service->create($mixed)////////////////////////////////////////////////
+    public function testCreate_validObject() {
+        $result = $this->createValidObject();
+
+        $this->assertNotNull($result->id);
+        $this->validateResult($result);
     }
 
-    public function testCreate() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testCreate_validArray() {
+        $array = array('type' => HomeNet_Model_Node::SENSOR,
+            'status' => HomeNet_Model_ComponentModel::LIVE,
+            'plugin' => 'Jeenode',
+            'name' => 'testModel',
+            'description' => 'test description',
+            'image' => 'test.jpg',
+            'max_devices' => 4,
+            'settings' => array('key' => 'value'));
+
+        $result = $this->service->create($array);
+        $this->validateResult($result);
     }
 
-    public function testUpdate() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testCreate_invalidObject() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $badObject = new StdClass();
+        $this->service->create($badObject);
+    }
+    
+//$this->service->update($mixed)////////////////////////////////////////////////
+    public function testUpdate_validObject() {
+        //setup
+        $object = $this->createValidObject();
+
+        //update values
+        $object->type = HomeNet_Model_Node::INTERNET;
+        $object->status = HomeNet_Model_ComponentModel::TESTING;
+        $object->plugin = 'RGBLED';
+        $object->name = 'testModel2';
+        $object->description = 'test description2';
+        $object->image = 'test2.jpg';
+        $object->max_devices = 2;
+        $object->settings = array('key' => 'value2');
+
+        $result = $this->service->update($object);
+
+        $this->assertInstanceOf('HomeNet_Model_NodeModel_Interface', $result);
+
+        $this->assertNotNull($result->id);
+        $this->assertEquals(HomeNet_Model_Node::INTERNET, $result->type);
+        $this->assertEquals(HomeNet_Model_ComponentModel::TESTING, $result->status);
+        $this->assertEquals('RGBLED', $result->plugin);
+        $this->assertEquals('testModel2', $result->name);
+        $this->assertEquals('test description2', $result->description);
+        $this->assertEquals('test2.jpg', $result->image);
+        $this->assertEquals(2, $result->max_devices);
+        $this->assertTrue(is_array($result->settings));
+        $this->assertEquals('value2', $result->settings['key']);
     }
 
-    public function testDelete() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testUpdate_validArray() {
+        //setup
+        $object = $this->createValidObject();
+        $array = $object->toArray();
+
+        //update values
+        $array['type'] = HomeNet_Model_Node::INTERNET;
+        $array['status'] = HomeNet_Model_ComponentModel::TESTING;
+        $array['plugin'] = 'RGBLED';
+        $array['name'] = 'testModel2';
+        $array['description'] = 'test description2';
+        $array['image'] = 'test2.jpg';
+        $array['max_devices'] = 2;
+        $array['settings'] = array('key' => 'value2');
+
+        $result = $this->service->update($array);
+
+        $this->assertInstanceOf('HomeNet_Model_NodeModel_Interface', $result);
+
+        $this->assertNotNull($result->id);
+        $this->assertEquals(HomeNet_Model_Node::INTERNET, $result->type);
+        $this->assertEquals(HomeNet_Model_ComponentModel::TESTING, $result->status);
+        $this->assertEquals('RGBLED', $result->plugin);
+        $this->assertEquals('testModel2', $result->name);
+        $this->assertEquals('test description2', $result->description);
+        $this->assertEquals('test2.jpg', $result->image);
+        $this->assertTrue(is_array($result->settings));
+        $this->assertEquals(2, $result->max_devices);
+        $this->assertEquals('value2', $result->settings['key']);
+    }
+
+    public function testUpdate_invalidObject() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $badObject = new StdClass();
+        $create = $this->service->update($badObject);
+    }
+
+//$this->service->delete($mixed)////////////////////////////////////////////////    
+    public function testDelete_validObject() {
+        //setup
+        $object = $this->createValidObject();
+
+        //test delete
+        $id = $object->id;
+        $this->service->delete($object);
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($id);
+    }
+
+    public function testDelete_validArray() {
+        //setup
+        $object = $this->createValidObject();
+
+        //test delete
+        $id = $object->id;
+        $this->service->delete($object->toArray());
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($id);
+    }
+
+    public function testDelete_validId() {
+        //setup
+        $object = $this->createValidObject();
+
+        //test delete
+        $id = $object->id;
+        $this->service->delete($id);
+
+        //verify that it was deleted
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($object->id);
+    }
+
+    public function testDelete_invalidObject() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $badObject = new StdClass();
+        $create = $this->service->delete($badObject);
     }
 }

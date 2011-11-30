@@ -34,7 +34,7 @@ interface HomeNet_Model_Room_MapperInterface {
 
     public function fetchObjectsByHouses($houses);
 
-    public function fetchObjectsByRegion($region);
+    public function fetchObjectsByHouseRegion($house, $region);
 
     public function save(HomeNet_Model_Room_Interface $object);
 

@@ -1,8 +1,6 @@
 <?php
 
 /*
- * ApikeyService.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -69,7 +67,7 @@ class HomeNet_Model_Apikey_Service {
      */
     public function getObjectById($id) {
         
-        if (empty($id) || !is_numeric($id)) {
+        if (empty($id) || !is_string($id)) {
             throw new InvalidArgumentException('Invalid Id');
         }
         
@@ -96,7 +94,7 @@ class HomeNet_Model_Apikey_Service {
             throw new InvalidArgumentException('Invalid House');
         }
         
-        if (!is_null($user) && !is_numeric($id)) {
+        if (!is_null($user) && !is_numeric($user)) {
             throw new InvalidArgumentException('Invalid User');
         }
         
@@ -108,32 +106,32 @@ class HomeNet_Model_Apikey_Service {
         return $results;
     }
 
-    /**
-     * Get Apikeys by id, house
-     * 
-     * @param int $id       Apikey id
-     * @param int $house    House id
-     * @return HomeNet_Model_ApiKey[] (HomeNet_Model_ApiKey_Interface[]) 
-     * @throws InvalidArgumentException
-     */
-    public function getObjectsByIdHouse($id, $house) {
-        
-        if (empty($id) || !is_numeric($id)) {
-            throw new InvalidArgumentException('Invalid Id');
-        }
-        
-        if (empty($house) || !is_numeric($house)) {
-            throw new InvalidArgumentException('Invalid House');
-        }
-        
-        $results = $this->getMapper()->fetchObjectsByIdHouse($id, $house);
-
-        if (empty($results)) {
-            return array();
-            //throw new NotFoundException('Apikey not found', 404);
-        }
-        return $results;
-    }
+//    /**
+//     * Get Apikeys by id, house
+//     * 
+//     * @param int $id       Apikey id
+//     * @param int $house    House id
+//     * @return HomeNet_Model_ApiKey[] (HomeNet_Model_ApiKey_Interface[]) 
+//     * @throws InvalidArgumentException
+//     */
+//    public function getObjectsByIdHouse($id, $house) {
+//        
+//        if (empty($id) || !is_string($id)) {
+//            throw new InvalidArgumentException('Invalid Id');
+//        }
+//        
+//        if (empty($house) || !is_numeric($house)) {
+//            throw new InvalidArgumentException('Invalid House');
+//        }
+//        
+//        $results = $this->getMapper()->fetchObjectsByIdHouse($id, $house);
+//
+//        if (empty($results)) {
+//            return array();
+//            //throw new NotFoundException('Apikey not found', 404);
+//        }
+//        return $results;
+//    }
 
     /**
      * Generate a new Apikey for a house and current user
@@ -169,26 +167,30 @@ class HomeNet_Model_Apikey_Service {
      * @throws InvalidArgumentException 
      */
     public function validate($key, $house = null) {
+        
+        if (empty($key) || !is_string($key)) {
+            throw new InvalidArgumentException('Invalid Key');
+        }
+        
         $count = 0;
         if (!preg_match('/\b([a-f0-9]{40})\b/', $key)) {
             //return false;
             throw new InvalidArgumentException('Invalid Api Key Format');
         }
 
-        $keys = array();
+      //  $keys = array();
 
-        if (!is_null($house)) {
-            $keys = $this->getObjectsByIdHouse($key, $house);
-        } else {
-            $keys[0] = $this->getObjectById($key);
+       // if (!is_null($house)) {
+       //     $keys = $this->getObjectsByIdHouse($key, $house);
+      //  } else {
+        
+        try{
+            $key = $this->getObjectById($key);
+        } catch(NotFoundException $e){
+            return false;
         }
 
-        $count = count($keys);
-
-        if ($count == 0) {
-            throw new Exception('Invalid API Key');
-        }
-        return $keys[0];
+        return true;
     }
 
     /**
@@ -232,12 +234,12 @@ class HomeNet_Model_Apikey_Service {
     /**
      * Delete Apikey
      * 
-     * @param HomeNet_Model_SubdeviceModel_Interface|array|integer $mixed
+     * @param HomeNet_Model_ComponentModel_Interface|array|integer $mixed
      * @return boolean Success
      * @throws InvalidArgumentException 
      */
     public function delete($mixed) {
-        if (is_int($mixed)) {
+        if (is_string($mixed)) {
             $object = $this->getObjectById($mixed);
         } elseif ($mixed instanceof HomeNet_Model_Apikey_Interface) {
             $object = $mixed;

@@ -37,7 +37,7 @@ class HomeNet_Model_DeviceModel_MapperDbTable implements HomeNet_Model_DeviceMod
     public function getTable() {
         if (is_null($this->_table)) {
             $this->_table = new Zend_Db_Table('homenet_device_models');
-            $this->_table->setRowClass('HomeNet_Model_DeviceModels_DbTableRow');
+            $this->_table->setRowClass('HomeNet_Model_DeviceModel_DbTableRow');
         }
         return $this->_table;
     }
@@ -45,8 +45,6 @@ class HomeNet_Model_DeviceModel_MapperDbTable implements HomeNet_Model_DeviceMod
     public function setTable($table) {
         $this->_table = $table;
     }
-
-
 
     public function fetchObjectById($id) {
         return $this->getTable()->find($id)->current();
@@ -64,15 +62,10 @@ class HomeNet_Model_DeviceModel_MapperDbTable implements HomeNet_Model_DeviceMod
         return $this->getTable()->fetchAll($select);
     }
 
-
-
-
     public function save(HomeNet_Model_DeviceModel_Interface $deviceModel) {
 
-
-        if (($deviceModel instanceof HomeNet_Model_DbTableRow_DeviceModel) && ($deviceModel->isConnected())) {
-            $deviceModel->save();
-            return;
+        if (($deviceModel instanceof HomeNet_Model_DeviceModel_DbTableRow) && ($deviceModel->isConnected())) {
+            return $deviceModel->save();
         } elseif (!is_null($deviceModel->id)) {
             $row = $this->getTable()->find($deviceModel->id)->current();
         } else {
@@ -81,14 +74,12 @@ class HomeNet_Model_DeviceModel_MapperDbTable implements HomeNet_Model_DeviceMod
 
         $row->fromArray($deviceModel->toArray());
         // die(debugArray($row));
-        $row->save();
-
-        return $row;
+        return $row->save();
     }
 
     public function delete(HomeNet_Model_DeviceModel_Interface $object) {
 
-        if (($object instanceof HomeNet_Model_DbTableRow_DeviceModel) && ($object->isConnected())) {
+        if (($object instanceof HomeNet_Model_DeviceModel_DbTableRow) && ($object->isConnected())) {
             return $object->delete();
         } elseif (!is_null($object->id)) {
             return $this->getTable()->find($object->id)->current()->delete();

@@ -174,12 +174,12 @@ class HomeNet_Model_DeviceModel_Service {
      * @throws InvalidArgumentException 
      */
     public function delete($mixed) {
-        if (is_int($mixed)) {
-            $object = $this->getObjectbyId($mixed);
-        } elseif ($mixed instanceof HomeNet_Model_DeviceModel_Interface) {
+        if ($mixed instanceof HomeNet_Model_DeviceModel_Interface) {
             $object = $mixed;
         } elseif (is_array($mixed)) {
             $object = new HomeNet_Model_DeviceModel(array('data' => $mixed));
+        } elseif (is_numeric($mixed)) {
+            $object = $this->getObjectbyId((int) $mixed);
         } else {
             throw new InvalidArgumentException('Invalid DeviceModel');
         }

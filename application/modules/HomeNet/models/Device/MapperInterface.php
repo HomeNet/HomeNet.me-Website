@@ -35,7 +35,7 @@ interface HomeNet_Model_Device_MapperInterface {
 
     public function fetchObjectsByNode($node);
 
-    public function fetchObjectByHouseNodeDevice($house, $node, $device);
+    public function fetchObjectByHouseNodeaddressPosition($house, $nodeAddress, $position);
 
     public function fetchObjectByIdWithNode($id);
 

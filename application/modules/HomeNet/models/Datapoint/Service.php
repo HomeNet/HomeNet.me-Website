@@ -83,8 +83,8 @@ class HomeNet_Model_Datapoint_Service {
      * @param int $id
      * @return HomeNet_Model_Datapoint (HomeNet_Model_Datapoint_Interface)
      */
-    public function getLastObjectBySubdevice($subdevice) {
-        $result = $this->getMapper()->fetchNewestDatapointBySubdevice($subdevice);
+    public function getLastObjectByComponent($subdevice) {
+        $result = $this->getMapper()->fetchNewestDatapointByComponent($subdevice);
 
         if (empty($result)) {
             // throw new HomeNet_Model_Exception('Datapoint not found', 404);
@@ -95,14 +95,14 @@ class HomeNet_Model_Datapoint_Service {
     /**
      * Get average values over a period of time
      * 
-     * @param integer $subdevice  Subdevice Id
+     * @param integer $subdevice  Component Id
      * @param Zend_Date $start
      * @param Zend_Date $end
      * @param int $points number of points to return
      * @return HomeNet_Model_Datapoint[] (HomeNet_Model_Datapoint_Interface[]) 
      */
-    public function getAveragesBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end, $points = null) {
-        $results = $this->getMapper()->fetchAveragesBySubdeviceTimespan($subdevice, $start, $end, $points);
+    public function getAveragesByComponentTimespan($subdevice, Zend_Date $start, Zend_Date $end, $points = null) {
+        $results = $this->getMapper()->fetchAveragesByComponentTimespan($subdevice, $start, $end, $points);
 
         if (empty($results)) {
             // throw new HomeNet_Model_Exception('Datapoint not found', 404);
@@ -118,8 +118,8 @@ class HomeNet_Model_Datapoint_Service {
      * @param Zend_Date $end
      * @return HomeNet_Model_Datapoint[] (HomeNet_Model_Datapoint_Interface[])  
      */
-    public function getObjectsBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end) {
-        $results = $this->getMapper()->fetchDatapointsBySubdeviceTimespan($subdevice, $start, $end);
+    public function getObjectsByComponentTimespan($subdevice, Zend_Date $start, Zend_Date $end) {
+        $results = $this->getMapper()->fetchDatapointsByComponentTimespan($subdevice, $start, $end);
 
         if (empty($results)) {
             //  throw new HomeNet_Model_Exception('Datapoint not found', 404);

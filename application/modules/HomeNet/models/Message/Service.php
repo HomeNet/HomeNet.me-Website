@@ -58,6 +58,27 @@ class HomeNet_Model_Message_Service {
     public function setMapper(HomeNet_Model_Message_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
+    
+    /**
+     * Get message by id
+     * 
+     * @param int $id
+     * @return HomeNet_Model_Message[] (HomeNet_Model_Message_Interface[])
+     * @throws InvalidArgumentException
+     */
+    public function getObjectById($id) {
+        if (empty($id) || !is_numeric($id)) {
+            throw new InvalidArgumentException('Invalid Id');
+        }
+
+        $result = $this->getMapper()->fetchObjectById($id);
+        
+        if (empty($result)) {
+            throw new NotFoundException('Message not found', 404);
+        }
+        
+        return $result;
+    }
 
     /**
      * Get messages by user
@@ -71,7 +92,7 @@ class HomeNet_Model_Message_Service {
             throw new InvalidArgumentException('Invalid User');
         }
 
-        $results = $this->getMapper()->fetchMessagesByUser($user);
+        $results = $this->getMapper()->fetchObjectsByUser($user);
         return $results;
     }
 
@@ -84,13 +105,13 @@ class HomeNet_Model_Message_Service {
      * @throws InvalidArgumentException
      */
     public function getObjectsByHouseOrUser($house, $user) {
-        if (empty($house) || !is_numeric($user)) {
+        if (empty($house) || !is_numeric($house)) {
             throw new InvalidArgumentException('Invalid House');
         }
         if (empty($user) || !is_numeric($user)) {
             throw new InvalidArgumentException('Invalid User');
         }
-        return $this->getMapper()->fetchMessagesByHouseOrUser($house, $user);
+        return $this->getMapper()->fetchObjectsByHouseOrUser($house, $user);
     }
 
     /**
@@ -101,17 +122,18 @@ class HomeNet_Model_Message_Service {
      * @param integer $user User is
      * @param integer $house House id
      * @param integer $room Room id
-     * @param integer $subdevice Subdevice id
+     * @param integer $component Component id
      * @return HomeNet_Model_Message (HomeNet_Model_Message_Interface)
      */
-    public function add($level, $message, $user = null, $house =null, $room = null, $subdevice = null) {
+    public function add($level, $message, $user = null, $house = null, $room = null, $component = null) {
 
         $row = new HomeNet_Model_Message();
         $row->level = $level;
         $row->message = $message;
         $row->user = $user;
         $row->house = $house;
-        $row->subdevice = $subdevice;
+        $row->room = $room;
+        $row->component = $component;
 
         return $this->create($row);
     }
@@ -162,12 +184,12 @@ class HomeNet_Model_Message_Service {
      * @throws InvalidArgumentException 
      */
     public function delete($mixed) {
-        if (is_int($mixed)) {
-            $object = $this->getObjectbyId($mixed);
-        } elseif ($mixed instanceof HomeNet_Model_Message_Interface) {
+        if ($mixed instanceof HomeNet_Model_Message_Interface) {
             $object = $mixed;
         } elseif (is_array($mixed)) {
             $object = new HomeNet_Model_Message(array('data' => $mixed));
+        } elseif (is_numeric($mixed)) {
+            $object = $this->getObjectbyId((int) $mixed);
         } else {
             throw new InvalidArgumentException('Invalid Message');
         }

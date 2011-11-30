@@ -31,7 +31,7 @@ class HomeNet_Model_Room implements HomeNet_Model_Room_Interface {
     public $region;
     public $name;
     public $description;
-    public $permissions;
+    public $permissions = null;
 
     public function  __construct(array $config = array()) {
         if(isset($config['data'])){

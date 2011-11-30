@@ -37,30 +37,32 @@ class HomeNet_Model_Room_DbTableRow extends Zend_Db_Table_Row_Abstract implement
         }
     }
 
-    public function toArray(){
+//    public function toArray(){
+//
+//        return parent::toArray();
+///*
+//        $array = array();
+//
+//        $array['id'] = $this->id;
+//        $array['house'] = $this->house;
+//        $array['region'] = $this->region;
+//        $array['name'] =  $this->name;
+//        $array['description'] = $this->description;
+//        $array['permissions'] = $this->permissions;
+//
+//        return $array;*/
+//    }
+//
+//    public function init() {
+//       // $this->fromArray($this->_data);
+//    }
 
-        return parent::toArray();
-/*
-        $array = array();
-
-        $array['id'] = $this->id;
-        $array['house'] = $this->house;
-        $array['region'] = $this->region;
-        $array['name'] =  $this->name;
-        $array['description'] = $this->description;
-        $array['permissions'] = $this->permissions;
-
-        return $array;*/
-    }
-
-    public function init() {
-       // $this->fromArray($this->_data);
-    }
-
-    public function save(){
-      //  $this->_data = $this->toArray();
+ public function save(){
+      //$this->compress();
         if (parent::save()) {
-            return $this->_data['id'];
+           // $this->uncompress();
+            return $this;
         }
     }
+    
 }

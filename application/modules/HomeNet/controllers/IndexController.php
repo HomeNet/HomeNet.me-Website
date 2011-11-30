@@ -73,8 +73,8 @@ class HomeNet_IndexController extends Zend_Controller_Action {
 //        $devices = new HomeNet_Model_Device_Service();
 //        $deviceModels = new HomeNet_Model_DeviceModel_Service();
 //
-//        $subdevices = new HomeNet_Model_Subdevice_Service();
-//        $subdeviceModels = new HomeNet_Model_SubdeviceModel_Service();
+//        $subdevices = new HomeNet_Model_Component_Service();
+//        $subdeviceModels = new HomeNet_Model_ComponentModel_Service();
      //   $dService = new HomeNet_Model_Datapoint_Service();
       //  $dService->add('byte',15,42,'2011-03-11 08:32:21');
         //15 	2011-02-23 04:32:21 	42

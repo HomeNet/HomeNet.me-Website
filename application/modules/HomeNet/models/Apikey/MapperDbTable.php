@@ -36,7 +36,7 @@ class HomeNet_Model_Apikey_MapperDbTable implements HomeNet_Model_Apikey_MapperI
      */
     public function getTable() {
         if (is_null($this->_table)) {
-            $this->_table = new Zend_Db_Table('homenet_apikey');
+            $this->_table = new Zend_Db_Table('homenet_apikeys');
             $this->_table->setRowClass('HomeNet_Model_Apikey_DbTableRow');
         }
         return $this->_table;
@@ -76,7 +76,7 @@ class HomeNet_Model_Apikey_MapperDbTable implements HomeNet_Model_Apikey_MapperI
 
     public function save(HomeNet_Model_Apikey_Interface $object) {
 
-        if (($object instanceof HomeNet_Model_DbTableRow_Apikey) && ($object->isConnected())) {
+        if (($object instanceof HomeNet_Model_Apikey_DbTableRow) && ($object->isConnected())) {
             return $object->save();
 
         } elseif (!is_null($object->id)) {
@@ -95,7 +95,7 @@ class HomeNet_Model_Apikey_MapperDbTable implements HomeNet_Model_Apikey_MapperI
 
     public function delete(HomeNet_Model_Apikey_Interface $object) {
 
-        if (($object instanceof HomeNet_Model_DbTableRow_Apikey) && ($object->isConnected())) {
+        if (($object instanceof HomeNet_Model_Apikey_DbTableRow) && ($object->isConnected())) {
             return $object->delete();
 
         } elseif (!is_null($object->id)) {

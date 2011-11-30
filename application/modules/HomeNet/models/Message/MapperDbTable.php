@@ -45,15 +45,21 @@ class HomeNet_Model_Message_MapperDbTable implements HomeNet_Model_Message_Mappe
     public function setTable($table) {
         $this->_table = $table;
     }
+    
+     public function fetchObjectById($id){
+        $result = $this->getTable()->find($id)->current();
+        return $result;
 
-    public function fetchMessagesByUser($user) {
+    }
+
+    public function fetchObjectsByUser($user) {
 
         $select = $this->getTable()->select()->where('user = ?', $user);
 
         return $this->getTable()->fetchAll($select);
     }
 
-    public function fetchMessagesByHouseOrUser($house, $user) {
+    public function fetchobjectsByHouseOrUser($house, $user) {
         $houses = array();
         if (!is_array($house)) {
             $houses[] = $house;
@@ -71,10 +77,8 @@ class HomeNet_Model_Message_MapperDbTable implements HomeNet_Model_Message_Mappe
 
     public function save(HomeNet_Model_Message_Interface $message) {
 
-
-        if (($message instanceof HomeNet_Model_DbTableRow_Message) && ($message->isConnected())) {
-            $message->save();
-            return;
+        if (($message instanceof HomeNet_Model_Message_DbTableRow) && ($message->isConnected())) {
+             return $message->save();
         } elseif (!is_null($message->id)) {
             $row = $this->getTable()->find($message->id)->current();
         } else {
@@ -82,20 +86,16 @@ class HomeNet_Model_Message_MapperDbTable implements HomeNet_Model_Message_Mappe
         }
 
         $row->fromArray($message->toArray());
-       // die(debugArray($message->toArray()));
-        $row->save();
 
-        return $row;
+        return $row->save();
     }
 
     public function delete(HomeNet_Model_Message_Interface $message) {
 
-        if (($message instanceof HomeNet_Model_DbTableRow_Message) && ($message->isConnected())) {
-            $message->delete();
-            return true;
+        if (($message instanceof HomeNet_Model_Message_DbTableRow) && ($message->isConnected())) {
+            return $message->delete();
         } elseif (!is_null($message->id)) {
-            $row = $this->getTable()->find($message->id)->current()->delete();
-            return;
+            return $this->getTable()->find($message->id)->current()->delete();
         }
 
         throw new HomeNet_Model_Exception('Invalid Room');

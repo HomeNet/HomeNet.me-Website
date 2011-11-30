@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
@@ -21,7 +20,7 @@
 
 /**
  * @package HomeNet
- * @subpackage Devices
+ * @subpackage Device
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */

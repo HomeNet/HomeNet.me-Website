@@ -1,8 +1,6 @@
 <?php
 
 /*
- * NodeService.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -115,7 +113,7 @@ class HomeNet_Model_NodeModel_Service {
         if ($mixed instanceof HomeNet_Model_NodeModel_Interface) {
             $object = $mixed;
         } elseif (is_array($mixed)) {
-            $object = new HomeNet_Model_Message(array('data' => $mixed));
+            $object = new HomeNet_Model_NodeModel(array('data' => $mixed));
         } else {
             throw new InvalidArgumentException('Invalid NodeModel');
         }
@@ -150,12 +148,12 @@ class HomeNet_Model_NodeModel_Service {
      * @throws InvalidArgumentException 
      */
     public function delete($mixed) {
-        if (is_int($mixed)) {
-            $object = $this->getObjectbyId($mixed);
-        } elseif ($mixed instanceof HomeNet_Model_NodeModel_Interface) {
+        if ($mixed instanceof HomeNet_Model_NodeModel_Interface) {
             $object = $mixed;
         } elseif (is_array($mixed)) {
             $object = new HomeNet_Model_NodeModel(array('data' => $mixed));
+        } elseif (is_numeric($mixed)) {
+            $object = $this->getObjectbyId((int) $mixed);
         } else {
             throw new InvalidArgumentException('Invalid NodeModel');
         }

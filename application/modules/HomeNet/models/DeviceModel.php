@@ -29,14 +29,16 @@ class HomeNet_Model_DeviceModel implements HomeNet_Model_DeviceModel_Interface {
     public $id = null;
     public $category;
     public $status;
-    public $driver;
+    public $plugin;
     public $name;
     public $description;
     public $image;
     public $settings;
     public $created;
     
-
+    const INACTIVE = -1;
+    const TESTING = 0;
+    const LIVE = 1;
 
     /**
      * @param array $config

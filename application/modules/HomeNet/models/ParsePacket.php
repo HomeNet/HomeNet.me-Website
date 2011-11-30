@@ -25,7 +25,7 @@ class HomeNet_Model_ParsePacket
             }
             $this->saveDatapoint();
             /*
-            $table = new HomeNet_Model_DbTable_Subdevices();
+            $table = new HomeNet_Model_DbTable_Components();
             $subdevice = $table->fetchAllByDevice($this->fromDevice);*/
 
         } catch (Zend_Exception $e){

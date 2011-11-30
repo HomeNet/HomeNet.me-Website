@@ -1,8 +1,6 @@
 <?php
 
 /*
- * HouseUserService.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -72,7 +70,7 @@ class HomeNet_Model_HouseUser_Service {
             throw new InvalidArgumentException('Invalid User');
         }
         
-        $result = $this->getMapper()->fetchObjectsbyUser($user);
+        $result = $this->getMapper()->fetchObjectsByUser($user);
 
         if (empty($result)) {
             throw new NotFoundException('HouseUser not found', 404);
@@ -94,7 +92,7 @@ class HomeNet_Model_HouseUser_Service {
             throw new InvalidArgumentException('Invalid HouseUser Id');
         }
         
-        $result = $this->getMapper()->fetchObjectbyId($id);
+        $result = $this->getMapper()->fetchObjectById($id);
 
         if (empty($result)) {
             throw new NotFoundException('HouseUser not found', 404);
@@ -121,19 +119,15 @@ class HomeNet_Model_HouseUser_Service {
         $result = $this->getMapper()->save($object);
 
         $houseService = new HomeNet_Model_House_Service();
-        $house = $houseService->getHouseById($result->house);
-        $houseService->clearCacheById($result->house);
+        $house = $houseService->getObjectById($result->house);
+      //  $houseService->clearCacheById($result->house);
 
-        $types = array('house' => 'House',
-            'apartment' => 'Apartment',
-            'condo' => 'Condo',
-            'other' => '',
-            'na' => '');
+        $types = $houseService->getTypes();
 
-        $table = new HomeNet_Model_DbTable_Alerts();
+        //$table = new HomeNet_Model_DbTable_Alerts();
 
         //$table->add(HomeNet_Model_Alert::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added a new houseUser ' . $houseUser->name . ' to their ' . $types[$this->house->type] . ' ' . $this->house->name . ' to HomeNet', null, $id);
-        $table->add(HomeNet_Model_Alert::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added a new houseUser ' . $result->name . ' to ' . $house->name . ' to HomeNet', null, $result->id);
+       // $table->add(HomeNet_Model_Alert::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added a new houseUser ' . $result->name . ' to ' . $house->name . ' to HomeNet', null, $result->id);
 
         return $result;
     }
@@ -156,8 +150,8 @@ class HomeNet_Model_HouseUser_Service {
 
         $result = $this->getMapper()->save($object);
 
-        $houseService = new HomeNet_Model_House_Service();
-        $houseService->clearCacheById($result->house);
+       // $houseService = new HomeNet_Model_House_Service();
+       // $houseService->clearCacheById($result->house);
 
         return $result;
     }
@@ -170,22 +164,22 @@ class HomeNet_Model_HouseUser_Service {
      * @throws InvalidArgumentException 
      */
     public function delete($mixed) {
-        if (is_int($mixed)) {
-            $object = $this->getObjectbyId($mixed);
-        } elseif ($mixed instanceof HomeNet_Model_HouseUser_Interface) {
+        if ($mixed instanceof HomeNet_Model_HouseUser_Interface) {
             $object = $mixed;
         } elseif (is_array($mixed)) {
             $object = new HomeNet_Model_HouseUser(array('data' => $mixed));
+        } elseif (is_numeric($mixed)) {
+            $object = $this->getObjectbyId((int) $mixed);
         } else {
-            throw new InvalidArgumentException('Invalid DeviceModel');
+            throw new InvalidArgumentException('Invalid UserModel');
         }
 
         return $this->getMapper()->delete($object);
 
         $result = $this->getMapper()->delete($houseUser);
 
-        $houseService = new HomeNet_Model_House_Service();
-        $houseService->clearCacheById($result->house);
+       // $houseService = new HomeNet_Model_House_Service();
+       // $houseService->clearCacheById($result->house);
 
         return $result;
     }

@@ -196,5 +196,8 @@ abstract class CMS_Installer_Abstract {
     public function getAdminBlocks(){
         return array();
     } 
-
+    
+    public function getDependencies(){
+        return array();
+    }
 }

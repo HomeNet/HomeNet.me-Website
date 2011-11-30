@@ -29,7 +29,7 @@ class HomeNet_Model_DbTable_DatapointsAbstract extends Zend_Db_Table_Abstract {
 
    // protected $_rowClass = 'HomeNet_Model_DbTableRow_Datapoint';
 
-    public function fetchNewestRowBySubdevice($subdevice) {
+    public function fetchNewestRowByComponent($subdevice) {
 
         $select = $this->select()
                         //->from($this,array('datetime','value'))
@@ -40,7 +40,7 @@ class HomeNet_Model_DbTable_DatapointsAbstract extends Zend_Db_Table_Abstract {
         return $this->fetchRow($select);
     }
 
-    public function fetchAveragesBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end, $points = null) {
+    public function fetchAveragesByComponentTimespan($subdevice, Zend_Date $start, Zend_Date $end, $points = null) {
 
         /*
          * @todo check that are in order
@@ -135,7 +135,7 @@ $start = true;
         return $datapoints;
     }
 
-    public function fetchRowsBySubdeviceTimespan($subdevice, Zend_Date $start, Zend_Date $end) {
+    public function fetchRowsByComponentTimespan($subdevice, Zend_Date $start, Zend_Date $end) {
 
         //die($subdevice);
 

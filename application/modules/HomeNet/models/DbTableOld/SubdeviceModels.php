@@ -21,14 +21,14 @@
 
 /**
  * @package HomeNet
- * @subpackage Subdevice
+ * @subpackage Component
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_DbTable_SubdeviceModels extends Zend_Db_Table_Abstract {
+class HomeNet_Model_DbTable_ComponentModels extends Zend_Db_Table_Abstract {
 
     protected $_name = 'homenet_subdevice_models';
-    protected $_rowClass = 'HomeNet_Model_DbTableRow_SubdeviceModel';
+    protected $_rowClass = 'HomeNet_Model_DbTableRow_ComponentModel';
 
 //    public function fetchRowById($id) {
 //
@@ -55,7 +55,7 @@ class HomeNet_Model_DbTable_SubdeviceModels extends Zend_Db_Table_Abstract {
 //            $driver = $rows[$id]->driver;
 //
 //            if (!class_exists($driver)) {
-//                throw new Zend_Exception('Subdevice driver ' . $driver . ' not found');
+//                throw new Zend_Exception('Component driver ' . $driver . ' not found');
 //            }
 //
 //             $d = new $driver();

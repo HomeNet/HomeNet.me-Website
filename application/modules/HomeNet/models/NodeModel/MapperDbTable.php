@@ -65,7 +65,7 @@ class HomeNet_Model_NodeModel_MapperDbTable implements HomeNet_Model_NodeModel_M
     public function save(HomeNet_Model_NodeModel_Interface $object) {
 
 
-        if (($object instanceof HomeNet_Model_DbTableRow_Node) && ($object->isConnected())) {
+        if (($object instanceof HomeNet_Model_NodeModel_DbTableRow) && ($object->isConnected())) {
             return $object->save();
         } elseif (!is_null($object->id)) {
             $row = $this->getTable()->find($object->id)->current();
@@ -80,7 +80,7 @@ class HomeNet_Model_NodeModel_MapperDbTable implements HomeNet_Model_NodeModel_M
 
     public function delete(HomeNet_Model_NodeModel_Interface $object) {
 
-        if (($object instanceof HomeNet_Model_DbTableRow_NodeModel) && ($object->isConnected())) {
+        if (($object instanceof HomeNet_Model_NodeModel_DbTableRow) && ($object->isConnected())) {
             return $object->delete();
         } elseif (!is_null($object->id)) {
             return $this->getTable()->find($object->id)->current()->delete();

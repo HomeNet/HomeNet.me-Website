@@ -25,13 +25,13 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_HouseUser implements HomeNet_Model_HouseUserInterface {
+class HomeNet_Model_HouseUser implements HomeNet_Model_HouseUser_Interface {
 
     public $id = null;
     public $house;
     public $user;
-    public $order;
-    public $permissions;
+    public $order = 0;
+    public $permissions = '';
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {

@@ -1,8 +1,6 @@
 <?php
 
 /*
- * Abstract.php
- *
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  *
  * This file is part of HomeNet.
@@ -30,21 +28,22 @@
 abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Interface {
 
     public $id = null;
+    public $house = null;
     public $node = null;
     public $model = null;
     public $position = null;
-    public $subdevices = 0;
+    public $components = 0;
     public $created = null;
     public $settings = array();
 
 
-    public $driver = null;
+    public $plugin = null;
     public $modelName = null;
 
 
     protected $_house;
     protected $_room;
-    protected $_subdevices;
+    protected $_components;
 
 
 
@@ -66,7 +65,7 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
      */
     public function fromArray(array $array) {
 
-        $vars = array('id', 'node', 'model', 'position', 'subdevices', 'created' , 'driver', 'modelName');
+        $vars = array('id', 'node', 'model', 'position', 'components', 'created' , 'driver', 'modelName');
 
         foreach ($array as $key => $value) {
             if (in_array($key, $vars)) {
@@ -89,16 +88,16 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
             'node' => $this->node,
             'model' => $this->model,
             'position' => $this->position,
-            'subdevices' => $this->subdevices,
+            'components' => $this->components,
             'created' => $this->created,
             'settings' => $this->settings,
-            'driver' => $this->driver,
+            'plugin' => $this->plugin,
             'modelName' => $this->modelName);
         return $array;
     }
 
     /**
-     * @param HomeNet_Model_SubdeviceModelInterface $model
+     * @param HomeNet_Model_ComponentModelInterface $model
      */
     public function loadModel(HomeNet_Model_DeviceModel_Interface $model) {
         if (!($this instanceof $model->driver )) {
@@ -115,9 +114,9 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
             $this->settings = array_merge($this->settings, $model->settings);
         }
 
-        if (!empty($model->settings['subdevices'])) {
-            $smService = new HomeNet_Model_SubdeviceModel_Service();
-            $this->_subdevices = $smService->getSubdevicesByIds($model->settings['subdevices']);
+        if (!empty($model->settings['components'])) {
+            $smService = new HomeNet_Model_ComponentModel_Service();
+            $this->_components = $smService->getComponentsByIds($model->settings['components']);
         }
     }
 
@@ -136,18 +135,18 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
         return new $this->driver(array('data' => $this->toArray()));
     }
 
-    public function getSubdevices($search = true) {
+    public function getComponents($search = true) {
 
-        if(!isset($this->_subdevices) && $search){
-            $service = new HomeNet_Model_Subdevice_Service();
-            $this->_subdevices = $service->getObjectsByDevice($this->id);
+        if(!isset($this->_components) && $search){
+            $service = new HomeNet_Model_Component_Service();
+            $this->_components = $service->getObjectsByDevice($this->id);
         } else {
-            //$this->_subdevices = array();
+            //$this->_components = array();
         }
 
-        //die(debugArray($this->_subdevices));
+        //die(debugArray($this->_components));
 
-        return $this->_subdevices;
+        return $this->_components;
     }
 
     public function setPosition($position) {
@@ -296,12 +295,12 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
 
         $form = new Zend_Form();
 
-        $subdevices = $this->getSubdevices();
+        $components = $this->getComponents();
 
         //debugArray($this->settings);
-       // die(debugArray($subdevices));
+       // die(debugArray($components));
 
-        foreach ($subdevices as $position => $subdevice) {
+        foreach ($components as $position => $subdevice) {
 
             $sub = $subdevice->getConfigForm();
 
@@ -321,7 +320,7 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
                     $room->setValue($this->getRoom());
                 }
 
-                $sub->setLegend('Subdevice ' . $position . ': ' . $subdevice->name);
+                $sub->setLegend('Component ' . $position . ': ' . $subdevice->name);
 
                 $form->addSubForm($sub, 'subdevice' . $position);
             }
@@ -333,8 +332,8 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
     }
 
     public function processConfigForm($values) {
-        $subdevices = $this->getSubdevices();
-        foreach ($subdevices as $key => $value) {
+        $components = $this->getComponents();
+        foreach ($components as $key => $value) {
             if (!empty($value) && !empty($values['subdevice' . $key])) {
                 $value->processConfigForm($values['subdevice' . $key]);
             }
@@ -362,10 +361,10 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
 //
 //        $row->save();
 //
-//        //create subdevices
+//        //create components
 //        $id = $row->id;
 //
-//        foreach ($this->subdevices as $key=>$value) {
+//        foreach ($this->components as $key=>$value) {
 //            if (!empty($value)) {
 //                $value->device = $id;
 //                $value->position = $key;
@@ -389,7 +388,7 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
 //
 //        $id = $row->id;
 //
-//        foreach ($this->subdevices as $value) {
+//        foreach ($this->components as $value) {
 //            if (!empty($value)) {
 //                $value->device = $id;
 //                $value->update();
@@ -404,7 +403,7 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
 //        $row = $table->fetchRowById($this->id);
 //        $row->delete();
 //
-//        foreach ($this->subdevices as $value) {
+//        foreach ($this->components as $value) {
 //            if (!empty($value)) {
 //                $value->delete();
 //            }
@@ -428,8 +427,8 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
             throw new Zend_Exception('Invalid value at position '.(string)$this->order);
         }
 */
-        $subdevices = $this->getSubdevices();
-        foreach ($subdevices as $subdevice) {
+        $components = $this->getComponents();
+        foreach ($components as $subdevice) {
             if (!empty($subdevice) && !empty($value[$subdevice->order+1])) {
                 $subdevice->saveDatapoint($value[$subdevice->order+1], $packet->timestamp->get('YYYY-MM-dd HH:mm:ss'));
             }

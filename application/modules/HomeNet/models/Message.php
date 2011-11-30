@@ -31,7 +31,7 @@ class HomeNet_Model_Message implements HomeNet_Model_Message_Interface {
     public $user;
     public $house;
     public $room;
-    public $subdevice;
+    public $component;
     public $level;
     public $message;
 
