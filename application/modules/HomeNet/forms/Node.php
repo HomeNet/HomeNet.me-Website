@@ -26,12 +26,43 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 class HomeNet_Form_Node extends CMS_Form {
+    
+    private $type;
+    
+    public function __construct($modelType = null) {
+        $this->type = $modelType;
+        parent::__construct();
+    }
 
     public function init() {
         $this->setMethod('post');
 
+        //get all models
+        $nService = new HomeNet_Model_Node_Service();
+        $types = $nService->getTypes();
+
+        $nmService = new HomeNet_Model_NodeModel_Service();
+        $objects = $nmService->getObjectsByStatus(1);
+
+        // die(debugArray($models));
+
+        $models = array();
+
+        if ($this->type === null) {
+            foreach ($objects as $value) {
+               $models[$types[$value->type]][$value->id] = $value->name;
+            }
+        } else {
+            foreach ($objects as $value) {
+                if ($value->type == $this->type) {
+                    $models[$types[$value->type]][$value->id] = $value->name;
+                }
+            }
+        }
+
         $model = $this->createElement('select', 'model');
         $model->setLabel("Model: ");
+        $model->addMultiOptions($models);
         $this->addElement($model);
 
         $id = $this->createElement('text', 'node');

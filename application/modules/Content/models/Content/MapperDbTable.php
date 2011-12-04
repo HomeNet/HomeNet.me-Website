@@ -37,7 +37,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
      * @return Content_Model_DbTable_Content;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('content_content');
         }
         return $this->_table;

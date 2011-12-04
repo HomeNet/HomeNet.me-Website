@@ -53,36 +53,4 @@ class HomeNet_Model_Message_DbTableRow extends Zend_Db_Table_Row_Abstract implem
             return $this;
         }
     }
-
-//    /**
-//     * @param int $id
-//     * @return HomeNet_Model_RoomInterface
-//     */
-//    public function getRoomById($id){
-//
-//        if(!empty($this->rooms[$id])){
-//            return $this->rooms[$id];
-//        }
-//
-//        $service = new HomeNet_Model_RoomsService();
-//        $room = $service->getRoomById($id);
-//        $this->rooms[$room->id] = $room;
-//
-//        return $room;
-//    }
-//
-//    public function getRooms(){
-//
-//        if(!is_null($this->rooms)){
-//            return $this->rooms;
-//        }
-//
-//        $service = new HomeNet_Model_RoomsService();
-//        $rooms = $service->getRoomsByMessage($this->id);
-//        $this->rooms = $rooms;
-//
-//        return $rooms;
-//    }
-
 }
-

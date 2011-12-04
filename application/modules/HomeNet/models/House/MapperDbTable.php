@@ -1,5 +1,6 @@
 <?php
-/* 
+
+/*
  * HouseMapperDbTable.php
  * 
  * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
@@ -34,89 +35,84 @@ class HomeNet_Model_House_MapperDbTable implements HomeNet_Model_House_MapperInt
      * @var HomeNet_Model_Room_MapperInterface
      */
     protected $_roomsMapper = null;
- 
+
     /**
      * @return Zend_Db_Table;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('homenet_houses');
             $this->_table->setRowClass('HomeNet_Model_House_DbTableRow');
         }
         return $this->_table;
     }
 
-    public function setTable($table){
+    public function setTable($table) {
         $this->_table = $table;
     }
 
     /**
      * @return HomeNet_Model_Room_MapperInterface
      */
-    public function getRoomsMapper(){
-        if(is_null($this->_roomsMapper)){
+    public function getRoomsMapper() {
+        if ($this->_roomsMapper === null) {
             $roomsService = new HomeNet_Model_Room_Service();
             $this->_roomsMapper = $roomsService->getMapper();
         }
         return $this->_roomsMapper;
     }
 
-    public function setRoomMapper(HomeNet_Model_RoomsMapperInterface $roomMapper){
+    public function setRoomMapper(HomeNet_Model_RoomsMapperInterface $roomMapper) {
         $this->_roomsMapper = $roomMapper;
     }
 
-
-    public function fetchObjectById($id){
+    public function fetchObjectById($id) {
         $result = $this->getTable()->find($id)->current();
         return $result;
-
     }
 
-     public function fetchObjectsByIds(array $ids){
+    public function fetchObjectsByIds(array $ids) {
         $select = $this->getTable()->select()->where('id in (?)', $ids);
         return $this->getTable()->fetchAll($select);
-        
-       
     }
 
-    public function fetchObjectByIdWithRooms($id){
+    public function fetchObjectByIdWithRooms($id) {
         $house = $this->getTable()->find($id)->current();
-        
+
         $rooms = $this->getRoomsMapper()->fetchObjectsByHouse($id);
 
-        foreach($rooms as $key => $room){
-             $house->rooms[$room->id] = $room;
+        foreach ($rooms as $key => $room) {
+            $house->rooms[$room->id] = $room;
         }
 
         return $house;
     }
 
-     public function fetchObjectsByIdsWithRooms($ids){
+    public function fetchObjectsByIdsWithRooms($ids) {
 
         $results = $this->fetchObjectsByIds($ids);
-     
+
         $roomsRaw = $this->getRoomsMapper()->fetchObjectsByHouses($ids);
         //sort rooms into houses
         $rooms = array_fill_keys($ids, array());
-        foreach($roomsRaw as $key => $room){
+        foreach ($roomsRaw as $key => $room) {
             $rooms[$room->house][$room->id] = $room;
         }
-        
 
-        foreach($results as $key => $value){
-            if(array_key_exists($value->id, $rooms))
-             $results[$key]->rooms = $rooms[$value->id];
+
+        foreach ($results as $key => $value) {
+            if (array_key_exists($value->id, $rooms))
+                $results[$key]->rooms = $rooms[$value->id];
         }
-        
+
         return $results;
     }
 
-    public function save(HomeNet_Model_House_Interface $object){
-        
-        if(($object instanceof HomeNet_Model_House_DbTableRow) && ($object->isConnected())){
+    public function save(HomeNet_Model_House_Interface $object) {
+
+        if (($object instanceof HomeNet_Model_House_DbTableRow) && ($object->isConnected())) {
             return $object->save();
-        }
-        elseif(!is_null($object->id)){
+        } elseif ($object->id !== null) {
             $row = $this->getTable()->find($object->id)->current();
         } else {
             $row = $this->getTable()->createRow();
@@ -126,19 +122,20 @@ class HomeNet_Model_House_MapperDbTable implements HomeNet_Model_House_MapperInt
         return $row->save();
     }
 
-    public function delete(HomeNet_Model_House_Interface $object){
+    public function delete(HomeNet_Model_House_Interface $object) {
         if (($object instanceof HomeNet_Model_House_DbTableRow) && ($object->isConnected())) {
             return $object->delete();
-        } elseif (!is_null($object->id)) {
+        } elseif ($object->id !== null) {
             return $this->getTable()->find($object->id)->current()->delete();
         }
 
         throw new InvalidArgumentException('Invalid House');
     }
-    
-    public function deleteAll(){
-        if(APPLICATION_ENV != 'production'){
-            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `'. $this->getTable()->info('name').'`');
+
+    public function deleteAll() {
+        if (APPLICATION_ENV != 'production') {
+            $this->getTable()->getAdapter()->query('TRUNCATE TABLE `' . $this->getTable()->info('name') . '`');
         }
     }
+
 }

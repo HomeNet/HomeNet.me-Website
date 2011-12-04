@@ -1,5 +1,30 @@
 <?php
+/*
+ * Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ *
+ * This file is part of HomeNet.
+ *
+ * HomeNet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * HomeNet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
+require_once 'Installer.php';
+
+/**
+ * @package Core
+ * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
+ */
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
     public static function autoload($class) {
@@ -55,7 +80,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         //Setup jquery
         $view->addHelperPath("ZendX/JQuery/View/Helper", "ZendX_JQuery_View_Helper");
         $view->jQuery()->enable();
-        $view->jQuery()->setVersion('1.6.4');
+        $view->jQuery()->setVersion('1.7.1');
         $view->jQuery()->useCdn();
         $view->jQuery()->uiEnable();
         $view->jQuery()->setUiVersion('1.8.16');
@@ -91,11 +116,15 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         $view->setScriptPath(APPLICATION_PATH.'/views/scripts');
 
         
+       // $layout->add
+        
         if($defaultTheme != 'default'){
             if(!file_exists(APPLICATION_PATH.'/themes/'.$defaultTheme)){
                 throw new Zend_Exception('Theme folder Doesn&quot;t exsist: '.APPLICATION_PATH.'/themes/'.$defaultTheme);
             }
-            $layout->addLayoutPath(APPLICATION_PATH.'/themes/'.$defaultTheme.'/layouts/scripts/');
+            //$layout->addLayoutPath(APPLICATION_PATH.'/themes/'.$defaultTheme.'/layouts/scripts/');
+            $layout->setLayoutPath(APPLICATION_PATH.'/themes/'.$defaultTheme.'/layouts/scripts/');
+            
             $view->addScriptPath(APPLICATION_PATH.'/themes/'.$defaultTheme.'/views/scripts');
         }
 
@@ -104,7 +133,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
                 throw new Zend_Exception('Theme folder Doesn&quot;t exsist: '.APPLICATION_PATH.'/themes/'.$theme);
             }
             
-            $layout->addLayoutPath(APPLICATION_PATH.'/themes/'.$theme.'/layouts/scripts/');
+           // $layout->addLayoutPath(APPLICATION_PATH.'/themes/'.$theme.'/layouts/scripts/');
+            $layout->setLayoutPath(APPLICATION_PATH.'/themes/'.$theme.'/layouts/scripts/');
+            
             $view->addScriptPath(APPLICATION_PATH.'/themes/'.$theme.'/views/scripts');
         }
         

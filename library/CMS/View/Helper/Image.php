@@ -41,10 +41,10 @@ class CMS_View_Helper_Image extends Zend_View_Helper_HtmlElement
         //_htmlAttribs($attribs)
         $attribs['src'] = $this->view->imagePath($source, $width, $height);
         $attribs['alt'] = $alt;
-        if(!is_null($width)){
+        if($width !== null){
         $attribs['width'] = $width;
         }
-        if(!is_null($height)){
+        if($height !== null){
         $attribs['height'] = $height;
         }
         

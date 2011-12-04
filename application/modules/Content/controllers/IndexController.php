@@ -6,7 +6,7 @@ class Content_IndexController extends Zend_Controller_Action
     {       
         //get section
         $section = $this->_getParam('section');
-        if(is_null($section)){
+        if($section === null){
             throw new InvalidArgumentException('Missing Section in Route');
         }
              

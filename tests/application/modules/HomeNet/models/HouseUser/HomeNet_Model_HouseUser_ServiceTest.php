@@ -18,7 +18,7 @@ class HomeNet_Model_HouseUser_ServiceTest extends PHPUnit_Framework_TestCase {
     protected function setUp() {
         $this->service = new HomeNet_Model_HouseUser_Service;
         $this->homenetInstaller = new HomeNet_Installer();
-        $this->homenetInstaller->installTest();
+        $this->homenetInstaller->installTest(array('house'));
     }
 
     /**

@@ -1,0 +1,63 @@
+
+.cms-filemanager .item-container  {
+    display: block;
+    overflow: auto;
+    
+    /*@todo auto adjust this*/
+ 
+    margin: 0; 
+    padding: 0;
+    text-align: left;
+}
+
+.cms-filemanager .list-item{
+  height: 77px;  
+  position: relative;
+  margin: 4px 0; 
+  padding: 5px;
+   
+}
+
+.cms-filemanager .list-item .thumbnail {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 100px;
+    height: 75px;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 75px;
+}
+
+.cms-filemanager .list-item canvas, .cms-filemanager .list-item img{
+    margin: auto;
+    vertical-align: middle;
+    display: inline-block !important;
+}
+
+.cms-filemanager .list-item .details {
+     margin: 10px 50px 0 105px;
+}
+
+.cms-filemanager .list-item .title {
+     font-weight: bold;
+     margin-bottom: 10px;
+     padding: 0 !important;
+}
+
+.cms-filemanager .list-item .properties {
+    
+}
+.cms-filemanager .list-item .controls {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 40px;
+    height: 75px;
+    text-align: right;
+}
+
+.cms-filemanager .list-item .controls button {
+    margin-bottom: 5px;
+}

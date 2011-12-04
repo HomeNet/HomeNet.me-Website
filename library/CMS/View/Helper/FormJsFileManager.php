@@ -57,6 +57,7 @@ class CMS_View_Helper_FormJsFileManager extends CMS_View_Helper_FormJsElement {
     }
 
     protected function _attachScripts() {
+        $this->view->headLink()->appendStylesheet('/css/jquery.filemanager.css');
         $this->view->headScript()->appendFile('/js/mylibs/jquery.filemanager.js');
         $this->view->headScript()->appendFile('/js/libs/jquery.fileupload.js');
         $this->view->headScript()->appendFile('/js/libs/jquery.fileupload-ui.js');

@@ -26,6 +26,10 @@ defined('APPLICATION_PATH')
         || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));
 
 // Define application environment
+
+if(isset($_GET['setenv']) && $_GET['setenv'] == 'testing'){
+    define('APPLICATION_ENV', 'testing');
+}
 defined('APPLICATION_ENV')
         || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'development'));
 
@@ -54,152 +58,168 @@ $application->bootstrap();
 //$application->getBootstrap()->bootstrap('db');
 //echo "hello xmlrpc client";
 
-class HomeNetXmlRpc {
+//class HomeNetXmlRpc {
+//
+//    /**
+//     * hello test
+//     *
+//     * @param struct $value Value
+//     * @return string 
+//     */
+//    public function hello($value) {
+//        return "Hello World";
+//    }
+//
+//    /**
+//     * ping test
+//     *
+//     * @param string $value Value
+//     * @return string
+//     */
+//    public function ping($value) {
+//        return $value;
+//    }
+//
+//    /**
+//     * Add Packet to log
+//     *
+//     * @param struct $value Value
+//     * @return string on success
+//     */
+//    public function packet($value) {
+//        if (empty($_GET['apikey'])) {
+//            return 'No API Key Supplied';
+//        }
+//       
+//        $aService = new HomeNet_Model_Apikey_Service();
+//
+//
+//        try {
+//            $apikey = $aService->validate($_GET['apikey']);
+//        } catch (Exception $e) {
+//            return $e->getMessage();
+//        }
+//
+//        //return $decoded = htmlspecialchars(print_r($value,1));
+//
+//        $packet = new HomeNet_Model_Packet();
+//
+//        try {
+//            $packet->loadXmlRpc($value);
+//            $packet->save();
+//        } catch (Exception $e) {
+//            return $e->getMessage();
+//        }
+//        $decoded = htmlspecialchars(print_r($packet->getArray(), 1));
+//        //$decoded = chunk_split(bin2hex(base64_decode($value['packet'])),2,',');
+//        //file_put_contents(APPLICATION_PATH . '/packet.log', print_r($packet->toArray(),true)."\r\n Base64 decoded: ".$decoded."\r\n",FILE_APPEND);
+//        //  return $apikey->house .'-'. $packet->fromNode .'-'. $packet->fromDevice;
+//try {
+//
+//        $nService = new HomeNet_Model_Node_Service();
+//
+//        $node = $nService->getObjectByHouseNode($apikey->house, $packet->fromNode);
+//
+//        $uplinkNode = $nService->getObjectById($node->uplink);
+//
+//        if($uplinkNode->ipaddress != $_SERVER['REMOTE_ADDR']){
+//            $uplinkNode->ipaddress = $_SERVER['REMOTE_ADDR'];
+//            $nService->update($uplinkNode);
+//        }
+//
+// } catch (Zend_Exception $e) {
+//            return $e->getMessage();
+//        }
+//
+//
+//        $dService = new HomeNet_Model_Device_Service();
+//   
+//        try {
+//            $driver = $dService->getObjectByHouseNodeDevice($apikey->house, $packet->fromNode, $packet->fromDevice);
+//           // return "true";
+//
+//            $driver->processPacket($packet);
+//        } catch (Zend_Exception $e) {
+//            return $e->getMessage();
+//        }
+//
+//       // return htmlspecialchars(print_r(error_get_last(),true));
+//
+//        //return print_r($packet->payload->getValue(),1);
+//
+//        return "true";
+//    }
+//
+//    /**
+//     * test connection
+//     *
+//     * @param string $value Value Ip address
+//     * @return string on success
+//     */
+//    public function testConnection($value) {
+//        $ipaddress = $_SERVER['REMOTE_ADDR'];
+//
+//        $client = new Zend_XmlRpc_Client('http://' . $ipaddress . ':2443/RPC2');
+//        //$client->
+//        //$arg1 = 5;
+//
+//        try {
+//
+//            $result = $client->call('HomeNet.testConnection', "test");
+//        } catch (Exception $e) {
+//            //return "Can't access your HomeNet at $ipaddress |Try forwarding port 8081 to ".$value;
+//            return $e->getMessage();
+//        }
+//
+//        return $result;
+//    }
+//
+//    /**
+//     * validate api key
+//     *
+//     * @param string $value Value Ip address
+//     * @return string on success
+//     */
+//    public function validateApikey($key) {
+//
+//        if (empty($_GET['apikey'])) {
+//            return 'No API Key Supplied';
+//        }
+//        if (!preg_match('/\b([a-f0-9]{40})\b/', $_GET['apikey'])) {
+//            return 'Invalid Format';
+//        }
+//
+//        //return 'true';
+//
+//        $aService = new HomeNet_Model_Apikey_Service();
+//
+//        try {
+//            $aService->validate($_GET['apikey']);
+//        } catch (Exception $e) {
+//            return $e->getMessage();
+//        }
+//        // return $key;
+//        return 'true';
+//    }
+//
+//}
 
-    /**
-     * hello test
-     *
-     * @param struct $value Value
-     * @return string 
-     */
-    public function hello($value) {
-        return "Hello World";
-    }
+$config = Zend_Registry::get('config');
 
-    /**
-     * ping test
-     *
-     * @param string $value Value
-     * @return string
-     */
-    public function ping($value) {
-        return $value;
-    }
-
-    /**
-     * Add Packet to log
-     *
-     * @param struct $value Value
-     * @return string on success
-     */
-    public function packet($value) {
-        if (empty($_GET['apikey'])) {
-            return 'No API Key Supplied';
-        }
-       
-        $aService = new HomeNet_Model_Apikey_Service();
-
-
-        try {
-            $apikey = $aService->validate($_GET['apikey']);
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-
-        //return $decoded = htmlspecialchars(print_r($value,1));
-
-        $packet = new HomeNet_Model_Packet();
-
-        try {
-            $packet->loadXmlRpc($value);
-            $packet->save();
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-        $decoded = htmlspecialchars(print_r($packet->getArray(), 1));
-        //$decoded = chunk_split(bin2hex(base64_decode($value['packet'])),2,',');
-        //file_put_contents(APPLICATION_PATH . '/packet.log', print_r($packet->toArray(),true)."\r\n Base64 decoded: ".$decoded."\r\n",FILE_APPEND);
-        //  return $apikey->house .'-'. $packet->fromNode .'-'. $packet->fromDevice;
-try {
-
-        $nService = new HomeNet_Model_Node_Service();
-
-        $node = $nService->getObjectByHouseNode($apikey->house, $packet->fromNode);
-
-        $uplinkNode = $nService->getObjectById($node->uplink);
-
-        if($uplinkNode->ipaddress != $_SERVER['REMOTE_ADDR']){
-            $uplinkNode->ipaddress = $_SERVER['REMOTE_ADDR'];
-            $nService->update($uplinkNode);
-        }
-
- } catch (Zend_Exception $e) {
-            return $e->getMessage();
-        }
-
-
-        $dService = new HomeNet_Model_Device_Service();
-   
-        try {
-            $driver = $dService->getObjectByHouseNodeDevice($apikey->house, $packet->fromNode, $packet->fromDevice);
-           // return "true";
-
-            $driver->processPacket($packet);
-        } catch (Zend_Exception $e) {
-            return $e->getMessage();
-        }
-
-       // return htmlspecialchars(print_r(error_get_last(),true));
-
-        //return print_r($packet->payload->getValue(),1);
-
-        return "true";
-    }
-
-    /**
-     * test connection
-     *
-     * @param string $value Value Ip address
-     * @return string on success
-     */
-    public function testConnection($value) {
-        $ipaddress = $_SERVER['REMOTE_ADDR'];
-
-        $client = new Zend_XmlRpc_Client('http://' . $ipaddress . ':2443/RPC2');
-        //$client->
-        //$arg1 = 5;
-
-        try {
-
-            $result = $client->call('HomeNet.testConnection', "test");
-        } catch (Exception $e) {
-            //return "Can't access your HomeNet at $ipaddress |Try forwarding port 8081 to ".$value;
-            return $e->getMessage();
-        }
-
-        return $result;
-    }
-
-    /**
-     * validate api key
-     *
-     * @param string $value Value Ip address
-     * @return string on success
-     */
-    public function validateApikey($key) {
-
-        if (empty($_GET['apikey'])) {
-            return 'No API Key Supplied';
-        }
-        if (!preg_match('/\b([a-f0-9]{40})\b/', $_GET['apikey'])) {
-            return 'Invalid Format';
-        }
-
-        //return 'true';
-
-        $aService = new HomeNet_Model_Apikey_Service();
-
-        try {
-            $aService->validate($_GET['apikey']);
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-        // return $key;
-        return 'true';
-    }
-
-}
-
+$cacheFile = $config->site->cacheDirectory . '/xmlrpc.cache';
 $server = new Zend_XmlRpc_Server();
-$server->setClass('HomeNetXmlRpc', 'HomeNet');
+Zend_XmlRpc_Server_Fault::attachFaultException('NotFoundException');
+Zend_XmlRpc_Server_Fault::attachFaultException('InvalidArgumentException');
+ 
+if (!Zend_XmlRpc_Server_Cache::get($cacheFile, $server)) {
+
+    $server->setClass('HomeNet_Model_Apikey_XmlRpc', 'homenet.apikey');
+    $server->setClass('HomeNet_Model_Packet_XmlRpc', 'homenet.packet');
+    $server->setClass('HomeNet_Model_Test_XmlRpc', 'homenet.test');
+ 
+    Zend_XmlRpc_Server_Cache::save($cacheFile, $server);
+}
+//echo '<pre>';
+//print_r(unserialize(file_get_contents($cacheFile)));
+
 echo $server->handle();

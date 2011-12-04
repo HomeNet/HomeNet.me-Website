@@ -33,9 +33,9 @@ class HomeNet_IndexController extends Zend_Controller_Action {
     }
 
     public function indexAction() {
-        $hService = new HomeNet_Model_House_Service();
+        $service = new HomeNet_Model_House_Service();
 
-        $ids = $hService->getHouseIdsByUser();
+        $ids = $service->getHouseIdsByUser();
 
         
         
@@ -44,7 +44,7 @@ class HomeNet_IndexController extends Zend_Controller_Action {
             return;
         }
 
-        $houses = $hService->getObjectsByIds($hService->getHouseIdsByUser());
+        $houses = $service->getObjectsByIds($service->getHouseIdsByUser());
 
         $this->_forward('home');
 

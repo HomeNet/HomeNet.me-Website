@@ -81,7 +81,7 @@ class Core_Model_Route_DbTableRow extends Zend_Db_Table_Row_Abstract implements 
 //    }
 //
 //    public function setSetting($setting, $value){
-//        if(is_null($this->settings)){
+//        if($this->settings === null){
 //            $this->settings = array($setting => $value);
 //            return;
 //        }

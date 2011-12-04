@@ -151,7 +151,7 @@ void loop() {
 
             $driver = $device->getDeviceDriver();
 
-            if (!is_null($driver)) {
+            if ($driver !== null) {
                 $this->_deviceVariables[$position] = $device->getDeviceVariable();
 
                 if ($driver == 'StatusLights') {

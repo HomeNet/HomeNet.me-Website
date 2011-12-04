@@ -122,7 +122,7 @@ abstract class Content_Model_Plugin_Block {
     function _getData($node, $whitelist = null) {
         $data = array();
         if ($node->attributes) {
-            if (is_null($whitelist)) {
+            if ($whitelist === null) {
                 foreach ($node->attributes as $attrName => $attrNode) {
                     if (stristr($attrName, 'data-')) {
                         $data[substr($attrName, 5)] = $attrNode->value;
@@ -143,7 +143,7 @@ abstract class Content_Model_Plugin_Block {
     }
 
     protected function _setData(DOMNode $node, $data, $whitelist = null) {
-        if (is_null($whitelist)) {
+        if ($whitelist === null) {
             foreach ($data as $key => $value) {
                 $node->setIdAttribute($key, $value);
             }

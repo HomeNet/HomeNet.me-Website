@@ -1,9 +1,9 @@
-<h1>Welcome</h1>
-<div class="transparent box">
+<?php echo $this->heading('Welcome'); ?>
+<section>
     <p>Ready to create your own HomeNet? Here's a quick overview before we start.</p>
-</div>
+</section>
 <h2>Do you have all the parts you need?</h2>
-<div class="transparent box">
+<section>
     <ul>
         <li>Download the Developer Kit. It includes the necessary Arduino and Processing programs with all of the required libraries</li>
         <li>PC (to link HomeNet to the Internet)</li>
@@ -27,9 +27,9 @@
 
     </ul>
     <p>Got all that? You're ready to get started.</p>
-</div>
+</section>
 <h2>The Process</h2>
-<div class="transparent box">
+<section>
     <p>It's a multi step process to setup a new HomeNet. Here is a quick summery of the steps</p>
     <ol>
         <li>Create a profile for your Home</li>
@@ -49,9 +49,9 @@
     <p>Please run this setup from the same PC as you plan on running the HomeNet App on.</p>
 
     <p>If you don't get though all the steps today, thats ok. You can come back and pick up right where you left</p>
-</div>
+</section>
 
-<a class="button cms-button-icon-right" href="<?php echo $this->url(array('action' => 'step', 'step' => 1), 'homenet-setup-index'); ?>">
+<a class="button cms-button-icon-right" href="<?php echo $this->url(array('controller'=>'setup', 'action' => 'step', 'id' => 1), 'homenet-id'); ?>">
     Continue <span class="ui-icon ui-icon-circle-arrow-e "</span>
 </a>
 

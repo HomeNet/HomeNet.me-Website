@@ -41,7 +41,7 @@ class CMS_View_Helper_ImagePath extends Zend_View_Helper_HtmlElement
         $source = strtolower($source);
         $config = Zend_Registry::get('config');
         $salt = $config->site->salt;
-        if(is_null($type)){
+        if($type === null){
             $type = $config->site->image->defaultType;
         }
 

@@ -22,10 +22,10 @@
 
     
     <?php if (APPLICATION_ENV == 'production') { ?>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/base.css">
     <?php 
         } else { ?>
-    <link rel="stylesheet" href="/css/style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="/css/base.css?v=<?php echo time(); ?>">
     <?php } ?>
     
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css" type="text/css" media="all" />
@@ -41,12 +41,7 @@
 <body>  
     <header>
         <h1><a href="/">Matthew Doll</a></h1>
-        <?php if (isset($_SESSION['User'])) {
-            ?>
-            <?php echo $this->action('login-widget', 'Login'); ?>
-            <?php
-        }
-        ?>
+        <?php echo $this->widget('Core','Login'); ?>
     </header>
     <nav>
         <ul>

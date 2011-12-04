@@ -35,7 +35,7 @@ class HomeNet_Model_HouseUser_MapperDbTable implements HomeNet_Model_HouseUser_M
      * @return Zend_Db_Table;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('homenet_house_users');
             $this->_table->setRowClass('HomeNet_Model_HouseUser_DbTableRow');
         }
@@ -57,10 +57,9 @@ class HomeNet_Model_HouseUser_MapperDbTable implements HomeNet_Model_HouseUser_M
 
     public function save(HomeNet_Model_HouseUser_Interface $object) {
 
-
         if (($object instanceof HomeNet_Model_HouseUser_DbTableRow) && ($object->isConnected())) {
             return $object->save();
-        } elseif (!is_null($object->id)) {
+        } elseif ($object->id !== null) {
             $row = $this->fetchObjectById($object->id);
         } else {
             $row = $this->getTable()->createRow();
@@ -71,13 +70,12 @@ class HomeNet_Model_HouseUser_MapperDbTable implements HomeNet_Model_HouseUser_M
        return $row->save();
     }
 
-    public function delete(HomeNet_Model_HouseUser_Interface $houseUser) {
+    public function delete(HomeNet_Model_HouseUser_Interface $object) {
 
-        if (($houseUser instanceof HomeNet_Model_HouseUser_DbTableRow) && ($houseUser->isConnected())) {
-            return $houseUser->delete();
-            return true;
-        } elseif (!is_null($houseUser->id)) {
-            $where = $this->getTable()->getAdapter()->quoteInto('id = ?', $houseUser->id);
+        if (($object instanceof HomeNet_Model_HouseUser_DbTableRow) && ($object->isConnected())) {
+            return $object->delete();
+        } elseif ($object->id !== null) {
+            $where = $this->getTable()->getAdapter()->quoteInto('id = ?', $object->id);
             return $this->getTable()->delete($where);
         }
 

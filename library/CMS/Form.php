@@ -39,8 +39,12 @@ class CMS_Form extends Zend_Form {
 
 
         parent::__construct($options);
+        
+        $this->getElement('hash');
         if(APPLICATION_ENV != 'testing'){
-            $this->addElement('hash', 'hash', array('salt' => 'unique'));
+            //if(empty($this->getElement('hash'))){
+                //$this->addElement('hash', 'hash', array('salt' => 'unique'));
+            //}
         }
     }
 

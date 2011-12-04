@@ -35,7 +35,7 @@ class HomeNet_Model_Room_MapperDbTable implements HomeNet_Model_Room_MapperInter
      * @return Zend_Db_Table;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('homenet_rooms');
             $this->_table->setRowClass('HomeNet_Model_Room_DbTableRow');
         }
@@ -73,7 +73,7 @@ class HomeNet_Model_Room_MapperDbTable implements HomeNet_Model_Room_MapperInter
 
         if (($object instanceof HomeNet_Model_Room_DbTableRow) && ($object->isConnected())) {
             return $object->save();
-        } elseif (!is_null($object->id)) {
+        } elseif ($object->id !== null) {
             $row = $this->getTable()->find($object->id)->current();
         } else {
             $row = $this->getTable()->createRow();
@@ -88,7 +88,7 @@ class HomeNet_Model_Room_MapperDbTable implements HomeNet_Model_Room_MapperInter
 
         if (($object instanceof HomeNet_Model_Room_DbTableRow) && ($object->isConnected())) {
             return $object->delete();
-        } elseif (!is_null($object->id)) {
+        } elseif ($object->id !== null) {
             return $this->getTable()->find($object->id)->current()->delete();
         }
 

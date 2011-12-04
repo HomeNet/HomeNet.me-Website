@@ -28,43 +28,34 @@
  */
 class HomeNet_NodeController extends Zend_Controller_Action {
 
+    private $_id;
+    private $_house;
+    
     public function init() {
-        $this->view->house = $this->_getParam('house');
+        $this->view->node = $this->_id = $this->_getParam('id');
+        $this->view->house = $this->_house = $this->_getParam('house');
+        
+        
         $this->view->room = $this->_getParam('room');
         $this->view->region = $this->_getParam('region');
-        $this->view->node = $this->_getParam('node');
+        
     }
 
     public function indexAction() {
-        if(is_null($this->view->node)){
-            $service = new HomeNet_Model_Node_Service();
-            $this->view->nodes = $service->getObjectsByHouse($this->view->house);
-            //die(debugArray($this->view->nodes->toArray()));
-        } else {
+        if($this->_id !== null){
             return $this->_forward('configure');
         }
+            
+        $service = new HomeNet_Model_Node_Service();
+        $this->view->objects = $service->getObjectsByHouse($this->view->house);
     }
 
-    public function addAction() {
-        
+    public function newAction() {
+        $this->_helper->viewRenderer->setNoController(true); //use generic templates
         $type = array(1 => 'Wireless Sensor Node', 2 => 'Wired Base Station', 3 => 'Internet Node');
 
         $form = new HomeNet_Form_Node();
         //$sub = $form->getSubForm('node');
-
-        $model = $form->getElement('model');
-
-        $nmService = new HomeNet_Model_NodeModel_Service();
-        $rows = $nmService->getObjectsByStatus(1);
-
-        $models = array();
-        foreach ($rows as $value) {
-            $models[$type[$value->type]][$value->id] = $value->name;
-
-          // $model->addMultiOption($value->id, $type[$value->type] . ':  ' . $value->name);
-        }
-        
-        $model->addMultiOptions($models);
 
         $uplink = $form->getElement('uplink');
 
@@ -73,10 +64,6 @@ class HomeNet_NodeController extends Zend_Controller_Action {
 
         $uplink->addMultiOptions(array_flip($ids));
 
-//        foreach ($ids as $key => $value) {
-//            //die(debugArray($value));
-//            $uplink->addMultiOption($value, $key);
-//        }
 
         $submit = $form->addElement('submit', 'submit', array('label' => 'Next'));
 
@@ -109,8 +96,6 @@ class HomeNet_NodeController extends Zend_Controller_Action {
         $node->house = $this->view->house;
         $node->room = $this->view->room;
 
-        //die(debugArray($node));
-
         $node = $nService->create($node);
 
 
@@ -120,7 +105,7 @@ class HomeNet_NodeController extends Zend_Controller_Action {
     }
 
     public function editAction() {
-
+        $this->_helper->viewRenderer->setNoController(true); //use generic templates
         $type = array(1 => 'Sensor Node', 2 => 'Base Station', 3 => 'Internet Node');
 
         $form = new HomeNet_Form_Node();
@@ -167,8 +152,9 @@ class HomeNet_NodeController extends Zend_Controller_Action {
         return $this->_redirect($this->view->url(array('house'=>$this->view->house),'homenet-node-index').'?message=Updated');//
     }
 
-    public function removeAction() {
+    public function deleteAction() {
 
+        $this->_helper->viewRenderer->setNoController(true); //use generic templates
         $nService = new HomeNet_Model_Node_Service();
         $node = $nService->getObjectById($this->view->node);
         $form = new Core_Form_Confirm();

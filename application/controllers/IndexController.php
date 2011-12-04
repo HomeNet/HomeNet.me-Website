@@ -34,7 +34,7 @@ class IndexController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        Zend_Layout::getMvcInstance()->setLayout('custom');
+        //Zend_Layout::getMvcInstance()->setLayout('custom');
         
         //  die(debugArray($_SESSION));
 //if user is logged in redirect them thier homenet feed
@@ -103,7 +103,7 @@ die(debugArray('email sent'));
 function fillArray( $depth, $max )
 {
     static $seed;
-    if ( is_null( $seed ) )
+    if ($seed === null)
     {
         $seed = array( 'a', 2, 'c', 4, 'e', 6, 'g', 8, 'i', 10 );
     }

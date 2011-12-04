@@ -82,7 +82,7 @@ class Core_Model_Plugin_Widget {
         
         
         
-        if(!is_null($path)){
+        if($path !== null){
             $view->setScriptPath($path);
         }
 

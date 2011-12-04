@@ -49,6 +49,9 @@ class CMS_View_Helper_FormJsWysiwyg extends CMS_View_Helper_FormJsElement
         $params['name'] = $name;
         //$params['layout'] = 'gallery';
        // $params['types'] = 'images';
+        
+        $this->view->headLink()->appendStylesheet('/css/jquery.wysiwyg.css');
+        $this->view->headScript()->appendFile('/js/mylibs/jquery.imageeditor.js');
         $this->view->headScript()->appendFile('/js/libs/jquery.wrapselection.js');
         $this->view->headScript()->appendFile('/js/mylibs/jquery.filemanager.js');
         $this->view->headScript()->appendFile('/js/libs/jquery.fileupload.js');
@@ -60,7 +63,7 @@ class CMS_View_Helper_FormJsWysiwyg extends CMS_View_Helper_FormJsElement
         
         $this->view->headScript()->appendFile('/js/mylibs/jquery.wysiwyg.js');
         $this->view->headScript()->appendFile('/js/mylibs/jquery.wysiwyg.block.js');
-        $this->view->headScript()->appendFile('/js/mylibs/jquery.imageeditor.js');
+        $this->view->headScript()->appendFile('/js/mylibs/jquery.galleryelement.js');
         $this->view->headScript()->appendFile('/js/mylibs/jquery.galleryblockhelper.js');
         
         $this->view->jquery()->addOnLoad("$('#" . $attribs['id'] . "').wysiwyg();");

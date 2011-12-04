@@ -27,19 +27,23 @@
  */
 abstract class Content_Model_Plugin_Template {
     
-    function getFieldSets(){
+    public function getTemplates(){
+        return array();
+    }
+    
+    public function getFieldSets(){
         $fieldSets = array();
         $fieldSets['publish'] = array('title' => 'Publish', 'visible' => true);
         return $fieldSets;
     }
     
-    function getFields($fieldSets){
+    public function getFields($fieldSets){
           $fields = array();
          $fields['title'] = array(
             'set' => $fieldSets['publish'],
             'order' => 1,
             'type' => Content_Model_Field::SYSTEM,
-            'element' => 'text',
+            'element' => 'Text',
             'name' => 'title',
             'label' => 'Title',
             'value' => '',
@@ -52,7 +56,7 @@ abstract class Content_Model_Plugin_Template {
             'set' => $fieldSets['publish'],
             'order' => 2,
             'type' => Content_Model_Field::SYSTEM,
-            'element' => 'slug',
+            'element' => 'Slug',
             'name' => 'url',
             'label' => 'Url',
             'value' => '',
@@ -60,7 +64,8 @@ abstract class Content_Model_Plugin_Template {
             'filters' => array(),
             'locked' => false,
             'required' => true,
-            'visible' => true);
+            'visible' => true,
+            'options' => array('source' => '#title'));
 //         $fields[] = array(
 //            'set' => $fieldSets['publish'],
 //            'order' => 2,
@@ -77,11 +82,11 @@ abstract class Content_Model_Plugin_Template {
          return $fields;
     }
     
-    function getContent(){
+    public function getContent(){
         return array();
     }
     
-    function getOptionalContent(){
+    public function getOptionalContent(){
         return array();
     }
 }

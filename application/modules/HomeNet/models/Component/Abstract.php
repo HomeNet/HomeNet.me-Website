@@ -317,7 +317,7 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
         $form->addElement($id);
         
         foreach ($this->_controls as $name => $control) {
-            if (!is_null($control['element'])) {
+            if ($control['element'] !== null) {
 
 
                 $control['elementOptions']['id'] = $control['element'].$this->id;
@@ -390,7 +390,7 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
             }
         }
 
-        if(is_null($action)){
+        if($action === null){
             throw new HomeNet_Model_Exception('Can\'t find matching action');
         }
         return true;

@@ -1,6 +1,6 @@
-<h1>Step 6</h1>
+<?php echo $this->heading('Step 6'); ?>
 <h2>Test your Base Node</h2>
-<div class="transparent box">
+<section>
  <p>If you are using a Jeelink, the status LED is built in. On a Jeelink, use 2 leds to create <a href="http://code.google.com/p/homenet/wiki/DeviceStatusLights">Status Lights</a>, If you're using an Arduino, connect an LED with one leg to 3.3v, other leg to pin 9</p>
 <p>Close the Arduino IDE (Only one program can connect to a serial port at a time)</p>
 <p>Launch the HomeNetApp. (Restart it if it was left open to refresh the serial ports)</p>
@@ -9,7 +9,7 @@
 
     <p>Not Working? Check the <a href="http://code.google.com/p/homenet/wiki/GettingStarted">Wiki</a></p>
     
-</div>
+</section>
 <?php /*
 <ul>
     <li>A JeeNode with serial adapter</li>
@@ -42,9 +42,9 @@
 
 </div>
 
-<div  class="transparent box center">
+<section class="center">
 <?php echo $this->ajaxLink("LED On", "/HomeNet/Setup/test-base/node/".$this->nodeId."/command/on", array('update' => '#test-status', 'class'=> 'button'));?> <?php echo $this->ajaxLink("LED Off", "/HomeNet/Setup/test-base/node/".$this->nodeId."/command/off", array('update' => '#test-status', 'class'=> 'button'));?>
-</div>
+</section>
 <br />
 <div class="center">
 <?php echo $this->form ?>

@@ -34,7 +34,7 @@ class HomeNet_Model_Component_MapperDbTable implements HomeNet_Model_Component_M
      * @return Zend_Db_Table;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('homenet_components');
             $this->_table->setRowClass('HomeNet_Model_Component_DbTableRow');
         }
@@ -81,18 +81,18 @@ class HomeNet_Model_Component_MapperDbTable implements HomeNet_Model_Component_M
         return $this->getTable()->fetchAll($select);
     }
 
-    public function save(HomeNet_Model_Component_Interface $component) {
+    public function save(HomeNet_Model_Component_Interface $object) {
 
 
-        if (($component instanceof HomeNet_Model_Room_DbTableRow) && ($component->isConnected())) {
-            return $component->save();
-        } elseif (!is_null($component->id)) {
-            $row = $this->getTable()->find($component->id)->current();
+        if (($object instanceof HomeNet_Model_Room_DbTableRow) && ($object->isConnected())) {
+            return $object->save();
+        } elseif ($object->id !== null) {
+            $row = $this->getTable()->find($object->id)->current();
         } else {
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($component->toArray());
+        $row->fromArray($object->toArray());
 
         return $row->save();
 

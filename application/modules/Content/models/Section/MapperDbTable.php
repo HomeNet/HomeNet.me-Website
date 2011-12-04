@@ -33,7 +33,7 @@ class Content_Model_Section_MapperDbTable implements Content_Model_Section_Mappe
      * @return Content_Model_DbTable_Section;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('content_sections');
             $this->_table->setRowClass('Content_Model_Section_DbTableRow');
         }
@@ -63,12 +63,12 @@ class Content_Model_Section_MapperDbTable implements Content_Model_Section_Mappe
        return $this->getTable()->fetchRow($select);
     }
 
-    public function save(Content_Model_Section_Interface $section) {
+    public function save(Content_Model_Section_Interface $object) {
 
-        if (($section instanceof Content_Model_Section_DbTableRow) && ($section->isConnected())) {
-            return $section->save();
-        } elseif (!is_null($section->id)) {
-            $row = $this->getTable()->find($section->id)->current();
+        if (($object instanceof Content_Model_Section_DbTableRow) && ($object->isConnected())) {
+            return $object->save();
+        } elseif ($object->id !== null) {
+            $row = $this->getTable()->find($object->id)->current();
             if (empty($row)) {
                 $row = $this->getTable()->createRow();
             }
@@ -76,7 +76,7 @@ class Content_Model_Section_MapperDbTable implements Content_Model_Section_Mappe
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($section->toArray());
+        $row->fromArray($object->toArray());
         // die(debugArray($row));
         try {
             $row->save();
@@ -93,13 +93,13 @@ class Content_Model_Section_MapperDbTable implements Content_Model_Section_Mappe
         return $row;
     }
 
-    public function delete(Content_Model_Section_Interface $section) {
+    public function delete(Content_Model_Section_Interface $object) {
 
-        if (($section instanceof Content_Model_Section_DbTableRow) && ($section->isConnected())) {
-            $section->delete();
+        if (($object instanceof Content_Model_Section_DbTableRow) && ($object->isConnected())) {
+            $object->delete();
             return true;
-        } elseif (!is_null($section->id)) {
-            $row = $this->getTable()->find($section->id)->current()->delete();
+        } elseif ($object->id !== null) {
+            $row = $this->getTable()->find($object->id)->current()->delete();
             return;
         }
 

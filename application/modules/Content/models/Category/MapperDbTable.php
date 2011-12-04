@@ -36,7 +36,7 @@ class Content_Model_Category_MapperDbTable implements Content_Model_Category_Map
      * @return Content_Model_DbTable_Category;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('content_categories');
             $this->_table->setRowClass('Content_Model_Category_DbTableRow');
         }
@@ -72,12 +72,12 @@ class Content_Model_Category_MapperDbTable implements Content_Model_Category_Map
 
 
 
-    public function save(Content_Model_Category_Interface $category) {
+    public function save(Content_Model_Category_Interface $object) {
 
-        if (($category instanceof Content_Model_Category_DbTableRow) && ($category->isConnected())) {
-            return $category->save();
-        } elseif (!is_null($category->id)) {
-            $row = $this->getTable()->find($category->id)->current();
+        if (($object instanceof Content_Model_Category_DbTableRow) && ($object->isConnected())) {
+            return $object->save();
+        } elseif ($object->id !== null) {
+            $row = $this->getTable()->find($object->id)->current();
             if(empty($row)){
                $row = $this->getTable()->createRow();
             }
@@ -86,7 +86,7 @@ class Content_Model_Category_MapperDbTable implements Content_Model_Category_Map
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($category->toArray());
+        $row->fromArray($object->toArray());
        // die(debugArray($row));
         try {
         $row->save();
@@ -103,13 +103,13 @@ class Content_Model_Category_MapperDbTable implements Content_Model_Category_Map
         return $row;
     }
 
-    public function delete(Content_Model_Category_Interface $category) {
+    public function delete(Content_Model_Category_Interface $object) {
 
-        if (($category instanceof Content_Model_Category_DbTableRow) && ($category->isConnected())) {
-            $category->delete();
+        if (($object instanceof Content_Model_Category_DbTableRow) && ($object->isConnected())) {
+            $object->delete();
             return true;
-        } elseif (!is_null($category->id)) {
-            $row = $this->getTable()->find($category->id)->current()->delete();
+        } elseif ($object->id !== null) {
+            $row = $this->getTable()->find($object->id)->current()->delete();
             return;
         }
 

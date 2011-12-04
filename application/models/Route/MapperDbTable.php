@@ -38,7 +38,7 @@ class Core_Model_Route_MapperDbTable implements Core_Model_Route_MapperInterface
      * @return Core_Model_DbTable_Route;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('routes');
             $this->_table->setRowClass('Core_Model_Route_DbTableRow');
         }
@@ -61,7 +61,7 @@ class Core_Model_Route_MapperDbTable implements Core_Model_Route_MapperInterface
 
         if (($object instanceof Core_Model_DbTableRow_Route) && ($object->isConnected())) {
             return $object->save();
-        } elseif (!is_null($object->id)) {
+        } elseif ($object->id !== null) {
             $row = $this->getTable()->find($object->id)->current();
             if (empty($row)) {
                 $row = $this->getTable()->createRow();
@@ -92,7 +92,7 @@ class Core_Model_Route_MapperDbTable implements Core_Model_Route_MapperInterface
         if (($object instanceof Core_Model_DbTableRow_Route) && ($object->isConnected())) {
             $object->delete();
             return true;
-        } elseif (!is_null($object->id)) {
+        } elseif ($object->id !== null) {
             $row = $this->getTable()->find($object->id)->current()->delete();
             return;
         }

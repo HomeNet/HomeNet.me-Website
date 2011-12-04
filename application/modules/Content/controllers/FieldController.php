@@ -199,7 +199,7 @@ class Content_FieldController extends Zend_Controller_Action {
             throw new InvalidArgumentException('Missing FieldSet Id');
         }
 
-        if (is_null($order) || !is_numeric($order)) {
+        if (!is_numeric($order)) {
             throw new InvalidArgumentException('Invalid Order');
         }
 
@@ -221,7 +221,7 @@ class Content_FieldController extends Zend_Controller_Action {
         $this->_helper->viewRenderer->setNoRender(true);
         $element = $this->_getParam('element');
         //$element = $_GET['element'];
-        if (is_null($element)) {
+        if ($element === null) {
             throw new InvalidArgumentException('Element Required' . $element);
         }
         

@@ -22,23 +22,15 @@
 <p>Please run this setup from the same PC as you plan on running the HomeNet App on.</p>
 
 <p>If you don't get though all the steps today, thats ok. You can come back and pick up right where you left</p>
-<a class="button cms-button-icon-right" href="<?php echo $this->url(array('action' => 'step', 'step' => 1), 'homenet-setup-index'); ?>">
+<a class="button cms-button-icon-right" href="<?php echo $this->url(array('controller'=>'setup', 'action' => 'step', 'id' => 1), 'homenet-house-id'); ?>">
     Continue <span class="ui-icon ui-icon-circle-arrow-e "</span>
 </a>
 <?php } elseif($this->step > 1){ ?>
 <p>It looks like you are in the process of setting up your HomeNet</p>
 <p>You can continue where you last were</p>
-<?php   if($this->step == 2){?>
-<a class="button cms-button-icon-right" href="<?php echo $this->baseUrl('homenet/setup/step/2'); ?>">
+
+<a class="button cms-button-icon-right" href="<?php echo $this->url(array('controller'=>'setup', 'action' => 'step', 'id' => $this->step ), 'homenet-house-id'); ?>">
     Continue <span class="ui-icon ui-icon-circle-arrow-e "</span>
 </a>
-<?php   } elseif($this->step == 3){ ?>
-<a class="button cms-button-icon-right" href="<?php echo $this->baseUrl('homenet/setup/step/3'); ?>">
-    Continue <span class="ui-icon ui-icon-circle-arrow-e "</span>
-</a>
-<?php   } elseif($this->step == 4){ ?>
-<a class="button cms-button-icon-right" href="<?php echo $this->baseUrl('homenet/setup/step/4'); ?>">
-    Continue <span class="ui-icon ui-icon-circle-arrow-e "</span>
-</a>
-<?php   }
+<?php   
 }?>

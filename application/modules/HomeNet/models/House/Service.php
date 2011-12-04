@@ -230,7 +230,7 @@ class HomeNet_Model_House_Service {
      * @todo find a better home for this
      */
     public function getHouseIdsByUser($user = null) {
-        if (!is_null($user)) {
+        if ($user !== null) {
             if (!is_numeric($user)) {
                 throw new InvalidArgumentException('Invaild User');
             }
@@ -330,19 +330,19 @@ class HomeNet_Model_House_Service {
         }
 
 
-        if (is_null($object->status)) {
+        if ($object->status === null) {
             $object->status = -1;
         }
 
-        if (is_null($object->url)) {
+        if ($object->url === null) {
             $object->url = '';
         }
 
-        if (is_null($object->settings)) {
+        if ($object->settings === null) {
             $object->settings = array();
         }
 
-        if (is_null($object->permissions)) {
+        if ($object->permissions === null) {
             $object->permissions = array();
         }
 

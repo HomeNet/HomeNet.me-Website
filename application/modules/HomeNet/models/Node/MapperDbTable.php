@@ -35,7 +35,7 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
      * @return Zend_Db_Table;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('homenet_nodes');
             $this->_table->setRowClass('HomeNet_Model_Node_DbTableRow');
         }
@@ -57,7 +57,7 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                ->where('homenet_nodes.id = ?', $id)
-               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS modelName', 'type', 'settings'))
+               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS modelName', 'type', 'settings AS modelSettings'))
                 ->limit(1);
 
         return $this->getTable()->fetchRow($select);
@@ -82,7 +82,7 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                ->where('house = ?', $house)
-               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS modelName', 'type', 'settings'));
+               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS modelName', 'type', 'settings AS modelSettings'));
 
         return $this->getTable()->fetchAll($select);
     }
@@ -92,7 +92,7 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                ->where('room = ?', $room)
-               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS modelName', 'type', 'settings'));
+               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS modelName', 'type', 'settings AS modelSettings'));
 
         return $this->getTable()->fetchAll($select);
     }
@@ -108,7 +108,7 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
         $select->setIntegrityCheck(false)
                ->where('house = ?', $house)
                ->where('address = ?', $address)
-               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS modelName', 'type', 'settings'))
+               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS modelName', 'type', 'settings AS modelSettings'))
                 ->limit(1);
 
         return $this->getTable()->fetchRow($select);
@@ -125,39 +125,46 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
         return $next;
     }
 
-    public function fetchInternetIdsByHouse($house){
+    public function fetchIdsByHouseType($house, $type){
 
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
-        $select->setIntegrityCheck(false)
-               ->where('homenet_nodes.house = ?', $house)
-               ->join('homenet_nodes_internet', 'homenet_nodes.id = homenet_nodes_internet.id');
-               // ->limit(1);
+         $select->setIntegrityCheck(false)
+               ->where('house = ?', $house)
+               ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS modelName', 'type', 'settings AS modelSettings'))
+               ->where('homenet_node_models.type = ?', $type);
+
+        $results = $this->getTable()->fetchAll($select);
+        $array = array();
         
-        return $this->getTable()->fetchAll($select);
+        foreach($results as $value){
+            $array[] = $value->id;
+        }
+        
+        return $array;
     }
 
-    public function save(HomeNet_Model_Node_Interface $node) {
+    public function save(HomeNet_Model_Node_Interface $object) {
 
 
-        if (($node instanceof HomeNet_Model_Node_DbTableRow) && ($node->isConnected())) {
-            return $node->save();
-        } elseif (!is_null($node->id)) {
-            $row = $this->getTable()->find($node->id)->current();
+        if (($object instanceof HomeNet_Model_Node_DbTableRow) && ($object->isConnected())) {
+            return $object->save();
+        } elseif ($object->id !== null) {
+            $row = $this->getTable()->find($object->id)->current();
         } else {
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($node->toArray());
-
+        $row->fromArray($object->toArray());
+        
         return $row->save();
     }
 
-    public function delete(HomeNet_Model_Node_Interface $node) {
+    public function delete(HomeNet_Model_Node_Interface $object) {
 
-        if (($node instanceof HomeNet_Model_Node_DbTableRow) && ($node->isConnected())) {
-            return $node->delete();
-        } elseif (!is_null($node->id)) {
-           return $this->getTable()->find($node->id)->current()->delete();
+        if (($object instanceof HomeNet_Model_Node_DbTableRow) && ($object->isConnected())) {
+            return $object->delete();
+        } elseif ($object->id !== null) {
+           return $this->getTable()->find($object->id)->current()->delete();
         }
 
         throw new HomeNet_Model_Exception('Invalid Room');

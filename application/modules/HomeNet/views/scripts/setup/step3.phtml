@@ -1,27 +1,26 @@
-<h1>Step 3</h1>
+<?php echo $this->heading('Step 3'); ?>
 <h2>Setup the HomeNet App</h2>
-<div class="transparent box">
+<section>
 <p>In order to link your HomeNet System to your account you have to enter an API key into the HomeNetApp. </p>
 
 <p>Your unique api key is: </p>
-</div>
+</section>
 <br />
-<div class="transparent box">
+<section>
 <h2><?php echo $this->apikey ?></h2>
-</div>
+</section>
 <br />
-<div class="transparent box">
+<section>
 <p>If you haven't already, download and unzip HomeNet Developer Kit</p>
 
 <p>Launch the Java HomeNetApp. Complete the setup wizard. When requested, copy and paste (or type this key) into the APIKEY field.</p>
 <p>Enable the Server feature, so Homenet can push updates from the Internet.</p>
-</div>
+</section>
 <h2>Firewall Setup</h2>
-<div class="transparent box">
-
+<section>
 <p>If you are behind a NAT/Firewall/Router you will also need to setup <strong>Port Forwarding</strong> on you router. You will need to forward port 2443 to your PC</p>
 <p>Please enable the included UPnP port forwarding or add a firewall exception for port 2443. This is how HomeNet connects to the Web </p>
-</div>
+</section>
 <h2>Test Connection</h2>
 <div class="transparent box" id="test-status" style="height:50px">
 <?php if(!empty($this->error)) { ?>
@@ -38,7 +37,9 @@
 </div>
 <?php } ?>
 <div class="center">
-<?php echo $this->ajaxLink("Test Connection", "/homenet/setup/test-connection", array('update' => '#test-status', 'class'=> 'button'));?>
+<?php 
+$url = $this->url(array('controller'=>'setup', 'action' => 'test-connection'), 'homenet');
+echo $this->ajaxLink("Test Connection", $url, array('update' => '#test-status', 'class'=> 'button'));?>
 
 <?php echo $this->form ?>
 </div>

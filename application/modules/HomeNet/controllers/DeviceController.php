@@ -28,6 +28,9 @@
  */
 class HomeNet_DeviceController extends Zend_Controller_Action {
 
+    private $_id;
+    private $_house;
+    
     public function init() {
         $this->view->house = $this->_getParam('house');
         $this->view->node = $this->_getParam('node');
@@ -39,6 +42,8 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
     }
 
     public function addAction() {
+        $this->_helper->viewRenderer->setNoController(true); //use generic templates
+        
         //check and make sure that there isn't a device there currently
         $model = $this->_getParam('model');
 
@@ -155,7 +160,7 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
     }
 
     public function editAction() {
-
+        $this->_helper->viewRenderer->setNoController(true); //use generic templates
         //check to make sure device doesn't already exist
         $dService = new HomeNet_Model_Device_Service();
         $driver = $dService->getObjectByNodePosition($this->view->node, $this->view->position);
@@ -196,7 +201,9 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
         return $this->_redirect($this->view->url(array('house'=>$this->view->house, 'node'=>$this->view->node),'homenet-node').'?message=Device Updated');//
     }
 
-    public function removeAction() {
+    public function deleteAction() {
+        $this->_helper->viewRenderer->setNoController(true); //use generic templates
+        
          $form = new Core_Form_Confirm();
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {

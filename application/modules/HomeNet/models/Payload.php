@@ -44,7 +44,7 @@ class HomeNet_Model_Payload
     public function __construct($payload, $type = SELF::RAW) {
 
 
-        if(is_null($type)){
+        if($type === null){
             if(is_array($payload)) {
                 $type = $this->guessType($payload[0]);
             } else {

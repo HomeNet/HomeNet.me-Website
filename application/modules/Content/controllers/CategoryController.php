@@ -31,7 +31,7 @@ class Content_CategoryController extends Zend_Controller_Action
     
     public function init()
     {
-        $this->view->controllerTitle = 'Category'; //for generic templates
+        $this->view->heading = 'Category'; //for generic templates
         $this->view->id = $this->_id = $this->_getParam('id');
     }
     

@@ -116,7 +116,7 @@ class Core_Model_User_Manager {
      */
     public function register($values = null) {
         
-        if(!is_null(self::getUser())){
+        if(self::getUser() !== null){
             throw new Zend_Exception("User Already Loaded");
         }   
         

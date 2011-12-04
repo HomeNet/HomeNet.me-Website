@@ -174,7 +174,7 @@ class HomeNet_Plugin_Component_MotionSensor_Component extends HomeNet_Model_Comp
 
         //die(debugArray($range));
 
-        if (!is_null($range)) {
+        if ($range !== null) {
             $min = (int) $range[0];
             $max = (int) $range[1];
             $difference = $max - $min;

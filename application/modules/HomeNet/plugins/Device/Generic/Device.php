@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Plugin_Generic_CharLcd extends HomeNet_Model_Device_Abstract {
+class HomeNet_Plugin_Device_Generic_Device extends HomeNet_Model_Device_Abstract {
 
 
 }

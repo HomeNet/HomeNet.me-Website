@@ -43,7 +43,7 @@ class Content_Model_Content implements Content_Model_Content_Interface {
     }
 
     public function getSection() {
-        if (is_null($this->_metadata)) {
+        if ($this->_metadata === null) {
             $this->loadMetadata();
         }
         return $this->_metadata;
@@ -87,7 +87,7 @@ class Content_Model_Content implements Content_Model_Content_Interface {
     }
 
     public function loadMetadata() {
-        if (is_null($this->_metadata)) {
+        if ($this->_metadata === null) {
             if (!isset($this->_values['section'])) {
                 throw new Exception('Section Required');
             }

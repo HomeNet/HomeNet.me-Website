@@ -277,8 +277,7 @@ class HomeNet_Model_Packet {
 
     public function loadXmlRpc($array) {
         $this->loadBase64Packet($array['packet']);
-        //$this->received = $array['received'];
-        $this->apikey = $_GET['apikey'];
+        $this->apikey = $array['apikey'];
         $this->timestamp = new Zend_Date($array['timestamp'], Zend_Date::ISO_8601);
     }
     

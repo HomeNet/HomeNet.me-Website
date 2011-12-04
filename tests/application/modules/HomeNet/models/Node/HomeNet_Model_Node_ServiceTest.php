@@ -86,27 +86,13 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('HomeNet_Model_Node_MapperInterface', $this->service->getMapper());
         $this->assertEquals($mapper, $this->service->getMapper());
     }
-
-    public function testGetInternetMapper() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-    }
-
-    public function testSetInternetMapper() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-    }
     
 //$this->service->getObjectById($id)////////////////////////////////////////////
    public function testGetObjectById_valid() {
         $object = $this->createValidObject();
-
+        
         $result = $this->service->getObjectById($object->id);
-
+var_dump($result);
         $this->validateResult($result);
     }
 
@@ -148,11 +134,12 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertGreaterThan($object->address, $result);
     }
 
-    public function testGetInternetIdsByHouse() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+//$this->service->create($mixed)////////////////////////////////////////////////
+    public function testGetIdsByHouseType_valid() {
+        $object = $this->createValidObject();
+        $result = $this->service->getIdsByHouseType($object->house, HomeNet_Model_Node::SENSOR);
+        
+        $this->assertEquals($object->id, $result[0]);
     }
 
     public function testNewObjectByModel() {

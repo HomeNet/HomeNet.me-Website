@@ -28,28 +28,36 @@
  */   
 class Content_Plugin_Template_Pages_Installer extends Content_Model_Plugin_Template {
     
-    function getDependencies(){
+    public function getDependencies(){
         $dependencies = array(
             
         );
         return $dependencies;
     }
     
+    public function getTemplates(){
+        
+        $path = dirname(__FILE__);
+        
+        $templates = array();
+        $templates[] = array(
+            'type' => Content_Model_Template::TEMPLATE,
+            'url' => 'index',
+            'content' => file_get_contents($path.'/index.phtml'));
+        return $templates;
+    }
     
-    function getFields($fieldSets){
+    
+    public function getFields($fieldSets){
          $fields = parent::getFields($fieldSets);
          $fields[] = array(
             'set' => $fieldSets['publish'],
             'order' => 2,
             'type' => Content_Model_Field::TEMPLATE,
-            'element' => 'textarea',
+            'element' => 'Editor',
             'name' => 'content',
             'label' => 'Content',
-            'validators' => array(),
-            'filters' => array(),
-            'locked' => false,
-            'required' => true,
-            'visible' => true);
+            'required' => true);
          return $fields;
     }
     

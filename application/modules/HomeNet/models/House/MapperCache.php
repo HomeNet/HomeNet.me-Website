@@ -173,7 +173,7 @@ class HomeNet_Model_House_MapperCache implements HomeNet_Model_House_MapperInter
 
     public function save(HomeNet_Model_House_Interface $house) {
         $row = $this->_mapper->save($house);
-        if(!is_null($house->id)){
+        if($house->id !== null){
             $this->clearCacheById($house->id);
         }
 

@@ -28,26 +28,33 @@
  */
 abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interface {
 
-    public $id = null;
-    public $address = null;
-    public $model = null;
-    public $uplink = null;
-    public $house = null;
-    public $room = null;
+    public $id;
+    public $address;
+    public $model;
+    public $uplink;
+    public $house;
+    public $room;
     public $description = '';
-    public $created = null;
+    public $created;
     public $settings = array();
 
    // public $internet = false;
-    public $ipaddress;
-    public $status = 1;
-    public $direction = 1;
+  //  public $ipaddress;
+  //  public $status = 1;
+  //  public $direction = 1;
 
-    public $modelName = null;
-    public $plugin = null;
-    public $type = null;
+    
+    public $modelName;
+    public $modelSettings;
+    public $plugin;
+    public $type;
 
     protected $_devices;
+    
+    //types
+    const INTERNET = 3;
+    const BASESTATION = 2;
+    const SENSOR = 1;
 
     public function  __construct(array $config = array()) {
 
@@ -71,7 +78,9 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
                 $this->$key = $value;
             }
         }
-
+        
+       // var_dump($array['settings']);
+        
         if(!empty($array['settings']) && is_array($array['settings'])){
             $this->settings = array_merge($this->settings, $array['settings']);
         }
@@ -90,8 +99,8 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
             'house' => $this->house,
             'room' => $this->room,
             'description' => $this->description,
-            'created' => $this->created
-            //'settings' => $this->settings
+            'created' => $this->created,
+            'settings' => $this->settings
            );
     }
 

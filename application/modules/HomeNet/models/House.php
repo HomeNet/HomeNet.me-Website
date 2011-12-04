@@ -79,7 +79,7 @@ class HomeNet_Model_House implements HomeNet_Model_House_Interface {
 
     public function getRooms(){
 
-        if(!is_null($this->rooms)){
+        if($this->rooms !== null){
             return $this->rooms;
         }
 

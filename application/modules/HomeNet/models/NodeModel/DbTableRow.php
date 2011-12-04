@@ -27,8 +27,6 @@
  */
 class HomeNet_Model_NodeModel_DbTableRow extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_NodeModel_Interface {
 
-//    public $rooms;
-
     public function fromArray(array $array){
 
         foreach($array as $key => $value){
@@ -61,9 +59,6 @@ class HomeNet_Model_NodeModel_DbTableRow extends Zend_Db_Table_Row_Abstract impl
         }
     }
 
-
-
-
     public function save(){
       $this->compress();
         if (parent::save()) {
@@ -71,37 +66,6 @@ class HomeNet_Model_NodeModel_DbTableRow extends Zend_Db_Table_Row_Abstract impl
             return $this;
         }
     }
-
-//    /**
-//     * @param int $id
-//     * @return HomeNet_Model_RoomInterface
-//     */
-//    public function getRoomById($id){
-//
-//        if(!empty($this->rooms[$id])){
-//            return $this->rooms[$id];
-//        }
-//
-//        $service = new HomeNet_Model_RoomsService();
-//        $room = $service->getRoomById($id);
-//        $this->rooms[$room->id] = $room;
-//
-//        return $room;
-//    }
-//
-//    public function getRooms(){
-//
-//        if(!is_null($this->rooms)){
-//            return $this->rooms;
-//        }
-//
-//        $service = new HomeNet_Model_RoomsService();
-//        $rooms = $service->getRoomsByNodeModel($this->id);
-//        $this->rooms = $rooms;
-//
-//        return $rooms;
-//    }
-
 
     public function getSetting($setting){
         if(isset($this->settings[$setting])){
@@ -111,7 +75,7 @@ class HomeNet_Model_NodeModel_DbTableRow extends Zend_Db_Table_Row_Abstract impl
     }
 
     public function setSetting($setting, $value){
-        if(is_null($this->settings)){
+        if($this->settings === null){
             $this->settings = array($setting => $value);
             return;
         }

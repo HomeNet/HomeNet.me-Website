@@ -26,9 +26,7 @@
  */
 class HomeNet_Model_Node extends HomeNet_Model_Node_Abstract {
     
-        const INTERNET = 3;
-    const BASESTATION = 2;
-    const SENSOR = 1;
+    
     
 //    public $id = null;
 //    public $node;

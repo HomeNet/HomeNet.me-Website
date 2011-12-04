@@ -277,17 +277,17 @@ class HomeNet_Model_Device_Service {
 
         $device = $this->getMapper()->save($object);
 
-        $component = $object->getComponents(false);
+//        $component = $object->getComponents(false);
+////
+//       if (!empty($component)) {
 //
-       if (!empty($component)) {
-
-            $sService = new HomeNet_Model_Component_Service();
-            foreach ($component as $component) {
-                $component->device = $device->id;
-                // die(debugArray($subdevice));
-                $sService->create($component);
-            }
-       }
+//            $sService = new HomeNet_Model_Component_Service();
+//            foreach ($component as $component) {
+//                $component->device = $device->id;
+//                // die(debugArray($subdevice));
+//                $sService->create($component);
+//            }
+//       }
 
         return $device;
     }
@@ -310,15 +310,15 @@ class HomeNet_Model_Device_Service {
 
         $device = $this->getMapper()->save($object);
 
-        $components = $object->getComponents(false);
-
-        if (!empty($components)) {
-
-            $sService = new HomeNet_Model_Component_Service();
-            foreach ($components as $component) {
-                $sService->update($component);
-            }
-        }
+//        $components = $object->getComponents(false);
+//
+//        if (!empty($components)) {
+//
+//            $sService = new HomeNet_Model_Component_Service();
+//            foreach ($components as $component) {
+//                $sService->update($component);
+//            }
+//        }
         return $device;
     }
 

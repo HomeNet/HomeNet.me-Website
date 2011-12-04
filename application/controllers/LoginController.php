@@ -42,6 +42,7 @@ class LoginController extends Zend_Controller_Action {
 
         if (!$form->isValid($_POST)) {
             // Failed validation; redisplay form
+            echo debugArray($form->getErrors());
             $this->view->form = $form;
             return;
         }
@@ -126,15 +127,6 @@ class LoginController extends Zend_Controller_Action {
 
     public function successAction() {
         // action body
-    }
-
-    public function loginWidgetAction() {
-        $auth = Zend_Auth::getInstance();
-        if ($auth->hasIdentity()) {
-            $user = new Zend_Session_Namespace('User');
-            $this->view->name = $user->name;
-            $this->view->identity = $auth->getIdentity();
-        }
     }
 
     public function logoutAction() {

@@ -174,7 +174,7 @@ class HomeNet_Plugin_Component_ContactSwitch_Component extends HomeNet_Model_Com
 
         //die(debugArray($range));
 
-        if (!is_null($range)) {
+        if ($range !== null) {
             $min = (int) $range[0];
             $max = (int) $range[1];
             $difference = $max - $min;

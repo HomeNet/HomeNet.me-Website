@@ -35,7 +35,7 @@ class HomeNet_Model_NodeModel_MapperDbTable implements HomeNet_Model_NodeModel_M
      * @return Zend_Db_Table;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('homenet_node_models');
             $this->_table->setRowClass('HomeNet_Model_NodeModel_DbTableRow');
         }
@@ -67,7 +67,7 @@ class HomeNet_Model_NodeModel_MapperDbTable implements HomeNet_Model_NodeModel_M
 
         if (($object instanceof HomeNet_Model_NodeModel_DbTableRow) && ($object->isConnected())) {
             return $object->save();
-        } elseif (!is_null($object->id)) {
+        } elseif ($object->id !== null) {
             $row = $this->getTable()->find($object->id)->current();
         } else {
             $row = $this->getTable()->createRow();
@@ -82,7 +82,7 @@ class HomeNet_Model_NodeModel_MapperDbTable implements HomeNet_Model_NodeModel_M
 
         if (($object instanceof HomeNet_Model_NodeModel_DbTableRow) && ($object->isConnected())) {
             return $object->delete();
-        } elseif (!is_null($object->id)) {
+        } elseif ($object->id !== null) {
             return $this->getTable()->find($object->id)->current()->delete();
         }
 

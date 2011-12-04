@@ -102,7 +102,7 @@ class Core_Model_Group implements Core_Model_Group_Interface {
     }
 
     public function setSetting($setting, $value) {
-        if (is_null($this->settings)) {
+        if ($this->settings === null) {
             $this->settings = array($setting => $value);
             return;
         }

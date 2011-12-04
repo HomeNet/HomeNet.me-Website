@@ -37,7 +37,7 @@ class Core_Model_Acl_Manager {
     private static $_instance = null;
 
     public function __construct(Core_Model_User_Interface $user = null) {
-        if (!is_null($user)) {
+        if ($user !== null) {
             $this->_user = $user;
         } else {
             $this->_user = Core_Model_User_Manager::getUser();
@@ -45,7 +45,7 @@ class Core_Model_Acl_Manager {
     }
     
     static public function getInstance(){
-        if(is_null(self::$_instance)){
+        if(self::$_instance === null){
             self::$_instance = new Core_Model_Acl_Manager();
         }
         return self::$_instance;
@@ -118,7 +118,7 @@ class Core_Model_Acl_Manager {
         }
 
         //format resources
-        if (!is_null($resource)) {
+        if ($resource !== null) {
             if ($resource instanceof Zend_Acl_Resource_Interface) {
                 $identifiers[] = $resource->getResourceId();
             } else {
@@ -128,7 +128,7 @@ class Core_Model_Acl_Manager {
 
         $tags = $identifiers; //get tags before crazy has is added
         //format objects
-        if (!is_null($objects)) {
+        if ($objects !== null) {
             if (is_array($objects)) {
                 $identifiers[] = md5(serialize($objects));
             } else {
@@ -161,7 +161,7 @@ class Core_Model_Acl_Manager {
 
     private function _setAcl(CMS_Acl $acl, $identifier) {
 
-        if (!is_null($identifier)) {
+        if ($identifier !== null) {
           //  echo "\n" . print_r($this->_aclTags[$identifier], 1) . "\n";
             $cache = $this->_getCache();
             $cache->save($acl, $identifier, $this->_aclTags[$identifier]); //
@@ -285,7 +285,7 @@ class Core_Model_Acl_Manager {
 
                     $cResource = null;
 
-                    if (!is_null($rule->controller)) {
+                    if ($rule->controller !== null) {
 
                         $cResource = new CMS_Acl_Resource_Controller($rule->controller);
 
@@ -350,7 +350,7 @@ class Core_Model_Acl_Manager {
 
                     $cResource = null;
 
-                    if (!is_null($rule->controller)) {
+                    if ($rule->controller !== null) {
 
                         $cResource = new CMS_Acl_Resource_Controller($rule->controller);
 
@@ -415,7 +415,7 @@ class Core_Model_Acl_Manager {
 
                 $cResource = null;
 
-                if (!is_null($rule->controller)) {
+                if ($rule->controller !== null) {
 
                     $cResource = new CMS_Acl_Resource_Controller($rule->controller);
 
@@ -489,15 +489,12 @@ class Core_Model_Acl_Manager {
 
                     // $cResource = null;
 
-                    if (is_null($rule->controller)) {
+                    if ($rule->controller === null) {
                         throw Exception('controller can\'t be Null');
                     }
 
                     //    $cResource = new CMS_Acl_Resource_Controller($rule->controller);
-
-
-
-                    if (is_null($rule->object)) { //if object is null (not specified)
+                    if ($rule->object === null) { //if object is null (not specified)
                         throw Exception('object can\'t be Null');
                     }
 
@@ -552,11 +549,11 @@ class Core_Model_Acl_Manager {
             //assumes to have the most nulls at the top
             foreach ($objects as $rule) {
 
-                if (is_null($rule->controller)) {
+                if ($rule->controller === null) {
                     throw Exception('controller can\'t be Null');
                 }
 
-                if (is_null($rule->object)) {
+                if ($rule->object === null) {
                     throw Exception('object can\'t be Null');
                 }
 

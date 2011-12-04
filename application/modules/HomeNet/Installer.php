@@ -48,14 +48,15 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
 
     public function getAdminBlocks() {
         return array(
-            array('module' => 'Content', 'widget' => 'AdminSections')
+          //  array('module' => 'Content', 'widget' => 'AdminSections')
         );
     }
 
     public function getAdminLinks() {
         return array(
-            array('title' => 'Category Sets', 'route' => 'content-admin', 'options' => array('controller' => 'category-set')),
-            array('title' => 'Content Sections', 'route' => 'content-admin', 'options' => array('controller' => 'section'))
+            array('title' => 'Node Models',      'route' => 'homenet-admin', 'options' => array('controller' => 'node-model')),
+            array('title' => 'Device Models',    'route' => 'homenet-admin', 'options' => array('controller' => 'device-model')),
+            array('title' => 'Component Models', 'route' => 'homenet-admin', 'options' => array('controller' => 'component-model'))
         );
     }
 
@@ -68,7 +69,7 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
         if (in_array('node_models', $list)) {
             $nodeModels = array();
 
-            $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::INTERNET, 'plugin' => 'Processing', 'name' => 'Proccessing HomeNet App', 'description' => 'The original, basic Internet Node', 'image' => '', 'max_devices' => 0, 'settings' => null);
+            $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::INTERNET, 'plugin' => 'Processing', 'name' => 'Proccessing HomeNet App', 'description' => 'The original, basic Internet Node', 'image' => null, 'max_devices' => 0, 'settings' => null);
             $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'plugin' => 'Arduino', 'name' => 'Arduino Node', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => array('serial' => true));
             $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR, 'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz)', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => array('rf12b' => true, 'rf12b_freq' => 915));
             $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR, 'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz)', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => array('rf12b' => true, 'rf12b_freq' => 433));

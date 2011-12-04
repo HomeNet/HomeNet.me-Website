@@ -1,0 +1,449 @@
+.ui-widget {
+    font-size: 11px;
+    /* font-family: "lucida grande",tahoma,verdana,arial,sans-serif; */
+}
+
+ /* Primary Styles
+    Author:
+ */
+
+html {  
+    height: 100%;
+    min-width: 800px;
+}
+
+.transparent {
+    
+    background-color: rgba(0, 0, 0, 0.4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#77000001',EndColorStr='#77000001');
+  /*  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#66000000',EndColorStr='#66000000')"; */
+  /* background-color: #000000; */
+}
+
+
+
+.box {
+    padding: 10px;
+}
+
+section > section {
+    background-color: rgba(0, 0, 0, 0.4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#77000001',EndColorStr='#77000001');
+    padding: 10px;
+}
+
+.inline {
+    display: inline-block;
+}
+
+h3 {
+    font-size: 16px;
+    color:  #FF9900;
+}
+
+body {
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/themes/homenet/img/background.jpg', sizingMethod='scale');
+   /* -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/background.jpg', sizingMethod='scale')"; */
+
+    background: url(/themes/homenet/img/background.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+    font-size: 11px;
+    color: #FFFFFF;
+    position: relative;
+    min-height: 100%;
+}
+strong {
+    font-weight: bold;
+}
+
+th, td {
+    padding: 2px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+
+header {
+    height: 30px;
+    position: relative;
+    text-align: center;
+    font-size: 12px;  
+}
+
+header a:link, header a:active, header a:visited  {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+#logo {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0px 0px;
+    padding: 10px 10px 0px 10px;
+    z-index:1;
+}
+
+#logo:hover {
+    background-color: #666666;
+    background-color: rgba(0, 0, 0, 0.4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#77000001',EndColorStr='#77000001');
+}
+
+#top-menu {
+    font-size: 16px;
+    position: absolute;
+    bottom: 2px;
+    width: 100%;
+    z-index:0;
+}
+
+#top-menu li {
+   display: inline;
+   font-size: 16px;
+   margin: 0px 5px;
+   padding: 10px 5px 2px 5px;
+}
+
+#top-menu li:hover {
+    background-color: #666666;
+    background-color: rgba(0, 0, 0, 0.4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#77000001',EndColorStr='#77000001');
+}
+
+#user {
+    position: absolute;
+    bottom: 2px;
+    right: 5px;
+    z-index:1;
+    text-align: right;
+}
+
+#user a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    position: absolute;
+    bottom: 0px;
+    height:20px;
+}
+
+#container {
+    width:600px;
+    margin: 40px auto;
+    margin-bottom: 0px;
+    position: relative;
+}
+
+#c1 {
+    width: 160px;
+    padding: 10px;
+    margin-right: 20px;
+    
+        margin-bottom: 20px;
+        float:left;
+
+}
+
+#c2 {
+    width: 360px;
+    padding: 20px;
+    
+    margin-bottom: 20px;
+    float: right;
+}
+
+#main {
+    width: 600px;
+    padding: 20px;
+    margin: 40px auto;
+    margin-bottom: 20px; 
+    position: relative;
+}
+
+h2 a:link, h2 a:hover, h2 a:visited  {
+    color: #FFFFFF;
+}
+
+#main h1, #c2 h1  {
+    font-size: 24px;
+    width: 580px;
+    padding: 0px 10px;
+   
+    color:  #CC6600;
+    /* font-weight: bold; rgba(0,0,0,.4);*/
+    position: absolute;
+    top: -36px;
+     left: 5px;
+    /* padding: 0 5px;
+     */
+    /* filter:progid:DXImageTransform.Microsoft.Shadow(color='#66000000',direction='45',strength='1');
+    filter: DropShadow(Color=#66cccccc, OffX=1, OffY=-1, Positive=1);
+    text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+   /*     */
+}
+
+#c2 h1 {
+    left:200px;
+}
+
+
+
+h2 {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.box h2 {
+    margin: 0;
+}
+
+p, ul {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+input.ui-button {
+    padding: .2em 1em;
+}
+
+
+label {
+    font-weight: bold;
+}
+
+dl {
+  padding: 10px;
+
+}
+
+form {
+    text-align: center;
+}
+
+legend {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    width:100%;
+    /*display: block;
+    position: absolute;
+    top: -8px;*/
+}
+
+fieldset {
+    padding: 5px 0;
+    margin-bottom: 5px;
+   /* position: relative; */
+    background-color: rgba(0, 0, 0, 0.4);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#44000001',EndColorStr='#44000001');
+}
+
+.form-element{
+    position: relative;
+    padding: 3px 0;
+    clear: both;
+}
+
+.form-element label {
+    float:left;
+    display: inline-block;
+    width: 49%;
+    text-align: right;
+    padding-right: 2px;
+    height:100%;
+}
+
+.form-input {
+    /* float:left; */
+    display: inline-block;
+    width: 49%;
+    text-align: left;
+    padding-left: 2px;
+}
+
+.form-input label {
+    display: block;
+    width:90%;
+    text-align: left;
+    padding-left: 2px;
+}
+
+
+form > dl {
+    /* border: solid 1px #333333; */
+    padding: 0px;
+    padding-top: 5px;
+  
+    /* margin: 10px 0;
+    background-color: transparent;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#FF000000',EndColorStr='#FF000000');
+    clear: both;  */
+}
+dd {
+  
+  text-align: left;
+
+  /*
+  float: right;
+  width: 260px;
+  
+  */
+  display: block;
+  margin: 0 5px 5px 5px;
+}
+
+form > dl > dd { 
+  text-align: center;
+  padding:5px 0;
+  width:100%;
+  float: none;
+}
+
+div > label {
+    display: inline-block;
+    margin: 2px 0;
+}
+
+
+dt {
+    clear: left;
+    margin: 5px 5px 5px 5px;
+    width: 260px;
+    text-align: right;
+    float: left;
+    
+}
+
+.zend_form > dt {
+    display: none;
+}
+
+input[type=text], input[type=password] {
+    width: 150px;
+}
+
+input[type=checkbox] {
+    margin-right: 5px;
+}
+
+.errors {
+    color: #EE5757;
+    font-style: italic;
+    margin-top: 2px;
+    list-style:none;
+    margin-left: .5em;
+}
+
+.ui-button {
+   /* margin-top: 10px; */
+}
+
+.cms-button-icon-right {
+    padding-right: 15px;
+}
+
+.cms-button-icon-right .ui-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.center {
+    text-align: center;
+}
+
+.center form{
+    display: inline;
+    width:auto;
+}
+
+
+table .button {
+    padding: 0px;
+    margin: 0px;
+}
+
+.navMenu  {
+    display:block;
+    margin-left: 0px;
+}
+
+.navMenu ul {
+    margin: 0px;
+}
+
+.navMenu li {
+   list-style-position: inside;
+   display: block;
+   margin-left: 0px;
+   
+}
+
+
+.navMenu a {
+    display: block;
+    padding: 1px 5px;
+    font-weight: normal;
+}
+
+.navMenu > li > div {
+    padding: 5px 5px;
+    font-weight: bold;
+}
+
+.house-region  {
+   color: #666666 !important;
+   left: -10px;
+   position: relative;
+}
+
+.room-new  {
+   color: #999999 !important;
+   left: 10px; 
+   position: relative;
+}
+
+.navMenu > li > ul {
+   padding-left: 10px;
+   position: relative;
+}
+
+.homeNet-room-subdevice {
+    padding:5px;
+}
+
+.homeNet-room-subdevice h2 {
+    margin:0 0 5px 0;
+    font-size: 16px;
+}
+
+.homeNet-room-menu {
+    /* font-size: 14px; */
+    margin-bottom:10px;
+}
+
+.homeNet-room-menu .selected {
+    font-weight: bold;
+}
+
+.homenet-room-newestvalue {
+    font-size: 20px;
+    padding-left: 3px;
+}
+
+.homenet-room-lastupdate {
+margin-top: 20px;
+padding-left: 3px;
+}
+
+.homenet-room-graph {
+
+}

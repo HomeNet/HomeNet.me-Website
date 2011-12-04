@@ -34,7 +34,7 @@ class Content_Model_Template_MapperDbTable implements Content_Model_Template_Map
      * @return Content_Model_DbTable_Template;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
              $this->_table = new Zend_Db_Table('content_templates');
             $this->_table->setRowClass('Content_Model_Template_DbTableRow');
         }
@@ -113,12 +113,12 @@ class Content_Model_Template_MapperDbTable implements Content_Model_Template_Map
 
 
 
-    public function save(Content_Model_Template_Interface $content) {
+    public function save(Content_Model_Template_Interface $object) {
 
-        if (($content instanceof Content_Model_Template_DbTableRow) && ($content->isConnected())) {
-            return $content->save();
-        } elseif (!is_null($content->id) && !is_null($content->revision)) {
-            $row = $this->getTable()->find($content->id,$content->revision)->current();
+        if (($object instanceof Content_Model_Template_DbTableRow) && ($object->isConnected())) {
+            return $object->save();
+        } elseif (!is_null($object->id) && !is_null($object->revision)) {
+            $row = $this->getTable()->find($object->id,$object->revision)->current();
             if(empty($row)){
                $row = $this->getTable()->createRow();
             }
@@ -127,11 +127,11 @@ class Content_Model_Template_MapperDbTable implements Content_Model_Template_Map
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($content->toArray());
+        $row->fromArray($object->toArray());
        // die(debugArray($row));
         $object = $row->save();
         
-        if($content->active == true){
+        if($object->active == true){
             $where1 = $this->getTable()->getAdapter()->quoteInto('id = ?', $object->id);
             $where2 = $this->getTable()->getAdapter()->quoteInto('revision != ?', $object->revision);
  
@@ -142,13 +142,13 @@ class Content_Model_Template_MapperDbTable implements Content_Model_Template_Map
         return $row;
     }
 
-    public function delete(Content_Model_Template_Interface $content) {
+    public function delete(Content_Model_Template_Interface $object) {
 
-        if (($content instanceof Content_Model_Template_DbTableRow) && ($content->isConnected())) {
-            $content->delete();
+        if (($object instanceof Content_Model_Template_DbTableRow) && ($object->isConnected())) {
+            $object->delete();
             return true;
-        } elseif (!is_null($content->id) && !is_null($content->revision)) {
-            $row = $this->getTable()->find($content->id,$content->revision)->current();
+        } elseif (!is_null($object->id) && !is_null($object->revision)) {
+            $row = $this->getTable()->find($object->id,$object->revision)->current();
             $row->delete();
             return true;
         }

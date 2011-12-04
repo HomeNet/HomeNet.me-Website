@@ -38,7 +38,7 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
      * @return Core_Model_DbTable_Acl_User;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('user_acls');
             $this->_table->setRowClass('Core_Model_Acl_User_DbTableRow');
         }
@@ -96,12 +96,12 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
     
     
 
-    public function save(Core_Model_Acl_User_Interface $acl) {
+    public function save(Core_Model_Acl_User_Interface $object) {
 
-        if (($acl instanceof Core_Model_DbTableRow_UserAcl) && ($acl->isConnected())) {
-            return $acl->save();;
-        } elseif (!is_null($acl->id)) {
-            $row = $this->getTable()->find($acl->id)->current();
+        if (($object instanceof Core_Model_DbTableRow_UserAcl) && ($object->isConnected())) {
+            return $object->save();;
+        } elseif ($object->id !== null) {
+            $row = $this->getTable()->find($object->id)->current();
             if(empty($row)){
                $row = $this->getTable()->createRow();
             }
@@ -110,20 +110,20 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($acl->toArray());
+        $row->fromArray($object->toArray());
        // die(debugArray($row));
         $row->save();
 
         return $row;
     }
 
-    public function delete(Core_Model_Acl_User_Interface $acl) {
+    public function delete(Core_Model_Acl_User_Interface $object) {
 
-        if (($acl instanceof Core_Model_DbTableRow_UserAcl) && ($acl->isConnected())) {
-            $acl->delete();
+        if (($object instanceof Core_Model_DbTableRow_UserAcl) && ($object->isConnected())) {
+            $object->delete();
             return true;
-        } elseif (!is_null($acl->id)) {
-            $row = $this->getTable()->find($acl->id)->current()->delete();
+        } elseif ($object->id !== null) {
+            $row = $this->getTable()->find($object->id)->current()->delete();
             return;
         }
 

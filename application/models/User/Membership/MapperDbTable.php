@@ -38,7 +38,7 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
      * @return Core_Model_DbTable_User_Membership;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('user_memberships');
             $this->_table->setRowClass('Core_Model_User_Membership_DbTableRow');
         }
@@ -80,7 +80,7 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
         if (($object instanceof Core_Model_UserMembership_DbTableRow) && ($object->isConnected())) {
 
             return $object->save();
-        } elseif (!is_null($object->id)) {
+        } elseif ($object->id !== null) {
             $row = $this->getTable()->find($object->id)->current();
             if (empty($row)) {
                 $row = $this->getTable()->createRow();
@@ -101,7 +101,7 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
         if (($object instanceof Core_Model_UserMembership_DbTableRow) && ($object->isConnected())) {
             $object->delete();
             return true;
-        } elseif (!is_null($object->id)) {
+        } elseif ($object->id !== null) {
             $row = $this->getTable()->find($object->id)->current()->delete();
             return;
         }

@@ -84,7 +84,7 @@ class HomeNet_Plugin_Component_Generic_Component extends HomeNet_Plugin_Componen
 
     protected function _convertValue($value) {
         $convert = $this->getSetting('convert');
-        if (is_null($convert)) {
+        if ($convert === null) {
             return $value;
         }
         $convert = strtolower($convert);
@@ -102,7 +102,7 @@ class HomeNet_Plugin_Component_Generic_Component extends HomeNet_Plugin_Componen
 
     protected function _convertValues($values) {
         $convert = $this->getSetting('convert');
-        if (is_null($convert)) {
+        if ($convert === null) {
             return $values;
         }
         $convert = strtolower($convert);
@@ -110,7 +110,7 @@ class HomeNet_Plugin_Component_Generic_Component extends HomeNet_Plugin_Componen
             case 'ctof':
                 foreach ($values as $key => $value) {
 
-                    if (is_null($value)) {
+                    if ($value === null) {
                         continue;
                     }
 
@@ -119,7 +119,7 @@ class HomeNet_Plugin_Component_Generic_Component extends HomeNet_Plugin_Componen
                 break;
             case 'ftoc':
                 foreach ($values as $key => $value) {
-                    if (is_null($value)) {
+                    if ($value === null) {
                         continue;
                     }
                     $values[$key] = (5 / 9) * ($value - 32);
@@ -244,7 +244,7 @@ class HomeNet_Plugin_Component_Generic_Component extends HomeNet_Plugin_Componen
 
         //die(debugArray($range));
 
-        if (!is_null($range)) {
+        if ($range !== null) {
             $min = (int) $range[0];
             $max = (int) $range[1];
             $difference = $max - $min;
@@ -347,5 +347,5 @@ class HomeNet_Plugin_Component_Generic_Component extends HomeNet_Plugin_Componen
 }
 
 function is_notnull($v) {
-    return!is_null($v);
+    return !is_null($v);
 }

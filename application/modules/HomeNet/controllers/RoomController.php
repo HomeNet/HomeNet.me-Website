@@ -29,9 +29,14 @@
  */
 class HomeNet_RoomController extends Zend_Controller_Action {
 
+    private $_id;
+    private $_house;
+    
     public function init() {
-        $this->view->house = $this->_getParam('house');
-        $this->view->room = $this->_getParam('room');
+        
+        $this->view->id = $this->_id =$this->_getParam('id');
+        $this->view->house = $this->_house = $this->_getParam('house');
+        
         $this->view->region = $this->_getParam('region');
     }
 
@@ -76,18 +81,17 @@ class HomeNet_RoomController extends Zend_Controller_Action {
 
     }
 
-    public function addAction() {
+    public function newAction() {
+        $this->_helper->viewRenderer->setNoController(true); //use generic templates
         $form = new HomeNet_Form_Room();
 
         $form->addElement('submit', 'submit', array('label' => 'Add'));
 
         $regionElement = $form->getElement('region');
+        
+        $hService = new HomeNet_Model_House_Service;
+        $regions = $hService->getHouseRegionNames($this->_house);
 
-        $hService = new HomeNet_Model_House_Service();
-        $house = $hService->getObjectById($this->view->house);
-
-        $regions = $hService->getHouseRegionNames($this->view->house);
-        //die(debugArray($_SESSION['HomeNet']));
         foreach ($regions as $region) {
             $regionElement->addMultiOption($region['id'], $region['name']);
         }
@@ -106,29 +110,29 @@ class HomeNet_RoomController extends Zend_Controller_Action {
 
         $values = $form->getValues();
 
-        $rService = new HomeNet_Model_Room_Service();
-        $room = new HomeNet_Model_Room(array('data' => $values));
-        $room->house = $this->view->house;
+        $service = new HomeNet_Model_Room_Service();
+        $values['house'] = $this->_house;
 
-        $rService->create($room);
 
-        $hService->clearCacheById($this->view->house);
+        $service->create($house);
 
-        //redirect to the next step
-        return $this->_redirect($this->view->url(array('house' => $this->view->house), 'homenet-house') . '?message=Added Room'); //
+        $this->view->messages()->add('Successfully added room &quot;'.$object->name.'&quot;');
+        return $this->_redirect($this->view->url(array('house' => $this->_house),'homenet-house'));
     }
 
     public function editAction() {
+        $this->_helper->viewRenderer->setNoController(true); //use generic templates
         $form = new HomeNet_Form_Room();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
 
         $regionElement = $form->getElement('region');
 
-        $hService = new HomeNet_Model_House_Service();
-        $house = $hService->getObjectById($this->view->house);
-        $room = $house->getRoomById($this->view->room);
+        //$house = $hService->getObjectById($this->view->house);
+        $service = new HomeNet_Model_Room_Service();
+        $object = $service->getObjectById($this->_room);
 
-        $regions = $hService->getHouseRegionNames($this->view->house);
+        $hService = new HomeNet_Model_House_Service();
+        $regions = $hService->getHouseRegionNames($this->_house);
 
         //die(debugArray($_SESSION['HomeNet']));
         foreach ($regions as $region) {
@@ -136,15 +140,8 @@ class HomeNet_RoomController extends Zend_Controller_Action {
         }
 
         if (!$this->getRequest()->isPost()) {
-
             //load exsiting values
-            
-            /*
-              if(is_null($row)){
-              throw new Zend_Exception('');
-              }
-             */
-            $form->populate($room->toArray());
+            $form->populate($object->toArray());
 
             $this->view->form = $form;
             return;
@@ -156,50 +153,44 @@ class HomeNet_RoomController extends Zend_Controller_Action {
             return;
         }
 
-        $room->fromArray($form->getValues());
+        $object->fromArray($form->getValues());
 
-        $room->house = $this->view->house;
-        $rService = new HomeNet_Model_Room_Service();
-        $rService->update($room);
+        //$object->house = $this->view->house;
+        
+        $service->update($object);
 
-        $mService = new HomeNet_Model_Message_Service();
-        $mService->add(HomeNet_Model_Message::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Updated &quot;' . $room->name . '&quot; in ' . $house->name . '', null, $this->view->house);
+       // $mService = new HomeNet_Model_Message_Service();
+       //  $mService->add(HomeNet_Model_Message::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Updated &quot;' . $object->name . '&quot; in ' . $house->name . '', null, $this->view->house);
 
-        $hService->clearCacheById($this->view->house);
 
-       // die($this->view->url(array('house' => $this->view->house, 'room' => $room->id, 'action'=>'index'), 'homenet-room'));
-
-        //redirect to the next step
-        return $this->_redirect($this->view->url(array('house' => $this->view->house, 'room' => $room->id, 'action'=>'index'), 'homenet-room') . '?message=Updated Room'); //
+        $this->view->messages()->add('Successfully updated room &quot;'.$object->name.'&quot;');
+        return $this->_redirect($this->view->url(array('controller' => 'room', 'house' => $this->_house, 'id'=>$object->id),'homenet-house-id'));
     }
 
-    public function removeAction() {
-
-
-
+    public function deleteAction() {
+        $this->_helper->viewRenderer->setNoController(true); //use generic templates
         $form = new Core_Form_Confirm();
+        
+        $service = new HomeNet_Model_Room_Service();
+        $object = $service->getObjectById($this->_id);
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
-            $rService = new HomeNet_Model_Room_Service();
-            $room = $rService->getObjectById($this->view->room);
+            
 
-            $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to remove "' . $room->name . '"?'));
+            $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to remove "' . $object->name . '"?'));
 
             $this->view->form = $form;
             return;
         }
 
-        $values = $form->getValues();
-
-        //need to figure out why this isn't in values
         if (!empty($_POST['delete'])) {
-            $rService = new HomeNet_Model_Room_Service();
-            $room = $rService->getObjectById($this->view->room);
-            $rService->delete($room);
-
-            return $this->_redirect($this->view->url(array('house' => $this->view->house), 'homenet-house') . '?message=Deleted');
+            $name = $object->name;
+            $service->delete($object);
+            
+            $this->view->messages()->add('Successfully deleted room &quot;'.$name.'&quot;');
+            return $this->_redirect($this->view->url(array('house' => $this->view->house), 'homenet-house'));
         }
-        return $this->_redirect($this->view->url(array('house' => $this->view->house, 'room' => $this->view->room), 'homenet-room') . '?message=Canceled');
+        return $this->_redirect($this->view->url(array('controller'=>'room', 'house' => $this-_house, 'id' => $this->_id), 'homenet-house-id'));
     }
 
 }

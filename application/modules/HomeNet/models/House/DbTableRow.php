@@ -106,7 +106,7 @@ class HomeNet_Model_House_DbTableRow extends Zend_Db_Table_Row_Abstract implemen
 
     public function getRooms(){
 
-        if(!is_null($this->rooms)){
+        if($this->rooms !== null){
             return $this->rooms;
         }
 
@@ -126,7 +126,7 @@ class HomeNet_Model_House_DbTableRow extends Zend_Db_Table_Row_Abstract implemen
     }
 
     public function setSetting($setting, $value){
-        if(is_null($this->settings)){
+        if($this->settings === null){
             $this->settings = array($setting => $value);
             return;
         }

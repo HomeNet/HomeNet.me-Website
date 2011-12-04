@@ -66,36 +66,6 @@ class HomeNet_Model_DeviceModel_DbTableRow extends Zend_Db_Table_Row_Abstract im
         }
     }
 
-//    /**
-//     * @param int $id
-//     * @return HomeNet_Model_RoomInterface
-//     */
-//    public function getRoomById($id){
-//
-//        if(!empty($this->rooms[$id])){
-//            return $this->rooms[$id];
-//        }
-//
-//        $service = new HomeNet_Model_RoomsService();
-//        $room = $service->getRoomById($id);
-//        $this->rooms[$room->id] = $room;
-//
-//        return $room;
-//    }
-//
-//    public function getRooms(){
-//
-//        if(!is_null($this->rooms)){
-//            return $this->rooms;
-//        }
-//
-//        $service = new HomeNet_Model_RoomsService();
-//        $rooms = $service->getRoomsByDeviceModel($this->id);
-//        $this->rooms = $rooms;
-//
-//        return $rooms;
-//    }
-
     public function getSetting($setting){
         if(isset($this->settings[$setting])){
             return $this->settings[$setting];
@@ -104,7 +74,7 @@ class HomeNet_Model_DeviceModel_DbTableRow extends Zend_Db_Table_Row_Abstract im
     }
 
     public function setSetting($setting, $value){
-        if(is_null($this->settings)){
+        if($this->settings === null){
             $this->settings = array($setting => $value);
             return;
         }

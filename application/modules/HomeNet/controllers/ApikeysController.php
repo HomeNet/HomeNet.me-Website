@@ -27,22 +27,23 @@
 class HomeNet_ApikeysController extends Zend_Controller_Action
 {
 
+    private $_house;
+    
     public function init()
     {
-        $this->view->house = $this->_getParam('house');
+        $this->view->house= $this->_house = $this->_getParam('house');
     }
 
     public function indexAction()
     {
         $service = new HomeNet_Model_Apikey_Service();
-        $keys = $service->getObjectsByHouseUser($this->view->house);
-        //die(print_r($keys->toArray(),1));
-        if (count($keys) == 0) {
-            $row = $service->createApikeyForHouse($this->view->house);
+        $objects = $service->getObjectsByHouseUser($this->_house);
+
+        if (count($objects) == 0) {
+            $row = $service->createApikeyForHouse($this->_house);
             $this->view->apikey = $row->id;
-        } else {
-            $row = $keys[0]; 
-            $this->view->apikey = $row->id;
+        } else { 
+            $this->view->apikey = $objects[0]->id;
         }
     }
 

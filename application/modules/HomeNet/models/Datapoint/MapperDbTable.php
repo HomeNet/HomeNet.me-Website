@@ -45,7 +45,7 @@ class HomeNet_Model_Datapoint_MapperDbTable implements HomeNet_Model_Datapoint_M
      */
     
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             
             switch($this->_type){
                 case 'bool':
@@ -194,27 +194,27 @@ $table = $this->getTable();
         return $this->getTable()->fetchAll($select);
     }
 
-    public function save(HomeNet_Model_Datapoint_Interface $room) {
+    public function save(HomeNet_Model_Datapoint_Interface $object) {
 
-        if (($room instanceof HomeNet_Model_Datapoint_DbTableRow) && ($room->isConnected())) {
-            return $room->save();
-        } elseif (!is_null($room->id)) {
-            $row = $this->getTable()->find($room->id);
+        if (($object instanceof HomeNet_Model_Datapoint_DbTableRow) && ($object->isConnected())) {
+            return $object->save();
+        } elseif ($object->id !== null) {
+            $row = $this->getTable()->find($object->id);
         } else {
             $row = $this->getTable()->createRow();
         }
 
-        $row->setFromArray($room->toArray());
+        $row->setFromArray($object->toArray());
         
         return $row->save();
     }
 
-    public function delete(HomeNet_Model_Datapoint_Interface $room) {
+    public function delete(HomeNet_Model_Datapoint_Interface $object) {
 
-        if (($room instanceof HomeNet_Model_Datapoint_DbTableRow) && ($room->isConnected())) {
-            return $room->delete();
-        } elseif (!is_null($room->id)) {
-            return $this->getTable()->find($room->id)->current()->delete();
+        if (($object instanceof HomeNet_Model_Datapoint_DbTableRow) && ($object->isConnected())) {
+            return $object->delete();
+        } elseif ($object->id !== null) {
+            return $this->getTable()->find($object->id)->current()->delete();
         }
 
         throw new HomeNet_Model_Exception('Invalid Datapoint');

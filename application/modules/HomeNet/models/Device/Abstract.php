@@ -27,18 +27,18 @@
  */
 abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Interface {
 
-    public $id = null;
-    public $house = null;
-    public $node = null;
-    public $model = null;
-    public $position = null;
+    public $id;
+    public $house;
+    public $node;
+    public $modell;
+    public $position;
     public $components = 0;
-    public $created = null;
+    public $created;
     public $settings = array();
 
 
-    public $plugin = null;
-    public $modelName = null;
+    public $plugin;
+    public $modelName;
 
 
     protected $_house;
@@ -100,13 +100,14 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
      * @param HomeNet_Model_ComponentModelInterface $model
      */
     public function loadModel(HomeNet_Model_DeviceModel_Interface $model) {
-        if (!($this instanceof $model->driver )) {
-            throw new Zend_Exception('Wrong driver ' . $model->driver . ' Loaded');
+        $class = 'HomeNet_Plugin_Device_'.$model->plugin.'_Device';
+        if (!($this instanceof $class)) {
+            throw new Zend_Exception('Wrong driver ' . $model->plugin . ' Loaded');
         }
 
       //  die(debugArray($model));
 
-        $this->driver = $model->driver;
+        $this->plugin = $model->plugin;
         $this->modelName = $model->name;
         $this->model = $model->id;
 
@@ -137,6 +138,12 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
 
     public function getComponents($search = true) {
 
+        if(!isset($this->_components) && empty($this->id)){
+            $this->_components = array();
+            
+            return $this->_components;
+        }
+        
         if(!isset($this->_components) && $search){
             $service = new HomeNet_Model_Component_Service();
             $this->_components = $service->getObjectsByDevice($this->id);

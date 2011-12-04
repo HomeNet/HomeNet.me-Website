@@ -52,91 +52,7 @@ class Core_Model_User implements Core_Model_User_Interface {
      */
     public $name;
 
-<<<<<<< .mine    public function setSetting($setting, $value, $module = 'Core'){
-
-        if(is_null($this->_settings)){
-            $this->loadSettings();
-        }
-
-        $this->_settings[$module][$setting] = $value;
-    }
-
-    public function loadSettings(){
-
-        if(empty($this->settings)){
-            $this->_settings = array();
-            return;
-        } 
-
-        $this->_settings = unserialize($this->settings);
-    }
-
-    public function saveSettings(){
-        $this->settings = serialize($this->_settings);
-    }
-
-    public function getSettings(){
-        return $this->_settings;
-    }
-
-    public function removeSetting($setting, $module = 'Core'){
-
-        if(is_null($this->_settings)){
-            $this->loadSettings();
-        }
-
-        if(isset($this->_settings[$module][$setting])){
-            unset($this->_settings[$module][$setting]);
-        }
-        return true;
-    }
-
-
-    public function importArray($array) {
-
-        $this->name = $array['name'];
-        $this->location = $array['location'];
-        $this->username = $array['username'];
-        $this->email = $array['email'];       
-
-        $this->permissions = '';
-    }
-    
-    
-//    public function login() {
-//
-//        if(!$this->isConnected() || empty($this->id)){
-//            throw new Zend_Exception("User Not Loaded");
-//        }
-//
-//        $_SESSION['User'] = $this->toArray();
-//        $_SESSION['User']['settings'] = $this->getSettings();
-//
-//         if($this->status == -1){
-//             $this->logout();
-//            throw new CMS_Exception("Account Not Activated", self::ERROR_NOT_ACTIVATED);
-//        } elseif($this->status < -1){
-//            $this->logout();
-//            throw new CMS_Exception("User Banned", self::ERROR_BANNED);
-//        }
-//
-//        
-//        $_SESSION['User'] = $this->toArray();
-//        $_SESSION['User']['settings'] = $this->getSettings();
-//
-//    }
-///**
-// * @todo move this to an auth model
-// */
-//    public function logout() {
-//
-//        //Zend_Session::destroy(true);
-//
-//        $authAdapter = Zend_Auth::getInstance();
-//        $authAdapter->clearIdentity();
-//    }
-
-=======>>>>>>> .theirs    /**
+    /**
      * @var string
      */
     public $location;
@@ -201,7 +117,7 @@ class Core_Model_User implements Core_Model_User_Interface {
     }
 
     public function setSetting($setting, $value) {
-        if (is_null($this->settings)) {
+        if ($this->settings === null) {
             $this->settings = array($setting => $value);
             return;
         }

@@ -187,7 +187,7 @@ class Content_FieldSetController extends Zend_Controller_Action {
         if (empty($id) || !is_numeric($id)) {
             throw new InvalidArgumentException('Missing FieldSet Id');
         }
-        if (is_null($order) || !is_numeric($order)) {
+        if (!is_numeric($order)) {
             throw new InvalidArgumentException('Invalid Order');
         }
 

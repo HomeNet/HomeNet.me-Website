@@ -1,0 +1,5 @@
+<?php if($this->identity == null) { ?>
+<div id="guest"><a href="/login">Login</a> or <a href="/register">Register</a></div>
+<?php }else{ ?>
+<ul id="login-widget"><li><a href="/user/settings"><?php echo $this->name ?></a></li><li><a href='/logout'>Logout</a></li></ul>
+<?php } ?>

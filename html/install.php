@@ -52,8 +52,14 @@ $application = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/config
 $application->bootstrap();
 
 Zend_Registry::set('cachemanager', $application->getBootstrap()->getResource('cachemanager'));
-Core_Model_Installer::uninstall();
-Core_Model_Installer::install();
+//$installer = new Installer();
+//$installer->installTest();
+
+
+$installer = new HomeNet_Installer();
+
+$installer->installOptionalContent($installer->getOptionalContent());
+
 
 echo 'database installed';
 

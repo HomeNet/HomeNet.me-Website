@@ -36,7 +36,7 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
      * @return Core_Model_DbTable_Group;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('groups');
             $this->_table->setRowClass('Core_Model_Group_DbTableRow');
         }
@@ -118,15 +118,15 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
     }
 
     /**
-     * @param Core_Model_Group_Interface $group
+     * @param Core_Model_Group_Interface $object
      * @return Core_Model_Group_DbTableRow  
      */
-    public function save(Core_Model_Group_Interface $group) {
+    public function save(Core_Model_Group_Interface $object) {
 
-        if (($group instanceof Core_Model_Group_DbTableRow) && ($group->isConnected())) {
-            return $group->save();
-        } elseif (!is_null($group->id)) {
-            $row = $this->getTable()->find($group->id)->current();
+        if (($object instanceof Core_Model_Group_DbTableRow) && ($object->isConnected())) {
+            return $object->save();
+        } elseif ($object->id !== null) {
+            $row = $this->getTable()->find($object->id)->current();
             if (empty($row)) {
                 $row = $this->getTable()->createRow();
             }
@@ -134,7 +134,7 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($group->toArray());
+        $row->fromArray($object->toArray());
         // die(debugArray($row));
         $row->save();
 
@@ -142,17 +142,17 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
     }
 
     /**
-     * @param Core_Model_Group_Interface $group
+     * @param Core_Model_Group_Interface $object
      * @return bool Success
      * @throws Exception
      */
-    public function delete(Core_Model_Group_Interface $group) {
+    public function delete(Core_Model_Group_Interface $object) {
 
-        if (($group instanceof Core_Model_Group_DbTableRow) && ($group->isConnected())) {
-            $group->delete();
+        if (($object instanceof Core_Model_Group_DbTableRow) && ($object->isConnected())) {
+            $object->delete();
             return true;
-        } elseif (!is_null($group->id)) {
-            $row = $this->getTable()->find($group->id)->current()->delete();
+        } elseif ($object->id !== null) {
+            $row = $this->getTable()->find($object->id)->current()->delete();
             return true;
         }
 

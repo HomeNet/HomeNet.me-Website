@@ -174,7 +174,7 @@ class Content_Model_Field_Service {
             
         }
 
-        if (!is_null($found)) {
+        if ($found !== null) {
             if($found->id != $object->id){
             throw new DuplicateEntryException('Name already exists ');
             }

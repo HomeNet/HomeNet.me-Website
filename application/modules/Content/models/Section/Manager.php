@@ -72,7 +72,7 @@ class Content_Model_Section_Manager {
      */
     function createByTemplate($values, $template = null, $options = null) {
 
-        if (is_null($template)) {
+        if ($template === null) {
             if (!empty($values['template'])) {
                 $template = $values['template'];
             } else {
@@ -136,6 +136,21 @@ class Content_Model_Section_Manager {
 
             $order++;
         }
+        
+        //install templates
+        $tService = new Content_Model_Template_Service();
+        $userId = Core_Model_User_Manager::getUser()->id;
+        
+        foreach ($plugin->getTemplates() as $template) {
+            $template['owner'] = $userId;
+            $template['active'] = true;
+            $template['visible'] = true;
+            $template['autosave'] = false;
+            $template['section'] = $sObject->id;
+
+            $tService->create($template);
+        }
+  
 
         return $sObject;
     }

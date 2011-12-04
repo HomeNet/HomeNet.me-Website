@@ -35,7 +35,7 @@ class HomeNet_Model_DeviceModel_MapperDbTable implements HomeNet_Model_DeviceMod
      * @return Zend_Db_Table;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('homenet_device_models');
             $this->_table->setRowClass('HomeNet_Model_DeviceModel_DbTableRow');
         }
@@ -62,17 +62,17 @@ class HomeNet_Model_DeviceModel_MapperDbTable implements HomeNet_Model_DeviceMod
         return $this->getTable()->fetchAll($select);
     }
 
-    public function save(HomeNet_Model_DeviceModel_Interface $deviceModel) {
+    public function save(HomeNet_Model_DeviceModel_Interface $object) {
 
-        if (($deviceModel instanceof HomeNet_Model_DeviceModel_DbTableRow) && ($deviceModel->isConnected())) {
-            return $deviceModel->save();
-        } elseif (!is_null($deviceModel->id)) {
-            $row = $this->getTable()->find($deviceModel->id)->current();
+        if (($object instanceof HomeNet_Model_DeviceModel_DbTableRow) && ($object->isConnected())) {
+            return $object->save();
+        } elseif ($object->id !== null) {
+            $row = $this->getTable()->find($object->id)->current();
         } else {
             $row = $this->getTable()->createRow();
         }
 
-        $row->fromArray($deviceModel->toArray());
+        $row->fromArray($object->toArray());
         // die(debugArray($row));
         return $row->save();
     }
@@ -81,7 +81,7 @@ class HomeNet_Model_DeviceModel_MapperDbTable implements HomeNet_Model_DeviceMod
 
         if (($object instanceof HomeNet_Model_DeviceModel_DbTableRow) && ($object->isConnected())) {
             return $object->delete();
-        } elseif (!is_null($object->id)) {
+        } elseif ($object->id !== null) {
             return $this->getTable()->find($object->id)->current()->delete();
         }
 

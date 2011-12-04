@@ -40,7 +40,7 @@ class CMS_View_Helper_Heading extends Zend_View_Helper_Abstract
     {
         $layout = Zend_Layout::getMvcInstance();
         //$layout->getView()->headTitle($title);
-        if(!is_null($title2)){
+        if($title2 !== null){
             $this->view->breadcrumbs()->addPage(array(
                 'label'  => $title,
                 'uri' => '#'

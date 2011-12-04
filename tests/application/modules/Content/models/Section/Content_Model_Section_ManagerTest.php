@@ -18,6 +18,9 @@ class Content_Model_Section_ManagerTest extends PHPUnit_Framework_TestCase {
      */
     protected function setUp() {
         $this->object = new Content_Model_Section_Manager;
+        $installer = new Installer();
+        $installer->installTest();
+        $installer->loginAsSuperAdmin();
     }
 
     /**
@@ -25,7 +28,6 @@ class Content_Model_Section_ManagerTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        Zend_Loader::loadClass('Content_Installer');
         $installer =  new Content_Installer();
         $installer->uninstallTest();
     }

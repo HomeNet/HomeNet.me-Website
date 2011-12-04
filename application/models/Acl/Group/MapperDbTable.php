@@ -38,7 +38,7 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
      * @return Core_Model_DbTable_Acl_Group;
      */
     public function getTable() {
-        if (is_null($this->_table)) {
+        if ($this->_table === null) {
             $this->_table = new Zend_Db_Table('group_acls');
             $this->_table->setRowClass('Core_Model_Acl_Group_DbTableRow');
         }
@@ -114,7 +114,7 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
         if (($object instanceof Core_Model_GroupAcl_DbTableRow) && ($object->isConnected())) {
             return $object->save();
 
-        } elseif (!is_null($object->id)) {
+        } elseif ($object->id !== null) {
             $row = $this->getTable()->find($object->id)->current();
             if(empty($row)){
                $row = $this->getTable()->createRow();
@@ -136,7 +136,7 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
         if (($object instanceof Core_Model_GroupAcl_DbTableRow) && ($object->isConnected())) {
             $object->delete();
             return true;
-        } elseif (!is_null($object->id)) {
+        } elseif ($object->id !== null) {
             $row = $this->getTable()->find($object->id)->current()->delete();
             return;
         }

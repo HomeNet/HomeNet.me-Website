@@ -27,21 +27,24 @@
  */
 class HomeNet_SetupController extends Zend_Controller_Action {
 
-    private $step = 0;
+    private $_step = 0;
     private $_house = null;
     private $_housesService = null;
 
     public function init() {
+        
+        $this->_step = $this->_getParam('id');
+        
 
-        $ajaxContext = $this->_helper->getHelper('AjaxContext');
-        $ajaxContext->addActionContext('testConection', 'html')
-                ->addActionContext('testBase', 'html')
-                ->addActionContext('testLed', 'html')
-                ->initContext();
-
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            return;
-        }
+//        $ajaxContext = $this->_helper->getHelper('AjaxContext');
+//        $ajaxContext->addActionContext('testConection', 'html')
+//                ->addActionContext('testBase', 'html')
+//                ->addActionContext('testLed', 'html')
+//                ->initContext();
+//
+//        if ($this->getRequest()->isXmlHttpRequest()) {
+//            return;
+//        }
     }
 
     public function indexAction() {
@@ -62,7 +65,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
             /* @var $house HomeNet_Model_HouseInterface */
 
             $step = $house->getSetting('setup');
-            if (!is_null($step)) {
+            if ($step !== null) {
                 $continueSetup[$house->id] = $house;
             }
         }
@@ -97,7 +100,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         //check that it's the right step for the house'
         $this->_housesService = new HomeNet_Model_House_Service();
 
-        $step = $this->_getParam('step');
+        $step = $this->_step;
 
         if ($step > 1) {
             $this->_house = $this->_housesService->getObjectById($this->_getParam('house'));
@@ -123,7 +126,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
             // Failed validation; redisplay form
-            $form->setAction($this->view->url(array('action' => 'step', 'step' => 1), 'homenet-setup-index'));
+            $form->setAction($this->view->url(array('controller'=>'setup', 'action' => 'step', 'id' => 1), 'homenet-id'));
             $this->view->form = $form;
             return;
         }
@@ -135,7 +138,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $house = $this->_housesService->create($house);
 
         //redirect to the next step
-        return $this->_redirect($this->view->url(array('house' => $house->id, 'action' => 'step', 'step' => 2), 'homenet-setup'));
+        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $house->id, 'action' => 'step', 'id' => 2), 'homenet-house-id'));
     }
 
     public function step2Action() {
@@ -165,7 +168,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $form->addElement('submit', 'submit', array('label' => 'Next'));
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
-            $form->setAction($this->view->url(array('action' => 'step', 'step' => 2), 'homenet-setup'));
+            $form->setAction($this->view->url(array('controller'=>'setup', 'action' => 'step', 'id' => 2), 'homenet-house-id'));
             $this->view->form = $form;
             return;
         }
@@ -183,7 +186,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $this->_housesService->update($this->_house);
 
         //redirect to the next step
-        return $this->_redirect($this->view->url(array('house' => $this->_house->id, 'action' => 'step', 'step' => 3), 'homenet-setup'));
+        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 3), 'homenet-house-id'));
     }
 
     public function step3Action() {
@@ -211,7 +214,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $form->addElement('submit', 'submit', array('label' => 'Next'));
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
-            $form->setAction($this->view->url(array('action' => 'step', 'step' => 3), 'homenet-setup'));
+            $form->setAction($this->view->url(array('controller'=>'setup', 'action' => 'step', 'id' => 3), 'homenet-house-id'));
             $this->view->form = $form;
             return;
         }
@@ -231,8 +234,6 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         // die(print_r($ids,1));
 
         if (empty($ids)) {
-
-
             $model = 0;
             $id = 0;
 
@@ -243,7 +244,6 @@ class HomeNet_SetupController extends Zend_Controller_Action {
             } catch (Exception $e) {
                 $result = $e->getMessage();
             }
-
 
             if (empty($key)) {
                 $this->view->error = "<strong>Missing Api Key</strong><br /> Please Re Enter your API Key into the HomeNet App";
@@ -305,41 +305,21 @@ class HomeNet_SetupController extends Zend_Controller_Action {
             $this->_housesService->update($this->_house);
         }
         //redirect to the next step
-        return $this->_redirect($this->view->url(array('house' => $this->_house->id, 'action' => 'step', 'step' => 4), 'homenet-setup'));
+        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 4), 'homenet-house-id'));
     }
 
     public function step4Action() {
-        $type = array(1 => 'Wireless Sensor Node', 2 => 'Wired Base Station', 3 => 'Internet Node');
-
-        $form = new HomeNet_Form_Node();
+        
+        $form = new HomeNet_Form_Node(2);  //only load model types 2
         $form->removeElement('uplink');
         $form->removeElement('node');
         $form->removeElement('description');
-        //$sub = $form->getSubForm('node');
-
-        $model = $form->getElement('model');
-
-        $nmService = new HomeNet_Model_NodeModel_Service();
-        $objects = $nmService->getObjectsByStatus(1);
-
-        // die(debugArray($models));
-
-        $models = array();
-        foreach ($objects as $value) {
-            if ($value->type == 2) {
-                $models[$type[$value->type]][$value->id] = $value->name;
-            }
-        }
-
-        $model->addMultiOptions($models);
-
-        $uplink = $form->getElement('uplink');
 
         $submit = $form->addElement('submit', 'submit', array('label' => 'Next'));
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
             // Failed validation; redisplay form
-            $form->setAction($this->view->url(array('house' => $this->_house->id, 'action' => 'step', 'step' => 4), 'homenet-setup'));
+            $form->setAction($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 4), 'homenet-house-id'));
             $this->view->form = $form;
             return;
         }
@@ -356,48 +336,48 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $values = $form->getValues();
 
         $ids = $nService->getInternetIdsByHouse($this->_house->id);
+        if(!$ids){
+            throw new Exception('Missing Internet ID');
+        }
         $uplink = current($ids);
 
-        $node = $nService->newObjectByModel($values['model']);
-
+        $node = $nService->newObjectFromModel($values['model']);
 
         $node->fromArray($values);
 
-        $node->description = 'Auto created Node by HomeNet';
+        $node->description = 'Auto created Node by HomeNet Setup';
 
-        $node->node = 1;
+        $node->address = 1;
         $node->house = $this->_house->id;
         $node->room = $room->id;
         $node->uplink = $uplink;
-
-
+        
         $node = $nService->create($node);
 
         $dService = new HomeNet_Model_Device_Service();
-        $device = $dService->getObjectByModel(9); //9 = Status Leds
+        $device = $dService->newObjectFromModel(16); // = Status Leds
+ 
 //        public $id = null;
         $device->node = $node->id;
 //    public $model = null;
         $device->position = 1;
-//    public $subdevices = 0;
-//    public $created = null;
-//    public $settings = array();
-        $subdevices = $device->getComponents();
-        $subdevices[0]->name = 'Red LED';
-        $subdevices[0]->room = $room->id;
-        $subdevices[1]->name = 'Green LED';
-        $subdevices[1]->room = $room->id;
+
+        $components = $device->getComponents(false);
+        $components[0]->name = 'Red LED';
+        $components[0]->room = $room->id;
+        $components[1]->name = 'Green LED';
+        $components[1]->room = $room->id;
 
         $dService->create($device);
 
-        $this->view->node = 1;
+       // $this->view->node = 1;
 
 
         //save status
         $this->_house->setSetting('setup', 5);
         $this->_housesService->update($this->_house);
 
-        return $this->_redirect($this->view->url(array('house' => $this->_house->id, 'action' => 'step', 'step' => 5), 'homenet-setup'));
+        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 5), 'homenet-house-id'));
     }
 
     public function step5Action() {
@@ -413,7 +393,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $form->addElement('submit', 'submit', array('label' => 'Next'));
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
-            $form->setAction($this->view->url(array('house' => $this->_house->id, 'action' => 'step', 'step' => 5), 'homenet-setup'));
+            $form->setAction($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 5), 'homenet-house-id'));
             $this->view->form = $form;
             return;
         }
@@ -423,7 +403,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $this->_house->setSetting('setup', 6);
         $this->_housesService->update($this->_house);
 
-        return $this->_redirect($this->view->url(array('house' => $this->_house->id, 'action' => 'step', 'step' => 6), 'homenet-setup'));
+        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 6), 'homenet-house-id'));
     }
 
     public function step6Action() {
@@ -443,7 +423,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
 
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
-            $form->setAction($this->view->url(array('action' => 'step', 'step' => 6), 'homenet-setup'));
+            $form->setAction($this->view->url(array('controller'=>'setup', 'action' => 'step', 'id' => 6), 'homenet-house-id'));
             $this->view->form = $form;
             return;
         }
@@ -452,43 +432,22 @@ class HomeNet_SetupController extends Zend_Controller_Action {
             $this->_house->clearSetting('setup');
             $this->_housesService->update($this->_house);
 
-            return $this->_redirect($this->view->url(array('house' => $this->_house->id, 'action' => 'finish'), 'homenet-setup'));
+            return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'finish'), 'homenet-house-id'));
         }
         //send packet to get model
         //save status
         $this->_house->setSetting('setup', 7);
         $this->_housesService->update($this->_house);
 
-        return $this->_redirect($this->view->url(array('house' => $this->_house->id, 'action' => 'step', 'step' => 7), 'homenet-setup'));
+        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 7), 'homenet-house-id'));
     }
 
     public function step7Action() {
 
-        $type = array(1 => 'Wireless Sensor Node', 2 => 'Wired Base Station', 3 => 'Internet Node');
-
-        $form = new HomeNet_Form_Node();
+        $form = new HomeNet_Form_Node(1); //limit model type
         $form->removeElement('uplink');
         $form->removeElement('node');
         $form->removeElement('description');
-        //$sub = $form->getSubForm('node');
-
-        $model = $form->getElement('model');
-
-        $nmService = new HomeNet_Model_NodeModel_Service();
-        $objects = $nmService->getObjectsByStatus(1);
-
-        // die(debugArray($models));
-
-        $models = array();
-        foreach ($objects as $value) {
-            if ($value->type == 1) {
-                $models[$type[$value->type]][$value->id] = $value->name;
-            }
-        }
-
-        $model->addMultiOptions($models);
-
-        $uplink = $form->getElement('uplink');
 
         $submit = $form->addElement('submit', 'submit', array('label' => 'Next'));
 
@@ -561,7 +520,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $this->_house->setSetting('setup', 8);
         $this->_housesService->update($this->_house);
 
-        return $this->_redirect($this->view->url(array('house' => $this->_house->id, 'action' => 'step', 'step' => 8), 'homenet-setup'));
+        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 8), 'homenet-house-id'));
     }
 
     public function step8Action() {
@@ -577,7 +536,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $form->addElement('submit', 'submit', array('label' => 'Next'));
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
-            $form->setAction($this->view->url(array('house' => $this->_house->id, 'action' => 'step', 'step' => 8), 'homenet-setup'));
+            $form->setAction($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 8), 'homenet-house-id'));
             $this->view->form = $form;
             return;
         }
@@ -587,7 +546,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $this->_house->setSetting('setup', 9);
         $this->_housesService->update($this->_house);
 
-        return $this->_redirect($this->view->url(array('house' => $this->_house->id, 'action' => 'step', 'step' => 9), 'homenet-setup'));
+        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 9), 'homenet-house-id'));
     }
 
     public function step9Action() {
@@ -596,25 +555,23 @@ class HomeNet_SetupController extends Zend_Controller_Action {
 
         $form->addElement('submit', 'finish', array('label' => 'Finish'));
 
-
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
-            $form->setAction($this->view->url(array('house' => $this->_house->id, 'action' => 'step', 'step' => 9), 'homenet-setup'));
+            $form->setAction($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 9), 'homenet-house-id'));
             $this->view->form = $form;
             return;
         }
 
-
         $this->_house->clearSetting('setup');
         $this->_housesService->update($this->_house);
 
-        return $this->_redirect($this->view->url(array('house' => $this->_house->id, 'action' => 'finish'), 'homenet-setup'));
+        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'finish'), 'homenet-house-id'));
     }
 
     public function finishAction() {
         //test remote led
     }
 
-    public function testBaseAction() {
+    public function testBaseAjaxAction() {
         $this->_helper->layout()->disableLayout();
 
         $packet = new HomeNet_Model_Packet();
@@ -633,7 +590,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $this->view->success = "<strong>Packet Sent: {$this->_getParam('command')}</strong>";
     }
 
-    public function testLedAction() {
+    public function testLedAjaxAction() {
         $this->_helper->layout()->disableLayout();
         $packet = new HomeNet_Model_Packet();
 
@@ -658,7 +615,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         // action body
     }
 
-    public function testConnectionAction() {
+    public function testConnectionAjaxAction() {
         $this->_helper->layout()->disableLayout();
 
         $result = "Unknown";

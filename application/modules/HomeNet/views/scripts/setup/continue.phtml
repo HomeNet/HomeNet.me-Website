@@ -1,20 +1,19 @@
-<h1>Getting Started</h1>
-
-<div class="transparent box">
+<?php echo $this->heading('Getting Started'); ?>
+<section>
 <p>It looks like you are in the process of setting up your HomeNet</p>
 <p>You can continue where you last were</p>
-</div>
+</section>
 <?php   
 foreach ($this->houses as $house){
     $step = $house->getSetting('setup');
 ?>
 <br />
-<div class="transparent box">
+<section>
 <h3 class="inline"><?php echo $house->name ?></h3>
- <a class="button cms-button-icon-right" href="<?php echo $this->url(array('house' => $house->id, 'action' => 'step', 'step' => $step), 'homenet-setup') ?>">
+ <a class="button cms-button-icon-right" href="<?php echo $this->url(array('controller'=>'setup', 'house' => $house->id, 'action' => 'step', 'id' => $step), 'homenet-house-id') ?>">
     Continue <span class="ui-icon ui-icon-circle-arrow-e "</span>
 </a>
-</div>
+</section>
 <?php
 }
 ?>
