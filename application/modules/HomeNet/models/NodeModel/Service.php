@@ -96,7 +96,7 @@ class HomeNet_Model_NodeModel_Service {
      * @throw InvalidArgumentException
      */
     public function getObjectsByStatus($status) {
-        if (empty($status)  || !is_numeric($status)) {
+        if (!is_numeric($status)) {
             throw new InvalidArgumentException('Invalid Status');
         }
         return $this->getMapper()->fetchObjectsByStatus($status);

@@ -109,7 +109,7 @@ class HomeNet_Model_ComponentModel_Service {
         $results = $this->getMapper()->fetchObjectsByIds($ids);
         
         if (count($results) == 0) {
-            throw new NotFoundException('No ContentModels Found', 404);
+            throw new NotFoundException('No Component Models Found: '.implode(', ',$ids), 404);
         }
         //@todo check to make sure all results asked for are recieved
         
@@ -121,34 +121,34 @@ class HomeNet_Model_ComponentModel_Service {
         return $array;
     }
 
-    /**
-     * Get ComponentModel Plugins by ids
-     * 
-     * @param array $ids
-     * @return driver 
-     * @throws InvalidArgumentException
-     */
-    public function getComponentsByIds(array $ids){
-        if (empty($ids)) {
-            throw new InvalidArgumentException('Invalid Id');
-        }
-        
-        $results = $this->getObjectsByIds($ids);
-        
-        $objects = array();
-
-        foreach($results as $value){
-            $objects[$value->id] = $value;
-        }
-
-        $subdevices = array();
-        foreach($ids as $key => $value){
-            $class = 'HomeNet_Plugin_Component_'.$objects[$value]->plugin.'_Component';
-            $subdevices[] = new $class(array('data' => array('position'=> $key),'model'=>$objects[$value]));
-        }
-
-        return $subdevices;
-    }
+//    /**
+//     * Get ComponentModel Plugins by ids
+//     * 
+//     * @param array $ids
+//     * @return driver 
+//     * @throws InvalidArgumentException
+//     */
+//    public function getComponentsByIds(array $ids){
+//        if (empty($ids)) {
+//            throw new InvalidArgumentException('Invalid Id');
+//        }
+//        
+//        $results = $this->getObjectsByIds($ids);
+//        
+//        $objects = array();
+//
+//        foreach($results as $value){
+//            $objects[$value->id] = $value;
+//        }
+//
+//        $subdevices = array();
+//        foreach($ids as $key => $value){
+//            $class = 'HomeNet_Plugin_Component_'.$objects[$value]->plugin.'_Component';
+//            $subdevices[] = new $class(array('data' => array('position'=> $key),'model'=>$objects[$value]));
+//        }
+//
+//        return $subdevices;
+//    }
     
     /**
      * Create a new ComponentModel

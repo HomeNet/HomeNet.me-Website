@@ -25,7 +25,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Plugin_Component_Generic_Component extends HomeNet_Plugin_Component_Generic {
+class HomeNet_Plugin_Component_Generic_Component extends HomeNet_Model_Component_Abstract {
 
    /**
      * Form for user config
@@ -51,36 +51,7 @@ class HomeNet_Plugin_Component_Generic_Component extends HomeNet_Plugin_Componen
         $this->setSetting('units', $values['units']);
     }
 
-    public function saveDatapoint($value, $timestamp) {
-
-        if (empty($this->settings['datatype'])) {
-            throw new Zend_Exception('this subdevice doesn\'t have a datatype to save a value');
-        }
-
-
-
-//        $class = 'HomeNet_Model_DbTable_Datapoints' . ucfirst($this->settings['datatype']);
-//
-//        if (!class_exists($class)) {
-//            throw new Zend_Exception('Invalid Datatype: ' . $class);
-//        }
-
-        $dService = new HomeNet_Model_Datapoint_Service();
-        $dService->add($this->settings['datatype'],$this->id,$value,$timestamp);
-
-//        $table = new $class();
-//        // $table = new HomeNet_Model_DbTable_DatapointsBoolean();
-//
-//        $row = $table->createRow();
-//
-//        $row->subdevice = $this->id;
-//        $row->datetime = $timestamp;
-//
-//        //$value = $this->_convertValue($value);
-//        $row->value = $value;
-//
-//        $row->save();
-    }
+    
 
     protected function _convertValue($value) {
         $convert = $this->getSetting('convert');
@@ -144,7 +115,7 @@ class HomeNet_Plugin_Component_Generic_Component extends HomeNet_Plugin_Componen
 
     public function getNewestDataPoint() {
         $dService = $this->getDatapointService();
-        $row = $dService->getNewestDatapointByComponent($this->id);
+        $row = $dService->getLastObjectById($this->id);
         if (empty($row)) {
             return array();
         }
@@ -337,9 +308,9 @@ class HomeNet_Plugin_Component_Generic_Component extends HomeNet_Plugin_Componen
      */
     public function getDataPoints($start, $end, $density = null) {
 
-        $dService = $this->getDatapointService();
+        $service = $this->getDatapointService();
 
-        $rows = $dService->getAveragesByComponentTimespan($this->id, $start, $end, $density);
+        $rows = $service->getAveragesByIdTimespan($this->id, $start, $end, $density);
         //die(debugArray($rows));
         return $this->_convertValues($rows); //->toArray();
     }

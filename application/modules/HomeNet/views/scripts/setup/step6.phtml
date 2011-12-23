@@ -43,7 +43,11 @@
 </div>
 
 <section class="center">
-<?php echo $this->ajaxLink("LED On", "/HomeNet/Setup/test-base/node/".$this->nodeId."/command/on", array('update' => '#test-status', 'class'=> 'button'));?> <?php echo $this->ajaxLink("LED Off", "/HomeNet/Setup/test-base/node/".$this->nodeId."/command/off", array('update' => '#test-status', 'class'=> 'button'));?>
+ <?php 
+ $url = $this->url(array('controller'=>'setup', 'action' => 'test-base'), 'homenet'); // 'id' => $this->nodeId
+ echo $this->ajaxLink("LED On", $url.'?command=on', array('update' => '#test-status', 'class'=> 'button'));
+ echo ' ';
+ echo $this->ajaxLink("LED Off", $url.'?command=off', array('update' => '#test-status', 'class'=> 'button'));?>
 </section>
 <br />
 <div class="center">

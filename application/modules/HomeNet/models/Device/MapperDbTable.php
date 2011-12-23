@@ -76,7 +76,7 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('homenet_devices.id = ?', $id)
-                ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin', 'name AS modelName'))
+                ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin', 'name AS model_name'))
                 ->limit(1);
 
         return $this->getTable()->fetchRow($select);
@@ -89,7 +89,7 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
         $select->setIntegrityCheck(false)
                 ->where('node = ?', $node)
                 ->where('position = ?', $position)
-                ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin', 'name AS modelName'))
+                ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin', 'name AS model_name'))
                 ->limit(1);
 
         return $this->getTable()->fetchRow($select);
@@ -107,7 +107,7 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('node = ?', $node)
-                ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin', 'name AS modelName'))
+                ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin', 'name AS model_name'))
                 ->order('position ASC');
 
         return $this->getTable()->fetchAll($select);
@@ -121,7 +121,7 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
                 ->join('homenet_nodes', 'homenet_nodes.id = homenet_devices.node', array('house'))
                 ->where('homenet_nodes.address = ?', $nodeAddress)
                 ->where('homenet_nodes.house = ?', $house)
-                ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin', 'name AS modelName'))
+                ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin', 'name AS model_name'))
                 ->limit(1);
 
 

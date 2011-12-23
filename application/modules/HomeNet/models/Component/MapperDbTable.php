@@ -52,7 +52,7 @@ class HomeNet_Model_Component_MapperDbTable implements HomeNet_Model_Component_M
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('homenet_components.id = ?', $id)
-                ->join('homenet_component_models', 'homenet_component_models.id = homenet_components.model', array('plugin', 'name AS modelName'))
+                ->join('homenet_component_models', 'homenet_component_models.id = homenet_components.model', array('plugin', 'datatype', 'name AS model_name'))
                 ->order('order ASC');
 
         return $this->getTable()->fetchRow($select);
@@ -64,7 +64,7 @@ class HomeNet_Model_Component_MapperDbTable implements HomeNet_Model_Component_M
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('device = ?', $device)
-                ->join('homenet_component_models', 'homenet_component_models.id = homenet_components.model', array('plugin', 'name AS modelName'))
+                ->join('homenet_component_models', 'homenet_component_models.id = homenet_components.model', array('plugin', 'datatype', 'name AS model_name'))
                 ->order('order ASC');
 
         return $this->getTable()->fetchAll($select);
@@ -75,7 +75,7 @@ class HomeNet_Model_Component_MapperDbTable implements HomeNet_Model_Component_M
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('room = ?', $room)
-                ->join('homenet_component_models', 'homenet_component_models.id = homenet_components.model', array('plugin', 'name AS modelName'))
+                ->join('homenet_component_models', 'homenet_component_models.id = homenet_components.model', array('plugin', 'datatype', 'name AS model_name'))
                 ->order('order ASC');
 
         return $this->getTable()->fetchAll($select);

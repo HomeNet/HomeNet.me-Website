@@ -50,20 +50,12 @@ class HomeNet_Model_Device_DbTableRow extends Zend_Db_Table_Row_Abstract impleme
         if(is_string($this->settings)){
             $this->settings = unserialize($this->settings);
         }
-
-//        if(is_string($this->permissions)){
-//            $this->permissions = unserialize($this->permissions);
-//        }
     }
     
     public function compress(){
         if(is_array($this->settings)){
             $this->settings = serialize($this->settings);
         }
-
-//        if(is_array($this->permissions)){
-//            $this->permissions = serialize($this->permissions);
-//        }
     }
 
     public function save(){

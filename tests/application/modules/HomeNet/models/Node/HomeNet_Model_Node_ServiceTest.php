@@ -49,7 +49,7 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
         $object = new HomeNet_Model_Node();
         $object->address = 1;
         $object->model = $model->id;
-        $object->uplink = 3;
+        $object->uplink = 1;
         $object->house = 4;
         $object->room = 5;
         $object->description = 'test description';
@@ -65,7 +65,7 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertNotNull($result->id);
         $this->assertEquals(1, $result->address);
       //  $this->assertEquals(2, $result->model);
-        $this->assertEquals(3, $result->uplink);
+        $this->assertEquals(1, $result->uplink);
         $this->assertEquals(4, $result->house);
         $this->assertEquals(5, $result->room);
         $this->assertEquals('test description', $result->description);
@@ -92,7 +92,7 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
         $object = $this->createValidObject();
         
         $result = $this->service->getObjectById($object->id);
-var_dump($result);
+        
         $this->validateResult($result);
     }
 
@@ -106,6 +106,7 @@ var_dump($result);
         $this->service->getObjectById(null);
     }
 
+//$this->service->getObjectByHouse($house)//////////////////////////////////////
     public function testGetObjectsByHouse() {
         $object = $this->createValidObject();
         $results = $this->service->getObjectsByHouse($object->house);
@@ -119,7 +120,8 @@ var_dump($result);
         $this->assertEquals(1, count($results));
         $this->validateResult($results[0]);
     }
-
+    
+//$this->service->getObjectByHouseAddress($house, $address)/////////////////////
     public function testGetObjectByHouseAddress() {
         $object = $this->createValidObject();
         $result = $this->service->getObjectByHouseAddress($object->house, $object->address);
@@ -127,6 +129,7 @@ var_dump($result);
         $this->validateResult($result);
     }
 
+//$this->service->getNextAddressByHouse($house)/////////////////////////////////
     public function testGetNextAddressByHouse() {
         $object = $this->createValidObject();
         $result = $this->service->getNextAddressByHouse($object->house);
@@ -134,14 +137,25 @@ var_dump($result);
         $this->assertGreaterThan($object->address, $result);
     }
 
-//$this->service->create($mixed)////////////////////////////////////////////////
+//$this->service->getObjectsByHouseType($house, $type)//////////////////////////
     public function testGetIdsByHouseType_valid() {
         $object = $this->createValidObject();
-        $result = $this->service->getIdsByHouseType($object->house, HomeNet_Model_Node::SENSOR);
         
-        $this->assertEquals($object->id, $result[0]);
+        $results = $this->service->getObjectsByHouseType($object->house, HomeNet_Model_Node::SENSOR);
+        $this->assertEquals(1, count($results));
+        $this->validateResult($results[0]);
     }
-
+//$this->service->getUplinksByHouse($house)/////////////////////////////////////
+    /**
+     * @todo create internet node to test against
+     */
+    public function testGetUplinksByHouse_valid() {
+        $object = $this->createValidObject();
+        
+        $results = $this->service->getUplinksByHouse($object->house);
+        $this->assertEquals(0, count($results));
+    }
+//$this->service->newObjectFromModel($model)////////////////////////////////////
     public function testNewObjectByModel() {
         $object = $this->createValidObject();
         $result = $this->service->newObjectFromModel($object->model);
@@ -159,7 +173,7 @@ var_dump($result);
     public function testCreate_validArray() {
         $array = array('address' => 1,
         'model' => 1,
-        'uplink' => 3,
+        'uplink' => 1,
         'house' => 4,
         'room' => 5,
         'description' => 'test description',
@@ -185,7 +199,7 @@ var_dump($result);
         //update values
        $object->address = 2;
         $object->model = 3;
-        $object->uplink = 4;
+        $object->uplink = 0;
         $object->house = 5;
         $object->room = 6;
         $object->description = 'test description2';
@@ -198,7 +212,7 @@ var_dump($result);
         $this->assertNotNull($result->id);
         $this->assertEquals(2, $result->address);
         $this->assertEquals(3, $result->model);
-        $this->assertEquals(4, $result->uplink);
+        $this->assertEquals(0, $result->uplink);
         $this->assertEquals(5, $result->house);
         $this->assertEquals(6, $result->room);
         $this->assertEquals('test description2', $result->description);
@@ -214,7 +228,7 @@ var_dump($result);
         //update values
         $array['address'] = 2;
         $array['model'] = 3;
-        $array['uplink'] = 4;
+        $array['uplink'] = 0;
         $array['house'] = 5;
         $array['room'] = 6;
         $array['description'] = 'test description2';
@@ -227,7 +241,7 @@ var_dump($result);
         $this->assertNotNull($result->id);
         $this->assertEquals(2, $result->address);
         $this->assertEquals(3, $result->model);
-        $this->assertEquals(4, $result->uplink);
+        $this->assertEquals(0, $result->uplink);
         $this->assertEquals(5, $result->house);
         $this->assertEquals(6, $result->room);
         $this->assertEquals('test description2', $result->description);

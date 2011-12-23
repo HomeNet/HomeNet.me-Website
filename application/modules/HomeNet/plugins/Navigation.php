@@ -27,6 +27,17 @@ class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
     private $_houses;
 
     public function preDispatch(Zend_Controller_Request_Abstract $request) {
+        
+        $module =     strtolower($request->getModuleName());
+        $controller = strtolower($request->getControllerName());
+        $action =     strtolower($request->getActionName());
+        
+        $id = $request->getParam('id', 'No ID');
+        
+        Zend_Registry::get('logger')->info("Route: $module > $controller > $action; $id" );
+       // print_r($request->getParams());
+        //exit;   
+        
         if ('homenet' != strtolower($request->getModuleName())) {
             // If not in this module, return early
             return;
@@ -46,7 +57,8 @@ class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
 
         $service = new HomeNet_Model_House_Service();
 
-        $userHousesIds = $service->getHouseIdsByUser();
+        // $userHousesIds = $service->getHouseIdsByUser();
+        $userHousesIds = HomeNet_Model_House_Manager::getHouseIds();
 
         $houses = array();
 
@@ -63,11 +75,11 @@ class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
                 $houses[0] = $service->getObjectByIdWithRooms($house);
             }
         } else {
-           try{
-            $houses = $service->getObjectsByIdsWithRooms($userHousesIds);
-           } catch(HomeNet_Model_Exception $e) {
-               $houses = array();
-           }
+            try {
+                $houses = $service->getObjectsByIdsWithRooms($userHousesIds);
+            } catch (HomeNet_Model_Exception $e) {
+                $houses = array();
+            }
         }
 
         $this->_houses = $houses;
@@ -79,23 +91,36 @@ class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
         if (!in_array(strtolower($request->getActionName()), $skip)) {
 
             $this->_buildNav = true;
-            
         }
     }
 
     public function postDispatch(Zend_Controller_Request_Abstract $request) {
 
-        if ($this->_buildNav) {
-            //die(debugArray($this->_buildNav));
-            $layout = Zend_Layout::getMvcInstance();
-            if($layout->isEnabled()){
-
-            $view = $layout->getView();
-            $layout->setLayout('two-column');
-            $view->homenetNav = new HomeNet_Model_Navigation($this->_houses);
-            $layout->assign('column', $view->render('navigation.phtml'));
-            }
+        if (!$this->_buildNav) {
+            return;
         }
+        //die(debugArray($this->_buildNav));
+        $layout = Zend_Layout::getMvcInstance();
+        if (!$layout->isEnabled()) {
+            return;
+        }
+
+        //$view = $layout->getView();
+        $layout->setLayout('side-menu');
+        $nav = new HomeNet_Model_Navigation($this->_houses);
+
+        $options = array(
+            'indent' => 16,
+            'ulClass' => 'navMenu ui-widget ui-state-default ui-corner-all'
+        );
+        $view = $layout->getView();
+        $view->navigation()->menu()->setPartial(array('_menu.phtml', 'default'));
+
+        $menu = $view->navigation()
+                ->menu()
+                ->render($nav, $options);
+
+        $layout->assign('menu', $menu);
     }
 
 }

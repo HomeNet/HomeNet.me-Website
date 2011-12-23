@@ -7,28 +7,30 @@ class HomeNet_Model_Navigation extends Zend_Navigation {
 
     public function __construct($houses) {
 
-        
+       // var_dump($houses);
 
         $container = $this->_buildHouses($houses);
         $this->addPages($container);
-
-
-
     }
 
     private function _getRegions($house){
 
         $service = new HomeNet_Model_House_Service();
-        $regions = $service->getHouseRegionNames($house->id);
+        $regions = $service->getRegionsById($house->id);
+        //$regions = $service->getRegions();
+ 
+        
+        $regions = array_fill_keys($regions, array());
 
-
-        //$regions = $house['regions'];
-
-        foreach($house->rooms as $room){
+        $rooms = $house->getRooms();
+ 
+        foreach($rooms as $room){
             $regions[$room['region']]['rooms'][] = $room;
         }
-
+        
         //die(debugArray($regions));
+
+        //exit;
 
         return $regions;
     }
@@ -62,13 +64,18 @@ class HomeNet_Model_Navigation extends Zend_Navigation {
         $regions = $this->_getRegions($house);
         //die(debugArray($regions));
         
-        foreach($regions as $region){
-            if(!empty($region->rooms)){
-                $this->_region = $region['id'];
+        $service = new HomeNet_Model_House_Service();
+        $regionNames = $service->getRegions();
+        
+        foreach($regions as $key=>$region){
+            
+           // var_dump($region);
+            if(!empty($region['rooms'])){
+                $this->_region = $key;
                 //http://homenet.me/home/2345/g
                 $container[] = array(
-                    'class' => 'house-region',
-                'label' => $region['name'],
+                    'class' => 'house-region', //-region
+                'label' => $regionNames[$key],
                 'uri' => '#',
                 //'params' => array('house'=>$this->_house, 'region' => $this->_region),
                 'pages' => $this->_buildRooms($region['rooms']));
@@ -86,8 +93,8 @@ class HomeNet_Model_Navigation extends Zend_Navigation {
             'label' => $room->name,
                 
             'title' => $room->description,
-            'route' => 'homenet-room',
-            'params' => array('house' => $this->_house, 'region' => $this->_region, 'room' => $room->id));
+            'route' => 'homenet-house-id',
+            'params' => array('controller'=>'room','house' => $this->_house, 'region' => $this->_region, 'id' => $room->id));
         }
 //        $container[] = array(
 //            'label' => 'New',

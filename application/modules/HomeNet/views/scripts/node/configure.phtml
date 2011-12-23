@@ -1,29 +1,49 @@
-<h1>Configure Node</h1>
+<?php echo $this->heading('Configure Node'); 
+//$rooms = $this->house->getRoomList();
+?>
 
-<table class="ui-widget" width="100%">
-  <thead class="ui-widget-header">
-    <tr><th width="30">Plug</th><th>Device</th><th width="150">Modify</th></tr>
+<div class="cms ui-widget ui-widget-content ui-corner-all">
+<div class="ui-widget-content">
+<table width="100%">
+    <thead class="ui-widget-header">
+        <tr><th width="30">Plug</th><th>Device</th><th width="55"></th></tr>
     </thead>
-    <tbody class="ui-widget-content">
-<?php for($i = 1; $i <= $this->maxDevices; $i++){ ?>
-<tr class="<?php echo $this->cycle(array("","ui-state-highlight"))->next()?>">
-    <td><?php echo $i ?></td>
-    <td><?php if(!empty($this->devices[$i])){
-        echo $this->devices[$i]->modelName;
-    } ?></td>
-    
-    <td><?php if(!empty($this->devices[$i])){ ?>
-
-        <a class="button" href="<?php echo $this->url(array('house'=>$this->house, 'node'=>$this->node->id, 'position'=>$i, 'action'=>'edit'),'homenet-device'); ?>"><span class="ui-icon ui-icon-pencil"></span></a>
-        <a class="button" href="<?php echo $this->url(array('house'=>$this->house, 'node'=>$this->node->id, 'position'=>$i, 'action'=>'remove'),'homenet-device'); ?>"><span class="ui-icon ui-icon-closethick"></span></a>
-
- <?php  } else { ?>
-        <a class="button" href="<?php echo $this->url(array('house'=>$this->house, 'node'=>$this->node->id, 'position'=>$i, 'action'=>'add'),'homenet-device'); ?>"><span class="ui-icon ui-icon-star"></span></a>
-
-    <?php } ?>
-    </td>
-</tr>
-<?php } ?>
-</tbody>
+    <tbody>
+       <?php for($i = 1; $i <= $this->maxDevices; $i++){ ?>
+        <tr  class="<?php echo $this->cycle(array("", "ui-state-default"))->next() ?>" >
+            <td><?php echo $i ?></td>
+            <?php if(!empty($this->devices[$i])){
+                $object = $this->devices[$i];
+                /*<th>Room</th><td><?php echo $rooms[$object->room]; ?></td>*/
+            ?>
+            
+            <td><?php echo $object->model_name; ?></td>
+            <td>
+                <a class="button" data-text="false" data-icon="ui-icon-pencil" title="Edit Device &quot;<?php echo $i ?>&quot;" 
+                   href="<?php echo $this->url(array('controller' => 'device', 'action' => 'edit', 'house' => $this->house->id, 'node' => $this->node->address, 'id' => $object->position),'homenet-house-node-id'); ?>">
+                    Edit
+                </a> 
+                <a class="button" data-text="false" data-icon="ui-icon-close" title="Delete Node &quot;<?php echo $i ?>&quot;" 
+                   href="<?php echo $this->url(array('controller' => 'device', 'action' => 'delete', 'house' => $this->house->id, 'node' => $this->node->address, 'id' => $object->position),'homenet-house-node-id'); ?>">
+                    Delete
+                </a>
+            </td>
+            <?php  } else { ?>
+            <td></td>
+            <td>
+                 <a class="button" data-text="false" data-icon="ui-icon-plus" title="New Node &quot;<?php echo $i ?>&quot;" 
+                   href="<?php echo $this->url(array('controller' => 'device', 'action' => 'new', 'house' => $this->house->id, 'node' => $this->node->address),'homenet-house-node'); ?>?position=<?php echo $i; ?>">
+                    New
+                </a>
+            </td>
+            <?php } ?>
+        </tr>
+        <?php
+        }
+        ?>
+    </tbody>
 </table>
-<a class="button" href="<?php echo $this->url(array('house'=>$this->house, 'node'=>$this->node->id, 'action'=>'code' ),'homenet-node'); ?>">Generate Code</a>
+<a class="button" data-icon="ui-icon-gear" title="Generate Code" 
+   href="<?php echo $this->url(array('controller' => 'node', 'action' => 'code', 'house' => $this->house->id, 'id'=>$this->node->address),'homenet-house-id'); ?>">Generate Code</a>
+</div>
+</div>

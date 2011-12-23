@@ -5,9 +5,7 @@ class HomeNet_ComponentController extends Zend_Controller_Action
 
     public function init()
     {
-        $ajaxContext = $this->_helper->getHelper('AjaxContext');
-        $ajaxContext->addActionContext('graph', 'html')
-                ->initContext();
+        
     }
 
     public function indexAction()
@@ -15,17 +13,17 @@ class HomeNet_ComponentController extends Zend_Controller_Action
         // action body
     }
 
-    public function graphAction()
+    public function graphAjaxAction()
     {
         $this->_helper->layout()->disableLayout();
 
         $service = new HomeNet_Model_Component_Service();
-        $drivRobjecter = $service->getObjectById($this->_getParam('subdevice'));
+        $object = $service->getObjectById($this->_getParam('id'));
 
         $start = new Zend_Date($this->_getParam('start'),Zend_Date::TIMESTAMP);
         $end   = new Zend_Date($this->_getParam('end'),  Zend_Date::TIMESTAMP);
 
-        $this->view->graphURL = $driver->getGraph($start, $end);
+        $this->view->graphURL = $object->getGraph($start, $end);
     }
 
     public function datasetAction()
@@ -33,7 +31,7 @@ class HomeNet_ComponentController extends Zend_Controller_Action
         $this->_helper->layout()->disableLayout();
 
         $service = new HomeNet_Model_Component_Service();
-        $object = $service->getObjectById($this->_getParam('subdevice'));
+        $object = $service->getObjectById($this->_getParam('id'));
 
         $start = new Zend_Date($this->_getParam('start'),Zend_Date::TIMESTAMP);
         $end   = new Zend_Date($this->_getParam('end'),  Zend_Date::TIMESTAMP);

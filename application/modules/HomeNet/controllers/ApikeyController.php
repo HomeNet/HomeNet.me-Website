@@ -20,19 +20,58 @@
 
 /**
  * @package HomeNet
- * @subpackage Alert
+ * @subpackage Apikey
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Model_Alert extends Zend_Db_Table_Row_Abstract
+class HomeNet_ApikeyController extends Zend_Controller_Action
 {
-    const ERROR = 1;
-    const WARNING = 2;
-    const INFO = 3;
-    const CHANGE = 4;
-    const NEWITEM = 5;
-    const HIGH = 6;
-    const LOW = 7;
+
+    private $_house;
+    
+    public function init()
+    {
+        $this->view->house= $this->_house = $this->_getParam('house');
+    }
+
+    public function indexAction()
+    {
+        $service = new HomeNet_Model_Apikey_Service();
+        $objects = $service->getObjectsByHouseUser($this->_house);
+
+        if (count($objects) == 0) {
+            $row = $service->createApikeyForHouse($this->_house);
+            $this->view->apikey = $row->id;
+        } else { 
+            $this->view->apikey = $objects[0]->id;
+        }
+    }
+
+    public function newAction()
+    {
+        // action body
+    }
+
+    public function editAction()
+    {
+        // action body
+    }
+
+    public function deleteAction()
+    {
+        // action body
+    }
+
+
+
 
 }
+
+
+
+
+
+
+
+
 

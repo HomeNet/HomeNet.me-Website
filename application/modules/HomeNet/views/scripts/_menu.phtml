@@ -23,7 +23,7 @@ $html = array ();
 $html[] = '<ul class="navMenu ui-widget ui-state-default ui-corner-all">';
 foreach ( $this->container as $page1 ) {
     //$depth = $iterator->getDepth ();
-    $html [] = '<li><div class="ui-widget-header ui-corner-top">' . $page1->getLabel().'<a  style="float: right;" href="' . $this->url($page1->getParams(),'homenet-node-index') . '"><span class="ui-icon ui-icon-pencil"></span></a></div>';
+    $html [] = '<li><div class="ui-widget-header ui-corner-top"><a href="' . $page1->getHref() . '">' . $page1->getLabel().'</a></div>';
     $html [] = '<ul>';
     
     foreach ( $page1 as $page2 ) {
@@ -41,7 +41,7 @@ foreach ( $this->container as $page1 ) {
 //            'route' => 'homenet-room-add',
 //            'params' => array('house' => $this->_house, 'region' => $this->_region)
 
-        $html [] = '<li class="room-new"><a href="' . $this->url($page1->getParams(),'homenet-room-add') . '/">New</a></li>';
+     //   $html [] = '<li class="room-new"><a href="' . $this->url($page1->getParams(),'homenet') . '/">New</a></li>';
         $html [] = '</ul></li>';
     }
     $html [] = '</ul></li>';
@@ -49,4 +49,3 @@ foreach ( $this->container as $page1 ) {
 
 $html [] = '</ul>';
 echo implode( '', $html);
-?>

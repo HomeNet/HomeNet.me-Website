@@ -20,6 +20,7 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->service = new HomeNet_Model_Device_Service;
         $this->homenetInstaller = new HomeNet_Installer();
         $this->homenetInstaller->installTest(array('house', 'room', 'node', 'device'));
+        $this->homenetInstaller->installOptionalContent(array('device_models', 'component_models'));
     }
 
     /**
@@ -33,6 +34,7 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
     private function createValidObject() {
 
         $object = new HomeNet_Model_Device();
+        $object->house = $this->homenetInstaller->house->test->id;
         $object->node = 1;
         $object->model = $this->homenetInstaller->deviceModel->test->id;
         $object->position = 3;
@@ -47,6 +49,7 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 
     private function validateResult($result) {
         $this->assertNotNull($result->id);
+        $this->assertEquals($this->homenetInstaller->house->test->id, $result->house);
         $this->assertEquals(1, $result->node);
         $this->assertEquals($this->homenetInstaller->deviceModel->test->id, $result->model);
         $this->assertEquals(3, $result->position);
@@ -209,6 +212,7 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testCreate_validArray() {
         $array = array(
+            'house' => $this->homenetInstaller->house->test->id,
             'node' => 1,
             'model' => $this->homenetInstaller->deviceModel->test->id,
             'position' => 3,
@@ -232,6 +236,7 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
         $object = $this->createValidObject();
 
         //update values
+        $object->house = 6;
         $object->node = 2;
         $object->model = 3;
         $object->position = 4;
@@ -243,6 +248,7 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('HomeNet_Model_Device_Interface', $result);
 
         $this->assertNotNull($result->id);
+        $this->assertEquals(6, $result->house);
         $this->assertEquals(2, $result->node);
         $this->assertEquals(3, $result->model);
         $this->assertEquals(4, $result->position);
@@ -257,6 +263,7 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
         $array = $object->toArray();
 
         //update values
+        $array['house'] = 6;
         $array['node'] = 2;
         $array['model'] = 3;
         $array['position'] = 4;
@@ -268,6 +275,7 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('HomeNet_Model_Device_Interface', $result);
 
         $this->assertNotNull($result->id);
+        $this->assertEquals(6, $result->house);
         $this->assertEquals(2, $result->node);
         $this->assertEquals(3, $result->model);
         $this->assertEquals(4, $result->position);

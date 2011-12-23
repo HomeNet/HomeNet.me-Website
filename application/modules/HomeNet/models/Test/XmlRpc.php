@@ -29,7 +29,5 @@ class HomeNet_Model_Test_XmlRpc {
     {
         return "You said: " . $textToEcho;
     }
-
-    
-    
+//recompile2
 }

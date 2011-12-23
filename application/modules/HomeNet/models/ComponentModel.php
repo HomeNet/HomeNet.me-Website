@@ -31,7 +31,7 @@ class HomeNet_Model_ComponentModel implements HomeNet_Model_ComponentModel_Inter
     public $plugin;
     public $name;
     public $description;
-    public $units;
+    public $datatype;
     public $settings;
     public $created;
     

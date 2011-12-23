@@ -26,10 +26,21 @@
  */
 class HomeNet_Form_Room extends CMS_Form
 {
-
+    private $regions;
+    
+    public function __construct($regions = array()) {
+        $this->regions = $regions;
+        parent::__construct();
+    }
+    
     public function init()
     {
-
+        $service = new HomeNet_Model_House_Service();
+       // $options = $service->getRegions($this->regions);
+        
+        
+        
+        
         $this->setMethod('post');
 
         $name = $this->createElement('text','name');
@@ -48,6 +59,9 @@ class HomeNet_Form_Room extends CMS_Form
 
         $region = $this->createElement('select', 'region');
         $region->setLabel("Room is in:");
+        
+        $region->setMultiOptions($service->getRegions($this->regions));
+        
         $region->setRequired('true');
         $this->addElement($region);
 /*
@@ -58,8 +72,6 @@ class HomeNet_Form_Room extends CMS_Form
         $house->addElement($other); */
 
         $this->addDisplayGroup($this->getElements(), 'room', array ('legend' => 'Room'));
-
-        $this->addElement('hash', 'hash', array('salt' => 'unique'));
     }
 
 }

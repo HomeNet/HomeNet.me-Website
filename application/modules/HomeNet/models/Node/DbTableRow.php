@@ -52,20 +52,12 @@ class HomeNet_Model_Node_DbTableRow extends Zend_Db_Table_Row_Abstract implement
         if(isset($this->settings) && is_string($this->settings)){
             $this->settings = unserialize($this->settings);
         }
-
-//        if(is_string($this->permissions)){
-//            $this->permissions = unserialize($this->permissions);
-//        }
     }
 
     public function compress(){
         if(is_array($this->settings)){
             $this->settings = serialize($this->settings);
        }
-
-//        if(is_array($this->permissions)){
-//            $this->permissions = serialize($this->permissions);
-//        }
     }
 
 
@@ -102,7 +94,8 @@ class HomeNet_Model_Node_DbTableRow extends Zend_Db_Table_Row_Abstract implement
     
     public function loadModel(HomeNet_Model_NodeModel_Interface $model){
 
-        $this->modelName = $model->name;
+        $this->model_name = $model->name;
+        $this->model_settings = $model->settings;
         $this->plugin = $model->plugin;
         $this->model = $model->id;
         $this->type = $model->type;

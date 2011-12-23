@@ -18,7 +18,10 @@ class HomeNet_Model_Packet_XmlRpcTest extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->client = new HomeNet_Model_Packet_XmlRpc;
+        $this->client = new Zend_XmlRpc_Client('http://localhost/xmlrpc.php');
+        $this->homenetInstaller = new HomeNet_Installer();
+        $this->homenetInstaller->installTest(array('apikey', 'house', 'room', 'node', 'device'));
+        $this->homenetInstaller->installOptionalContent(array('device_models', 'component_models'));
     }
 
     /**
@@ -28,101 +31,47 @@ class HomeNet_Model_Packet_XmlRpcTest extends PHPUnit_Framework_TestCase {
     protected function tearDown() {
         
     }
+    
+    
+    private function _createValidObject($seed){
+        
+    }
+    private function _validateResult($result) {
+//        $this->assertNotNull($result->id);
+//        $this->assertEquals($this->homenetInstaller->house->test->id, $result->house);
+//        $this->assertEquals(1, $result->node);
+//        $this->assertEquals($this->homenetInstaller->deviceModel->test->id, $result->model);
+//        $this->assertEquals(3, $result->position);
+//        $this->assertEquals(4, $result->components);
+//        $this->assertTrue(is_array($result->settings));
+//        $this->assertEquals('value', $result->settings['key']);
+    }
 
     /**
      * @todo Implement testProcess().
      */
-    public function testProcess() {
-       //        $apikeys = new HomeNet_Model_Apikey_Service();
-//        $apikeys->validate('96b1e1ad70e96197aff8c1b48f1106767e7ecfe7');
-//
-//                die('done');
+    public function testProcess_int() {
 
-      // // $apikeys->getApikeyById($id);
-        
-//        $messages = new HomeNet_Model_Message_Service();
-//
-//        $nodes = new HomeNet_Model_Node_Service();
-//        $NodeModels = new HomeNet_Model_NodeModel_Service();
-//
-//
-//        $devices = new HomeNet_Model_Device_Service();
-//        $deviceModels = new HomeNet_Model_DeviceModel_Service();
-//
-//        $subdevices = new HomeNet_Model_Component_Service();
-//        $subdeviceModels = new HomeNet_Model_ComponentModel_Service();
-     //   $dService = new HomeNet_Model_Datapoint_Service();
-      //  $dService->add('byte',15,42,'2011-03-11 08:32:21');
-        //15 	2011-02-23 04:32:21 	42
-        
-
-        //die(debugArray($this->view->getScriptPaths()));
           $packet = new HomeNet_Model_Packet();
-          // $packet->apikey = '5e6e55b3d965d47def3b18f5cc95b2414a37ee5a';
-          //$packet->timestamp = new Zend_Date();
-         /* $_GET['apikey'] = '5e6e55b3d965d47def3b18f5cc95b2414a37ee5a';
-          $xml = array(
-          'timestamp' => '2011-02-23T03:57:10-05:00',
-          'packet' => 'DAIAQ//wAfM0AI4Y'
-          );
-
-          $packet->loadXmlRpc($xml);
-          $packet->save(); */
-        //$packet->loadBase64Packet('DgIAQv/wAPRCoN+A2Ik=');
-      
-            $packet->timestamp = new Zend_Date();
+           
+          $packet->apikey = $this->homenetInstaller->apikey->test->id;
+          $packet->timestamp = new Zend_Date();
           $packet->settings = 2;
-          $packet->fromNode = 4;
-          $packet->fromDevice = 3;
+          $packet->fromNode = $this->homenetInstaller->node->test->address;
+          $packet->fromDevice = 1;
           $packet->toNode =   4095;
           $packet->toDevice = 0;
           //$packet->ttl = null;
           $packet->id = 55;
-          $packet->command = 0xF3;
-          $packet->payload = new HomeNet_Model_Payload(50, HomeNet_Model_Payload::RAW);
+          $packet->command = HomeNet_Model_Packet::INT;
+          $packet->payload = new HomeNet_Model_Payload(10, HomeNet_Model_Payload::INT);
+      
+          
+          $xmlrpc = new HomeNet_Model_Packet_XmlRpc;
+          $result = $xmlrpc->submit($packet->getXmlrpcPacket()->getValue());
 
-          $packet->payload->setType(HomeNet_Model_Payload::BYTE);
-        
-        // $packet->payload->setType(HomeNet_Model_Payload::BYTE);
-        //$packet->save();
-//die(debugArray($packet->payload->getValue()));
-        //
-        //DAIAQ//wAfMrAL4Q
-
-       
-
-          $service = new HomeNet_Model_Device_Service();
-
-          $driver = $service->getObjectByHouseNodeDevice(8, 5, 3);
-          $driver->processPacket($packet);
-         die('passed');
-
-        $form = new HomeNet_Form_Packet();
-        $form->setAction('/homenet/index/test');
-
-        if (!$this->getRequest()->isPost()) {
-            $this->view->form = $form;
-            return;
-        }
-
-        if (!$form->isValid($_POST)) {
-            // Failed validation; redisplay form
-            $this->view->form = $form;
-            return;
-        }
-        $values = $form->getValues();
-        $values = $values['packet'];
-
-        // die(print_r($values,1));
-
-        $packet = new HomeNet_Model_Packet();
-        $command = explode('|', $values['command']);
-        $packet->buildUdp($values['fromNode'], $values['fromDevice'], $values['toNode'], $values['toDevice'], $command[0], new HomeNet_Model_Payload($values['payload'], $command[1]));
-        //die($packet->getBase64Packet());
-
-        $packet->sendXmlRpc($_SERVER['REMOTE_ADDR']);
-        $this->view->sent = true;
-        $this->view->form = $form;
+         // $result = $this->client->call('homenet.packet.submit', $packet->getXmlrpcPacket());
+        var_dump($result);
+         // $this->assertEquals('Hello World', $result);
     }
-
 }

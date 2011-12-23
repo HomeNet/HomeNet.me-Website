@@ -171,6 +171,31 @@ class HomeNet_Model_Component_Service {
 //        return $components;
 //
 //    }
+    
+    /**
+     * Get plugin by model
+     * 
+     * @param integer $id Model Id
+     * @return driver 
+     * @throws InvalidArgumentException
+     */
+    public function newObjectFromModel($id) {
+        if (empty($id) || !is_numeric($id)) {
+            throw new InvalidArgumentException('Invalid Id');
+        }
+        $cmService = new HomeNet_Model_ComponentModel_Service();
+
+        $model = $cmService->getObjectById($id);
+
+        $class = 'HomeNet_Plugin_Component_' . $model->plugin . '_Component';
+
+        if (!class_exists($class, true)) {
+            throw new Exception('Device Plugin: ' . $model->plugin . ' Doesn\'t Exist');
+        }
+
+        return new $class(array('model' => $model));
+    }
+    
 
     /**
      * Create a new Component

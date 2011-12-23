@@ -28,9 +28,12 @@
 class HomeNet_Form_Node extends CMS_Form {
     
     private $type;
+    private $uplinkNodeIds;
+    private $house;
     
-    public function __construct($modelType = null) {
+    public function __construct($modelType = null, $house = null ) {
         $this->type = $modelType;
+        $this->house = $house;
         parent::__construct();
     }
 
@@ -65,8 +68,8 @@ class HomeNet_Form_Node extends CMS_Form {
         $model->addMultiOptions($models);
         $this->addElement($model);
 
-        $id = $this->createElement('text', 'node');
-        $id->setLabel('ID: ');
+        $id = $this->createElement('text', 'address');
+        $id->setLabel('Address: ');
         $id->setValue($this->id);
         $id->setRequired('true');
         $id->addFilter('Digits');
@@ -79,10 +82,30 @@ class HomeNet_Form_Node extends CMS_Form {
         $description->setAttrib('rows', '3');
         $description->setAttrib('cols', '20');
         $this->addElement($description);
+        
+        $nodeService = new HomeNet_Model_Node_Service;
+        $uplinks = $nodeService->getUplinksByHouse($this->house);
 
         $uplink = $this->createElement('select', 'uplink');
         $uplink->setLabel("Uplink: ");
+        $uplink->addMultiOptions($uplinks);
         $this->addElement($uplink);
+        
+        $house = HomeNet_Model_House_Manager::getHouseById($this->house);
+        $rooms = $house->getRooms();
+        $regions = $house->getRegions();
+        $roomList = array_fill_keys(array_keys(array_flip($regions)), array());
+        
+        foreach($rooms as $room){
+            $roomList[$regions[$room->region]][$room->id] = $room->name;
+        }
+  
+        
+        
+        $room = $this->createElement('select', 'room');
+        $room->setLabel("Room: ");
+        $room->addMultiOptions($roomList);
+        $this->addElement($room);
 
         //$this->addSubForm($this, 'node');
 

@@ -27,21 +27,62 @@ class HomeNet_Model_ComponentModel_ServiceTest extends PHPUnit_Framework_TestCas
         $this->service->deleteAll();
     }
     
+    private function _fillObject($object, $seed = 0) {
+        $data = $this->_getTestData($seed);
+        foreach ($data as $key => $value) {
+            $object->$key = $value;
+        }
+        return $object;
+    }
+    private function _fillArray($array, $seed = 0) {
+        if(is_object($array)){
+            $array = $array->toArray();
+        }
+        return array_merge($array, $this->_getTestData($seed));
+    }
     
-    private function createValidObject() {
+    private function _getTestData($seed = 0) {
+        
+        $array = array('status' => HomeNet_Model_ComponentModel::LIVE,
+        'plugin' => 'LED',
+        'name' => 'testModel'.$seed,
+        'description' => 'test description'.$seed,
+        'datatype' => $seed,
+        'settings' => array('key' => 'value'.$seed));
+        
+        if($seed % 2 == 0){
+            $array['status'] = HomeNet_Model_ComponentModel::TESTING;
+            $array['plugin'] = 'RGBLED';
+        }
+        return $array;
+    }
+    
+    private function _createValidObject($seed = 0) {
         $object = new HomeNet_Model_ComponentModel();
-        $object->status = HomeNet_Model_ComponentModel::LIVE;
-        $object->plugin = 'LED';
-        $object->name = 'testModel';
-        $object->description = 'test description';
-        $object->units = '"';
-        $object->settings = array('key' => 'value');
-        //$object->created;
-
+        $object = $this->_fillObject($object, $seed);
+  
         $result = $this->service->create($object);
 
         $this->assertInstanceOf('HomeNet_Model_ComponentModel_Interface', $result);
         return $result;
+    }
+     private function _validateResult($result, $seed = 0){
+        
+        $this->assertInstanceOf('HomeNet_Model_ComponentModel_Interface', $result);
+        $this->assertNotNull($result->id);
+        
+        if($seed % 2 == 0){
+            $this->assertEquals(HomeNet_Model_ComponentModel::TESTING, $result->status);
+            $this->assertEquals('RGBLED', $result->plugin);
+        } else {
+            $this->assertEquals(HomeNet_Model_ComponentModel::LIVE, $result->status);
+            $this->assertEquals('LED', $result->plugin);
+        }
+        $this->assertEquals('testModel'.$seed, $result->name);
+        $this->assertEquals('test description'.$seed, $result->description);
+        $this->assertEquals($seed, $result->datatype);
+        $this->assertTrue(is_array($result->settings));
+        $this->assertEquals('value'.$seed, $result->settings['key']);
     }
     
 //$this->service->getMapper()///////////////////////////////////////////////////
@@ -60,18 +101,11 @@ class HomeNet_Model_ComponentModel_ServiceTest extends PHPUnit_Framework_TestCas
     
 //$this->service->getObjectById($id)////////////////////////////////////////////
    public function testGetObjectById_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         $result = $this->service->getObjectById($object->id);
 
-        $this->assertNotNull($result->id);
-        $this->assertEquals(HomeNet_Model_ComponentModel::LIVE, $result->status);
-        $this->assertEquals('LED', $result->plugin);
-        $this->assertEquals('testModel', $result->name);
-        $this->assertEquals('test description', $result->description);
-        $this->assertEquals('"', $result->units);
-        $this->assertTrue(is_array($result->settings));
-        $this->assertEquals('value', $result->settings['key']);
+       
     }
 
     public function testGetObjectById_invalid() {
@@ -84,24 +118,18 @@ class HomeNet_Model_ComponentModel_ServiceTest extends PHPUnit_Framework_TestCas
         $result = $this->service->getObjectById(null);
     }
 
+//$this->service->getObjectsByIds($ids)/////////////////////////////////////////
     public function testGetObjectsByIds_valid() {
-        $object = $this->createValidObject();
-        $object2 = $this->createValidObject();
-        $object3 = $this->createValidObject();
+        $object = $this->_createValidObject(1);
+        $object2 = $this->_createValidObject(2);
+        $object3 = $this->_createValidObject(3);
         
         $results = $this->service->getObjectsByIds(array($object->id, $object2->id));
         
         $this->assertEquals(2, count($results));
         reset($results);
         $result = current($results);
-        $this->assertNotNull($result->id);
-        $this->assertEquals(HomeNet_Model_ComponentModel::LIVE, $result->status);
-        $this->assertEquals('LED', $result->plugin);
-        $this->assertEquals('testModel', $result->name);
-        $this->assertEquals('test description', $result->description);
-        $this->assertEquals('"', $result->units);
-        $this->assertTrue(is_array($result->settings));
-        $this->assertEquals('value', $result->settings['key']);
+        $this->_validateResult($result,1);
     }
     
     public function testGetObjectsByIds_empty() {
@@ -115,140 +143,93 @@ class HomeNet_Model_ComponentModel_ServiceTest extends PHPUnit_Framework_TestCas
         $this->setExpectedException('InvalidArgumentException');
         $this->service->getObjectsByIds(array('string'));
     }
+    
+    public function testGetObjectsByIds_notFound() {
 
+        $this->setExpectedException('NotFoundException');
+        $this->service->getObjectsByIds(array(1000,1001));
+    }
+//$this->service->getObjects()//////////////////////////////////////////////////
     public function testGetObjects() {
-        $object = $this->createValidObject();
-        $object2 = $this->createValidObject();
+        $object = $this->_createValidObject(1);
+        $object2 = $this->_createValidObject(2);
         
         $results = $this->service->getObjects();
         
         $this->assertEquals(2, count($results));
         
         $result = $results[0];
-        $this->assertNotNull($result->id);
-        $this->assertEquals(HomeNet_Model_ComponentModel::LIVE, $result->status);
-        $this->assertEquals('LED', $result->plugin);
-        $this->assertEquals('testModel', $result->name);
-        $this->assertEquals('test description', $result->description);
-        $this->assertEquals('"', $result->units);
-        $this->assertTrue(is_array($result->settings));
-        $this->assertEquals('value', $result->settings['key']);
+        $this->_validateResult($result,1);
     }
 
-    public function testGetComponentsByIds_valid() {
-        $object = $this->createValidObject();
-        
-        $results = $this->service->getComponentsByIds(array($object->id));
-        
-        $this->assertEquals(1, count($results));
-        
-        $result = $results[0];
-        $this->assertInstanceOf('HomeNet_Model_Component_Abstract', $result);
-        
-    }
-    
-    public function testGetComponentsByIds_empty() {
-        $this->setExpectedException('InvalidArgumentException');
-        $results = $this->service->getComponentsByIds(array());
-    }
-    
-     public function testGetObjectsByIds_notFound() {
-        $this->setExpectedException('NotFoundException');
-        $results = $this->service->getObjectsByIds(array(1000));
-    }
+//    public function testGetComponentsByIds_valid() {
+//        $object = $this->_createValidObject();
+//        
+//        $results = $this->service->getComponentsByIds(array($object->id));
+//        
+//        $this->assertEquals(1, count($results));
+//        
+//        $result = $results[0];
+//        $this->assertInstanceOf('HomeNet_Model_Component_Abstract', $result);
+//        
+//    }
+//    
+//    public function testGetComponentsByIds_empty() {
+//        $this->setExpectedException('InvalidArgumentException');
+//        $results = $this->service->getComponentsByIds(array());
+//    }
+//    
+//     public function testGetObjectsByIds_notFound() {
+//        $this->setExpectedException('NotFoundException');
+//        $results = $this->service->getObjectsByIds(array(1000));
+//    }
 //$this->service->create($mixed)////////////////////////////////////////////////
     public function testCreate_validObject() {
-        $result = $this->createValidObject();
-
-        $this->assertNotNull($result->id);
-        $this->assertEquals(HomeNet_Model_ComponentModel::LIVE, $result->status);
-        $this->assertEquals('LED', $result->plugin);
-        $this->assertEquals('testModel', $result->name);
-        $this->assertEquals('test description', $result->description);
-        $this->assertEquals('"', $result->units);
-        $this->assertTrue(is_array($result->settings));
-        $this->assertEquals('value', $result->settings['key']);
+        $result = $this->_createValidObject();
+        $this->_validateResult($result);
     }
 
     public function testCreate_validArray() {
-        $array = array('status' => HomeNet_Model_ComponentModel::LIVE,
-        'plugin' => 'LED',
-        'name' => 'testModel',
-        'description' => 'test description',
-        'units' => '"',
-        'settings' => array('key' => 'value'));
+        $array = $this->_getTestData();
 
         $result = $this->service->create($array);
 
-        $this->assertNotNull($result->id);
-        $this->assertEquals(HomeNet_Model_ComponentModel::LIVE, $result->status);
-        $this->assertEquals('LED', $result->plugin);
-        $this->assertEquals('testModel', $result->name);
-        $this->assertEquals('test description', $result->description);
-        $this->assertEquals('"', $result->units);
-        $this->assertTrue(is_array($result->settings));
-        $this->assertEquals('value', $result->settings['key']);
+        $this->_validateResult($result);
     }
     
-//$this->service->update($mixed)////////////////////////////////////////////////
     public function testCreate_invalidObject() {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
         $this->service->create($badObject);
     }
-
+    
+//$this->service->update($mixed)////////////////////////////////////////////////
     public function testUpdate_validObject() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //update values
-        $object->status = HomeNet_Model_ComponentModel::TESTING;
-        $object->plugin = 'RGBLED';
-        $object->name = 'testModel2';
-        $object->description = 'test description2';
-        $object->units = '\'';
-        $object->settings = array('key' => 'value2');
+        $object = $this->_fillObject($object, 1);
 
         $result = $this->service->update($object);
 
-        $this->assertInstanceOf('HomeNet_Model_ComponentModel_Interface', $result);
-
-        $this->assertNotNull($result->id);
-        $this->assertEquals(HomeNet_Model_ComponentModel::TESTING, $result->status);
-        $this->assertEquals('RGBLED', $result->plugin);
-        $this->assertEquals('testModel2', $result->name);
-        $this->assertEquals('test description2', $result->description);
-        $this->assertEquals('\'', $result->units);
-        $this->assertTrue(is_array($result->settings));
-        $this->assertEquals('value2', $result->settings['key']);
+        $this->_validateResult($result, 1);
     }
 
     public function testUpdate_validArray() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
         $array = $object->toArray();
 
         //update values
-        $array['status'] = HomeNet_Model_ComponentModel::TESTING;
-        $array['plugin'] = 'RGBLED';
-        $array['name'] = 'testModel2';
-        $array['description'] = 'test description2';
-        $array['units'] = '\'';
-        $array['settings'] = array('key' => 'value2');
+        $array = $this->_fillArray($array, 1);
 
         $result = $this->service->update($array);
 
         $this->assertInstanceOf('HomeNet_Model_ComponentModel_Interface', $result);
 
-        $this->assertNotNull($result->id);
-        $this->assertEquals(HomeNet_Model_ComponentModel::TESTING, $result->status);
-        $this->assertEquals('RGBLED', $result->plugin);
-        $this->assertEquals('testModel2', $result->name);
-        $this->assertEquals('test description2', $result->description);
-        $this->assertEquals('\'', $result->units);
-        $this->assertTrue(is_array($result->settings));
-        $this->assertEquals('value2', $result->settings['key']);
+        $this->_validateResult($result, 1);
     }
 
     public function testUpdate_invalidObject() {
@@ -261,7 +242,7 @@ class HomeNet_Model_ComponentModel_ServiceTest extends PHPUnit_Framework_TestCas
 //$this->service->delete($mixed)////////////////////////////////////////////////
     public function testDelete_validObject() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //test delete
         $id = $object->id;
@@ -274,7 +255,7 @@ class HomeNet_Model_ComponentModel_ServiceTest extends PHPUnit_Framework_TestCas
     
     public function testDelete_validArray() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //test delete
         $id = $object->id;
@@ -287,7 +268,7 @@ class HomeNet_Model_ComponentModel_ServiceTest extends PHPUnit_Framework_TestCas
 
     public function testDelete_validId() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //test delete
         $id = $object->id;

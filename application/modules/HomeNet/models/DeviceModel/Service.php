@@ -95,7 +95,7 @@ class HomeNet_Model_DeviceModel_Service {
      * @return HomeNet_Model_DeviceModel (HomeNet_Model_DeviceModel_Inteface) 
      */
     public function getObjectsByStatus($status = 1) {
-        if (empty($status) || !is_numeric($status)) {
+        if (!is_numeric($status)) {
             throw new InvalidArgumentException('Invalid Status');
         }
         $result = $this->getMapper()->fetchObjectsByStatus($status);

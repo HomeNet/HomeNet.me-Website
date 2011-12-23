@@ -1,0 +1,17 @@
+<?php echo $this->render('header.phtml') ?>
+<div id="two-column-container">
+<nav class="transparent">
+<?php echo $this->layout()->menu ?>
+</nav>
+<section class="transparent">
+     <h1><?php echo $this->layout()->heading ?></h1>
+    <div class="breadcrumbs"><?php echo $this->breadcrumbs(); ?></div>   
+<?php 
+echo $this->messages();
+echo $this->layout()->content ?>
+</section>
+<div class="clearfix"></div>
+<?php echo $this->render('footer.phtml') ?>
+
+
+

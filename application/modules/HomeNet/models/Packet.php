@@ -152,18 +152,29 @@ class HomeNet_Model_Packet {
             'payload' => $this->payload->getByteString(),
             'checksum' => $this->checksum);
     }
+    
+    public function getXmlrpcPacket() {
+        $date = new Zend_Date();
+        $xmlrpc = array(
+            'apikey' => $this->apikey,
+            'timestamp' => $date->get(Zend_Date::ISO_8601),
+            'packet' => $this->getBase64Packet()
+        );
 
-    /** 
-     * Save packet database
-     */
-    public function save() {
-        // HomeNet_Model_DbTable_Packets
-        // echo $this->_packet;
-
-        $table = new HomeNet_Model_DbTable_Packets();
-        $table->insert($this->getArray());
-        //die($this->_packet);
+        return new Zend_XmlRpc_Value_Struct($xmlrpc);
     }
+
+//    /** 
+//     * Save packet database
+//     */
+//    public function save() {
+//        // HomeNet_Model_DbTable_Packets
+//        // echo $this->_packet;
+//
+//        $table = new HomeNet_Model_DbTable_Packets();
+//        $table->insert($this->getArray());
+//        //die($this->_packet);
+//    }
 
     /**
      * decodes a base64 packet in to a HomeNet_Packet object

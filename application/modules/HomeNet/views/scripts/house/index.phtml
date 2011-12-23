@@ -1,1 +1,61 @@
-<br /><br /><center>View script for controller <b>House</b> and script/action name <b>index</b></center>
+<?php 
+/* @var $this->object HomeNet_Model_House */
+echo $this->heading($this->house->name); ?>
+<a class="button" href="<?php echo $this->url(array('controller'=>'house', 'house' => $this->house->id, 'action' => 'edit'), 'homenet-house') ?>">Edit</a>
+<a class="button" href="<?php echo $this->url(array('controller'=>'house', 'house' => $this->house->id, 'action' => 'delete'), 'homenet-house') ?>">Delete</a>
+
+<h2>Rooms</h2>
+<div class="cms ui-widget ui-widget-content ui-corner-all">
+<div class="ui-widget-content">
+<table width="100%">
+    <thead class="ui-widget-header">
+        <tr><th width="50">ID</th><th>Region</th><th>Name</th><th width="55"></th></tr>
+    </thead>
+    <tbody>
+        <?php
+        $service = new HomeNet_Model_House_Service();
+        $regions = $service->getRegions();
+        $rooms = $this->house->getRooms();
+        
+        foreach ($rooms as $object) {
+            /* @var $object HomeNet_Model_DeviceModel */
+        ?>
+        <tr  class="<?php echo $this->cycle(array("", "ui-state-default"))->next() ?>" >
+            <td><?php echo $object->id ?></td>
+            <td><?php echo $regions[$object->region] ?></td>
+            <td class="left"><?php echo $object->name ?></td>
+            <td>
+                <a class="button" data-text="false" data-icon="ui-icon-pencil" title="Edit Room &quot;<?php echo $object->name ?>&quot;" 
+                   href="<?php echo $this->url(array('controller' => 'room', 'action' => 'edit', 'house' => $object->house, 'id' => $object->id),'homenet-house-id'); ?>">
+                    Edit
+                </a> 
+                <a class="button" data-text="false" data-icon="ui-icon-close" title="Delete Room &quot;<?php echo $object->name ?>&quot;" 
+                   href="<?php echo $this->url(array('controller' => 'room', 'action' => 'delete', 'house' => $object->house, 'id' => $object->id),'homenet-house-id'); ?>">
+                    Delete
+                </a>
+           </td>
+        </tr>
+        <?php
+        }
+        ?>
+    </tbody>
+</table>
+<a class="button" data-icon="ui-icon-plusthick" title="New Room" 
+   href="<?php echo $this->url(array('controller' => 'room', 'action' => 'new', 'house' => $this->house->id), 'homenet-house'); ?>">New</a>
+</div>
+</div>
+
+
+<h2>Configure</h2>
+
+<a class="button" data-icon="ui-icon-wrench" title="Configure Nodes" 
+   href="<?php echo $this->url(array('controller' => 'node', 'action' => 'index', 'house' => $this->house->id), 'homenet-house'); ?>">
+    Configure Nodes
+</a>
+<a class="button" data-icon="ui-icon-wrench" title="Configure API Keys" 
+   href="<?php echo $this->url(array('controller' => 'apikey', 'action' => 'index', 'house' => $this->house->id), 'homenet-house'); ?>">
+    Configure API Keys
+</a>
+
+
+

@@ -25,7 +25,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class HomeNet_Plugin_Component_GenericTemp_Component extends HomeNet_Plugin_Component_Generic {
+class HomeNet_Plugin_Component_GenericTemp_Component extends HomeNet_Plugin_Component_Generic_Component {
 
     /**
      * Form for user config

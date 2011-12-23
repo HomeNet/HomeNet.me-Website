@@ -74,6 +74,15 @@ class HomeNet_Model_Message_MapperDbTable implements HomeNet_Model_Message_Mappe
 
         return $this->getTable()->fetchAll($select);
     }
+    public function fetchobjectsByHousesOrUser(array $houses, $user) {
+        
+        $select = $this->getTable()->select()->where('user = ?', $user)
+                        ->orWhere('house in (?)', $houses)
+                        ->order('id DESC')
+                        ->limit(20);
+
+        return $this->getTable()->fetchAll($select);
+    }
 
     public function save(HomeNet_Model_Message_Interface $object) {
 

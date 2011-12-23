@@ -10,5 +10,5 @@ class HomeNet_Model_Apikey_XmlRpc {
         
         return $service->validate($apikey);
     }
-    
-}
+    //recompile2
+} 

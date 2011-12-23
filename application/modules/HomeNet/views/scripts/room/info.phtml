@@ -1,18 +1,18 @@
-<h1><?php echo $this->roomName ?></h1>
+<?php echo $this->heading($this->room->name); ?>
 <div class="homeNet-room-menu">
-<a class="ui-state-hover button"  href="<?php echo $this->url(array('house' => $this->house, 'room' => $this->room, 'region' => $this->region, 'node' => $this->node, 'action' => 'info'), 'homenet-room') ?>">Information</a>
-<a class="button" href="<?php echo $this->url(array('house' => $this->house, 'room' => $this->room, 'region' => $this->region, 'node' => $this->node, 'action' => 'control'), 'homenet-room') ?>">Control</a>
+<a class="ui-state-hover button"  href="<?php echo $this->url(array('controller'=>'room', 'action' => 'info', 'house' => $this->house->id, 'id' => $this->id, ), 'homenet-house-id') ?>">Information</a>
+<a class="button" href="<?php echo $this->url(array('controller'=>'room', 'action' => 'control', 'house' => $this->house->id, 'id' => $this->id), 'homenet-house-id') ?>">Control</a>
 </div>
 <?php
 $timeCache = array();
 
-foreach ($this->subdevices as $subdevice) {
+foreach ($this->components as $component) {
 
-    if (!$subdevice->hasGraphs()) {
+    if (!$component->hasGraphs()) {
         continue;
     }
 
-    $presets = $subdevice->getGraphPresets();
+    $presets = $component->getGraphPresets();
 
     $first = reset($presets);
 
@@ -31,7 +31,7 @@ foreach ($this->subdevices as $subdevice) {
         $end2 = new Zend_Date($timeCache[$first['end']], Zend_Date::TIMESTAMP);
     }
 
-    $newest = $subdevice->getNewestDataPoint();
+    $newest = $component->getNewestDataPoint();
 
     if(empty($newest)){
         $newest['value'] = '';
@@ -44,16 +44,16 @@ foreach ($this->subdevices as $subdevice) {
 
 ?>
     <div class="ui-widget ui-state-default ui-corner-all homeNet-room-subdevice">
-        <h2><?php echo $subdevice->name ?></h2>
+        <h2><?php echo $component->name ?></h2>
         <div style="width:80px; float:left; margin-right: 10px;">
            <div class="homenet-room-newestvalue"><?php echo $newest['value'];  ?></div>
            <div class="homenet-room-lastupdate"><?php echo $time; ?></div>
             
         </div>
 
-        <div id="graph-<?php echo $subdevice->id ?>" class="" style="height:100px;">
+        <div id="graph-<?php echo $component->id ?>" class="" style="height:100px;">
 
-            <img alt="graph" src="<?php echo $subdevice->getGraph($start2, $end2); ?>" />
+            <img alt="graph" src="<?php echo $component->getGraph($start2, $end2); ?>" />
         </div>
 <?php
 $links = array();
@@ -79,8 +79,8 @@ $links = array();
 
 
         $links[] = $this->ajaxLink($key,
-                $this->url(array('house' => $this->house, 'subdevice' => $subdevice->id, 'action' => 'graph', 'start' => $start, 'end' => $end), 'homenet-subdevice-graph'),
-                array('update' => '#graph-' . $subdevice->id));
+                $this->url(array('controller'=>'component', 'action' => 'graph', 'house' => $this->house->id, 'id' => $component->id), 'homenet-house-id')."?start=$start&end=$end",
+                array('update' => '#graph-' . $component->id));
 
     }
     echo implode(" &nbsp; ", $links);
@@ -90,6 +90,6 @@ $links = array();
     <?php
 }
     ?>
-<a class="button" href="<?php echo $this->url(array('house' => $this->house, 'room' => $this->room, 'region' => $this->region), 'homenet-node-add') ?>">Add Node</a>
-<a class="button" href="<?php echo $this->url(array('house' => $this->house, 'room' => $this->room, 'region' => $this->region, 'node' => $this->node, 'action' => 'edit'), 'homenet-room') ?>">Edit Room</a>
-<a class="button" href="<?php echo $this->url(array('house' => $this->house, 'room' => $this->room, 'region' => $this->region, 'node' => $this->node, 'action' => 'remove'), 'homenet-room') ?>">Remove Room</a>
+<a class="button" href="<?php echo $this->url(array('controller'=>'node', 'action'=>'new',     'house' => $this->house->id, 'room' => $this->id), 'homenet-house-room') ?>">Add Node</a>
+<a class="button" href="<?php echo $this->url(array('controller'=>'room', 'action' => 'edit',  'house' => $this->house->id, 'id' => $this->id), 'homenet-house-id') ?>">Edit Room</a>
+<a class="button" href="<?php echo $this->url(array('controller'=>'room', 'action' => 'delete','house' => $this->house->id, 'id' => $this->id), 'homenet-house-id') ?>">Remove Room</a>

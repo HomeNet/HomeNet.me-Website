@@ -1,31 +1,31 @@
 <h1>Feed</h1>
 <?php foreach ($this->alerts as $alert){ 
     switch ($alert->level){
-        case HomeNet_Model_Alert::ERROR:
+        case HomeNet_Model_Message::ERROR:
             $class = 'ui-state-error';
             $icon = 'ui-icon-alert';
             break;
-        case HomeNet_Model_Alert::WARNING:
+        case HomeNet_Model_Message::WARNING:
             $class = 'ui-state-error';
             $icon = 'ui-icon-alert';
             break;
-        case HomeNet_Model_Alert::INFO:
+        case HomeNet_Model_Message::INFO:
             $class = 'ui-state-highlight';
             $icon = 'ui-icon-info';
             break;
-        case HomeNet_Model_Alert::CHANGE:
+        case HomeNet_Model_Message::CHANGE:
             $class = 'ui-state-highlight';
             $icon = 'ui-icon-info';
             break;
-        case HomeNet_Model_Alert::NEWITEM:
+        case HomeNet_Model_Message::NEWITEM:
             $class = 'ui-state-highlight';
             $icon = 'ui-icon-star';
             break;
-        case HomeNet_Model_Alert::HIGH:
+        case HomeNet_Model_Message::HIGH:
             $class = 'ui-state-highlight';
             $icon = 'ui-icon-circle-arrow-n';
             break;
-        case HomeNet_Model_Alert::LOW:
+        case HomeNet_Model_Message::LOW:
             $class = 'ui-state-highlight';
             $icon = 'ui-icon-circle-arrow-s';
             break;

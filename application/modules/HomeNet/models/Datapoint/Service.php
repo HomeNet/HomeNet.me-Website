@@ -39,6 +39,14 @@ class HomeNet_Model_Datapoint_Service {
      * @var string
      */
     protected $_type;
+    
+    protected $_house;
+    
+    public function __construct($house, $type = null) {
+        $this->_house = $house;
+        $this->_type = $type;
+    }
+    
 
     /**
      * Get storage mapper
@@ -47,12 +55,15 @@ class HomeNet_Model_Datapoint_Service {
      */
     public function getMapper() {
 
-        if (empty($this->_type)) {
-            throw new Exception('Set Type First');
+//        if (empty($this->_type)) {
+//            throw new Exception('Type not valid');
+//        }
+        if (empty($this->_house)) {
+            throw new Exception('House not valid');
         }
 
         if (empty($this->_mapper)) {
-            $this->_mapper = new HomeNet_Model_Datapoint_MapperDbTable($this->_type);
+            $this->_mapper = new HomeNet_Model_Datapoint_MapperDbTable($this->_house->id, $this->_house->database, $this->_type);
         }
 
         return $this->_mapper;
@@ -76,6 +87,19 @@ class HomeNet_Model_Datapoint_Service {
         //@todo validate type
         $this->_type = $type;
     }
+    
+    /**
+     * @param $house 
+     */
+    public function createTables(){
+        $this->getMapper()->createTables();
+    }
+    /**
+     * @param $house 
+     */
+    public function deleteTables(){
+        $this->getMapper()->deleteTables();
+    }
 
     /**
      * Get the last datapoint of a subdevice
@@ -83,8 +107,8 @@ class HomeNet_Model_Datapoint_Service {
      * @param int $id
      * @return HomeNet_Model_Datapoint (HomeNet_Model_Datapoint_Interface)
      */
-    public function getLastObjectByComponent($subdevice) {
-        $result = $this->getMapper()->fetchNewestDatapointByComponent($subdevice);
+    public function getLastObjectById($id) {
+        $result = $this->getMapper()->fetchLastObjectById($id);
 
         if (empty($result)) {
             // throw new HomeNet_Model_Exception('Datapoint not found', 404);
@@ -95,14 +119,14 @@ class HomeNet_Model_Datapoint_Service {
     /**
      * Get average values over a period of time
      * 
-     * @param integer $subdevice  Component Id
+     * @param integer $id  Component Id
      * @param Zend_Date $start
      * @param Zend_Date $end
      * @param int $points number of points to return
      * @return HomeNet_Model_Datapoint[] (HomeNet_Model_Datapoint_Interface[]) 
      */
-    public function getAveragesByComponentTimespan($subdevice, Zend_Date $start, Zend_Date $end, $points = null) {
-        $results = $this->getMapper()->fetchAveragesByComponentTimespan($subdevice, $start, $end, $points);
+    public function getAveragesByIdTimespan($id, Zend_Date $start, Zend_Date $end, $points = 100) {
+        $results = $this->getMapper()->fetchAveragesByIdTimespan($id, $start, $end, $points);
 
         if (empty($results)) {
             // throw new HomeNet_Model_Exception('Datapoint not found', 404);
@@ -113,13 +137,13 @@ class HomeNet_Model_Datapoint_Service {
     /**
      * Get all datapoints over a time period
      * 
-     * @param integer $subdevice
+     * @param integer $id
      * @param Zend_Date $start
      * @param Zend_Date $end
      * @return HomeNet_Model_Datapoint[] (HomeNet_Model_Datapoint_Interface[])  
      */
-    public function getObjectsByComponentTimespan($subdevice, Zend_Date $start, Zend_Date $end) {
-        $results = $this->getMapper()->fetchDatapointsByComponentTimespan($subdevice, $start, $end);
+    public function getObjectsByIdTimespan($id, Zend_Date $start, Zend_Date $end) {
+        $results = $this->getMapper()->fetchObjectsByIdTimespan($id, $start, $end);
 
         if (empty($results)) {
             //  throw new HomeNet_Model_Exception('Datapoint not found', 404);
@@ -131,16 +155,15 @@ class HomeNet_Model_Datapoint_Service {
      * Add datapoint helper
      * 
      * @param string $type
-     * @param integer $subdevice
+     * @param integer $id
      * @param mixed $value
      * @param type $timestamp 
      */
-    public function add($type, $subdevice, $value, $timestamp) {
-        $this->setType($type);
+    public function add($id, Zend_Date $timestamp, $value) {
         $datapoint = new HomeNet_Model_Datapoint();
-        $datapoint->subdevice = $subdevice;
+        $datapoint->id = $id;
+        $datapoint->timestamp = $timestamp->toString('YYYY-MM-dd HH:mm:ss');
         $datapoint->value = $value;
-        $datapoint->datetime = $timestamp;
         $this->create($datapoint);
     }
 

@@ -30,50 +30,75 @@ class HomeNet_NodeController extends Zend_Controller_Action {
 
     private $_id;
     private $_house;
-    
+    private $_node;
+    private $service;
+
     public function init() {
-        $this->view->node = $this->_id = $this->_getParam('id');
-        $this->view->house = $this->_house = $this->_getParam('house');
+        $this->service = new HomeNet_Model_Node_Service();
+        
+        $this->view->heading = 'Node'; //for generic templates
+        
+        $this->view->id = $this->_id = $this->_getParam('id');
+        $this->view->house = $this->_house = HomeNet_Model_House_Manager::getHouseById($this->_getParam('house'));
+        
+        //setup bread crumbs
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Home',
+            'route'  => 'homenet',   
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => $this->_house->name,
+            'route'  => 'homenet-house',  
+            'controller' => 'house',
+            'params' => array('house'=>$this->_house->id)
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Nodes',
+            'route'  => 'homenet-house',  
+            'controller' => 'node',
+            'params' => array('house'=>$this->_house->id)
+        ));
         
         
-        $this->view->room = $this->_getParam('room');
-        $this->view->region = $this->_getParam('region');
-        
+        if($this->_id !== null){
+            $this->view->node =  $this->_node = HomeNet_Model_Node_Manager::getNodeByHouseAddress($this->_house->id, $this->_getParam('id'));
+
+            $this->view->breadcrumbs()->addPage(array(
+            'label'  => $this->_node->model_name,
+            'route'  => 'homenet-house-id',  
+            'controller' => 'node',
+            'params' => array('house'=>$this->_house->id,
+               // 'room'=>$this->_room->id,
+                'id'=>$this->_node->address,)
+            ));
+        }
     }
 
     public function indexAction() {
-        if($this->_id !== null){
-            return $this->_forward('configure');
+        if ($this->_id !== null) {
+            $this->_helper->viewRenderer('configure');
+            return $this->configureAction();
+           // return $this->_forward('configure');
         }
-            
-        $service = new HomeNet_Model_Node_Service();
-        $this->view->objects = $service->getObjectsByHouse($this->view->house);
+        
+
+        $this->view->objects = $this->service->getObjectsByHouse($this->_house->id);
     }
 
     public function newAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        $type = array(1 => 'Wireless Sensor Node', 2 => 'Wired Base Station', 3 => 'Internet Node');
 
-        $form = new HomeNet_Form_Node();
+        $form = new HomeNet_Form_Node(null, $this->_house->id);
         //$sub = $form->getSubForm('node');
-
-        $uplink = $form->getElement('uplink');
-
-        $nService = new HomeNet_Model_Node_Service();
-        $ids = $nService->getInternetIdsByHouse($this->view->house);
-
-        $uplink->addMultiOptions(array_flip($ids));
-
-
+        //array_flip($ids)
         $submit = $form->addElement('submit', 'submit', array('label' => 'Next'));
-
 
         if (!$this->getRequest()->isPost()) {
 
-            $id = $form->getElement('node');
-
-            //$nodeService = new HomeNet_Model_DbTable_Nodes();
-            $id->setValue($nService->getNextIdByHouse($this->view->house));
+            $address = $form->getElement('address');
+            $address->setValue($this->service->getNextAddressByHouse($this->_house->id));
 
             $this->view->form = $form;
             return;
@@ -84,49 +109,37 @@ class HomeNet_NodeController extends Zend_Controller_Action {
             $this->view->form = $form;
             return;
         }
-        
+
         //save
         //$nodeService = new HomeNet_Model_NodesService();
 
-       $values = $form->getValues();
+        $values = $form->getValues();
 
-        $node = $nService->newObjectByModel($values['model']);
+        $node = $this->service->newObjectFromModel($values['model']);
         $node->fromArray($values);
 
-        $node->house = $this->view->house;
-        $node->room = $this->view->room;
-
-        $node = $nService->create($node);
-
+        $node->house = $this->_house->id;
+ 
+        $node = $this->service->create($node);
 
         $this->view->node = $node->id;
         $this->view->done = true;
-      
     }
 
     public function editAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        $type = array(1 => 'Sensor Node', 2 => 'Base Station', 3 => 'Internet Node');
 
-        $form = new HomeNet_Form_Node();
+        $form = new HomeNet_Form_Node(null, $this->_house->id);
         $form->removeElement('model');
 
-        $uplink = $form->getElement('uplink');
-
-        $nService = new HomeNet_Model_Node_Service();
-        $ids = $nService->getInternetIdsByHouse($this->view->house);
-
-        $uplink->addMultiOptions(array_flip($ids));
-
         $submit = $form->addElement('submit', 'submit', array('label' => 'Update'));
-        
+
+        $object = $this->_node;
+
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
-            $node = $nService->getObjectById($this->view->node);
-            
-            $values = $node->toArray();
-//die(debugArray($values));
-            $form->populate(array('description'=>$values['description'],'uplink'=>$values['uplink'],'node'=>$values['node']));
+            $values = $object->toArray();
+            $form->populate(array('description' => $values['description'], 'uplink' => $values['uplink'], 'address' => $values['address']));
 
             $this->view->form = $form;
             return;
@@ -139,79 +152,56 @@ class HomeNet_NodeController extends Zend_Controller_Action {
         }
 
         //save
-
-        $node = $nService->getObjectById($this->view->node);
-
         $values = $form->getValues();
-        $node->fromArray($values);
-        $node->house = $this->view->house;
-        $node->room = $this->view->room;
+        $object->fromArray($values);
 
-        $nService->update($node);
+        $this->service->update($object);
 
-        return $this->_redirect($this->view->url(array('house'=>$this->view->house),'homenet-node-index').'?message=Updated');//
+        $this->view->messages()->add('Successfully updated node &quot;' . $object->address . '&quot;');
+        return $this->_redirect($this->view->url(array('controller' => 'node', 'house' => $this->_house->id), 'homenet-house')); //
     }
 
     public function deleteAction() {
-
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        $nService = new HomeNet_Model_Node_Service();
-        $node = $nService->getObjectById($this->view->node);
+
+        $object = $this->_node;
+        
         $form = new Core_Form_Confirm();
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
-
-            $form->addDisplayGroup($form->getElements(), 'node', array ('legend' => 'Are you sure you want to remove node "'.$node->node.'"?'));
-
+            $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to remove node "' . $object->address . '"?'));
             $this->view->form = $form;
             return;
         }
 
-        $values = $form->getValues();
-
-        //need to figure out why this isn't in values
-        if(!empty($_POST['delete'])){
-            
-            $nService->delete($node);
-            return $this->_redirect($this->view->url(array('house'=>$this->view->house),'homenet-node-index').'?message=Deleted');
+        if (!empty($_POST['delete'])) {
+            $name = $object->address;
+            $this->service->delete($object);
+            $this->view->messages()->add('Successfully deleted node &quot;' . $name . '&quot;');
         }
-        return $this->_redirect($this->view->url(array('house'=>$this->view->house),'homenet-node-index').'?message=Canceled');
+        return $this->_redirect($this->view->url(array('controller' => 'node', 'house' => $this->_house->id), 'homenet-house'));
     }
 
     public function codeAction() {
-
-        $nodesService = new HomeNet_Model_Node_Service();
-        $node = $nodesService->getObjectById($this->view->node);
-       // $node->loadDevices();
-
-        $this->view->code = htmlspecialchars($node->getCode());
+        $this->view->code = htmlspecialchars($this->_node->getCode());
     }
 
     public function configureAction() {
-        $node = $this->_getParam('node');
-/**
- * @todo this might be faster as a join
- */
-        $nService = new HomeNet_Model_Node_Service();
-        $this->view->node = $nService->getObjectById($node);
-
-       // die(debugArray($this->view->node));
-
-        $nodeModels = new HomeNet_Model_NodeModel_Service();
-        $model = $nodeModels->getObjectById($this->view->node->model);
-        $this->view->maxDevices = $model->max_devices;
-
 
         
+        $this->view->maxDevices = $this->_node->max_devices;
+
+
+
         //$settings = unserialize($model->settings);
 
         $dService = new HomeNet_Model_Device_Service();
 
-        $d = $dService->getObjectsByNode($node);
+        $d = $dService->getObjectsByNode($this->_node->id);
 
         $devices = array();
-        foreach($d as $value){
-           $devices[$value->position] = $value;
+        foreach ($d as $value) {
+            $devices[$value->position] = $value;
         }
 
         $this->view->devices = $devices;

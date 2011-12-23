@@ -35,6 +35,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
     protected function _initSession(){
         Zend_Session::start();
     }
+    
+    protected function _initLogging(){
+        $writer = new Zend_Log_Writer_Firebug();
+        $logger = new Zend_Log($writer);
+        Zend_Registry::set('logger', $logger);
+
+    
+    }
 
     protected function _initLoaderResource() {
         $resourceLoader = new Zend_Loader_Autoloader_Resource(array(
@@ -189,6 +197,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 }
 
 function _htmlspecialchars($item){
+    
+    if(is_object($item)){
+        return $item;
+    }
+    
     if(is_array($item)){
         return array_map("_htmlspecialchars", $item);
     }
@@ -202,6 +215,10 @@ function debugArray($array) {
    $array = array_map("_htmlspecialchars", $array);
     }
     return '<pre>' . print_r($array, 1) . '</pre>';
+}
+
+class NotSupportedException extends Exception {
+    
 }
 
 class NotFoundException extends DomainException {

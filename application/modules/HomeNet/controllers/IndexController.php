@@ -28,34 +28,66 @@
  */
 class HomeNet_IndexController extends Zend_Controller_Action {
 
+    private $_house;
+    
     public function init() {
-        
+        $this->_house = $this->_getParam('house');
     }
 
     public function indexAction() {
-        $service = new HomeNet_Model_House_Service();
 
-        $ids = $service->getHouseIdsByUser();
-
+        $houseIds = HomeNet_Model_House_Manager::getHouseIds();
+        
+        //user has houses, send to home page
+      //  if($this->_house !== null)
+        
+        if ($this->_house !== null) {
+            $this->_helper->viewRenderer('house');
+            return $this->houseAction();
+        }
         
         
-        if (count($ids) == 0) {
-            $this->_helper->_layout->setLayout('one-column');
+        if (count($houseIds) >= 0) {
+            $this->_forward('home');
             return;
         }
 
-        $houses = $service->getObjectsByIds($service->getHouseIdsByUser());
+        //user has no house, display welcome page
+        $this->_helper->_layout->setLayout('one-column');
+    }
 
-        $this->_forward('home');
+    public function sendPacketAction() {
+        // action body
+    }
 
-        //$packet = new HomeNet_Model_Packet();
+    public function homeAction() {
+
+        
+        
+        $houseIds = HomeNet_Model_House_Manager::getHouseIds();
+        $user = Core_Model_User_Manager::getUser();
+        
+        //@todo validate house
+        //$house = HomeNet_Model_House_Manager::getHouse($this->_house);
+        
+        $messageService = new HomeNet_Model_Message_Service();        
+        //$this->view->alerts = $messageService->getObjectsByHouseOrUser($this->_house, $user);
+        $this->view->alerts = $messageService->getObjectsByHousesOrUser($houseIds, $user->id);
+        
+        //$this->view->alerts = $mService->getObjectsByHousesOrUser($_SESSION['HomeNet']['houses'], $_SESSION['User']['id']);
+    }
+
+    public function houseAction() {
+        // action body
+    }
+    public function testAction() {
+        
+                //$packet = new HomeNet_Model_Packet();
         //$packet->loadXmlRPc(array('packet'=>"DQIAQA/yBfAxMjP+jw==", 'received'=> '2010-11-18 10:23:00'));
         //print_r($packet->getArray());
         // $packet->save();
         //echo 'success';
-    }
-
-    public function testAction() {
+        
         
 //        $apikeys = new HomeNet_Model_Apikey_Service();
 //        $apikeys->validate('96b1e1ad70e96197aff8c1b48f1106767e7ecfe7');
@@ -149,31 +181,4 @@ class HomeNet_IndexController extends Zend_Controller_Action {
         $this->view->form = $form;
     }
 
-    public function sendPacketAction() {
-        // action body
-    }
-
-    public function homeAction() {
-
-       // die(debugArray($this->view->getScriptPaths()));
-
-
-
-        //if(isset($_SESSION['HomeNet']['Houses'])){
-        //$cache = HomeNet_Model_Cache::getInstance();
-        //$houses = $cache->getHouses();
-        // }
-        // $this->_helper->_layout->setLayout('two-column');
-        //$this->_helper->_layout->assign('column','test');
-        $mService = new HomeNet_Model_Message_Service();
-        //$this->view->alerts = $table->fetchAllByUser($_SESSION['User']['id']);
-
-        $this->view->alerts = $mService->getObjectsByHouseOrUser($_SESSION['HomeNet']['houses'], $_SESSION['User']['id']);
-    }
-
-    public function errorAction() {
-        // action body
-    }
-
 }
-

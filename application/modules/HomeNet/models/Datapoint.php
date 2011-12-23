@@ -26,10 +26,18 @@
  */
 class HomeNet_Model_Datapoint implements HomeNet_Model_Datapoint_Interface {
     
-    public $id = null;
-    public $subdevice;
-    public $datetime;
+    public $id;
+    public $timestamp;
     public $value;
+    
+    const NONE = null;
+    const BOOLEAN = 1;
+    const BYTE = 2;
+    const INTEGER = 3;
+    const FLOAT = 4;
+    const LONG = 5;
+    const STRING = 6;
+    const BINARY = 7;
 
     public function  __construct(array $config = array()) {
         if(isset($config['data'])){

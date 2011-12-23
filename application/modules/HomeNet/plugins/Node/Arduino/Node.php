@@ -51,7 +51,7 @@ class HomeNet_Plugin_Node_Arduino_Node extends HomeNet_Model_Node_Abstract {
 ' . $this->getCustomCode() . '
 
 //Start HomeNet packet stack
-HomeNet stack(' . $this->node . ');//0x01 is RF12 base station //0xFF is PC uplink
+HomeNet stack(' . $this->address . ');//0x01 is RF12 base station //0xFF is PC uplink
 
 //Setup network adapters
 ' . $this->getPortsCode() . '

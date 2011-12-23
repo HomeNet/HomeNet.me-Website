@@ -31,7 +31,7 @@ class HomeNet_Model_Component extends HomeNet_Model_Component_Abstract {
 //     * @param HomeNet_Model_ComponentModelInterface $model
 //     */
 //    public function loadModel(HomeNet_Model_ComponentModelInterface $model) {
-//        $this->modelName = $row->name;
+//        $this->model_name = $row->name;
 //        $this->model = $row->id;
 //    }
 //

@@ -29,11 +29,11 @@
 abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interface {
 
     public $id;
-    public $address;
-    public $model;
-    public $uplink;
     public $house;
     public $room;
+    public $address;
+    public $model;
+    public $uplink = 0;
     public $description = '';
     public $created;
     public $settings = array();
@@ -44,10 +44,11 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
   //  public $direction = 1;
 
     
-    public $modelName;
-    public $modelSettings;
+    public $model_name;
+    public $model_settings = array();
     public $plugin;
     public $type;
+    public $max_devices;
 
     protected $_devices;
     
@@ -71,7 +72,7 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
 
    public function fromArray(array $array) {
 
-        $vars = array('id', 'address', 'model', 'uplink', 'house', 'room', 'description', 'created', 'modelName', 'driver', 'type', 'ipaddress', 'status','direction');
+        $vars = array('id', 'address', 'model', 'uplink', 'house', 'room', 'description', 'created', 'model_name','max_devices', 'driver', 'type', 'ipaddress', 'status','direction');
 
         foreach ($array as $key => $value) {
             if (in_array($key, $vars)) {
@@ -79,7 +80,11 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
             }
         }
         
-       // var_dump($array['settings']);
+       //merge in model settings
+        if(!empty($array['model_settings']) && is_array($array['model_settings'])){
+            $this->settings = array_merge($this->settings, $array['model_settings']);
+        }
+        
         
         if(!empty($array['settings']) && is_array($array['settings'])){
             $this->settings = array_merge($this->settings, $array['settings']);
@@ -106,7 +111,7 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
 
     public function loadModel(HomeNet_Model_NodeModel_Interface $model){
 
-        $this->modelName = $model->name;
+        $this->model_name = $model->name;
         $this->plugin = $model->plugin;
         $this->model = $model->id;
         $this->type = $model->type;

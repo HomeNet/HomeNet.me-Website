@@ -29,6 +29,8 @@ class HomeNet_Form_House extends CMS_Form
 
     public function init()
     {
+        $service = new HomeNet_Model_House_Service();
+        
         $this->setMethod('post');
 
         $name = $this->createElement('text','name');
@@ -51,11 +53,7 @@ class HomeNet_Form_House extends CMS_Form
         $this->addElement($location);
 
         $type = $this->createElement('select','type');
-        $type->setMultiOptions(array('house' => 'House',
-                                     'apartment' => 'Apartment',
-                                     'condo' => 'Condo',
-                                     'other' => 'Other',
-                                     'na' => 'N/A'));
+        $type->setMultiOptions($service->getTypes());
         $type->setLabel('Type: ');
         $type->setRequired('true');
         $type->addFilter('StripTags');
@@ -64,14 +62,8 @@ class HomeNet_Form_House extends CMS_Form
         $regions = $this->createElement('MultiCheckbox', 'regions');
         $regions->setLabel("Create space for:");
         $regions->setRequired('true');
-        $regions->setMultiOptions(array('1' => 'First Floor',
-                                       '2' => 'Second Floor',
-                                       '3' => 'Third Floor',
-                                       '4' => 'Forth Floor',
-                                       '5' => 'Fifth Floor',
-                                       'B' => 'Basement',
-                                       'A' => 'Attic',
-                                       'O' => 'Outdoors'));
+        
+        $regions->setMultiOptions($service->getRegions());
 
         //$regions->addDecorator('HtmlTag', array('tag' => 'div', 'style'=>'float:right; width:265px; text-align:left;'));
 
@@ -83,14 +75,7 @@ class HomeNet_Form_House extends CMS_Form
         $other->addMultiOption('Attic', 'Attic');
         $house->addElement($other); */
 
-        $this->addDisplayGroup($this->getElements(), 'house', array('legend' => 'House'));
-
-        $this->addElement('hash', 'hash', array('salt' => 'unique'));
-
-
-       // $this->addSubForm($sub, 'home');
-
-        
+        $this->addDisplayGroup($this->getElements(), 'house', array('legend' => 'Home'));        
     }
 
 }

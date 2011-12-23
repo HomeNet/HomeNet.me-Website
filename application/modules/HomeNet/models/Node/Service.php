@@ -94,7 +94,7 @@ class HomeNet_Model_Node_Service {
      * Get Node by id
      * 
      * @param int $id
-     * @return HomeNet_Model_Node[] (HomeNet_Model_Node_Abstract[])
+     * @return HomeNet_Model_Node (HomeNet_Model_Node_Abstract)
      * @throws InvalidArgumentException
      * @throws NotFoundException
      */
@@ -186,7 +186,7 @@ class HomeNet_Model_Node_Service {
 //            $result->fromArray($internet->toArray());
 //        }
 
-        return $result;
+        return $this->_getPlugin($result);
     }
 
     /**
@@ -219,7 +219,7 @@ class HomeNet_Model_Node_Service {
      * @return int[]
      * @throws InvalidArgumentException
      */
-    public function getIdsByHouseType($house, $type) {
+    public function getObjectsByHouseType($house, $type) {
         if (empty($house) || !is_numeric($house)) {
             throw new InvalidArgumentException('Invalid House Id');
         }
@@ -228,11 +228,36 @@ class HomeNet_Model_Node_Service {
             throw new InvalidArgumentException('Invalid Type');
         }
         
-        $results = $this->getMapper()->fetchIdsByHouseType($house, $type);
+        $results = $this->getMapper()->fetchObjectsByHouseType($house, $type);
 
   
         return $results;
     }
+    
+    /**
+     * Get the Id's of Internet nodes by house
+     * 
+     * @param int $house
+     * @param int $type
+     * @return int[]
+     * @throws InvalidArgumentException
+     */
+    public function getUplinksByHouse($house) {
+        if (empty($house) || !is_numeric($house)) {
+            throw new InvalidArgumentException('Invalid House Id');
+        }
+        
+        $results = $this->getObjectsByHouseType($house, HomeNet_Model_Node::INTERNET);
+               
+        $array = array();
+        foreach($results as $value){
+               $array[$value->id] = $value->address;
+        }
+
+  
+        return $array;
+    }
+    
 
 //    public function geObjectByIdWithModel($id, $columns){
 //        $node = $this->getMapper()->fetchNodeByIdWithModel($id, $columns);
@@ -292,7 +317,7 @@ class HomeNet_Model_Node_Service {
         } else {
             throw new InvalidArgumentException('Invalid Node');
         }
-
+        
         $result = $this->getMapper()->save($object);
         
         $object->id = $result->id; //patch to fix null id, $node missing some parameters

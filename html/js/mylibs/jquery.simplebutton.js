@@ -20,7 +20,6 @@
             }
             
             var options = this.options;
-            console.log(options);
             if ( options.label === null ) {
                 options.label = this.element.html();
             }

@@ -10,13 +10,121 @@ class HomeNet_Model_Datapoint_ServiceTest extends PHPUnit_Framework_TestCase {
      * @var HomeNet_Model_Datapoint_Service
      */
     protected $service;
+    private $type = 'int';
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->service = new HomeNet_Model_Datapoint_Service;
+
+        $house = new HomeNet_Model_House();
+        $house->id = 1;
+        $house->database = 1;
+
+        $this->service = new HomeNet_Model_Datapoint_Service($house, $this->type);
+        $this->service->deleteAll();
+    }
+
+    private function _getTestData($seed = 0) {
+
+        $date = new Zend_Date();
+        $date->subMinute($seed);
+        $array = array('id' => 1, 'timestamp' => $date->toString('YYYY-MM-dd HH:mm:ss'));
+
+        switch ($this->type) {
+
+            case 'bool':
+            case 'boolean': {
+                    if ($seed % 2 == 0) {
+                        $array['value'] = true;
+                    } else {
+                        $array['value'] = false;
+                    }
+
+                    break;
+                }
+            case 'byte':
+                $array['value'] = 1 + $seed;
+                break;
+            case 'float':
+                $array['value'] = 1.111 + $seed;
+                break;
+            case 'int':
+            case 'integer':
+                $array['value'] = 1000 + $seed;
+                break;
+            case 'long':
+                $array['value'] = 10000 + $seed;
+                break;
+            case 'str':
+            case 'string':
+                $array['value'] = "test string $seed";
+                break;
+            default:
+                throw new Exception('Invalid Type: ' . $this->_type);
+                break;
+        }
+
+        return $array;
+    }
+
+    private function _fillObject($object, $data) {
+        foreach ($data as $key => $value) {
+            $object->$key = $value;
+        }
+        return $object;
+    }
+
+    private function createValidObject($seed = 0) {
+        $object = new HomeNet_Model_Datapoint();
+        $object = $this->_fillObject($object, $this->_getTestData($seed));
+        $result = $this->service->create($object);
+
+        $this->assertInstanceOf('HomeNet_Model_Datapoint_Interface', $result);
+        return $result;
+    }
+
+    private function createData($items = 60) {
+        for ($i = 0; $i < $items; $i++) {
+            $this->createValidObject($i);
+        }
+    }
+
+    private function validateResult($result, $seed = 0) {
+
+        switch ($this->type) {
+
+            case 'bool':
+            case 'boolean': {
+                    if ($seed % 2 == 0) {
+                        $this->assertEquals(true, $result->value);
+                    } else {
+                        $this->assertEquals(false, $result->value);
+                    }
+                    break;
+                }
+            case 'byte':
+                $this->assertEquals(1 + $seed, $result->value);
+                break;
+            case 'float':
+                $this->assertEquals((string)(1.111 + $seed),  $result->value);
+                break;
+            case 'int':
+            case 'integer':
+                $this->assertEquals(1000 + $seed, $result->value);
+                break;
+            case 'long':
+                $this->assertEquals(10000 + $seed, $result->value);
+                break;
+            case 'str':
+            case 'string':
+                $this->assertEquals("test string $seed", $result->value);
+                break;
+            default:
+                throw new Exception('Invalid Type: ' . $this->_type);
+                break;
+        }
     }
 
     /**
@@ -27,16 +135,16 @@ class HomeNet_Model_Datapoint_ServiceTest extends PHPUnit_Framework_TestCase {
         
     }
 
-     public function testGetMapper() {
-         $this->service->setType('Int');
-       $this->assertInstanceOf('HomeNet_Model_Datapoint_MapperInterface', $this->service->getMapper());
+    public function testGetMapper() {
+        $this->service->setType('Int');
+        $this->assertInstanceOf('HomeNet_Model_Datapoint_MapperInterface', $this->service->getMapper());
     }
 
     public function testSetMapper() {
         $this->service->setType('Int');
-        $mapper = new HomeNet_Model_Datapoint_MapperDbTable('int');
-         $this->service->setMapper($mapper);
-        
+        $mapper = new HomeNet_Model_Datapoint_MapperDbTable(1, 1, 'int');
+        $this->service->setMapper($mapper);
+
         $this->assertInstanceOf('HomeNet_Model_Datapoint_MapperInterface', $this->service->getMapper());
         $this->assertEquals($mapper, $this->service->getMapper());
     }
@@ -48,53 +156,112 @@ class HomeNet_Model_Datapoint_ServiceTest extends PHPUnit_Framework_TestCase {
         );
     }
 
-    public function testGetNewestDatapointBySubdevice() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testCreateTables() {
+        $this->service->createTables();
     }
 
-    public function testGetAveragesBySubdeviceTimespan() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testDeleteTables() {
+        // $this->service->deleteTables();
     }
 
-    public function testGetDatapointsBySubdeviceTimespan() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+//$this->service->getLastObjectById($id)////////////////////////////////////////
+    public function testGetLastObjectById() {
+        $object = $this->createValidObject();
+        $result = $this->service->getLastObjectById($object->id);
+        $this->validateResult($result);
     }
 
+//$this->service->getAveragesByIdTimespan($id, $start, $end)////////////////////
+    public function testGetAveragesByIdTimespan() {
+        $this->createData();
+        $start = new Zend_Date;
+        $end = new Zend_Date;
+        $start->subMinute(60);
+        $result = $this->service->getAveragesByIdTimespan(1, $start, $end, 60);
+        $this->assertTrue(is_array($result));
+        $this->assertGreaterThan(2, count($result));
+    }
+
+//$this->service->getObjectsByIdTimespan($id, $start, $end)/////////////////////  
+    public function testGetObjectsByIdTimespan() {
+        $this->createData();
+        $start = new Zend_Date;
+        $end = new Zend_Date;
+        $start->subMinute(60);
+        $result = $this->service->getObjectsByIdTimespan(1, $start, $end);
+        //$this->assertTrue(is_array($result), print_r());
+        $this->assertGreaterThan(30, count($result),print_r($result, 1));
+    }
+
+//$this->service->add($type, $id, $timestamp, $value)///////////////////////////
     public function testAdd() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $date = new Zend_Date();
+        $this->service->add('int', 1, $date, 1);
     }
 
-    public function testCreate() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+//$this->service->create($mixed)//////////////////////////////////////////////// 
+    public function testCreate_validObject() {
+        $result = $this->createValidObject();
+        $this->validateResult($result);
     }
 
-    public function testUpdate() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testCreate_validArray() {
+        $result = $this->service->create($this->_getTestData());
+        $this->validateResult($result);
     }
 
-    public function testDelete() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+    public function testCreate_null() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->create(null);
     }
 
+//$this->service->update($mixed)//////////////////////////////////////////////// 
+    public function testUpdate_validObject() {
+        $object = $this->createValidObject();
+
+        $object = $this->_fillObject($object, $this->_getTestData(1));
+
+        $result = $this->service->update($object);
+        $this->validateResult($result, 1);
+    }
+
+    public function testUpdate_validArray() {
+        $object = $this->createValidObject();
+        $array = array_merge($object->toArray(), $this->_getTestData(1));
+
+        $result = $this->service->update($array);
+        $this->validateResult($result, 1);
+    }
+
+    public function testUpdate_null() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $this->service->update(null);
+    }
+
+//$this->service->delete($mixed)//////////////////////////////////////////////// 
+    public function testDelete_validObject() {
+        $object = $this->createValidObject();
+        $count = $this->service->delete($object);
+        $this->assertEquals(1, $count);
+    }
+
+    public function testDelete_validArray() {
+        $object = $this->createValidObject();
+        $count = $this->service->delete($this->_getTestData());
+        $this->assertEquals(1, $count);
+    }
+
+    public function testDelete_null() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $this->service->delete(null);
+    }
+
+    public function testDelete_invalidObject() {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $badObject = new StdClass();
+        $this->service->delete($badObject);
+    }
 }

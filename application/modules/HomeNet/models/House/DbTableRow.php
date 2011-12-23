@@ -51,10 +51,6 @@ class HomeNet_Model_House_DbTableRow extends Zend_Db_Table_Row_Abstract implemen
             $this->settings = unserialize($this->settings);
         }
 
-        if(is_string($this->permissions)){
-            $this->permissions = unserialize($this->permissions);
-        }
-
         if(is_string($this->regions)){
             $this->regions = unserialize($this->regions);
         }
@@ -63,10 +59,6 @@ class HomeNet_Model_House_DbTableRow extends Zend_Db_Table_Row_Abstract implemen
     public function compress(){
         if(is_array($this->settings)){
             $this->settings = serialize($this->settings);
-        }
-
-        if(is_array($this->permissions)){
-            $this->permissions = serialize($this->permissions);
         }
 
         if(is_array($this->regions)){
@@ -87,6 +79,11 @@ class HomeNet_Model_House_DbTableRow extends Zend_Db_Table_Row_Abstract implemen
         }
     }
 
+    public function getRegions(){
+        $service = new HomeNet_Model_House_Service();
+        return $service->getRegions($this->regions);
+    }
+    
     /**
      * @param int $id
      * @return HomeNet_Model_RoomInterface
@@ -103,18 +100,29 @@ class HomeNet_Model_House_DbTableRow extends Zend_Db_Table_Row_Abstract implemen
 
         return $room;
     }
-
+public function getRoomList(){
+        $rooms = $this->getRooms();
+        $list = array();
+        foreach($rooms as $room){
+            $list[$room->id] = $room->name;
+        }
+        return $rooms;
+    }
     public function getRooms(){
+        
+      //  die(debugArray($this->rooms));
 
         if($this->rooms !== null){
             return $this->rooms;
         }
 
         $service = new HomeNet_Model_Room_Service();
-        $rooms = $service->getObjectsByHouse($this->id);
-        $this->rooms = $rooms;
+        $this->rooms = $service->getObjectsByHouse($this->id);
+      //  $this->rooms = $rooms;
+        
+      // die(debugArray($this->rooms));
 
-        return $rooms;
+        return $this->rooms->toArray();
     }
 
 

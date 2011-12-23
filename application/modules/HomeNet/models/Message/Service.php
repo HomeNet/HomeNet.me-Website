@@ -113,6 +113,24 @@ class HomeNet_Model_Message_Service {
         }
         return $this->getMapper()->fetchObjectsByHouseOrUser($house, $user);
     }
+    
+    /**
+     * Get all messages relevant to the user or to the house
+     * 
+     * @param integer $house House id
+     * @param integer $user User id
+     * @return HomeNet_Model_Message[] (HomeNet_Model_Message_Interface[])
+     * @throws InvalidArgumentException
+     */
+    public function getObjectsByHousesOrUser(array $houses, $user) {
+//        if (!is_array($houses)) {
+//            throw new InvalidArgumentException('Invalid House');
+//        }
+        if (empty($user) || !is_numeric($user)) {
+            throw new InvalidArgumentException('Invalid User');
+        }
+        return $this->getMapper()->fetchObjectsByHousesOrUser($houses, $user);
+    }
 
     /**
      * Shortcut for creating a new message

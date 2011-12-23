@@ -210,6 +210,9 @@ $cacheFile = $config->site->cacheDirectory . '/xmlrpc.cache';
 $server = new Zend_XmlRpc_Server();
 Zend_XmlRpc_Server_Fault::attachFaultException('NotFoundException');
 Zend_XmlRpc_Server_Fault::attachFaultException('InvalidArgumentException');
+Zend_XmlRpc_Server_Fault::attachFaultException('NotSupportedException');
+Zend_XmlRpc_Server_Fault::attachFaultException('UnexpectedValueException');
+
  
 if (!Zend_XmlRpc_Server_Cache::get($cacheFile, $server)) {
 
@@ -217,9 +220,9 @@ if (!Zend_XmlRpc_Server_Cache::get($cacheFile, $server)) {
     $server->setClass('HomeNet_Model_Packet_XmlRpc', 'homenet.packet');
     $server->setClass('HomeNet_Model_Test_XmlRpc', 'homenet.test');
  
-    Zend_XmlRpc_Server_Cache::save($cacheFile, $server);
+    //Zend_XmlRpc_Server_Cache::save($cacheFile, $server);
 }
 //echo '<pre>';
 //print_r(unserialize(file_get_contents($cacheFile)));
-
+//exit;
 echo $server->handle();

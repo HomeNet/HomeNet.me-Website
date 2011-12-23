@@ -37,7 +37,7 @@ interface HomeNet_Model_Node_MapperInterface {
 
     public function fetchNextAddressByHouse($house);
 
-    public function fetchIdsByHouseType($house, $type);
+    public function fetchObjectsByHouseType($house, $type);
 
     public function save(HomeNet_Model_Node_Interface $object);
 

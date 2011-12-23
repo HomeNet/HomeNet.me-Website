@@ -25,7 +25,7 @@
  */
 class HomeNet_Plugin_Node_Processing_Node extends HomeNet_Model_Node_Abstract {
 
-    public $type = HomeNet_Model_Node_Service::INTERNET;
+    public $type = self::INTERNET;
 
     /**
      * get max number of ports

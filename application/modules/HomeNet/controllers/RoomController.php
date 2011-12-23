@@ -29,74 +29,94 @@
  */
 class HomeNet_RoomController extends Zend_Controller_Action {
 
-    private $_id;
+    /**
+     * 
+     * @var int room id
+     */
+    private $_id; 
     private $_house;
+    private $_room;
+    protected $service;
     
     public function init() {
         
-        $this->view->id = $this->_id =$this->_getParam('id');
-        $this->view->house = $this->_house = $this->_getParam('house');
+        $this->service = new HomeNet_Model_Room_Service();
+        $this->view->heading = 'Room'; //for generic templates
         
-        $this->view->region = $this->_getParam('region');
+        $this->view->id = $this->_id = $this->_getParam('id');
+        $this->view->house = $this->_house = HomeNet_Model_House_Manager::getHouseById($this->_getParam('house'));
+        
+        //$this->view->region = $this->_getParam('region');
+
+        
+        //setup bread crumbs
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Home',
+            'route'  => 'homenet',   
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => $this->_house->name,
+            'route'  => 'homenet-house',  
+            'controller' => 'house',
+            'params' => array('house'=>$this->_house->id)
+        ));
+        
+        if($this->_id !== null){
+            $this->view->room =  $this->_room = $this->_house->getRoomById($this->_getParam('id'));
+
+            $this->view->breadcrumbs()->addPage(array(
+                'label'  => $this->_room->name,
+                'route'  => 'homenet-house-id',  
+                'controller' => 'room',
+                'params' => array('house'=>$this->_house->id, 'id'=>$this->_room->id)
+            ));
+        }
     }
 
     public function indexAction() {
-        return $this->_forward('info');
+           $this->_helper->viewRenderer('info');
+            return $this->infoAction();
+        
+        //return $this->_forward('info');
     }
 
     public function infoAction() {
-        $hService = new HomeNet_Model_House_Service();
-        $house = $hService->getObjectById($this->view->house);
-        $room = $house->getRoomById($this->view->room);
-
-        $this->view->roomName = $room->name;
-
         $sService = new HomeNet_Model_Component_Service();
-        $this->view->subdevices = $sService->getObjectsByRoom($this->view->room);
+        $this->view->components = $sService->getObjectsByRoom($this->_room->id);
     }
 
     public function controlAction() {
-        $hService = new HomeNet_Model_House_Service();
-        $house = $hService->getObjectById($this->view->house);
-        $room = $house->getRoomById($this->view->room);
-
-        $this->view->roomName = $room->name;
-
+       
         $sService = new HomeNet_Model_Component_Service();
-        $this->view->subdevices = $sService->getObjectsByRoom($this->view->room);
+        $this->view->components = $sService->getObjectsByRoom($this->_room->id);
 
         if (!$this->getRequest()->isPost()) {
             
             return;
         }
 
-        //die(debugArray($this->view->subdevices));
-
-        $subdevice = $_POST['subdevice'];
+        $component = $_POST['component'];
         
-        if(!empty($this->view->subdevices[$subdevice])){
-            $this->view->subdevices[$subdevice]->processControlForm($_POST);
+        if(!empty($this->view->components[$component])){
+            $this->view->components[$component]->processControlForm($_POST);
         }
-
-
     }
 
     public function newAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        $form = new HomeNet_Form_Room();
+        
+        $hService = new HomeNet_Model_House_Service;
+        $regionIds = $hService->getRegionsById($this->_house->id);
+        
+        
+        $form = new HomeNet_Form_Room($regionIds);
 
         $form->addElement('submit', 'submit', array('label' => 'Add'));
 
-        $regionElement = $form->getElement('region');
-        
-        $hService = new HomeNet_Model_House_Service;
-        $regions = $hService->getHouseRegionNames($this->_house);
-
-        foreach ($regions as $region) {
-            $regionElement->addMultiOption($region['id'], $region['name']);
-        }
 
         if (!$this->getRequest()->isPost()) {
+            $regionElement = $form->getElement('region');
             $regionElement->setValue($this->view->region);
             $this->view->form = $form;
             return;
@@ -110,39 +130,29 @@ class HomeNet_RoomController extends Zend_Controller_Action {
 
         $values = $form->getValues();
 
-        $service = new HomeNet_Model_Room_Service();
-        $values['house'] = $this->_house;
+        $values['house'] = $this->_house->id;
 
-
-        $service->create($house);
+        $object = $this->service->create($values);
 
         $this->view->messages()->add('Successfully added room &quot;'.$object->name.'&quot;');
-        return $this->_redirect($this->view->url(array('house' => $this->_house),'homenet-house'));
+        return $this->_redirect($this->view->url(array('controller'=>'house', 'action'=>'index', 'house' => $this->_house->id),'homenet-house'));
     }
 
     public function editAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        $form = new HomeNet_Form_Room();
+        
+        $homeService = new HomeNet_Model_House_Service();
+        $regions = $homeService->getRegionsById($this->_house->id);
+
+        $form = new HomeNet_Form_Room($regions);
         $form->addElement('submit', 'submit', array('label' => 'Update'));
 
-        $regionElement = $form->getElement('region');
-
-        //$house = $hService->getObjectById($this->view->house);
         $service = new HomeNet_Model_Room_Service();
-        $object = $service->getObjectById($this->_room);
-
-        $hService = new HomeNet_Model_House_Service();
-        $regions = $hService->getHouseRegionNames($this->_house);
-
-        //die(debugArray($_SESSION['HomeNet']));
-        foreach ($regions as $region) {
-            $regionElement->addMultiOption($region['id'], $region['name']);
-        }
+        $object = $service->getObjectById($this->_id);
 
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
             $form->populate($object->toArray());
-
             $this->view->form = $form;
             return;
         }
@@ -164,7 +174,7 @@ class HomeNet_RoomController extends Zend_Controller_Action {
 
 
         $this->view->messages()->add('Successfully updated room &quot;'.$object->name.'&quot;');
-        return $this->_redirect($this->view->url(array('controller' => 'room', 'house' => $this->_house, 'id'=>$object->id),'homenet-house-id'));
+        return $this->_redirect($this->view->url(array('controller' => 'room', 'action'=>'index', 'house' => $this->_house->id, 'id'=>$object->id),'homenet-house-id'));
     }
 
     public function deleteAction() {
@@ -176,7 +186,6 @@ class HomeNet_RoomController extends Zend_Controller_Action {
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
             
-
             $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to remove "' . $object->name . '"?'));
 
             $this->view->form = $form;
@@ -188,9 +197,9 @@ class HomeNet_RoomController extends Zend_Controller_Action {
             $service->delete($object);
             
             $this->view->messages()->add('Successfully deleted room &quot;'.$name.'&quot;');
-            return $this->_redirect($this->view->url(array('house' => $this->view->house), 'homenet-house'));
+            return $this->_redirect($this->view->url(array('house' => $this->_house->id), 'homenet-house'));
         }
-        return $this->_redirect($this->view->url(array('controller'=>'room', 'house' => $this-_house, 'id' => $this->_id), 'homenet-house-id'));
+        return $this->_redirect($this->view->url(array('controller'=>'room', 'action'=>'index', 'house' => $this->_house->id, 'id' => $this->_room->id), 'homenet-house-id'));
     }
 
 }

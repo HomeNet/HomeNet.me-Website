@@ -3,9 +3,9 @@
     /* font-family: "lucida grande",tahoma,verdana,arial,sans-serif; */
 }
 
- /* Primary Styles
-    Author:
- */
+/* Primary Styles
+   Author:
+*/
 
 html {  
     height: 100%;
@@ -13,11 +13,11 @@ html {
 }
 
 .transparent {
-    
+
     background-color: rgba(0, 0, 0, 0.4);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#77000001',EndColorStr='#77000001');
-  /*  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#66000000',EndColorStr='#66000000')"; */
-  /* background-color: #000000; */
+    /*  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#66000000',EndColorStr='#66000000')"; */
+    /* background-color: #000000; */
 }
 
 
@@ -43,7 +43,7 @@ h3 {
 
 body {
     filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/themes/homenet/img/background.jpg', sizingMethod='scale');
-   /* -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/background.jpg', sizingMethod='scale')"; */
+    /* -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/background.jpg', sizingMethod='scale')"; */
 
     background: url(/themes/homenet/img/background.jpg) no-repeat center center fixed;
     -webkit-background-size: cover;
@@ -105,10 +105,10 @@ header a:link, header a:active, header a:visited  {
 }
 
 #top-menu li {
-   display: inline;
-   font-size: 16px;
-   margin: 0px 5px;
-   padding: 10px 5px 2px 5px;
+    display: inline;
+    font-size: 16px;
+    margin: 0px 5px;
+    padding: 10px 5px 2px 5px;
 }
 
 #top-menu li:hover {
@@ -142,23 +142,7 @@ footer {
     position: relative;
 }
 
-#c1 {
-    width: 160px;
-    padding: 10px;
-    margin-right: 20px;
-    
-        margin-bottom: 20px;
-        float:left;
 
-}
-
-#c2 {
-    width: 360px;
-    padding: 20px;
-    
-    margin-bottom: 20px;
-    float: right;
-}
 
 #main {
     width: 600px;
@@ -168,29 +152,51 @@ footer {
     position: relative;
 }
 
+#two-column-container {
+    width: 820px;
+    margin: 20px auto;
+    margin-bottom: 20px; 
+    position: relative;
+}
+
+
+#two-column-container > nav {
+    width: 150px;
+    padding: 10px;
+    margin-bottom: 20px;
+    float:left;
+}
+
+#two-column-container > section {
+    width: 600px;
+    padding: 20px;
+    margin-bottom: 20px;
+    float: right;
+}
+
 h2 a:link, h2 a:hover, h2 a:visited  {
     color: #FFFFFF;
 }
 
-#main h1, #c2 h1  {
+#main h1, #two-column-container h1  {
     font-size: 24px;
     width: 580px;
     padding: 0px 10px;
-   
+
     color:  #CC6600;
     /* font-weight: bold; rgba(0,0,0,.4);*/
     position: absolute;
     top: -36px;
-     left: 5px;
+    left: 5px;
     /* padding: 0 5px;
-     */
+    */
     /* filter:progid:DXImageTransform.Microsoft.Shadow(color='#66000000',direction='45',strength='1');
     filter: DropShadow(Color=#66cccccc, OffX=1, OffY=-1, Positive=1);
     text-shadow: 1px 1px 1px rgba(0,0,0,.4);
    /*     */
 }
 
-#c2 h1 {
+#two-column-container h1 {
     left:200px;
 }
 
@@ -198,7 +204,8 @@ h2 a:link, h2 a:hover, h2 a:visited  {
 
 h2 {
     font-size: 20px;
-    margin-top: 10px;
+    margin-top: 20px;
+    margin-bottom: 5px;
 }
 
 .box h2 {
@@ -220,7 +227,7 @@ label {
 }
 
 dl {
-  padding: 10px;
+    padding: 10px;
 
 }
 
@@ -241,7 +248,7 @@ legend {
 fieldset {
     padding: 5px 0;
     margin-bottom: 5px;
-   /* position: relative; */
+    /* position: relative; */
     background-color: rgba(0, 0, 0, 0.4);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#44000001',EndColorStr='#44000001');
 }
@@ -281,30 +288,30 @@ form > dl {
     /* border: solid 1px #333333; */
     padding: 0px;
     padding-top: 5px;
-  
+
     /* margin: 10px 0;
     background-color: transparent;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#FF000000',EndColorStr='#FF000000');
     clear: both;  */
 }
 dd {
-  
-  text-align: left;
 
-  /*
-  float: right;
-  width: 260px;
-  
-  */
-  display: block;
-  margin: 0 5px 5px 5px;
+    text-align: left;
+
+    /*
+    float: right;
+    width: 260px;
+    
+    */
+    display: block;
+    margin: 0 5px 5px 5px;
 }
 
 form > dl > dd { 
-  text-align: center;
-  padding:5px 0;
-  width:100%;
-  float: none;
+    text-align: center;
+    padding:5px 0;
+    width:100%;
+    float: none;
 }
 
 div > label {
@@ -319,7 +326,7 @@ dt {
     width: 260px;
     text-align: right;
     float: left;
-    
+
 }
 
 .zend_form > dt {
@@ -343,7 +350,7 @@ input[type=checkbox] {
 }
 
 .ui-button {
-   /* margin-top: 10px; */
+    /* margin-top: 10px; */
 }
 
 .cms-button-icon-right {
@@ -381,10 +388,10 @@ table .button {
 }
 
 .navMenu li {
-   list-style-position: inside;
-   display: block;
-   margin-left: 0px;
-   
+    list-style-position: inside;
+    display: block;
+    margin-left: 0px;
+
 }
 
 
@@ -400,20 +407,20 @@ table .button {
 }
 
 .house-region  {
-   color: #666666 !important;
-   left: -10px;
-   position: relative;
+    color: #666666 !important;
+    left: -10px;
+    position: relative;
 }
 
 .room-new  {
-   color: #999999 !important;
-   left: 10px; 
-   position: relative;
+    color: #999999 !important;
+    left: 10px; 
+    position: relative;
 }
 
 .navMenu > li > ul {
-   padding-left: 10px;
-   position: relative;
+    padding-left: 10px;
+    position: relative;
 }
 
 .homeNet-room-subdevice {
@@ -440,8 +447,8 @@ table .button {
 }
 
 .homenet-room-lastupdate {
-margin-top: 20px;
-padding-left: 3px;
+    margin-top: 20px;
+    padding-left: 3px;
 }
 
 .homenet-room-graph {

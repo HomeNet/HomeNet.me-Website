@@ -29,44 +29,91 @@
  */
 class HomeNet_Model_Datapoint_MapperDbTable implements HomeNet_Model_Datapoint_MapperInterface {
 
-    protected $_table = null;
+    protected $_table;
 
-    protected $_type = null;
+    protected $_type;
+    protected $_database;
+    protected $_house;
 
 
-    public function  __construct($type) {
-       $this->_type = strtolower($type) ;
+    public function  __construct($house_id, $database, $type = null) {
+        $this->_type = strtolower($type);
+        
+        $this->_house = $house_id;
+        
+        $config = Zend_Registry::get('config');
+            
+            if(APPLICATION_ENV == 'testing'){
+                $database = Zend_Db_Table_Abstract::getDefaultAdapter();
+            } else {
+                if($database == 1){
+                    $database = Zend_Db_Table_Abstract::getDefaultAdapter();
+                } elseif($database == 2){
+                    $database = Zend_Db::factory('PDO_MYSQL', array(
+                        'host'             => 'localhost',
+                        'dbname'           => 'homenet_data',
+                        'username'         => $config->resources->db->params->username,
+                        'password'         => $config->resources->db->params->password));
+                } else {
+                    throw new Exception('Invalid Database');
+                }
+            }
+        
+        $this->_database = $database;
     }
-
-
-        /**
+   
+    /**
      *
      * @return HomeNet_Model_DbTable_Datapoints;
      */
+    public function getTablePrefix(){
+        if(empty($this->_house)){
+            throw new Exception('Missing House Id');
+        }
+        return 'homenet_datapoint_' . mysql_real_escape_string($this->_house).'_';
+    }
+    
+    private function getDatabase(){
+        return $this->_database;
+    }
     
     public function getTable() {
         if ($this->_table === null) {
             
+            $prefix = $this->getTablePrefix();
+            
             switch($this->_type){
+                case HomeNet_Model_Datapoint::BOOLEAN:
                 case 'bool':
                 case 'boolean':
-                    $table = 'homenet_datapoints_boolean';
+                    $table = $prefix.'boolean';
                     break;
+                case HomeNet_Model_Datapoint::BYTE:
                 case 'byte':
-                    $table = 'homenet_datapoints_byte';
+                    $table = $prefix.'byte';
                     break;
+                case HomeNet_Model_Datapoint::FLOAT:
                 case 'float':
-                    $table = 'homenet_datapoints_float';
+                    $table = $prefix.'float';
                     break;
+                case HomeNet_Model_Datapoint::INTEGER:
                 case 'int':
                 case 'integer':
-                    $table = 'homenet_datapoints_int';
+                    $table = $prefix.'int';
                     break;
-                 case 'long':
-                    $table = 'homenet_datapoints_long';
+                case HomeNet_Model_Datapoint::LONG:
+                case 'long':
+                    $table = $prefix.'long';
+                    break;
+                default:
+                    throw new Exception('Invalid Type: '.$this->_type);
                     break;
             }
-            $this->_table = new Zend_Db_Table($table);
+            
+            
+            
+            $this->_table = new Zend_Db_Table(array('name' => $table, 
+                                                    'db' => $this->getDatabase()));
             $this->_table->setRowClass('HomeNet_Model_Datapoint_DbTableRow');
         }
         return $this->_table;
@@ -75,19 +122,84 @@ class HomeNet_Model_Datapoint_MapperDbTable implements HomeNet_Model_Datapoint_M
     public function setTable($table) {
         $this->_table = $table;
     }
+    
+    public function createTables() {
 
-    public function fetchLastObjectByComponent($subdevice) {
+        $prefix = $this->getTablePrefix();
+
+        $this->getDatabase()->query('CREATE TABLE IF NOT EXISTS `'.$prefix.'boolean` (
+          `id` int(11) unsigned NOT NULL,
+          `timestamp` datetime NOT NULL,
+          `value` tinyint(1) unsigned NOT NULL,
+          PRIMARY KEY (`id`,`timestamp`)
+        ) ENGINE=MyISAM;');
+
+        $this->getDatabase()->query('CREATE TABLE IF NOT EXISTS `'.$prefix.'byte` (
+          `id` int(11) unsigned NOT NULL,
+          `timestamp` datetime NOT NULL,
+          `value` tinyint(3) unsigned NOT NULL,
+          PRIMARY KEY (`id`,`timestamp`)
+        ) ENGINE=MyISAM;');
+
+        $this->getDatabase()->query('CREATE TABLE IF NOT EXISTS `'.$prefix.'float` (
+          `id` int(11) unsigned NOT NULL,
+          `timestamp` datetime NOT NULL,
+          `value` float NOT NULL,
+          PRIMARY KEY (`id`,`timestamp`)
+        ) ENGINE=MyISAM;');
+
+        $this->getDatabase()->query('CREATE TABLE IF NOT EXISTS `'.$prefix.'int` (
+          `id` int(11) unsigned NOT NULL,
+          `timestamp` datetime NOT NULL,
+          `value` int(11) NOT NULL,
+          PRIMARY KEY (`id`,`timestamp`)
+        ) ENGINE=MyISAM;');
+
+        $this->getDatabase()->query('CREATE TABLE IF NOT EXISTS `'.$prefix.'long` (
+          `id` int(11) NOT NULL,
+          `timestamp` datetime NOT NULL,
+          `value` bigint(20) NOT NULL,
+          PRIMARY KEY (`id`,`timestamp`)
+        ) ENGINE=MyISAM;');
+        
+        $this->getDatabase()->query('CREATE TABLE IF NOT EXISTS `'.$prefix.'messages` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          `user` int(11) DEFAULT NULL,
+          `room` int(11) DEFAULT NULL,
+          `component` int(11) DEFAULT NULL,
+          `level` tinyint(3) unsigned NOT NULL,
+          `message` varchar(128) CHARACTER SET utf8 NOT NULL,
+          PRIMARY KEY (`id`)
+        ) ENGINE=MyISAM;');
+        
+    }
+    
+    public function deleteTables(){
+         //drop table
+        $prefix = $this->getTablePrefix();
+        $result = $this->getDatabase()->query('DROP TABLE IF EXISTS `'.$prefix.'boolean`');
+        $result = $this->getDatabase()->query('DROP TABLE IF EXISTS `'.$prefix.'byte`');
+        $result = $this->getDatabase()->query('DROP TABLE IF EXISTS `'.$prefix.'float`');
+        $result = $this->getDatabase()->query('DROP TABLE IF EXISTS `'.$prefix.'int`');
+        $result = $this->getDatabase()->query('DROP TABLE IF EXISTS `'.$prefix.'long`');
+        $result = $this->getDatabase()->query('DROP TABLE IF EXISTS `'.$prefix.'messages`');
+
+        return $result;
+    }
+
+    public function fetchLastObjectById($id) {
 
         $select = $this->getTable()->select()
                         //->from($this,array('datetime','value'))
-                        ->where('subdevice = ?', $subdevice)
-                        ->order('datetime DESC')
+                        ->where('id = ?', $id)
+                        ->order('timestamp DESC')
                         ->limit(1);
 
         return $this->getTable()->fetchRow($select);
     }
 
-    public function fetchAveragesByComponentTimespan($subdevice, Zend_Date $start, Zend_Date $end, $points = null) {
+    public function fetchAveragesByIdTimespan($id, Zend_Date $start, Zend_Date $end, $points = null) {
         /*
          * @todo check that are in order
          */
@@ -111,11 +223,11 @@ $table = $this->getTable();
         $select = $table->select()
                         ->setIntegrityCheck(false)
                         ->from($table, array('average' => new Zend_Db_Expr('ROUND(AVG(value),2)'),
-                            'interval' => new Zend_Db_Expr('FLOOR(UNIX_TIMESTAMP(datetime)/' . $interval . ')')))
-                        ->where('subdevice = ?', $subdevice)
-                        ->where('datetime > ?', $start->toString('YYYY-MM-dd HH:mm:ss'))
-                        ->where('datetime < ?', $end->toString('YYYY-MM-dd HH:mm:ss'))
-                        ->order('datetime ASC')
+                            'interval' => new Zend_Db_Expr('FLOOR(UNIX_TIMESTAMP(timestamp)/' . $interval . ')')))
+                        ->where('id = ?', $id)
+                        ->where('timestamp > ?', $start->toString('YYYY-MM-dd HH:mm:ss'))
+                        ->where('timestamp < ?', $end->toString('YYYY-MM-dd HH:mm:ss'))
+                        ->order('timestamp ASC')
                         ->group('interval');
         // ->order('interval ASC');
 
@@ -182,14 +294,14 @@ $table = $this->getTable();
         return $datapoints;
     }
 
-    public function fetchObjectsByComponentTimespan($subdevice, Zend_Date $start, Zend_Date $end) {
+    public function fetchObjectsByIdTimespan($id, Zend_Date $start, Zend_Date $end) {
 
         $select = $this->getTable()->select()
                         //->from($this,array('datetime','value'))
-                        ->where('subdevice = ?', $subdevice)
-                        ->where('datetime > ?', $start->toString('YYYY-MM-dd HH:mm:ss'))
-                        ->where('datetime < ?', $end->toString('YYYY-MM-dd HH:mm:ss'))
-                        ->order('datetime ASC');
+                        ->where('id = ?', $id)
+                        ->where('timestamp > ?', $start->toString('YYYY-MM-dd HH:mm:ss'))
+                        ->where('timestamp < ?', $end->toString('YYYY-MM-dd HH:mm:ss'))
+                        ->order('timestamp ASC');
 
         return $this->getTable()->fetchAll($select);
     }
@@ -198,13 +310,15 @@ $table = $this->getTable();
 
         if (($object instanceof HomeNet_Model_Datapoint_DbTableRow) && ($object->isConnected())) {
             return $object->save();
-        } elseif ($object->id !== null) {
-            $row = $this->getTable()->find($object->id);
-        } else {
+        } elseif (($object->id !== null) && ($object->timestamp !== null)) {
+            $row = $this->getTable()->find($object->id, $object->timestamp)->current();
+        } 
+        
+        if(empty($row)){
             $row = $this->getTable()->createRow();
         }
 
-        $row->setFromArray($object->toArray());
+        $row->fromArray($object->toArray());
         
         return $row->save();
     }
@@ -213,8 +327,8 @@ $table = $this->getTable();
 
         if (($object instanceof HomeNet_Model_Datapoint_DbTableRow) && ($object->isConnected())) {
             return $object->delete();
-        } elseif ($object->id !== null) {
-            return $this->getTable()->find($object->id)->current()->delete();
+        } elseif (($object->id !== null) && ($object->timestamp !== null)) {
+            return $this->getTable()->find($object->id, $object->timestamp)->current()->delete();
         }
 
         throw new HomeNet_Model_Exception('Invalid Datapoint');

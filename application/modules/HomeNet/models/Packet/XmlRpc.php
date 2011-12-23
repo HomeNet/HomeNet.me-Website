@@ -32,14 +32,17 @@ class HomeNet_Model_Packet_XmlRpc extends HomeNet_Model_Api {
      * @param struct $params hashmap of values
      * @return boolean return true if valid
      */
-    public function process($params) {
+    public function submit($params) {
 
         $defaults = array('apikey' => null, 'timestamp' => null, 'packet' => null);
         $params = $this->_prepareParams($params, $defaults);
 
         $manager = new HomeNet_Model_Packet_Manager();
+        
+        $apikeyService = new HomeNet_Model_Apikey_Service;
+        $apikey = $apikeyService->getObjectById($params['apikey']);
 
-        $rawPacket = $packet;
+       // $rawPacket = $packet;
 
         //return $decoded = htmlspecialchars(print_r($value,1));
 
@@ -48,7 +51,6 @@ class HomeNet_Model_Packet_XmlRpc extends HomeNet_Model_Api {
 
         try {
             $packet->loadXmlRpc($params);
-            $packet->save();
         } catch (Exception $e) {
             return $e->getMessage();
         }
@@ -57,37 +59,33 @@ class HomeNet_Model_Packet_XmlRpc extends HomeNet_Model_Api {
         //file_put_contents(APPLICATION_PATH . '/packet.log', print_r($packet->toArray(),true)."\r\n Base64 decoded: ".$decoded."\r\n",FILE_APPEND);
         //  return $apikey->house .'-'. $packet->fromNode .'-'. $packet->fromDevice;
      
+        //@todo move this to a service or manager
+        
+        
         try {
-            $nService = new HomeNet_Model_Node_Service();
+            $nodeService = new HomeNet_Model_Node_Service();
 
-            $node = $nService->getObjectByHouseNode($apikey->house, $packet->fromNode);
+            $node = $nodeService->getObjectByHouseAddress($apikey->house, $packet->fromNode);
+            //@todo validate this this is a  internetnode
+            //update uplink's ip address if it changed
+            $uplinkNode = $nodeService->getObjectById($node->uplink);
 
-            $uplinkNode = $nService->getObjectById($node->uplink);
-
-            if ($uplinkNode->ipaddress != $_SERVER['REMOTE_ADDR']) {
-                $uplinkNode->ipaddress = $_SERVER['REMOTE_ADDR'];
-                $nService->update($uplinkNode);
+            if (isset($_SERVER['REMOTE_ADDR']) && ($uplinkNode->getSetting('ipaddress') != $_SERVER['REMOTE_ADDR'])) {
+                $uplinkNode->setSetting('ipaddress', $_SERVER['REMOTE_ADDR']);
+                $nodeService->update($uplinkNode);
             }
-        } catch (Zend_Exception $e) {
-            return $e->getMessage();
+        } catch (Exception $e) {
+            throw new InvalidArgumentException($e->getMessage());
         }
 
 
-        $dService = new HomeNet_Model_Device_Service();
+        $deviceService = new HomeNet_Model_Device_Service();
 
-        try {
-            $driver = $dService->getObjectByHouseNodeDevice($apikey->house, $packet->fromNode, $packet->fromDevice);
-            // return "true";
-
-            $driver->processPacket($packet);
-        } catch (Zend_Exception $e) {
-            return $e->getMessage();
-        }
-
-        // return htmlspecialchars(print_r(error_get_last(),true));
-        //return print_r($packet->payload->getValue(),1);
-
-        return "true";
+        //@throws NotFoundException || InvaildArgumentException //Pass these errors to the user
+        $object = $deviceService->getObjectByHouseNodeaddressPosition($apikey->house, $packet->fromNode, $packet->fromDevice);
+        $object->processPacket($packet);
+        
+        return true;
     }
-
+//recompile2
 }

@@ -68,9 +68,15 @@ class HomeNet_Model_DeviceModel_MapperDbTable implements HomeNet_Model_DeviceMod
             return $object->save();
         } elseif ($object->id !== null) {
             $row = $this->getTable()->find($object->id)->current();
-        } else {
+        } 
+        
+        if(empty($row)) {
             $row = $this->getTable()->createRow();
         }
+        
+       // var_dump($row);
+       // exit;
+      //  debug_print_backtrace();
 
         $row->fromArray($object->toArray());
         // die(debugArray($row));

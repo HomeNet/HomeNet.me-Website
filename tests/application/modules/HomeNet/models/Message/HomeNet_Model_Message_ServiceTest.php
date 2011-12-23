@@ -86,7 +86,7 @@ class HomeNet_Model_Message_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('InvalidArgumentException');
         $result = $this->service->getObjectById(null);
     }
-
+//$this->service->getObjectsByUser($user)///////////////////////////////////////
     public function testGetObjectsByUser_valid() {
         $object = $this->createValidObject();
         $results = $this->service->getObjectsByUser($object->user);
@@ -99,9 +99,10 @@ class HomeNet_Model_Message_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('InvalidArgumentException');
         $this->service->getObjectsByUser(null);
     }
-
+//$this->service->getObjectsByHouseOrUser($house, $user)////////////////////////
     public function testGetObjectsByHouseOrUser_valid() {
         $object = $this->createValidObject();
+        
         $results = $this->service->getObjectsByHouseOrUser($object->house, $object->user);
         $this->validateResult($results[0]);
     }
@@ -117,7 +118,27 @@ class HomeNet_Model_Message_ServiceTest extends PHPUnit_Framework_TestCase {
         $object = $this->createValidObject();
         $this->service->getObjectsByHouseOrUser($object->house, null);
     }
-
+//$this->service->getObjectsByHousesOrUser($houses, $user)////////////////////////
+    public function testGetObjectsByHousesOrUser_valid() {
+        $object = $this->createValidObject();
+        
+        $results = $this->service->getObjectsByHousesOrUser(array($object->house), $object->user);
+        $this->validateResult($results[0]);
+    }
+    
+    public function testGetObjectsByHousesOrUser_nullHouse() {
+        $this->setExpectedException('PHPUnit_Framework_Error'); //expect php error
+        $object = $this->createValidObject();
+        $this->service->getObjectsByHousesOrUser(null, $object->user);
+    }
+    
+    public function testGetObjectsByHousesOrUser_nullUser() {
+        $this->setExpectedException('InvalidArgumentException');
+        $object = $this->createValidObject();
+        $this->service->getObjectsByHousesOrUser(array($object->house), null);
+    }
+    
+//getObjectsByHousesOrUser
     public function testAdd() {
         $result = $this->service->add(HomeNet_Model_Message::ERROR, 'test message', 1, 2, 3, 4);
 

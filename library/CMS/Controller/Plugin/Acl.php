@@ -33,6 +33,8 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
         $auth = Zend_Auth::getInstance();
 
         $user = Core_Model_User_Manager::getUser();
+        
+        
 
         $module =     strtolower($request->getModuleName());
         $controller = strtolower($request->getControllerName());
@@ -80,6 +82,8 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
 //        }
 //       echo "<br>";
 //       die('Failed Acl: '.$user->name.', ' . $module . ' > ' . $controller . ' > ' . $action);
+
+      
         if (!$acl->isAllowed($user, $cResource, $action)) {
             
             $dispatcher = Zend_Controller_Front::getInstance()->getDispatcher();

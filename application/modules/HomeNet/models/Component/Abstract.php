@@ -27,18 +27,22 @@
 abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Component_Interface {
 
     public $settings = array();
-    public $id = null;
+    public $id;
+    public $house;
+    public $room;
     //public $node;
     public $device;
     public $model;
     public $position = 0;
     public $order = 0;
-    public $room = null;
+    
     public $name;
-    public $permissions = '';
+    //public $permissions = '';
 
-    public $plugin = null;
-    public $modelName = null;
+    //imported from ComponentModel
+    public $plugin;
+    public $model_name;
+    public $datatype;
 
     private $_house;
     private $_controls;
@@ -51,6 +55,15 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
     private $_datapointService;
 
     //public $units = '';
+    
+    const NONE = null;
+    const BOOLEAN = 1;
+    const BYTE = 2;
+    const INTEGER = 3;
+    const FLOAT = 4;
+    const LONG = 5;
+    const STRING = 6;
+    const BINARY = 7;
 
      public function __construct(array $config = array()) {
         //load data
@@ -62,14 +75,23 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
         if (isset($config['model']) && $config['model'] instanceof HomeNet_Model_ComponentModel_Interface) {
             $this->loadModel($config['model']);
         }
-
-
-
+    }
+    
+    public function getDatatypes(){
+        return array(
+            'None'    => self::NONE,
+            'Boolean' => self::BOOLEAN,
+            'Byte'    => self::BYTE,
+            'Integer' => self::INTEGER,
+            'Float'   => self::FLOAT,
+            'Long'    => self::LONG,
+            'String'  => self::STRING,
+            'Binary'  => self::BINARY);
     }
     
      public function fromArray(array $array) {
 
-        $vars = array('id', 'device', 'model', 'room', 'position', 'order', 'name', 'permissions');
+        $vars = array('id', 'house', 'room', 'device', 'model',  'position', 'order', 'name');
 
         foreach ($array as $key => $value) {
             if (in_array($key, $vars)) {
@@ -90,14 +112,14 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
 
         $array = array(
             'id' => $this->id,
-            'device' => $this->device,
+            'house' => $this->house,
             'room' => $this->room,
+            'device' => $this->device,
             'model' => $this->model,
             'position' => $this->position,
             'order' => $this->order,
             'name' => $this->name,
-            'settings' => $this->settings,
-            'permissions' => $this->permissions);
+            'settings' => $this->settings);
 
         return $array;
     }
@@ -121,7 +143,7 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
      * @param HomeNet_Model_ComponentModelInterface $model
      */
     public function loadModel(HomeNet_Model_ComponentModel_Interface $model) {
-        $this->modelName = $model->name;
+        $this->model_name = $model->name;
         $this->model = $model->id;
         $this->plugin = $model->plugin;
         //$this->type = $model->type;
@@ -137,6 +159,10 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
     }
 
     public function getHouse() {
+        if($this->_house === null){
+            $this->_house = HomeNet_Model_House_Manager::getHouseById($this->house);
+        }
+        
         return $this->_house;
     }
 
@@ -181,7 +207,7 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
         $name = $sub->createElement('text', 'name');
         $name->setLabel('Name: ');
         if (empty($this->name)) {
-            $name->setValue($this->modelName);
+            $name->setValue($this->model_name);
         } else {
             $name->setValue($this->name);
         }
@@ -445,21 +471,20 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
 
 
     /**
-     * @return HomeNet_Model_DbTable_DatapointsAbstract
+     * @return HomeNet_Model_Datapoint_Service
      */
-    public function getDatapointService(){
+    public function getDatapointService() {
 
-        if(!empty($this->_datapointService)){
-            return $this->_datapointService;
+        if ($this->_datapointService === null) {
+            if (empty($this->settings['datatype'])) {
+                throw new Zend_Exception($this->model_name . ' ' . $this->name . ' doesn\'t have a datatype');
+            }
+
+            $this->_datapointService = new HomeNet_Model_Datapoint_Service($this->getHouse(), $this->settings['datatype']);
         }
 
-        if (empty($this->settings['datatype'])) {
-            throw new Zend_Exception($this->modelName.' '.$this->name.' doesn\'t have a datatype');
-        }
 
-        $this->_datapointService = new HomeNet_Model_Datapoint_Service();
-        $this->_datapointService->setType($this->settings['datatype']);
-
+        // $this->_datapointService->setType($this->settings['datatype']);
 //        $class = 'HomeNet_Model_DbTable_Datapoints' . ucfirst($this->settings['datatype']);
 //
 //        if (!class_exists($class)) {
@@ -468,12 +493,22 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
 //
 //        $this->_datapointService = new $class();
 //
-       return $this->_datapointService;
+        return $this->_datapointService;
     }
 
 
-    public function saveDatapoint($value, $timestamp) {
-        throw new Zend_Exception('This component doesn\'t save datapoints');
+    /**
+     * @param type $timestamp 
+     * @param type $value 
+     */
+    public function saveDatapoint($timestamp, $value) {
+
+        if ($this->datatype === null) {
+            throw new NotSupportedException('This component doesn\'t save data');
+        }
+
+        $dService = new HomeNet_Model_Datapoint_Service($this->getHouse(), $this->datatype);
+        $dService->add($this->id,$timestamp, $value);
     }
 
 }

@@ -33,7 +33,9 @@ class HomeNet_Plugin_Layout extends Zend_Controller_Plugin_Abstract
             return;
         }
 
-        // Change layout
+        $layout = Zend_Registry::get('layout');
+        /* @var $layout Zend_Layout   */
+        $layout->setLayout('two-column');
         
     }
 }

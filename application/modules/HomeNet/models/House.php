@@ -37,8 +37,17 @@ class HomeNet_Model_House implements HomeNet_Model_House_Interface {
     public $type;
     public $regions;
     public $settings;
-    public $permissions;
+    
+    public $database;
+    
     public $rooms;
+    
+    
+    const STATUS_DELETED = -1;
+    const STATUS_NORMAL = 1;
+    
+    const DB_TYPE_MYSQL = 1;
+    const DB_TYPE_MONGODB = 2;
 
     public function  __construct(array $config = array()) {
         if(isset($config['data'])){
@@ -76,6 +85,20 @@ class HomeNet_Model_House implements HomeNet_Model_House_Interface {
 
         return $room;
     }
+    
+    public function getRegions(){
+        $service = new HomeNet_Model_House_Service();
+        return $service->getRegions($this->regions);
+    }
+    
+    public function getRoomList(){
+        $rooms = $this->getRooms();
+        $list = array();
+        foreach($rooms as $room){
+            $list[$room->id] = $room->name;
+        }
+        return $rooms;
+    }
 
     public function getRooms(){
 
@@ -83,11 +106,10 @@ class HomeNet_Model_House implements HomeNet_Model_House_Interface {
             return $this->rooms;
         }
 
-        $service = new HomeNet_Model_RoomsService();
-        $rooms = $service->getRoomsByHouse($this->id);
-        $this->rooms = $rooms;
-
-        return $rooms;
+        $service = new HomeNet_Model_Room_Service();
+        $this->rooms = $service->getObjectsByHouse($this->id);
+        
+        return $this->rooms;
     }
 
     public function getSetting($setting){

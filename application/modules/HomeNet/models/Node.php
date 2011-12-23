@@ -38,7 +38,7 @@ class HomeNet_Model_Node extends HomeNet_Model_Node_Abstract {
 //    public $created;
 //    public $settings;
 //
-//    public $modelName = null;
+//    public $model_name = null;
 //    public $driver = null;
 //
 //    public function  __construct(array $config = array()) {
@@ -53,7 +53,7 @@ class HomeNet_Model_Node extends HomeNet_Model_Node_Abstract {
 //
 //   public function fromArray(array $array) {
 //
-//        $vars = array('id', 'node', 'model', 'uplink', 'house', 'room', 'description', 'created', 'settings', 'modelName', 'driver');
+//        $vars = array('id', 'node', 'model', 'uplink', 'house', 'room', 'description', 'created', 'settings', 'model_name', 'driver');
 //
 //        foreach ($array as $key => $value) {
 //            if (in_array($key, $vars)) {
@@ -77,7 +77,7 @@ class HomeNet_Model_Node extends HomeNet_Model_Node_Abstract {
 //            'description' => $this->description,
 //            'created' => $this->created,
 //            'settings' => $this->settings,
-//            'modelName' => $this->modelName,
+//            'model_name' => $this->model_name,
 //            'driver' => $this->driver );
 //    }
 //
