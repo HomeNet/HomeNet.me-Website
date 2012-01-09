@@ -163,7 +163,7 @@ class Content_TemplateController extends Zend_Controller_Action {
 
         $section = $object->section;
         
-        if (!empty($_POST['delete'])) {
+        if (!empty($_POST['confirm'])) {
             $url = $object->url;
             $service->deleteById($object->id);
             $this->view->messages()->add('Successfully Deleted Template &quot;' . $url . '&quot;');

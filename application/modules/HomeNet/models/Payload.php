@@ -191,7 +191,31 @@ class HomeNet_Model_Payload
 
 
     public function setBoolean($payload){
+        $this->_type = self::BYTE;
         
+        if(is_array($payload)){
+        
+        foreach($payload as $key => $value){
+
+            if($value == true){
+                $payload[$key] = 255;
+            } else {
+                $payload[$key] = 0;
+            }
+
+        }
+        
+        
+        } else {
+             if($payload == true){
+                $payload = 255;
+            } else {
+                $payload = 0;
+            }
+        }
+        
+        
+        $this->_data = $this->pack('C*',$payload,'int');
     }
 
     public function getType(){
@@ -228,7 +252,17 @@ class HomeNet_Model_Payload
     }
 
     public function getBoolean(){
+        $array = unpack('C*',$this->_data);
 
+        foreach($array as $key => $value){
+            if($value == 0){
+                $array[$key] = false;
+            } else {
+                $array[$key] = true;
+            }
+        }
+
+        return $array;
     }
 
     public function getByteArray(){

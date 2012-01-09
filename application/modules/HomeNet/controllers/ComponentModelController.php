@@ -149,7 +149,7 @@ class HomeNet_ComponentModelController extends Zend_Controller_Action {
         }
 
         //need to figure out why this isn't in values
-        if (!empty($_POST['delete'])) {
+        if (!empty($_POST['confirm'])) {
             $name = $object->name;
             $service->delete($object);
             $this->view->messages()->add('Successfully deleted ComponentModel &quot;'.$name.'&quot;');

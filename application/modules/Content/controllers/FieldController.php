@@ -175,7 +175,7 @@ class Content_FieldController extends Zend_Controller_Action {
         
         $section = $object->section;
 
-        if (!empty($_POST['delete'])) {
+        if (!empty($_POST['confirm'])) {
             
             $label = $object->label;
             $service->delete($object);

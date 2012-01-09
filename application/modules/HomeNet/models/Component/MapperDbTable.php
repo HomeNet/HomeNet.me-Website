@@ -59,22 +59,24 @@ class HomeNet_Model_Component_MapperDbTable implements HomeNet_Model_Component_M
 
     }
 
-    public function fetchObjectsByDevice($device) {
+    public function fetchObjectsByDevice($device, $status = HomeNet_Model_Component::STATUS_LIVE) {
 
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('device = ?', $device)
+                ->where('homenet_components.status = ?', $status)
                 ->join('homenet_component_models', 'homenet_component_models.id = homenet_components.model', array('plugin', 'datatype', 'name AS model_name'))
                 ->order('order ASC');
 
         return $this->getTable()->fetchAll($select);
     }
 
-    public function fetchObjectsByRoom($room) {
+    public function fetchObjectsByRoom($room, $status = HomeNet_Model_Component::STATUS_LIVE) {
 
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('room = ?', $room)
+                ->where('homenet_components.status = ?', $status)
                 ->join('homenet_component_models', 'homenet_component_models.id = homenet_components.model', array('plugin', 'datatype', 'name AS model_name'))
                 ->order('order ASC');
 

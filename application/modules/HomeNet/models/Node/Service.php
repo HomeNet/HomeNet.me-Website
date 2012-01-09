@@ -130,7 +130,26 @@ class HomeNet_Model_Node_Service {
             throw new InvalidArgumentException('Invalid House Id');
         }
 
-        $results = $this->getMapper()->fetchObjectsByHouse($house);
+        $results = $this->getMapper()->fetchObjectsByHouse($house, HomeNet_Model_Node::STATUS_LIVE);
+   
+//        if (empty($result)) {
+//            throw new NotFoundException('House: '.$house.' Not Found', 404);
+//        }
+        return $this->_getPlugins($results);
+    }
+    /**
+     * Get Nodes by house id
+     * 
+     * @param int $house
+     * @return HomeNet_Model_Node[] (HomeNet_Model_Node_Interface[])
+     * @throws InvalidArgumentException
+     */
+    public function getTrashedObjectsByHouse($house) {
+        if (empty($house) || !is_numeric($house)) {
+            throw new InvalidArgumentException('Invalid House Id');
+        }
+
+        $results = $this->getMapper()->fetchObjectsByHouse($house, HomeNet_Model_Node::STATUS_TRASHED);
 
 //        if (empty($result)) {
 //            throw new NotFoundException('House: '.$house.' Not Found', 404);
@@ -289,16 +308,51 @@ class HomeNet_Model_Node_Service {
         $object = $nmService->getObjectById($id);
 
         if(empty($object->plugin)){
-            throw new HomeNet_Model_Exception('Missing Component Driver');
+            throw new InvalidArgumentException('Missing Component Driver');
         }
         
         $class = 'HomeNet_Plugin_Node_'.$object->plugin.'_Node';
 
         if(!class_exists($class, true)){
-            throw new HomeNet_Model_Exception('Node Plugin: '.$object->plugin.' Doesn\'t Exist');
+            throw new InvalidArgumentException('Node Plugin: '.$object->plugin.' Doesn\'t Exist');
         }
 
         return new $class(array('model' => $object));
+    }
+    
+    
+    /**
+     * Mark a node as deleted and cascades to all child elements
+     * 
+     * @param HomeNet_Model_Node_Interface $object 
+     */
+    public function trash(HomeNet_Model_Node_Interface $object){
+        $object->status = HomeNet_Model_Node::STATUS_TRASHED;
+        $result = $this->update($object);
+        
+        $devices = $object->getDevices();
+        $service = new HomeNet_Model_Device_Service();
+        foreach($devices as $device){
+            $service->trash($device);
+        }
+        return $result;
+    }
+    
+    /**
+     * Undelete a node and cascades to all child elements
+     * 
+     * @param HomeNet_Model_Node_Interface $object 
+     */
+    public function untrash(HomeNet_Model_Node_Interface $object){
+        $object->status = HomeNet_Model_Node::STATUS_LIVE;
+        $result = $this->update($object);
+        
+        $devices = $object->getDevices();
+        $service = new HomeNet_Model_Device_Service();
+        foreach($devices as $device){
+            $service->untrash($device);
+        }
+        return $result;
     }
 
     /**
@@ -389,17 +443,21 @@ class HomeNet_Model_Node_Service {
         } else {
             throw new InvalidArgumentException('Invalid Node');
         }
+        
+        $devices = $object->getDevices();
 
         $result = $this->getMapper()->delete($object);
-//
-//        if ($object->type == HomeNet_Model_Node::INTERNET) {
-//            $this->getInternetMapper()->delete($object);
-//        }
+        
+        
+        if (!empty($devices)) {
 
-        // $houseService = new HomeNet_Model_House_Service();
-        // $houseService->clearCacheById($this->house);
+            $deviceService = new HomeNet_Model_Device_Service();
+            foreach ($devices as $device) {
+                $deviceService->delete($device);
+            }
+        }
 
-        /* @todo add message */
+        return $result;
 
         return $result;
     }

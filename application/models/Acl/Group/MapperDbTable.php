@@ -55,21 +55,21 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
     
     public function fetchObjectsByGroup($group){
        $select = $this->getTable()->select()
-               ->where('`group` = ?',$group)
+               ->where('`group` = ? or `group` is NULL',$group)
                ->where('object is NULL');
       return $this->getTable()->fetchAll($select);
     }
     
     public function fetchObjectsByGroups(array $groups){
        $select = $this->getTable()->select()
-               ->where('`group` in (?)',$groups)
+               ->where('`group` in (?) or `group` is NULL',$groups)
                 ->where('object is NULL');
       return $this->getTable()->fetchAll($select);
     }
     
     public function fetchObjectsByGroupsModule(array $groups, $module) {
         $select = $this->getTable()->select()
-        ->where('`group` in (?)', $groups)
+        ->where('`group` in (?) or `group` is NULL', $groups)
         ->where('(module = ? OR module is NULL)', $module)
         ->order(array('controller','action'));
         
@@ -78,7 +78,7 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
     
     public function fetchObjectsByGroupsModuleController($groups, $module, $controller) {
         $select = $this->getTable()->select()
-        ->where('`group` in (?)', $groups)
+        ->where('`group` in (?) or `group` is NULL', $groups)
         ->where('(module = ? OR module is NULL)', $module)
         ->where('(controller = ? or controller is NULL)', $controller)           
         ->where('object is NULL')
@@ -89,7 +89,7 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
     
     public function fetchObjectsByGroupsModuleControllerObject($groups, $module, $controller, $object) {
         $select = $this->getTable()->select()
-        ->where('`group` in (?)', $groups)
+        ->where('`group` in (?) or `group` is NULL', $groups)
         ->where('module = ?', $module)
         ->where('controller = ?', $controller)    
         ->where('object = ?', $object)
@@ -100,7 +100,7 @@ class Core_Model_Acl_Group_MapperDbTable implements Core_Model_Acl_Group_MapperI
     
     public function fetchObjectsByGroupsModuleControllerObjects($groups, $module, $controller, $objects) {
         $select = $this->getTable()->select()
-        ->where('`group` in (?)', $groups)
+        ->where('`group` in (?) or `group` is NULL', $groups)
         ->where('module = ?', $module)
         ->where('controller = ?', $controller)    
         ->where('object in (?)', $objects)

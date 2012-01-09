@@ -44,54 +44,75 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
         //build breadcrumbs
         
         $this->view->house = $this->_house = HomeNet_Model_House_Manager::getHouseById($this->_getParam('house'));
-       // $this->view->room =  $this->_room = $this->_house->getRoomById($this->_getParam('room'));
+     
         $this->view->node =  $this->_node = HomeNet_Model_Node_Manager::getNodeByHouseAddress($this->_house->id, $this->_getParam('node'));
+        $this->view->room =  $this->_room = $this->_house->getRoomById($this->_node->room);
         
-//        $this->view->breadcrumbs()->addPage(array(
-//            'label'  => 'Home',
-//            'route'  => 'homenet',   
-//        ));
-//        
-//        $this->view->breadcrumbs()->addPage(array(
-//            'label'  => $this->_house->name,
-//            'route'  => 'homenet-house',  
-//            'controller' => 'house',
-//            'params' => array('house'=>$this->_house->id)
-//        ));
-//        
-//        $this->view->breadcrumbs()->addPage(array(
-//            'label'  => $this->_room->name,
-//            'route'  => 'homenet-house',  
-//            'controller' => 'room',
-//            'params' => array('house'=>$this->_house->id)
-//        ));
-//        
-//        $this->view->breadcrumbs()->addPage(array(
-//            'label'  => $this->_node->model_name,
-//            'route'  => 'homenet-house-id',  
-//            'controller' => 'node',
-//            'params' => array('house'=>$this->_house->id,
-//               // 'room'=>$this->_room->id,
-//                'id'=>$this->_node->address,)
-//        ));
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Home',
+            'route'  => 'homenet',   
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => $this->_house->name,
+            'route'  => 'homenet-house',  
+            'controller' => 'house',
+            'params' => array('house'=>$this->_house->id)
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => $this->_room->name,
+            'route'  => 'homenet-house',  
+            'controller' => 'room',
+            'params' => array('house'=>$this->_house->id)
+        ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => $this->_node->model_name,
+            'route'  => 'homenet-house-id',  
+            'controller' => 'node',
+            'params' => array('house'=>$this->_house->id,
+               // 'room'=>$this->_room->id,
+                'id'=>$this->_node->address,)
+        ));
         if($this->_id !== null){
             $this->view->device =  $this->_device = $this->service->getObjectByHouseNodeaddressPosition($this->_house->id, $this->_node->address, $this->_id);
 
-//            $this->view->breadcrumbs()->addPage(array(
-//            'label'  => $this->_node->model_name,
-//            'route'  => 'homenet-house-id',  
-//            'controller' => 'node',
-//            'params' => array('house'=>$this->_house->id,
-//               // 'room'=>$this->_room->id,
-//                'id'=>$this->_node->address,)
-//            ));
+            $this->view->breadcrumbs()->addPage(array(
+            'label'  => $this->_device->model_name,
+            'route'  => 'homenet-house-id',  
+            'controller' => 'node',
+            'params' => array('house'=>$this->_house->id,
+               // 'room'=>$this->_room->id,
+                'id'=>$this->_node->address,)
+            ));
         }
 
         
     }
 
     public function indexAction() {
-        // action body
+         $this->view->maxDevices = $this->_node->max_devices;
+        //$settings = unserialize($model->settings);
+
+        $dService = new HomeNet_Model_Device_Service();
+
+        $d = $dService->getObjectsByNode($this->_node->id);
+
+        $devices = array();
+        foreach ($d as $value) {
+            $devices[$value->position] = $value;
+        }
+
+        $this->view->devices = $devices;
+    }
+    
+    public function trashedAction() {
+        $dService = new HomeNet_Model_Device_Service();
+
+        $devices = $dService->getTrashedObjectsByNode($this->_node->id);
+
+        $this->view->devices = $devices;
     }
 
     public function newAction() {
@@ -167,7 +188,7 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
         $object = $this->service->newObjectFromModel($model);
         $object->house = $this->_house->id;
         $object->setHouse($this->_house);
-       $object->setRoomId($this->_node->room);
+       $object->setRoom($this->_room);
 
         //get setup form
         $form = $object->getConfigForm();
@@ -197,7 +218,13 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
 
        // try {
             $object->processConfigForm($form->getValues());
+            
+           // var_dump($object);
+           
+            
+            $object->status = HomeNet_Model_Device::STATUS_LIVE;
             $this->service->create($object);
+ 
        // } catch (Zend_Exception $e){
        //     $this->view->error = $e->getMessage();
        //     $this->view->form = $form;
@@ -211,7 +238,7 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
 
         $object = $this->_device; //$dService->getObjectByNodePosition($this->view->node, $this->view->position);
-        var_dump($object);
+      //  var_dump($object);
 
 
 //$object->setHouse($this->view->house);
@@ -221,11 +248,11 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
 
         $form->addElement('submit', 'add', array('label' => 'Update'));
 
-        if (!$this->getRequest()->isPost() && !$form->isValid($_POST)) {
+      //  if (!$this->getRequest()->isPost() && !$form->isValid($_POST)) {
             // Failed validation; redisplay form
             $this->view->form = $form;
             return;
-        }
+      //  }
 
       //  try {
             $object->processConfigForm($form->getValues());
@@ -236,8 +263,52 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
        //     $this->view->form = $form;
           //  return;
        // }
-        return;
+
         $this->view->messages()->add('Successfully updated device &quot;' . $object->position . '&quot;');    
+        return $this->_redirect($this->view->url(array('controller' => 'node', 'house'=>$this->_house->id, 'id'=>$this->_node->address),'homenet-house-id'));
+    }
+    
+    public function trashAction() {
+        $this->_helper->viewRenderer->setNoController(true); //use generic templates
+        
+         $form = new Core_Form_Confirm('Trash');
+
+        if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
+
+            $form->addDisplayGroup($form->getElements(), 'node', array ('legend' => 'Are you sure you want to trash device "'.$this->_device->model_name.'"?'));
+            $this->view->form = $form;
+            return;
+        }
+
+        $values = $form->getValues();
+
+        if(!empty($_POST['confirm'])){
+            $description = $this->_device->id;
+            $this->service->trash($this->_device);
+            $this->view->messages()->add('Successfully trashed device &quot;' . $description . '&quot;');
+        }
+        return $this->_redirect($this->view->url(array('controller' => 'node', 'house'=>$this->_house->id, 'id'=>$this->_node->address),'homenet-house-id'));
+    }
+    
+    public function untrashAction() {
+        $this->_helper->viewRenderer->setNoController(true); //use generic templates
+        
+        $form = new Core_Form_Confirm('Untrash');
+
+        if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
+            $form->addDisplayGroup($form->getElements(), 'node', array ('legend' => 'Are you sure you want to untrash device "'.$this->_device->model_name.'"?'));
+            $this->view->form = $form;
+            return;
+        }
+
+        $values = $form->getValues();
+
+        //need to figure out why this isn't in values
+        if(!empty($_POST['confirm'])){
+            $description = $this->_device->id;
+            $this->service->untrash($this->_device);
+            $this->view->messages()->add('Successfully untrashed device &quot;' . $description . '&quot;');
+        }
         return $this->_redirect($this->view->url(array('controller' => 'node', 'house'=>$this->_house->id, 'id'=>$this->_node->address),'homenet-house-id'));
     }
 
@@ -248,8 +319,7 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
 
-            $form->addDisplayGroup($form->getElements(), 'node', array ('legend' => 'Are you sure you want to remove device "'.$this->_device->model_name.'"?'));
-
+            $form->addDisplayGroup($form->getElements(), 'node', array ('legend' => 'Are you sure you want to delete device "'.$this->_device->model_name.'"? All associated data will be deleted. Be sure to export any data you wish to keep before continuing.'));
             $this->view->form = $form;
             return;
         }
@@ -257,17 +327,11 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
         $values = $form->getValues();
 
         //need to figure out why this isn't in values
-        if(!empty($_POST['delete'])){
+        if(!empty($_POST['confirm'])){
+            $description = $this->_device->id;
             $this->service->delete($this->_device);
-            $this->view->messages()->add('Successfully deleted device &quot;' . $object->position . '&quot;');
-            //return $this->_redirect($this->view->url(array('house'=>$this->view->house, 'node'=>$this->view->node),'homenet-node').'?message=Deleted');
+            $this->view->messages()->add('Successfully deleted device &quot;' . $description . '&quot;');
         }
-        return $this->_redirect($this->view->url(array('controller' => 'node', 'house'=>$this->_house->id, 'node'=>$this->_node->address),'homenet-house-id'));
+        return $this->_redirect($this->view->url(array('controller' => 'node', 'house'=>$this->_house->id, 'id'=>$this->_node->address),'homenet-house-id'));
     }
-
-    public function configureAction() {
-        // action body
-    }
-
 }
-

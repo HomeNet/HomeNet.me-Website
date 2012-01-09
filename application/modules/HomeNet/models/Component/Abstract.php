@@ -28,6 +28,7 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
 
     public $settings = array();
     public $id;
+    public $status;
     public $house;
     public $room;
     //public $node;
@@ -64,6 +65,9 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
     const LONG = 5;
     const STRING = 6;
     const BINARY = 7;
+    
+    const STATUS_LIVE = 1;
+    const STATUS_TRASHED = 0;
 
      public function __construct(array $config = array()) {
         //load data
@@ -91,7 +95,8 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
     
      public function fromArray(array $array) {
 
-        $vars = array('id', 'house', 'room', 'device', 'model',  'position', 'order', 'name');
+        $vars = array('id', 'house', 'room', 'device', 'model',  'position', 'order', 'name', 
+            'plugin', 'model_name', 'datatype');
 
         foreach ($array as $key => $value) {
             if (in_array($key, $vars)) {
@@ -143,9 +148,10 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
      * @param HomeNet_Model_ComponentModelInterface $model
      */
     public function loadModel(HomeNet_Model_ComponentModel_Interface $model) {
-        $this->model_name = $model->name;
+        $this->name = $this->model_name = $model->name;
         $this->model = $model->id;
         $this->plugin = $model->plugin;
+        $this->datatype = $model->datatype;
         //$this->type = $model->type;
         if(is_array($model->settings)){
         $this->settings = array_merge($this->settings, $model->settings);
@@ -475,12 +481,13 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
      */
     public function getDatapointService() {
 
-        if ($this->_datapointService === null) {
-            if (empty($this->settings['datatype'])) {
+        if ($this->_datapointService === null) {          
+            
+            if (empty($this->datatype)) {
                 throw new Zend_Exception($this->model_name . ' ' . $this->name . ' doesn\'t have a datatype');
             }
 
-            $this->_datapointService = new HomeNet_Model_Datapoint_Service($this->getHouse(), $this->settings['datatype']);
+            $this->_datapointService = new HomeNet_Model_Datapoint_Service($this->getHouse(), $this->datatype);
         }
 
 
@@ -501,7 +508,7 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
      * @param type $timestamp 
      * @param type $value 
      */
-    public function saveDatapoint($timestamp, $value) {
+    public function saveDatapoint(Zend_Date $timestamp, $value) {
 
         if ($this->datatype === null) {
             throw new NotSupportedException('This component doesn\'t save data');

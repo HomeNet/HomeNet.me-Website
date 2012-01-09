@@ -123,7 +123,7 @@ class Admin_MenuController extends Zend_Controller_Action {
         $values = $form->getValues();
        // $id = $object->set;
         //need to figure out why this isn't in values
-        if (!empty($_POST['delete'])) {
+        if (!empty($_POST['confirm'])) {
 
             $cService->delete($object);
             return $this->_redirect($this->view->url(array('controller' => 'menu', 'action' => 'index'), 'admin') . '?message=Deleted');

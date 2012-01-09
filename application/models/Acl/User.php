@@ -49,6 +49,13 @@ class Core_Model_Acl_User implements Core_Model_Acl_User_Interface {
     public $action;
     
     /**
+     * id of specific collection of items in the module
+     * 
+     * @var int
+     */
+    public $collection;
+    
+    /**
      * id of specific object to control
      * 
      * @var int

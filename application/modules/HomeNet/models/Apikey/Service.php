@@ -68,7 +68,7 @@ class HomeNet_Model_Apikey_Service {
     public function getObjectById($id) {
         
         if (empty($id) || !is_string($id)) {
-            throw new InvalidArgumentException('Invalid Id');
+            throw new InvalidArgumentException('Invalid Apikey: '.$id);
         }
         
         $result = $this->getMapper()->fetchObjectById($id);

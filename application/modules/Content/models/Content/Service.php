@@ -200,6 +200,9 @@ class Content_Model_Content_Service {
         }
 
         $result = $this->getMapper()->save($object);
+        
+        //save addtional data as required by elements
+        //@todo create custom function that only pulls the elements that are saveable/deleteable
 
         $fields = $object->getSection()->getFields();
         foreach ($fields as $key => $value) {
@@ -230,6 +233,7 @@ class Content_Model_Content_Service {
 
         $result = $this->getMapper()->save($object);
 
+        //save addtional data as required by elements
         $fields = $object->getSection()->getFields();
         foreach ($fields as $key => $value) {
             // die('called'.$key);
@@ -239,6 +243,8 @@ class Content_Model_Content_Service {
                 $o->save($result);
             }
         }
+        
+       // die('Check Now');
 
         return $result;
     }

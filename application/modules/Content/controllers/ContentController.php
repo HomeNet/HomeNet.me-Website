@@ -134,8 +134,9 @@ class Content_ContentController extends Zend_Controller_Action {
         $values = $form->getValues();
         $values['owner'] = Core_Model_User_Manager::getUser()->id;
         $object->fromArray($values);
+        
         $service->update($object);
-
+        //exit;
         $this->view->messages()->add('Successfully Updated Content &quot;' . $object->title . '&quot;');
         return $this->_redirect($this->view->url(array('controller' => 'content', 'action' => 'index', 'id' => $object->section), 'content-admin-id')); //
     }
@@ -160,7 +161,7 @@ class Content_ContentController extends Zend_Controller_Action {
         
         $section = $object->section;
         
-        if (!empty($_POST['delete'])) {
+        if (!empty($_POST['confirm'])) {
             
             $title = $object->title;
             $service->delete($object);

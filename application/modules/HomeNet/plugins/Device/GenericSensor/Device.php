@@ -25,7 +25,9 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 class HomeNet_Plugin_Device_GenericSensor_Device extends HomeNet_Model_Device_Abstract {
+     public function getSchedule() {
 
-
-
+        $default = array(0, 60, $this->getDeviceVariable(), 4095, 0, HomeNet_Model_Packet::GETVALUE, '""');
+        return array($default);
+    }
 }

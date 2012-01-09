@@ -29,6 +29,7 @@
 abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interface {
 
     public $id;
+    public $status;
     public $house;
     public $room;
     public $address;
@@ -56,6 +57,9 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
     const INTERNET = 3;
     const BASESTATION = 2;
     const SENSOR = 1;
+    
+    const STATUS_LIVE = 1;
+    const STATUS_TRASHED = 0;
 
     public function  __construct(array $config = array()) {
 
@@ -72,7 +76,7 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
 
    public function fromArray(array $array) {
 
-        $vars = array('id', 'address', 'model', 'uplink', 'house', 'room', 'description', 'created', 'model_name','max_devices', 'driver', 'type', 'ipaddress', 'status','direction');
+        $vars = array('id', 'status', 'address', 'model', 'uplink', 'house', 'room', 'description', 'created', 'model_name','max_devices', 'driver', 'type', 'ipaddress', 'direction');
 
         foreach ($array as $key => $value) {
             if (in_array($key, $vars)) {
@@ -98,6 +102,7 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
 
         return array(
             'id' => $this->id,
+            'status' => $this->status,
             'address' => $this->address,
             'model' => $this->model,
             'uplink' => $this->uplink,

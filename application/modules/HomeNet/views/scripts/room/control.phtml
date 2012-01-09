@@ -1,4 +1,4 @@
-<h1><?php echo $this->roomName ?></h1>
+<?php echo $this->heading($this->room->name); ?>
 <div class="homeNet-room-menu">
 <a class="button"  href="<?php echo $this->url(array('controller'=>'room', 'action' => 'info', 'house' => $this->house->id, 'id' => $this->id, ), 'homenet-house-id') ?>">Information</a>
 <a class="ui-state-hover button" href="<?php echo $this->url(array('controller'=>'room', 'action' => 'control', 'house' => $this->house->id, 'id' => $this->id), 'homenet-house-id') ?>">Control</a></div>

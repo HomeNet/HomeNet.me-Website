@@ -210,6 +210,32 @@ class HomeNet_Model_Device_Service {
         }
         return $array;
     }
+    
+    /**
+     * Get Devices by node
+     * 
+     * @param type $node
+     * @return HomeNet_Model_Device[] (HomeNet_Model_Device_Interface[]) 
+     * @throws InvalidArgumentException
+     */
+    public function getTrashedObjectsByNode($node) {
+        if (empty($node) || !is_numeric($node)) {
+            throw new InvalidArgumentException('Invalid Id');
+        }
+        //@todo valide not exists
+        $devices = $this->getMapper()->fetchObjectsByNode($node, HomeNet_Model_Device::STATUS_TRASHED);
+
+        if (empty($devices)) {
+            // throw new HomeNet_Model_Exception('Device not found', 404);
+        }
+
+        $array = array();
+
+        foreach ($devices as $device) {
+            $array[$device->position] = $this->_getPlugin($device);
+        }
+        return $array;
+    }
 
     /**
      * Get Device by house, node, device
@@ -237,6 +263,7 @@ class HomeNet_Model_Device_Service {
         if (empty($result)) {
             throw new NotFoundException('Device not found ' . "$house, $nodeAddress, $position", 404);
         }
+
         return $this->_getPlugin($result);
     }
 
@@ -260,6 +287,42 @@ class HomeNet_Model_Device_Service {
         }
         return $result;
     }
+    
+    /**
+     * Mark a device as deleted and cascades to all child elements
+     * 
+     * @param HomeNet_Model_Device_Interface $object 
+     */
+    public function trash(HomeNet_Model_Device_Interface $object){
+        $object->status = HomeNet_Model_Device::STATUS_TRASHED;
+        $result = $this->update($object);
+        
+        $components = $object->getComponents();
+        $service = new HomeNet_Model_Component_Service();
+        foreach($components as $component){
+            $service->trash($component);
+        }
+        return $result;
+    }
+    
+    /**
+     * Undelete a device and cascades to all child elements
+     * 
+     * @param HomeNet_Model_Device_Interface $object 
+     */
+    public function untrash(HomeNet_Model_Device_Interface $object){
+        $object->status = HomeNet_Model_Device::STATUS_LIVE;
+        $result = $this->update($object);
+        
+        $components = $object->getComponents();
+        $service = new HomeNet_Model_Component_Service();
+        foreach($components as $component){
+            $service->untrash($component);
+        }
+        return $result;
+    }
+    
+    
 
     /**
      * Create a new Device
@@ -280,15 +343,16 @@ class HomeNet_Model_Device_Service {
         $result = $this->getMapper()->save($object);
 
         $components = $object->getComponents(false);
-//
+
         if (!empty($components)) {
 
             $sService = new HomeNet_Model_Component_Service();
             foreach ($components as $component) {
+                $component->status = $object->status;
                 $component->house = $object->house;
-                $component->room = $object->room;
+                $component->room = $object->getRoom()->id;
                 $component->device = $result->id;
-                // die(debugArray($subdevice));
+
                 $sService->create($component);
             }
         }

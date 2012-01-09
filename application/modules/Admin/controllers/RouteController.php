@@ -121,7 +121,7 @@ class Admin_RouteController extends Zend_Controller_Action
         $values = $form->getValues();
 
         //need to figure out why this isn't in values
-        if(!empty($_POST['delete'])){
+        if(!empty($_POST['confirm'])){
             
             $csService->delete($object);
             return $this->_redirect($this->view->url(array('controller'=>'route'),'admin-route').'?message=Deleted');

@@ -143,6 +143,11 @@ class Content_Plugin_Element_Editor_Element extends Content_Model_Plugin_Element
     private $_helpers = array();
     private $_document;
     
+    public function setValue($value){
+        parent::setValue($value);
+        $this->_document = null; //force rebuild of document
+    }
+    
     public function getDocument(){
         if(empty($this->_document)){
             $this->_document = new DOMDocument;

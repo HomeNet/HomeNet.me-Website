@@ -122,7 +122,7 @@ public function getRoomList(){
         
       // die(debugArray($this->rooms));
 
-        return $this->rooms->toArray();
+        return $this->rooms;//->toArray();
     }
 
 

@@ -101,5 +101,14 @@ class Content_Model_Section implements Content_Model_Section_Interface {
         return $this->_fields;
     }
     
+    public function getField($name){
+        $fields = $this->getFields();
+        if(!empty($fields[$name])){
+            return $fields[$name];
+        }
+        
+        return null;
+    }
+    
 
 }

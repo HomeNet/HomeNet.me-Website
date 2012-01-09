@@ -135,7 +135,7 @@ class Content_SectionController extends Zend_Controller_Action
             return;
         }
 
-        if(!empty($_POST['delete'])){
+        if(!empty($_POST['confirm'])){
             $title = $object->title;
             $csService->delete($object);
             $this->view->messages()->add('Successfully Added Section &quot;' . $title . '&quot;');

@@ -42,12 +42,13 @@ class HomeNet_IndexController extends Zend_Controller_Action {
       //  if($this->_house !== null)
         
         if ($this->_house !== null) {
+            die('house not null');
             $this->_helper->viewRenderer('house');
             return $this->houseAction();
         }
         
         
-        if (count($houseIds) >= 0) {
+        if (count($houseIds) > 0) {
             $this->_forward('home');
             return;
         }

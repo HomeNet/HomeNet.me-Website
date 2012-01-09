@@ -147,7 +147,7 @@ class HomeNet_DeviceModelController extends Zend_Controller_Action {
         $values = $form->getValues();
 
         //need to figure out why this isn't in values
-        if (!empty($_POST['delete'])) {
+        if (!empty($_POST['confirm'])) {
             $name = $object->name;
             $service->delete($object);
             $this->view->messages()->add('Successfully deleted DeviceModel &quot;'.$name.'&quot;');

@@ -75,21 +75,23 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
 //        return $this->getTable()->fetchAll($select);
 //    }
 
-    public function fetchObjectsByHouse($house) {
+    public function fetchObjectsByHouse($house, $status = HomeNet_Model_Node::STATUS_LIVE) {
 
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('house = ?', $house)
+                ->where('homenet_nodes.status = ?', $status)
                 ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS model_name', 'type', 'max_devices', 'settings AS model_settings'));
 
         return $this->getTable()->fetchAll($select);
     }
 
-    public function fetchObjectsByRoom($room) {
+    public function fetchObjectsByRoom($room, $status = HomeNet_Model_Node::STATUS_LIVE) {
 
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('room = ?', $room)
+                ->where('homenet_nodes.status = ?', $status)
                 ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS model_name', 'type','max_devices', 'settings AS model_settings'));
 
         return $this->getTable()->fetchAll($select);
@@ -119,17 +121,26 @@ class HomeNet_Model_Node_MapperDbTable implements HomeNet_Model_Node_MapperInter
                 ->order('address DESC')
                 ->limit(1);
         $row = $this->getTable()->fetchRow($select);
+        if(empty($row)){
+            return null;
+        }
+        
         $next = $row['address'] + 1;
+        if($next == 255){
+            $next++;
+        }
         return $next;
     }
 
-    public function fetchObjectsByHouseType($house, $type) {
+    public function fetchObjectsByHouseType($house, $type, $status = HomeNet_Model_Node::STATUS_LIVE) {
 
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('house = ?', $house)
+                ->where('homenet_nodes.status = ?', $status)
                 ->join('homenet_node_models', 'homenet_node_models.id = homenet_nodes.model', array('plugin', 'name AS model_name', 'type', 'settings AS model_settings'))
                 ->where('homenet_node_models.type = ?', $type);
+        
 
         return $this->getTable()->fetchAll($select);
     }

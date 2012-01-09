@@ -19,7 +19,8 @@ class Content_Model_Field_ServiceTest extends PHPUnit_Framework_TestCase {
      */
     protected function setUp() {
         
-
+        $this->installer = new Installer();
+        $this->installer->installTest();
         
         $this->contentInstaller = new Content_Installer();
         $this->contentInstaller->installTest();

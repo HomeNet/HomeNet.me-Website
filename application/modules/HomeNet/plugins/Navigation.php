@@ -59,6 +59,11 @@ class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
 
         // $userHousesIds = $service->getHouseIdsByUser();
         $userHousesIds = HomeNet_Model_House_Manager::getHouseIds();
+        
+        if(empty($userHousesIds)){
+            return;
+        }
+        
 
         $houses = array();
 

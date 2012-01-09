@@ -27,11 +27,19 @@
 class Core_Form_Confirm extends Zend_Form 
 {
 
+    public $label;
+    
+    public function __construct($label = 'Delete') {
+        $this->label = $label;
+        parent::__construct();
+        
+    }
+    
     public function init()
     {
         $this->setMethod('post');
         $this->setElementDecorators( array( 'ViewHelper' ) );
-        $this->addElement('submit', 'delete', array('label' => 'Delete'));
+        $this->addElement('submit', 'confirm', array('label' => $this->label));
         $this->addElement('submit', 'cancel', array('label' => 'Cancel'));
 
         $this->addElement('hash', 'hash', array('salt' => 'unique'));

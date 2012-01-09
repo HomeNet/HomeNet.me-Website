@@ -1,0 +1,32 @@
+<?php echo $this->heading('Trashed','Devices'); 
+//$rooms = $this->house->getRoomList();
+?>
+
+<div class="cms ui-widget ui-widget-content ui-corner-all">
+<div class="ui-widget-content">
+<table width="100%">
+    <thead class="ui-widget-header">
+        <tr><th width="30">Device</th><th>Device</th><th width="55"></th></tr>
+    </thead>
+    <tbody>
+       <?php foreach($this->devices as $object){ ?>
+        <tr  class="<?php echo $this->cycle(array("", "ui-state-default"))->next() ?>" >
+            <td><?php echo $object->position; ?></td>
+            <td><?php echo $object->model_name; ?></td>
+            <td>
+                <a class="button" data-text="false" data-icon="ui-icon-arrowreturnthick-1-w" title="Untrash Device &quot;<?php echo $object->position ?>&quot;" 
+                   href="<?php echo $this->url(array('controller' => 'device', 'action' => 'untrash', 'house' => $this->house->id, 'node' => $this->node->address, 'id' => $object->position),'homenet-house-node-id'); ?>">
+                    Edit
+                </a> 
+                <a class="button" data-text="false" data-icon="ui-icon-close" title="Delete Node &quot;<?php echo $object->position ?>&quot;" 
+                   href="<?php echo $this->url(array('controller' => 'device', 'action' => 'delete', 'house' => $this->house->id, 'node' => $this->node->address, 'id' => $object->position),'homenet-house-node-id'); ?>">
+                    Delete
+                </a>
+            </td>
+           
+        </tr>
+        <?php
+        }
+        ?>
+    </tbody>
+</table>

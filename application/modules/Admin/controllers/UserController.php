@@ -109,7 +109,7 @@ class Admin_UserController extends Zend_Controller_Action
             return;
         }
 
-        if (!empty($_POST['delete'])) {
+        if (!empty($_POST['confirm'])) {
 
             $title = $object->title;
             $cService->delete($object);

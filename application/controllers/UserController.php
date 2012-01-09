@@ -39,7 +39,14 @@ class UserController extends Zend_Controller_Action
 
     public function newAction()
     {
-        $form   = new Core_Form_User();
+        $config = Zend_Registry::get('config');
+        if($config->site->registrationEnabled == false){
+            $this->view->form = 'Registration Disabled';
+            return;
+        }
+        
+        
+        $form   = new Core_Form_Registration();
         //$form->setAction('/user/new');
         if (!$this->getRequest()->isPost()) {
             $this->view->form = $form;

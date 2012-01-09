@@ -67,6 +67,10 @@ abstract class Content_Model_Plugin_Element {
         return  $this->render();
     }
     
+    public function setValue($value){
+        $this->_value = $value;
+    }
+    
     public function hasValue(){
         return !empty($this->_value);
     }

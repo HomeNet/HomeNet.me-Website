@@ -60,34 +60,34 @@ $convert->setMultiOptions(array('' => 'None',
         $this->setSetting('convert', $values['convert']);
     }
 
-    public function saveDatapoint($value, $timestamp) {
-
-//        if (empty($this->settings['datatype'])) {
-//            throw new Zend_Exception('this subdevice doesn\'t have a datatype to save a value');
-//        }
-
-
-
-//        $class = 'HomeNet_Model_DbTable_Datapoints' . ucfirst($this->settings['datatype']);
+//    public function saveDatapoint( $timestamp) {
 //
-//        if (!class_exists($class)) {
-//            throw new Zend_Exception('Invalid Datatype: ' . $class);
-//        }
-
-        $dService = new HomeNet_Model_Datapoint_Service();
-        $dService->add('Float',$this->id,$value,$timestamp);
-
-//        $table = new $class();
-//        // $table = new HomeNet_Model_DbTable_DatapointsBoolean();
+////        if (empty($this->settings['datatype'])) {
+////            throw new Zend_Exception('this subdevice doesn\'t have a datatype to save a value');
+////        }
 //
-//        $row = $table->createRow();
 //
-//        $row->subdevice = $this->id;
-//        $row->datetime = $timestamp;
 //
-//        //$value = $this->_convertValue($value);
-//        $row->value = $value;
+////        $class = 'HomeNet_Model_DbTable_Datapoints' . ucfirst($this->settings['datatype']);
+////
+////        if (!class_exists($class)) {
+////            throw new Zend_Exception('Invalid Datatype: ' . $class);
+////        }
 //
-//        $row->save();
-    }
+//        $dService = new HomeNet_Model_Datapoint_Service();
+//        $dService->add('Float',$this->id,$value,$timestamp);
+//
+////        $table = new $class();
+////        // $table = new HomeNet_Model_DbTable_DatapointsBoolean();
+////
+////        $row = $table->createRow();
+////
+////        $row->subdevice = $this->id;
+////        $row->datetime = $timestamp;
+////
+////        //$value = $this->_convertValue($value);
+////        $row->value = $value;
+////
+////        $row->save();
+//    }
 }

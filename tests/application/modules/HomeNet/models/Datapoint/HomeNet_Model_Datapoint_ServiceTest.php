@@ -196,7 +196,7 @@ class HomeNet_Model_Datapoint_ServiceTest extends PHPUnit_Framework_TestCase {
 //$this->service->add($type, $id, $timestamp, $value)///////////////////////////
     public function testAdd() {
         $date = new Zend_Date();
-        $this->service->add('int', 1, $date, 1);
+        $this->service->add('int', $date, 1);
     }
 
 //$this->service->create($mixed)//////////////////////////////////////////////// 

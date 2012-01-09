@@ -28,6 +28,7 @@
 abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Interface {
 
     public $id;
+    public $status;
     public $house;
     public $node;
     public $model;
@@ -44,6 +45,8 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
     protected $_room;
     protected $_components;
 
+    const STATUS_LIVE = 1;
+    const STATUS_TRASHED = 0;
 
 
     /**
@@ -64,7 +67,7 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
      */
     public function fromArray(array $array) {
 
-        $vars = array('id', 'house', 'node', 'model', 'position', 'components', 'created' , 'driver', 'model_name');
+        $vars = array('id', 'status', 'house', 'node', 'model', 'position', 'components', 'created' , 'driver', 'model_name');
 
         foreach ($array as $key => $value) {
             if (in_array($key, $vars)) {
@@ -84,6 +87,7 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
 
         $array = array(
             'id' => $this->id,
+            'status' => $this->status,
             'house' => $this->house,
             'node' => $this->node,
             'model' => $this->model,
@@ -119,8 +123,14 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
             $cService = new HomeNet_Model_Component_Service();
             
             foreach($model->settings['components'] as $value){
-                $this->_components[] = $cService->newObjectFromModel($value);
+                $component = $cService->newObjectFromModel($value);
+                if($model->settings['components']){
+                    
+                }
+                $this->_components[] = $component;
             }
+           // var_dump($this->_components);
+          //  exit;
         }
     }
 
@@ -173,7 +183,7 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
         return $this->_house;
     }
 
-    public function setRoomId($room) {
+    public function setRoom($room) {
         $this->_room = $room;
     }
 
@@ -284,9 +294,12 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
 
         $r = $housesService->getRegionsById($this->house);
 
-        foreach($r as $region){
-            $regions[$region['id']] = $region['name'];
-        }
+        
+        $regions = $housesService->getRegions($r);
+        
+//        foreach($r as $region){
+//            $regions[$region['id']] = $region['name'];
+//        }
 
         foreach($house->rooms as $room){
                 $region = $regions[$room->region];
@@ -309,7 +322,8 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
                 
                 //set default name
                 $name = $sub->getElement('name');//
-                if(empty($component->name) && !empty($this->settings['component'.$position.'name'])){
+                //die($this->settings['component'.$position.'name']);
+                if(!empty($this->settings['component'.$position.'name'])){
                     $name->setValue($this->settings['component'.$position.'name']); 
                 } 
                
@@ -317,7 +331,7 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
                 $room->setMultiOptions($rooms);
 
                 if(empty($component->room)){
-                    $room->setValue($this->getRoom());
+                    $room->setValue($this->getRoom()->id);
                 }
 
                 $sub->setLegend('Component ' . $position . ': ' . $component->name);
@@ -414,7 +428,7 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
 
     public function processPacket(HomeNet_Model_Packet $packet){
         
-        $supportedCommands = array(HomeNet_Model_Packet::BINARY, HomeNet_Model_Packet::FLOAT, HomeNet_Model_Packet::BYTE, HomeNet_Model_Packet::INT, HomeNet_Model_Packet::LONG);
+        $supportedCommands = array(HomeNet_Model_Packet::BINARY, HomeNet_Model_Packet::BOOLEAN, HomeNet_Model_Packet::FLOAT, HomeNet_Model_Packet::BYTE, HomeNet_Model_Packet::INT, HomeNet_Model_Packet::LONG);
         if(!in_array($packet->command, $supportedCommands)){
             throw new UnexpectedValueException('this device doesn\'t can\'t process command '.print_r($packet->command,1));
         }
@@ -428,11 +442,12 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
         }
 */
         $components = $this->getComponents();
-        var_dump($components);
-        exit;
+       // var_dump($components);
+      //  exit;
         foreach ($components as $object) {
-            if (!empty($object) && !empty($value[$object->order+1])) {
-                $object->saveDatapoint($packet->timestamp->get('YYYY-MM-dd HH:mm:ss'), $value[$object->order+1]);
+            if (!empty($object) && !empty($value[$object->order+1])) { //->get('YYYY-MM-dd HH:mm:ss')
+                
+                $object->saveDatapoint($packet->timestamp, $value[$object->order+1]);
             }
         }
     }

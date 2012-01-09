@@ -6,7 +6,7 @@
 <div class="ui-widget-content">
 <table width="100%">
     <thead class="ui-widget-header">
-        <tr><th width="30">Device</th><th>Device</th><th width="55"></th></tr>
+        <tr><th width="30">Plug</th><th>Device</th><th width="55"></th></tr>
     </thead>
     <tbody>
        <?php for($i = 1; $i <= $this->maxDevices; $i++){ ?>
@@ -23,8 +23,8 @@
                    href="<?php echo $this->url(array('controller' => 'device', 'action' => 'edit', 'house' => $this->house->id, 'node' => $this->node->address, 'id' => $object->position),'homenet-house-node-id'); ?>">
                     Edit
                 </a> 
-                <a class="button" data-text="false" data-icon="ui-icon-trash" title="Trash Node &quot;<?php echo $i ?>&quot;" 
-                   href="<?php echo $this->url(array('controller' => 'device', 'action' => 'trash', 'house' => $this->house->id, 'node' => $this->node->address, 'id' => $object->position),'homenet-house-node-id'); ?>">
+                <a class="button" data-text="false" data-icon="ui-icon-close" title="Delete Node &quot;<?php echo $i ?>&quot;" 
+                   href="<?php echo $this->url(array('controller' => 'device', 'action' => 'delete', 'house' => $this->house->id, 'node' => $this->node->address, 'id' => $object->position),'homenet-house-node-id'); ?>">
                     Delete
                 </a>
             </td>

@@ -40,7 +40,7 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
      */
 
     public function __construct() {
-
+        $this->device = new stdClass();
     }
 
     public function getAdminBlocks() {
@@ -59,6 +59,27 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
 
     public function getOptionalContent() {
         return array('node_models', 'device_models', 'component_models');
+    }
+    
+    public function installGroupAcl() {
+        
+        
+        
+        //$config = Zend_Registry::get('config');
+       // $guests = $config->site->group->guests;
+       // $members = $config->site->group->default;
+        
+        
+        return array(
+            array('group' => null, 'module' => 'homenet', 'controller' => 'apikey', 'action' => null, 'permission' => 1),
+            array('group' => null, 'module' => 'homenet', 'controller' => 'component', 'action' => null, 'permission' => 1),
+            array('group' => null, 'module' => 'homenet', 'controller' => 'device', 'action' => null, 'permission' => 1),
+            array('group' => null, 'module' => 'homenet', 'controller' => 'house', 'action' => null, 'permission' => 1),
+            array('group' => null, 'module' => 'homenet', 'controller' => 'index', 'action' => null, 'permission' => 1),
+            array('group' => null, 'module' => 'homenet', 'controller' => 'node', 'action' => null, 'permission' => 1),
+            array('group' => null, 'module' => 'homenet', 'controller' => 'room', 'action' => null, 'permission' => 1),
+            array('group' => null, 'module' => 'homenet', 'controller' => 'setup', 'action' => null, 'permission' => 1),
+        );
     }
 
     public function installOptionalContent(array $list) {
@@ -110,12 +131,14 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
             $deviceModels[] = array('id' => 20, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 8, 'plugin' => 'Generic', 'name' => 'Contact Switch: Door',      'description' => '',                                        'image' => null, 'settings' => array('components' => array(17),     'driver' => 'ContactSwitch'));
             $deviceModels[] = array('id' => 21, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 8, 'plugin' => 'Generic', 'name' => 'Contact Switch: Window',    'description' => '',                                        'image' => null, 'settings' => array('components' => array(16),     'driver' => 'ContactSwitch'));
             $deviceModels[] = array('id' => 22, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 8, 'plugin' => 'Generic', 'name' => 'Motion Sensor',             'description' => '',                                        'image' => null, 'settings' => array('components' => array(18),     'driver' => 'MotionSensor'));
-
+            
             $service = new HomeNet_Model_DeviceModel_Service();
 
             foreach ($deviceModels as $object) {
                 $service->create($object);
             }
+            
+            $this->deviceModel = $service->getObjectById(3);
         }
         if (in_array('component_models', $list)) {
 
@@ -216,7 +239,9 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
             $this->nodeModel = $service->create($array);
 
             $service = new HomeNet_Model_Node_Service;
-            $array = array('address' => 1,
+            $array = array(
+                'status' => HomeNet_Model_Node::STATUS_LIVE,
+                'address' => 1,
                 'model' => $this->nodeModel->id,
                 'uplink' => 1,
                 'house' => $this->house->id,
@@ -227,19 +252,37 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
             //var_dump($this->node);
             //exit;
         }
+        
+        
 
         if (in_array('device', $list)) {
 
             $this->installOptionalContent(array('device_models', 'component_models'));
-
+            
             $service = new HomeNet_Model_Device_Service;
-            $object = $service->newObjectFromModel(3);
-            $object->house = $this->house->id;
-            $object->room = 1;
-            $object->node = $this->node->id;
-            $object->position = 1;
+            
+            //HomeNet_Model_Component::BOOLEAN, HomeNet_Model_Component::BYTE,   HomeNet_Model_Component::INTEGER, HomeNet_Model_Component::FLOAT,    HomeNet_Model_Component::LONG
+            $devices = array();
+            $devices['boolean'] = $service->newObjectFromModel(1);
+            $devices['byte'] = $service->newObjectFromModel(2);
+            $devices['int'] = $service->newObjectFromModel(3);
+            $devices['float'] = $service->newObjectFromModel(4);
+            $devices['long'] = $service->newObjectFromModel(5);
+            
+            $count = 1;
+            foreach($devices as $key => $object){
+                $object->house = $this->house->id;
+                $object->room = 1;
+                $object->node = $this->node->id;
+                $object->position = $count;
+                $count++;
+                $this->device->$key = $service->create($object);
+            }
+
+            
+            
  
-            $this->device = $service->create($object);
+            
         }
     }
 

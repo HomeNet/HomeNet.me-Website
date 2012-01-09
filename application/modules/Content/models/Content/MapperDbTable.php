@@ -19,7 +19,6 @@
  * along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
  */
 
-require_once "MapperInterface.php";
 
 /**
  * @package Content

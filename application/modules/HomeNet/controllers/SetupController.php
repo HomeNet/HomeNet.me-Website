@@ -136,6 +136,11 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $house = new HomeNet_Model_House(array('data' => $values));
         $house->setSetting('setup', 2);
         $house = $this->_housesService->create($house);
+        
+        $messageService = new HomeNet_Model_Message_Service();
+        $url = $this->view->url(array('controller'=>'setup', 'house' => $house->id, 'action' => 'index'), 'homenet-house-id');
+        $messageService->add(HomeNet_Model_Message::NEWITEM, 'Congrates on starting your HomeNet. If you need to, you can return to the <a href="'.$url.'">Setup Wizard</a>', $user->id);
+       
 
         //redirect to the next step
         return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $house->id, 'action' => 'step', 'id' => 2), 'homenet-house-id'));
@@ -200,7 +205,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
 
         $nService = new HomeNet_Model_Node_Service();
 
-        $ids = $nService->getIdsByHouseType($this->_house->id, HomeNet_Model_Node::INTERNET);
+        $ids = $nService->getUplinksByHouse($this->_house->id);//getIdsByHouseType($this->_house->id, HomeNet_Model_Node::INTERNET);
 
         if (empty($ids)) {
             $model = 0;
@@ -272,10 +277,11 @@ class HomeNet_SetupController extends Zend_Controller_Action {
 
     public function step4Action() {
         
-        $form = new HomeNet_Form_Node(2);  //only load model types 2
+        $form = new HomeNet_Form_Node(2,$this->_house->id);  //only load model types 2
         $form->removeElement('uplink');
-        $form->removeElement('node');
+        $form->removeElement('address');
         $form->removeElement('description');
+        $form->removeElement('room');
 
         $submit = $form->addElement('submit', 'submit', array('label' => 'Next'));
 
@@ -290,7 +296,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
 
         $values = $form->getValues();
 
-        $ids = $nService->getIdsByHouseType($this->_house->id, HomeNet_Model_Node::INTERNET);
+        $ids = $nService->getUplinksByHouse($this->_house->id);//getIdsByHouseType($this->_house->id, HomeNet_Model_Node::INTERNET);
         if(!$ids){
             throw new Exception('Missing Internet ID');
         }
@@ -304,25 +310,26 @@ class HomeNet_SetupController extends Zend_Controller_Action {
 
         
         $rooms = $this->_house->getRooms();
+        $room = $rooms[0];
         
         $node->address = 1;
         $node->house = $this->_house->id;
-        $node->room = $rooms[0]->id;
+        $node->room = $room->id;
         $node->uplink = $uplink;
         
         $node = $nService->create($node);
 
         $dService = new HomeNet_Model_Device_Service();
         $device = $dService->newObjectFromModel(16); // = Status Leds
-
+        $device->house = $this->_house->id;
         $device->node = $node->id;
         $device->position = 1;
+        $device->setRoom($room);
 
         $components = $device->getComponents(false);
+
         $components[0]->name = 'Red LED';
-        $components[0]->room = $room->id;
         $components[1]->name = 'Green LED';
-        $components[1]->room = $room->id;
 
         $dService->create($device);
 
@@ -400,10 +407,11 @@ class HomeNet_SetupController extends Zend_Controller_Action {
 
     public function step7Action() {
 
-        $form = new HomeNet_Form_Node(1); //limit model type
+        $form = new HomeNet_Form_Node(1, $this->_house->id); //limit model type
         $form->removeElement('uplink');
-        $form->removeElement('node');
+        $form->removeElement('address');
         $form->removeElement('description');
+        $form->removeElement('room');
 
         $submit = $form->addElement('submit', 'submit', array('label' => 'Next'));
 
@@ -419,7 +427,7 @@ class HomeNet_SetupController extends Zend_Controller_Action {
 
         $nService = new HomeNet_Model_Node_Service();
 
-        $ids = $nService->getIdsByHouseType($this->_house->id, HomeNet_Model_Node::INTERNET);
+        $ids = $nService->getUplinksByHouse($this->_house->id);//getIdsByHouseType($this->_house->id, HomeNet_Model_Node::INTERNET);
         $uplink = current($ids);
 
         //get room
@@ -438,16 +446,15 @@ class HomeNet_SetupController extends Zend_Controller_Action {
 
         $dService = new HomeNet_Model_Device_Service();
         $device = $dService->newObjectFromModel(16); //= Status Leds
-//        public $id = null;
+
+        $device->house = $this->_house->id;
         $device->node = $node->id;
-//    public $model = null;
         $device->position = 1;
+        $device->setRoom($room);
 
         $subdevices = $device->getComponents();
         $subdevices[0]->name = 'Red LED';
-        $subdevices[0]->room = $room->id;
         $subdevices[1]->name = 'Green LED';
-        $subdevices[1]->room = $room->id;
 
 //    public $subdevices = 0;
 //    public $created = null;
@@ -455,11 +462,12 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $dService->create($device);
 
         $dService = new HomeNet_Model_Device_Service();
-        $device = $dService->newObjectFromModel(6); //6 = Simple LED
-//        public $id = null;
+        $device = $dService->newObjectFromModel(15); //15 = Simple LED
+
+        $device->house = $this->_house->id;
         $device->node = $node->id;
-//    public $model = null;
         $device->position = 2;
+        $device->setRoom($room);
 //    public $subdevices = 0;
 //    public $created = null;
 //    public $settings = array();

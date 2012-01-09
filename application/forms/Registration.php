@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Form_User extends CMS_Form
+class Core_Form_Registration extends CMS_Form
 {
 
     public function init()
@@ -76,9 +76,37 @@ class Core_Form_User extends CMS_Form
         }
         $password2->addErrorMessage('Password doesn\'t match');
         $this->addElement($password2);
+
+        
       
-        $group = $this->addDisplayGroup(array('username', 'name', 'email', 'location'), 'profile',array ( 'legend' => 'User Profile'));
-        $group = $this->addDisplayGroup(array('password', 'password2'), 'setpassword', array ( 'legend' => 'Account Password'));
+       //group->setLegend('Login Details');
+
+        $key = $this->createElement('text', 'accessKey');
+        $key->setLabel('Access Key: ');
+        $key->setRequired('true');
+        $key->addValidator(new Zend_Validate_Identical('Ao843NF'));
+
+        $key->addErrorMessage('Invalid Key');
+        $this->addElement($key);
+
+        $confirm = $this->createElement('checkbox', 'confirm',array('uncheckedValue' => ""));
+        $confirm->setLabel('I understand that HomeNet.me is still under development and that not all security measures have been implemented yet');
+        $confirm->setRequired('true');
+        $confirm->addValidator(new Zend_Validate_NotEmpty());
+        $confirm->addErrorMessage('You must agree to the site terms');
+        $this->addElement($confirm);
+
+          $group = $this->addDisplayGroup(array('name', 'email', 'location'), 'profile',array ( 'legend' => 'User Profile'));
+       // $group->setDescription("test");
+//setLegend('User Profile');
+        $group = $this->addDisplayGroup(array('username', 'password', 'password2'), 'login',array ( 'legend' => 'Login Details'));
+
+
+        $group = $this->addDisplayGroup(array('accessKey', 'confirm'), 'confirm2', array ( 'legend' => 'Dev Terms', 'description'=>'Don\'t have an access key? <a href="https://spreadsheets.google.com/viewform?formkey=dHg4QjB0RzN0YkoybEVzd05qbXdxZnc6MQ">Request one</a>'));
+
+
+
+        $submit = $this->addElement('submit', 'submit', array('label' => 'Submit'));        
     }
 }
 

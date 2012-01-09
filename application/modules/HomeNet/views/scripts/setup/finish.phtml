@@ -1,6 +1,6 @@
-<h1>Finished</h1>
-<div class="transparent box">
+<?php echo $this->heading('Finished HomeNet Setup'); ?>
+<section>
 <p>Your Basic HomeNet has been setup.  You can now explore HomeNet and start using your smart devices</p>
-<a class="button cms-button-icon-right" href="/">
+<a class="button cms-button-icon-right" href="<?php echo $this->url(array('module'=>'homenet', 'controller'=>'index', 'action' => 'index'), 'homenet'); ?>">
     Continue <span class="ui-icon ui-icon-circle-arrow-e "</span></a>
-</div>
+</section>

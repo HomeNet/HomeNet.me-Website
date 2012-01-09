@@ -32,6 +32,11 @@ class HomeNet_Form_Node extends CMS_Form {
     private $house;
     
     public function __construct($modelType = null, $house = null ) {
+        if($house === null){
+            throw new InvalidArgumentException('Missing House Id');
+        }
+        
+        
         $this->type = $modelType;
         $this->house = $house;
         parent::__construct();
@@ -97,6 +102,9 @@ class HomeNet_Form_Node extends CMS_Form {
         $roomList = array_fill_keys(array_keys(array_flip($regions)), array());
         
         foreach($rooms as $room){
+            $room->region;
+            $room->id;
+            $room->name;
             $roomList[$regions[$room->region]][$room->id] = $room->name;
         }
   

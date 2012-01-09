@@ -51,39 +51,7 @@ class Content_Model_Content implements Content_Model_Content_Interface {
 
     public function __get($name) {
 
-
-        if (!isset($this->_objects[$name])) {
-
-            $fields = $this->getSection()->getFields();
-            // $fields = array();
-            //unset($fields['url']);
-            if (isset($fields[$name])) {
-                //create object
-
-                $class = 'Content_Plugin_Element_' . ucfirst($fields[$name]->element) . '_Element';
-                if (!class_exists($class, true)) {
-                    throw new Exception('Element not found: ' . $class);
-                }
-
-                $data = null;
-                if(isset($this->_values[$name])){
-                    $data = $this->_values[$name];
-                }
-
-                $this->_objects[$name] = new $class(array(
-                            'data' => $data,
-                            'options' => $fields[$name]->options));
-                //$this->_objects[$name] = $this->_values[$name];
-            } elseif (isset($this->_values[$name])) {
-                //id or revision or something without metadata
-                $this->_objects[$name] = $this->_values[$name];
-            } else {
-                return null;
-            }
-        }
-
-
-        return $this->_objects[$name];
+        return $this->getField($name);
     }
 
     public function loadMetadata() {
@@ -98,6 +66,9 @@ class Content_Model_Content implements Content_Model_Content_Interface {
 
     public function __set($name, $value) {
         $this->_values[$name] = $value;
+        if (isset($this->_objects[$name])) {
+            $this->_objects[$name]->setValue($value);
+        }
     }
 
     public function __unset($name) {
@@ -109,6 +80,11 @@ class Content_Model_Content implements Content_Model_Content_Interface {
     }
 
     public function fromArray(array $array) {
+        
+        foreach($array as $name=> $value){
+            $this->__set($name, $value);
+        }
+        
 
         //  $vars = get_object_vars($this);
         // die(debugArray($vars));
@@ -117,7 +93,7 @@ class Content_Model_Content implements Content_Model_Content_Interface {
         //     $this->$key = $value;
         //   }
         // }
-        $this->_values = array_merge($this->_values, $array);
+       // $this->_values = array_merge($this->_values, $array);
     }
 
     /**
@@ -135,8 +111,48 @@ class Content_Model_Content implements Content_Model_Content_Interface {
 
         return $array;
     }
-    
-    public function toObjects() {
+
+    public function getValue($name) {
+
+        if (isset($this->_values[$name])) {
+            return $this->_values[$name];
+        }
+        return null;
+    }
+
+    public function getField($name) {
+        
+        $field = $this->getSection()->getField($name);
+
+        if($field !== null){
+            if (!isset($this->_objects[$name])) {
+
+
+
+                $class = 'Content_Plugin_Element_' . ucfirst($field->element) . '_Element';
+                if (!class_exists($class, true)) {
+                    throw new Exception('Element not found: ' . $class);
+                }
+
+                $data = $this->getValue($name);
+                $options = $field->options;
+
+                $this->_objects[$name] = new $class(array(
+                            'data' => $data,
+                            'options' => $options));
+                //$this->_objects[$name] = $this->_values[$name];
+            }
+            return $this->_objects[$name];
+            
+        }elseif (isset($this->_values[$name])) {
+            //id or revision or something without metadata
+            return $this->_values[$name];
+        }
+
+        return null;
+    }
+
+    public function getFields() {
 
         $array = $this->_values;
 
@@ -144,27 +160,26 @@ class Content_Model_Content implements Content_Model_Content_Interface {
 
         foreach ($fields as $name => $value) {
 
-            if (!isset($this->_objects[$name])) {
-
-                $class = 'Content_Plugin_Element_' . ucfirst($value->element) . '_Element';
-                if (!class_exists($class, true)) {
-                    throw new Exception('Element not found: ' . $class);
-                }
-
-                $data = null;
-                if (isset($this->_values[$name])) {
-                    $data = $this->_values[$name];
-                }
-
-                $this->_objects[$name] = new $class(array(
-                            'data' => $data,
-                            'options' => $value->options));
-                //$this->_objects[$name] = $this->_values[$name];
-            }
-            $array[$name] = $this->_objects[$name];
+            $array[$name] = $this->getField($name);
         }
 
         return $array;
+    }
+
+    public function toObjects() {
+
+        return $this->getFields();
+
+//        $array = $this->_values;
+//
+//        $fields = $this->getSection()->getFields();
+//
+//        foreach ($fields as $name => $value) {
+//
+//            $array[$name] = $this->getField($name);
+//        }
+//
+//        return $array;
     }
 
     public function getForm() {
@@ -172,14 +187,14 @@ class Content_Model_Content implements Content_Model_Content_Interface {
         $form = new CMS_Form();
 
         $fields = $this->getSection()->getFields();
-        
+
         $sets = array();
 
         foreach ($fields as $key => $field) {
 
             $object = $this->$key;
-         //   echo $key;
-        //  echo debugArray($object->getValue());
+            //   echo $key;
+            //  echo debugArray($object->getValue());
             $options = array(
                 'name' => $field->name,
                 'label' => $field->label,
@@ -187,12 +202,12 @@ class Content_Model_Content implements Content_Model_Content_Interface {
                 'value' => $object->getFormValue(),
                 'required' => $field->required,
             );
-            if(empty($sets[$field->set])){
+            if (empty($sets[$field->set])) {
                 $sets[$field->set] = array();
             }
-           $sets[$field->set][] = $field->name;
-            
-          //  debugArray($object->getValue());
+            $sets[$field->set][] = $field->name;
+
+            //  debugArray($object->getValue());
             // $options['validators'] = $field->validators; // array('alnum', array('regex', false, '/^[a-z]/i')  );
             // $options['filters'] = $field->filters; //array('StringToLower');
             //$options['attrib'] = $field->attributes;
@@ -202,25 +217,25 @@ class Content_Model_Content implements Content_Model_Content_Interface {
             $form->applyDefaultDecorators($e);
             $form->addElement($e);
         }
-        
+
         $service = new Content_Model_FieldSet_Service();
         $fieldSets = $service->getObjectsBySection($this->section);
 
-        foreach($fieldSets as $value){
-            if(isset($sets[$value->id])){
-            $form->addDisplayGroup($sets[$value->id], 'set-'.$value->id, array('legend' => $value->title));
+        foreach ($fieldSets as $value) {
+            if (isset($sets[$value->id])) {
+                $form->addDisplayGroup($sets[$value->id], 'set-' . $value->id, array('legend' => $value->title));
             }
         }
-        
 
-       // $form->addDisplayGroup($form->getElements(), 'main', array('legend' => $this->getSection()->title));
+
+        // $form->addDisplayGroup($form->getElements(), 'main', array('legend' => $this->getSection()->title));
 
         return $form;
     }
-    
-    public function save(){
+
+    public function save() {
         $fields = $this->getSection()->getFields();
-        
+
 
         foreach ($fields as $key => $field) {
 

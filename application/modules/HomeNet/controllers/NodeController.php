@@ -31,6 +31,10 @@ class HomeNet_NodeController extends Zend_Controller_Action {
     private $_id;
     private $_house;
     private $_node;
+    /**
+     *
+     * @var HomeNet_Model_Node_Service
+     */
     private $service;
 
     public function init() {
@@ -86,6 +90,10 @@ class HomeNet_NodeController extends Zend_Controller_Action {
 
         $this->view->objects = $this->service->getObjectsByHouse($this->_house->id);
     }
+    
+    public function trashedAction() {
+         $this->view->objects = $this->service->getTrashedObjectsByHouse($this->_house->id);
+    }
 
     public function newAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
@@ -117,13 +125,13 @@ class HomeNet_NodeController extends Zend_Controller_Action {
 
         $node = $this->service->newObjectFromModel($values['model']);
         $node->fromArray($values);
-
+        $node->status = HomeNet_Model_Node::STATUS_LIVE;
         $node->house = $this->_house->id;
  
         $node = $this->service->create($node);
-
-        $this->view->node = $node->id;
-        $this->view->done = true;
+        
+        $this->view->messages()->add('Successfully added node '.$node->address.' &quot;' . $node->description . '&quot;');
+        return $this->_redirect($this->view->url(array('controller' => 'node', 'action'=>'configure', 'house' => $this->_house->id, 'id'=>$node->address), 'homenet-house-id')); //
     }
 
     public function editAction() {
@@ -160,6 +168,47 @@ class HomeNet_NodeController extends Zend_Controller_Action {
         $this->view->messages()->add('Successfully updated node &quot;' . $object->address . '&quot;');
         return $this->_redirect($this->view->url(array('controller' => 'node', 'house' => $this->_house->id), 'homenet-house')); //
     }
+    
+    public function trashAction() {
+        $this->_helper->viewRenderer->setNoController(true); //use generic templates
+
+        $object = $this->_node;
+        
+        $form = new Core_Form_Confirm('Trash');
+
+        if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
+            $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to trash node "' . $object->address . '"?'));
+            $this->view->form = $form;
+            return;
+        }
+
+        if (!empty($_POST['confirm'])) {
+            $name = $object->address;
+            $this->service->trash($object);//($object);
+            $this->view->messages()->add('Successfully trashed node &quot;' . $name . '&quot;');
+        }
+        return $this->_redirect($this->view->url(array('controller' => 'node', 'house' => $this->_house->id), 'homenet-house'));
+    }
+    public function untrashAction() {
+        $this->_helper->viewRenderer->setNoController(true); //use generic templates
+
+        $object = $this->_node;
+        
+        $form = new Core_Form_Confirm('Untrash');
+
+        if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
+            $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to undelete node "' . $object->address . '"?'));
+            $this->view->form = $form;
+            return;
+        }
+
+        if (!empty($_POST['confirm'])) {
+            $name = $object->address;
+            $this->service->untrash($object);//($object);
+            $this->view->messages()->add('Successfully untrashed node &quot;' . $name . '&quot;');
+        }
+        return $this->_redirect($this->view->url(array('controller' => 'node', 'house' => $this->_house->id), 'homenet-house'));
+    }
 
     public function deleteAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
@@ -169,14 +218,15 @@ class HomeNet_NodeController extends Zend_Controller_Action {
         $form = new Core_Form_Confirm();
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
-            $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to remove node "' . $object->address . '"?'));
+            $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to delete node "' . $object->address . '"?
+                All associated data will be deleted. Be sure to export any data you wish to keep before continuing.'));
             $this->view->form = $form;
             return;
         }
 
-        if (!empty($_POST['delete'])) {
+        if (!empty($_POST['confirm'])) {
             $name = $object->address;
-            $this->service->delete($object);
+            $this->service->setStatusToDeleted($object);//($object);
             $this->view->messages()->add('Successfully deleted node &quot;' . $name . '&quot;');
         }
         return $this->_redirect($this->view->url(array('controller' => 'node', 'house' => $this->_house->id), 'homenet-house'));

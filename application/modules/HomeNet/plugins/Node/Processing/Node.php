@@ -39,12 +39,14 @@ class HomeNet_Plugin_Node_Processing_Node extends HomeNet_Model_Node_Abstract {
     public function sendPacket(HomeNet_Model_Packet $packet){
 
         //die(debugArray($this));
+        
+        $ipaddress = $this->getSetting('ipaddress');
 
-        if(empty($this->ipaddress)){
+        if($ipaddress === null){
             throw new HomeNet_Model_Exception('Internet Node not loaded');
         }
         
-        $packet->sendXmlRpc($this->ipaddress);
+        $packet->sendXmlRpc($ipaddress);
     }
 
 }

@@ -170,7 +170,7 @@ class Content_FieldSetController extends Zend_Controller_Action {
         $section = $object->section;
         
         //need to figure out why this isn't in values
-        if (!empty($_POST['delete'])) {
+        if (!empty($_POST['confirm'])) {
             $title = $object->title;
             $service->delete($object);
             $this->view->messages()->add('Successfully Deleted Field Set &quot;' . $title . '&quot;');

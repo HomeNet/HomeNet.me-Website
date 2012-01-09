@@ -154,7 +154,7 @@ class Content_CategorySetController extends Zend_Controller_Action
 
         $values = $form->getValues();
 
-        if(!empty($_POST['delete'])){
+        if(!empty($_POST['confirm'])){
             $title = $object->title;
             $csService->delete($object);
             $this->view->messages()->add('Successfully Deleted Category Set &quot;'.$title.'&quot;');

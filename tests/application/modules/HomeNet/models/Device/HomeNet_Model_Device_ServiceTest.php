@@ -19,7 +19,7 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
     protected function setUp() {
         $this->service = new HomeNet_Model_Device_Service;
         $this->homenetInstaller = new HomeNet_Installer();
-        $this->homenetInstaller->installTest(array('house', 'room', 'node', 'device'));
+        $this->homenetInstaller->installTest(array('house', 'room', 'node'));
         $this->homenetInstaller->installOptionalContent(array('device_models', 'component_models'));
     }
 
@@ -31,15 +31,50 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
         
     }
 
-    private function createValidObject() {
+    private function _fillObject($object, $seed = 0) {
+        $data = $this->_getTestData($seed);
+        foreach ($data as $key => $value) {
+            $object->$key = $value;
+        }
+        return $object;
+    }
 
+    private function _fillArray($array, $seed = 0) {
+        if (is_object($array)) {
+            $array = $array->toArray();
+        }
+
+        return array_merge($array, $this->_getTestData($seed));
+    }
+
+    private function _getTestData($seed = 0) {
+
+//          //create node model
+//        $array = array('type' => HomeNet_Model_Node::SENSOR,
+//            'status' => HomeNet_Model_ComponentModel::LIVE,
+//            'plugin' => 'Jeenode',
+//            'name' => 'testModel',
+//            'description' => 'test description',
+//            'image' => 'test.jpg',
+//            'max_devices' => 4,
+//            'settings' => array('key' => 'value'));
+//        $service = new HomeNet_Model_NodeModel_Service;
+//        $model = $service->create($array);
+
+        return
+                $array = array(
+            'status' => HomeNet_Model_Node::STATUS_LIVE,
+            'house' => $this->homenetInstaller->house->id,
+            'node' => 1 + $seed,
+            'model' => $this->homenetInstaller->deviceModel->id,
+            'position' => 3 + $seed,
+            'components' => 4 + $seed,
+            'settings' => array('key' => 'value' . $seed));
+    }
+
+    private function _createValidObject($seed = 0) {
         $object = new HomeNet_Model_Device();
-        $object->house = $this->homenetInstaller->house->test->id;
-        $object->node = 1;
-        $object->model = $this->homenetInstaller->deviceModel->test->id;
-        $object->position = 3;
-        $object->components = 4;
-        $object->settings = array('key' => 'value');
+        $object = $this->_fillObject($object, $seed);
 
         $result = $this->service->create($object);
 
@@ -47,15 +82,16 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
         return $result;
     }
 
-    private function validateResult($result) {
+    private function _validateResult($result, $seed = 0) {
+        $this->assertInstanceOf('HomeNet_Model_Device_Interface', $result);
         $this->assertNotNull($result->id);
-        $this->assertEquals($this->homenetInstaller->house->test->id, $result->house);
-        $this->assertEquals(1, $result->node);
-        $this->assertEquals($this->homenetInstaller->deviceModel->test->id, $result->model);
-        $this->assertEquals(3, $result->position);
-        $this->assertEquals(4, $result->components);
+        $this->assertEquals($this->homenetInstaller->house->id, $result->house);
+        $this->assertEquals(1 + $seed, $result->node);
+        $this->assertEquals($this->homenetInstaller->deviceModel->id, $result->model);
+        $this->assertEquals(3 + $seed, $result->position);
+        $this->assertEquals(4 + $seed, $result->components);
         $this->assertTrue(is_array($result->settings));
-        $this->assertEquals('value', $result->settings['key']);
+        $this->assertEquals('value' . $seed, $result->settings['key']);
     }
 
 //$this->service->getMapper()///////////////////////////////////////////////////
@@ -74,11 +110,11 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 
 //$this->service->getObjectById($id)////////////////////////////////////////////
     public function testGetObjectById_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         $result = $this->service->getObjectById($object->id);
 
-        $this->validateResult($result);
+        $this->_validateResult($result);
     }
 
     public function testGetObjectById_invalid() {
@@ -93,9 +129,9 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 
 //$this->service->getObjectByNodePosition($node, $position)/////////////////////
     public function testGetObjectByNodePosition_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
         $result = $this->service->getObjectByNodePosition($object->node, $object->position);
-        $this->validateResult($result);
+        $this->_validateResult($result);
     }
 
     public function testGetObjectByNodePosition_invalidNode() {
@@ -105,7 +141,7 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testGetObjectByNodePosition_invalidPosition() {
         $this->setExpectedException('NotFoundException');
-        $this->service->getObjectByNodePosition($this->homenetInstaller->node->test->id, 1000);
+        $this->service->getObjectByNodePosition($this->homenetInstaller->node->id, 1000);
     }
 
     public function testGetObjectByNodePosition_nullNode() {
@@ -115,12 +151,12 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testGetObjectByNodePosition_nullPosition() {
         $this->setExpectedException('InvalidArgumentException');
-        $this->service->getObjectByNodePosition($this->homenetInstaller->node->test->id, null);
+        $this->service->getObjectByNodePosition($this->homenetInstaller->node->id, null);
     }
 
 //$this->service->newObjectFromModel($id)///////////////////////////////////////
     public function testnewObjectFromModel_valid() {
-        $result = $this->service->newObjectFromModel($this->homenetInstaller->deviceModel->test->id);
+        $result = $this->service->newObjectFromModel($this->homenetInstaller->deviceModel->id);
         $this->assertInstanceOf('HomeNet_Model_Device_Abstract', $result);
     }
 
@@ -136,11 +172,11 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 
 //$this->service->getObjectsByNode($node)///////////////////////////////////////
     public function testGetObjectsByNode_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         $results = $this->service->getObjectsByNode($object->node);
 
-        $this->validateResult(end($results));
+        $this->_validateResult(end($results));
     }
 
     public function testGetObjectsByNode_invalid() {
@@ -156,11 +192,11 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 
 //$this->service->getObjectByHouseNodeaddressPosition($node,$nodeAddress,$position)
     public function testGetObjectByHouseNodeaddressPosition_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
-        $result = $this->service->getObjectByHouseNodeaddressPosition($this->homenetInstaller->house->test->id, $this->homenetInstaller->node->test->address, $object->position);
+        $result = $this->service->getObjectByHouseNodeaddressPosition($this->homenetInstaller->house->id, $this->homenetInstaller->node->address, $object->position);
 
-        $this->validateResult($result);
+        $this->_validateResult($result);
     }
 
     public function testGetObjectByHouseNodeaddressPosition_invalid() {
@@ -185,11 +221,11 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 
 //$this->service->getObjectByIdWithNode($id)////////////////////////////////////    
     public function testGetObjectByIdWithNode_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         $result = $this->service->getObjectByIdWithNode($object->id);
 
-        $this->validateResult($result);
+        $this->_validateResult($result);
     }
 
     public function testGetObjectByIdWithNode_invalid() {
@@ -201,26 +237,36 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('InvalidArgumentException');
         $this->service->getObjectByIdWithNode(null);
     }
+    
+//$this->service->trash($object)///////////////////////////////////
+    public function testTrash(){
+        $object = $this->_createValidObject();
+        $result = $this->service->trash($object);
+        $this->assertEquals(HomeNet_Model_Device::STATUS_TRASHED, $result->status);
+    }
+    
+//$this->service->untrash($object)//////////////////////////////////////
+    public function testUntrash(){
+        $object = $this->_createValidObject();
+        $object->status = HomeNet_Model_Device::STATUS_TRASHED;
+        $result = $this->service->untrash($object);
+        $this->assertEquals(HomeNet_Model_Device::STATUS_LIVE, $result->status);
+        
+    }    
 
 //$this->service->create($mixed)////////////////////////////////////////////////
     public function testCreate_validObject() {
-        $result = $this->createValidObject();
+        $result = $this->_createValidObject();
 
         $this->assertNotNull($result->id);
-        $this->validateResult($result);
+        $this->_validateResult($result);
     }
 
     public function testCreate_validArray() {
-        $array = array(
-            'house' => $this->homenetInstaller->house->test->id,
-            'node' => 1,
-            'model' => $this->homenetInstaller->deviceModel->test->id,
-            'position' => 3,
-            'components' => 4,
-            'settings' => array('key' => 'value'));
+        $array = $this->_getTestData();
 
         $result = $this->service->create($array);
-        $this->validateResult($result);
+        $this->_validateResult($result);
     }
 
     public function testCreate_invalidObject() {
@@ -233,55 +279,27 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 //$this->service->update($mixed)////////////////////////////////////////////////
     public function testUpdate_validObject() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //update values
-        $object->house = 6;
-        $object->node = 2;
-        $object->model = 3;
-        $object->position = 4;
-        $object->components = 5;
-        $object->settings = array('key' => 'value2');
+        $object = $this->_fillObject($object, 1);
 
         $result = $this->service->update($object);
 
-        $this->assertInstanceOf('HomeNet_Model_Device_Interface', $result);
-
-        $this->assertNotNull($result->id);
-        $this->assertEquals(6, $result->house);
-        $this->assertEquals(2, $result->node);
-        $this->assertEquals(3, $result->model);
-        $this->assertEquals(4, $result->position);
-        $this->assertEquals(5, $result->components);
-        $this->assertTrue(is_array($result->settings));
-        $this->assertEquals('value2', $result->settings['key']);
+        $this->_validateResult($result, 1);
     }
 
     public function testUpdate_validArray() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
         $array = $object->toArray();
 
         //update values
-        $array['house'] = 6;
-        $array['node'] = 2;
-        $array['model'] = 3;
-        $array['position'] = 4;
-        $array['components'] = 5;
-        $array['settings'] = array('key' => 'value2');
+        $array = $this->_fillArray($array, 1);
 
         $result = $this->service->update($array);
 
-        $this->assertInstanceOf('HomeNet_Model_Device_Interface', $result);
-
-        $this->assertNotNull($result->id);
-        $this->assertEquals(6, $result->house);
-        $this->assertEquals(2, $result->node);
-        $this->assertEquals(3, $result->model);
-        $this->assertEquals(4, $result->position);
-        $this->assertEquals(5, $result->components);
-        $this->assertTrue(is_array($result->settings));
-        $this->assertEquals('value2', $result->settings['key']);
+        $this->_validateResult($result, 1);
     }
 
     public function testUpdate_invalidObject() {
@@ -294,7 +312,7 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 //$this->service->delete($mixed)////////////////////////////////////////////////
     public function testDelete_validObject() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //test delete
         $id = $object->id;
@@ -307,7 +325,7 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testDelete_validArray() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //test delete
         $id = $object->id;
@@ -320,7 +338,7 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testDelete_validId() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //test delete
         $id = $object->id;

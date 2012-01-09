@@ -97,18 +97,17 @@ class HomeNet_Model_House implements HomeNet_Model_House_Interface {
         foreach($rooms as $room){
             $list[$room->id] = $room->name;
         }
-        return $rooms;
+        return $list;
     }
 
     public function getRooms(){
 
-        if($this->rooms !== null){
-            return $this->rooms;
+        if($this->rooms === null){
+            
+            $service = new HomeNet_Model_Room_Service();
+            $this->rooms = $service->getObjectsByHouse($this->id);
         }
-
-        $service = new HomeNet_Model_Room_Service();
-        $this->rooms = $service->getObjectsByHouse($this->id);
-        
+        var_dump($this->rooms);
         return $this->rooms;
     }
 

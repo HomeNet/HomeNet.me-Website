@@ -175,7 +175,7 @@ class Content_CategoryController extends Zend_Controller_Action
 
         $set = $object->set;
         
-        if(!empty($_POST['delete'])){
+        if(!empty($_POST['confirm'])){
             
             $title = $object->title;
             $service->delete($object);

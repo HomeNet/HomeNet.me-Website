@@ -73,8 +73,8 @@ class HomeNet_Model_Component_Service {
 
     protected function _getPlugins($objects){
         $plugins = array();
-        foreach($objects as $object){
-            $plugins[] = $this->_getPlugin($object);
+        foreach($objects as $key=>$object){
+            $plugins[$key] = $this->_getPlugin($object);
         }
 
         return $plugins;
@@ -116,7 +116,7 @@ class HomeNet_Model_Component_Service {
         if (empty($results)) {
             return array();
         }
-
+        
         $array = array();
 
         foreach ($results as $component) {
@@ -194,6 +194,26 @@ class HomeNet_Model_Component_Service {
         }
 
         return new $class(array('model' => $model));
+    }
+    
+    /**
+     * Mark a device as component and cascades to all child elements
+     * 
+     * @param HomeNet_Model_Component_Abstract $object 
+     */
+    public function trash(HomeNet_Model_Component_Interface $object){
+        $object->status = HomeNet_Model_Component::STATUS_TRASHED;
+        return $this->update($object);
+    }
+    
+    /**
+     * Undelete a component and cascades to all child elements
+     * 
+     * @param HomeNet_Model_Component_Abstract $object 
+     */
+    public function untrash(HomeNet_Model_Component_Interface $object){
+        $object->status = HomeNet_Model_Component::STATUS_LIVE;
+        return $this->update($object);
     }
     
 

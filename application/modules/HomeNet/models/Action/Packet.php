@@ -72,14 +72,14 @@ class HomeNet_Model_Action_Packet extends HomeNet_Model_Action_Abstract {
         //die(debugArray($value));
 
         $dService = new HomeNet_Model_Device_Service();
-        $row = $dService->getDeviceByIdWithNode($this->_options['device']);
+        $object = $dService->getObjectByIdWithNode($this->_options['device']);
 
-        if (empty($row)) {
+        if (empty($object)) {
             throw new HomeNet_Model_Exception('Can\'t find device ' . $this->_options['device']);
         }
 
         //$row->uplink
-        if (empty($row->uplink)) {
+        if (empty($object->uplink)) {
             throw new HomeNet_Model_Exception('Node missing Uplink',404);
         }
 
@@ -87,12 +87,15 @@ class HomeNet_Model_Action_Packet extends HomeNet_Model_Action_Abstract {
         /**
          * @todo offer other packet types
          */
-        $packet->buildUdp(4095, 0, $row->node, $row->device, $command, $payload);
+        $packet->buildUdp(4095, 0, $object->address, $object->device, $command, $payload);
 
         //die(debugArray($packet->getArray()));
         //get upload link if it has one or it self
         $nService = new HomeNet_Model_Node_Service();
-        $node = $nService->getObjectById($row->uplink);
+    //    var_dump($this->_options);
+    
+        //throw new Exception('Trace this');
+        $node = $nService->getObjectByHouseAddress($object->house, $object->uplink);
         $node->sendPacket($packet);
     }
 

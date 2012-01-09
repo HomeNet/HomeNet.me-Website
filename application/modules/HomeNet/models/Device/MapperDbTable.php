@@ -103,10 +103,11 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
 //        return $this->getTable()->fetchAll($select);
 //    }
 
-    public function fetchObjectsByNode($node) {
+    public function fetchObjectsByNode($node, $status = HomeNet_Model_Component::STATUS_LIVE) {
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('node = ?', $node)
+                ->where('homenet_devices.status = ?', $status)
                 ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin', 'name AS model_name'))
                 ->order('position ASC');
 

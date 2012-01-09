@@ -145,7 +145,7 @@ class HomeNet_NodeModelController extends Zend_Controller_Action {
 
         $values = $form->getValues();
         
-        if (!empty($_POST['delete'])) {
+        if (!empty($_POST['confirm'])) {
             $name = $object->name;
             $service = new HomeNet_Model_NodeModel_Service();
             $service->delete($object);

@@ -34,7 +34,7 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $object = new HomeNet_Model_Room();
         //$object->status = 1;
-        $object->house = $this->homenetInstaller->house->test->id;
+        $object->house = $this->homenetInstaller->house->id;
         $object->region = '2';
         $object->name = 'My Room';
         $object->description = 'My Description';
@@ -49,7 +49,7 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
     private function validateResult($result) {
         $this->assertNotNull($result->id);
         //$this->assertEquals(1, $result->status);
-        $this->assertEquals($this->homenetInstaller->house->test->id, $result->house);
+        $this->assertEquals($this->homenetInstaller->house->id, $result->house);
         $this->assertEquals('2', $result->region);
         $this->assertEquals('My Room', $result->name);
         $this->assertEquals('My Description', $result->description);
@@ -90,7 +90,7 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testGetObjectsByHouse_valid() {
         $object = $this->createValidObject();
-        $results = $this->service->getObjectsByHouse($this->homenetInstaller->house->test->id);
+        $results = $this->service->getObjectsByHouse($this->homenetInstaller->house->id);
 
         $this->assertEquals(1, count($results));
 
@@ -110,7 +110,7 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testGetObjectsByHouses_valid() {
         $object = $this->createValidObject();
-        $results = $this->service->getObjectsByHouses(array($this->homenetInstaller->house->test->id, $this->homenetInstaller->house->test2->id));
+        $results = $this->service->getObjectsByHouses(array($this->homenetInstaller->house->id, $this->homenetInstaller->house2->id));
 
         $this->assertEquals(1, count($results));
 
@@ -188,7 +188,7 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
 
         //update values
         //$object->status = -1;
-        $object->house = $this->homenetInstaller->house->test2->id;
+        $object->house = $this->homenetInstaller->house2->id;
         $object->region = '3';
         $object->name = 'My Room2';
         $object->description = 'My Description2';
@@ -199,7 +199,7 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertNotNull($result->id);
         //$this->assertEquals(1, $result->status);
-        $this->assertEquals($this->homenetInstaller->house->test2->id, $result->house);
+        $this->assertEquals($this->homenetInstaller->house2->id, $result->house);
         $this->assertEquals('3', $result->region);
         $this->assertEquals('My Room2', $result->name);
         $this->assertEquals('My Description2', $result->description);
@@ -212,7 +212,7 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
 
         //update values
         //$array['status'] = -1;
-        $array['house'] = $this->homenetInstaller->house->test2->id;
+        $array['house'] = $this->homenetInstaller->house2->id;
         $array['region'] = '3';
         $array['name'] = 'My Room2';
         $array['description'] = 'My Description2';
@@ -223,7 +223,7 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertNotNull($result->id);
         //$this->assertEquals(1, $result->status);
-        $this->assertEquals($this->homenetInstaller->house->test2->id, $result->house);
+        $this->assertEquals($this->homenetInstaller->house2->id, $result->house);
         $this->assertEquals('3', $result->region);
         $this->assertEquals('My Room2', $result->name);
         $this->assertEquals('My Description2', $result->description);

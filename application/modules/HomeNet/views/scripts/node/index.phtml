@@ -14,7 +14,7 @@
         ?>
         <tr  class="<?php echo $this->cycle(array("", "ui-state-default"))->next() ?>" >
             <td><a class="button" data-text="false" data-icon="ui-icon-wrench" title="Configure Node &quot;<?php echo $object->address ?>&quot;" 
-                   href="<?php echo $this->url(array('controller' => 'node', 'action' => 'index', 'house' => $object->house, 'id' => $object->address),'homenet-house-id'); ?>">
+                   href="<?php echo $this->url(array('controller' => 'node', 'action' => 'configure', 'house' => $object->house, 'id' => $object->address),'homenet-house-id'); ?>">
                     Configure
                 </a></td>
             <td><?php echo $object->address ?></td>
@@ -27,8 +27,8 @@
                    href="<?php echo $this->url(array('controller' => 'node', 'action' => 'edit', 'house' => $object->house, 'id' => $object->address),'homenet-house-id'); ?>">
                     Edit
                 </a> 
-                <a class="button" data-text="false" data-icon="ui-icon-close" title="Delete Node &quot;<?php echo $object->id ?>&quot;" 
-                   href="<?php echo $this->url(array('controller' => 'node', 'action' => 'delete', 'house' => $object->house, 'id' => $object->address),'homenet-house-id'); ?>">
+                <a class="button" data-text="false" data-icon="ui-icon-trash" title="Trash Node &quot;<?php echo $object->id ?>&quot;" 
+                   href="<?php echo $this->url(array('controller' => 'node', 'action' => 'trash', 'house' => $object->house, 'id' => $object->address),'homenet-house-id'); ?>">
                     Delete
                 </a>
            </td>
@@ -42,3 +42,5 @@
    href="<?php echo $this->url(array('controller' => 'node', 'action' => 'new', 'house' => $this->house->id),'homenet-house'); ?>">New</a>
 </div>
 </div>
+<a class="button" data-icon="ui-icon-trash" title="View Trashed Nodes" 
+   href="<?php echo $this->url(array('controller' => 'node', 'action' => 'trashed', 'house' => $this->house->id),'homenet-house'); ?>">Trashed Nodes</a>

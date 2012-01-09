@@ -67,7 +67,7 @@ class HomeNet_Model_Test_XmlRpcTest extends PHPUnit_Framework_TestCase {
     
     public function testValidate_list() {
 
-        $result = $this->client->call('system.listMethods', array(''));
+//        $result = $this->client->call('system.listMethods', array(''));
 
     }
     

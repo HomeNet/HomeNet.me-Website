@@ -374,7 +374,7 @@ class HomeNet_Model_House_Service {
         //add alerts
         $messageService = new HomeNet_Model_Message_Service();
        // $url = $this->view->url(array('action' => 'index'), 'homenet-setup-index');
-        $messageService->add(HomeNet_Model_Message::NEWITEM, 'Congrates on starting your HomeNet. If you need to, you can return to the <a href="/home/' . $result->id . '/setup">Setup Wizard</a>', $user->id);
+       // $messageService->add(HomeNet_Model_Message::NEWITEM, 'Congrates on starting your HomeNet. If you need to, you can return to the <a href="/home/' . $result->id . '/setup">Setup Wizard</a>', $user->id);
        $messageService->add(HomeNet_Model_Message::NEWITEM, '<strong>' . $user->name . '</strong> Added their home &quot;' . $result->name . '&quot; to HomeNet', null, $result->id);
 
         return $result;

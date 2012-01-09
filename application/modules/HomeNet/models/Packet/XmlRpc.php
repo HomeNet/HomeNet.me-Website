@@ -83,6 +83,7 @@ class HomeNet_Model_Packet_XmlRpc extends HomeNet_Model_Api {
 
         //@throws NotFoundException || InvaildArgumentException //Pass these errors to the user
         $object = $deviceService->getObjectByHouseNodeaddressPosition($apikey->house, $packet->fromNode, $packet->fromDevice);
+       // var_dump($object);
         $object->processPacket($packet);
         
         return true;

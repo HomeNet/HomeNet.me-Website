@@ -117,17 +117,17 @@ class HomeNet_Plugin_Component_Generic_Component extends HomeNet_Model_Component
         $dService = $this->getDatapointService();
         $row = $dService->getLastObjectById($this->id);
         if (empty($row)) {
-            return array();
+            return new stdClass();
         }
 
         $units = $this->getSetting('units');
 
-        $array = array(
-            'datetime' => new Zend_Date($row->datetime, Zend_Date::ISO_8601),
-            'value' => round($this->_convertValue($row->value), 2) . $this->getSetting('units')
-        );
+        $object = new stdClass();
+        $object->timestamp = new Zend_Date($row->timestamp, Zend_Date::ISO_8601);
+        $object->value = round($this->_convertValue($row->value), 2) . $this->getSetting('units');
 
-        return $array;
+
+        return $object;
     }
 
     /**
@@ -211,13 +211,14 @@ class HomeNet_Plugin_Component_Generic_Component extends HomeNet_Model_Component
         $labelYPositions = array();
 
 
-        $range = $this->getSetting('range');
+        $rangeStart = $this->getSetting('start');
+        $rangeEnd = $this->getSetting('end');
 
         //die(debugArray($range));
 
-        if ($range !== null) {
-            $min = (int) $range[0];
-            $max = (int) $range[1];
+        if (($rangeStart !== null)&&($rangeEnd !== null)) {
+            $min = (int) $rangeStart;
+            $max = (int) $rangeEnd;
             $difference = $max - $min;
         } else {
             //fixes null being treated like 0

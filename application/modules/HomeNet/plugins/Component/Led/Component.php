@@ -37,6 +37,7 @@ class HomeNet_Plugin_Component_LED_Component extends HomeNet_Model_Component_Abs
      * Build the Actions that this subdevice can perform
      */
     public function buildControls() {
+        
         $this->addControl(
             'on',
             'submit',
