@@ -54,26 +54,66 @@ class Core_Model_User_Membership_Service {
      * @throws NotFoundException
      */
     public function getObjectById($id) {
-        $result = $this->getMapper()->fetchObjectById($id);
+        if($id === null && !is_numeric($id)){
+            throw new InvalidArgumentException('Invalid Id');
+        }
+        
+        $result = $this->getMapper()->fetchObjectById((int) $id);
 
         if (empty($result)) {
-            throw new NotFoundException('Id: '.$id.' Not Found', 404);
+            throw new NotFoundException('Id: '.$id.' Not Found');
         }
         return $result;
     }
 
     /**
-     * @param Content_Model_Section_MapperInterface $mapper 
+     * @param int $user user id 
      * @throws NotFoundException
      */
     public function getGroupIdsByUser($user) {
-        $result = $this->getMapper()->fetchGroupIdsByUser($user);
+        if($user === null && !is_numeric($user)){
+            throw new InvalidArgumentException('Invalid user');
+        }
+           
+        $result = $this->getMapper()->fetchGroupIdsByUser((int) $user);
 
         if (empty($result)) {
-            throw new NotFOundException('Id: '.$id.' Not Found', 404);
+            throw new NotFoundException('User: '.$user.' Not Found');
         }
         return $result;
     }
+    
+     /**
+     * @param int $user user id 
+     * @throws NotFoundException
+     */
+    public function getObjectByUserGroup($user, $group) {
+        if($user === null && !is_numeric($user)){
+            throw new InvalidArgumentException('Invalid user');
+        }
+        if($group === null && !is_numeric($group)){
+            throw new InvalidArgumentException('Invalid group');
+        }
+        $result = $this->getMapper()->fetchObjectByUserGroup((int) $user, (int) $group);
+
+        if (empty($result)) {
+            throw new NotFoundException('User: '.$user.', Group: '.$group.' Not Found');
+        }
+        return $result;
+    }
+    
+    /**
+     *
+     * @param int $user User Id
+     * @return type 
+     */
+    public function getObjectsByUser($user) {
+        if($user === null && !is_numeric($user)){
+            throw new InvalidArgumentException('Invalid user');
+        }
+        return $this->getMapper()->fetchObjectsByUser($user);
+    }
+    
 
 //    public function getObjectsByIdHouse($id,$house){
 //        $apikeys = $this->getMapper()->fetchObjectsByIdHouse($id,$house);
@@ -84,6 +124,20 @@ class Core_Model_User_Membership_Service {
 //        }
 //        return $apikeys;
 //    }
+    
+    public function add($user, $group){
+        if($user === null && !is_numeric($user)){
+            throw new InvalidArgumentException('Invalid user');
+        }
+        if($group === null && !is_numeric($group)){
+            throw new InvalidArgumentException('Invalid group');
+        }
+        $object = new Core_Model_User_Membership();
+        $object->user = (int) $user;
+        $object->group = (int) $group;
+        return $this->create($object);
+        
+    }
 
     /**
      * @param Core_Model_User_Membership_Interface|array $mixed
@@ -120,6 +174,8 @@ class Core_Model_User_Membership_Service {
 //        } else {
 //            throw new InvalidArgumentException('Invalid Membership');
 //        }
+//        
+//        
 //
 //        return $this->getMapper()->save($object);
 //    }
@@ -159,23 +215,57 @@ class Core_Model_User_Membership_Service {
      * @return boolean Success 
      */
     public function deleteByUser($user) {
-        $affectedRows = $this->getMapper()->deleteByUser($user);
-
+        
+        if($user === null && !is_numeric($user)){
+            throw new InvalidArgumentException('Invalid user');
+        }
+        
+        $objects = $this->getObjectsByUser($user);
+        
         $gService = new Core_Model_Group_Service();
-        $gService->decrementGroupCount($membership->group, $affectedRows);
+        
+        foreach($objects as $object){
+            $gService->decrementGroupCount($object->group);
+        }
+        
+        $affectedRows = $this->getMapper()->deleteByUser($user);
 
         return $affectedRows;
     }
+    
+     public function deleteByUserGroup($user, $group) {
+         
+         if($user === null && !is_numeric($user)){
+            throw new InvalidArgumentException('Invalid user');
+        }
+        if($group === null && !is_numeric($group)){
+            throw new InvalidArgumentException('Invalid group');
+        }
+        
+        $affectedRows = $this->getMapper()->deleteByUserGroup($user, $group);
+        
+        $gService = new Core_Model_Group_Service();
+        
+        $gService->decrementGroupCount($group);
+      
+        return $affectedRows;
+    }
+    
 
     /**
      * @param Integer $group   Group Id
      * @return boolean Success 
      */
     public function deleteByGroup($group) {
+        
+        if($group === null && !is_numeric($group)){
+            throw new InvalidArgumentException('Invalid group');
+        }
+        
         $affectedRows = $this->getMapper()->deleteByGroup($group);
 
         $gService = new Core_Model_Group_Service();
-        $gService->updateGroupCount($membership->group, 0);
+        $gService->updateGroupCount($group, 0);
 
         return $affectedRows;
     }

@@ -59,7 +59,9 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
     }
     
     public function fetchObjectsByUser($user){
-       $select = $this->getTable()->select()->where('user = ?',$user)->where('object is NULL');
+       $select = $this->getTable()->select()->where('user = ?',$user)
+               ->where('collection is NULL')
+               ->where('object is NULL');
       return $this->getTable()->fetchAll($select);
     }
     
@@ -67,10 +69,23 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
         $select = $this->getTable()->select()
         ->where('user = ?', $user)
         ->where('(module = ? OR module is NULL)', $module) //->orWhere('module is NULL')
+        ->where('collection is NULL')
+        ->where('object is NULL')
         ->order(array('controller','action'));
         
         return $this->getTable()->fetchAll($select);
     }
+    
+    public function fetchObjectsByUserModuleCollection($user, $module, $collection) {
+        $select = $this->getTable()->select()
+        ->where('user = ?', $user)
+        ->where('module = ?', $module)        
+        ->where('collection = ?', $collection)
+        ->order(array('controller','object','action'));
+        
+        return $this->getTable()->fetchAll($select);
+    }
+    
      public function fetchObjectsByUserModuleControllerObject($user, $module, $controller, $object) {
         $select = $this->getTable()->select()
         ->where('user = ?', $user)
@@ -112,9 +127,9 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
 
         $row->fromArray($object->toArray());
        // die(debugArray($row));
-        $row->save();
+        return $row->save();
 
-        return $row;
+        //return $row;
     }
 
     public function delete(Core_Model_Acl_User_Interface $object) {
@@ -131,9 +146,42 @@ class Core_Model_Acl_User_MapperDbTable implements Core_Model_Acl_User_MapperInt
     }
     
      public function deleteByUser($user){
-         $select = $this->getTable()->select()->where('user = ?',$user);
-         $this->getTable()->delete($select);
+         $where = $this->getTable()->getAdapter()->quoteInto('user = ?',$user);
+         return $this->getTable()->delete($where);
     }
+    
+     public function deleteByModule($module) {
+         $where = $this->getTable()->getAdapter()->quoteInto('module = ?',$module);
+         return $this->getTable()->delete($where);
+    }
+    
+    public function deleteByModuleCollection($module, $collection) {
+        $where = array();
+        $where[] = $this->getTable()->getAdapter()->quoteInto('module = ?',$module);
+        $where[] = $this->getTable()->getAdapter()->quoteInto('collection = ?',$collection);
+
+        return $this->getTable()->delete($where);
+    }
+    
+    public function deleteByUserModuleCollection($user, $module, $collection) {
+        $where = array();
+        $where[] = $this->getTable()->getAdapter()->quoteInto('user = ?',$user);
+        $where[] = $this->getTable()->getAdapter()->quoteInto('module = ?',$module);
+        $where[] = $this->getTable()->getAdapter()->quoteInto('collection = ?',$collection);
+
+        return $this->getTable()->delete($where);
+    }
+    
+    public function deleteByModuleControllerObject($module, $controller, $object) {
+        
+        $where = array();
+        $where[] = $this->getTable()->getAdapter()->quoteInto('module = ?',$module);
+        $where[] = $this->getTable()->getAdapter()->quoteInto('controller = ?',$controller);
+        $where[] = $this->getTable()->getAdapter()->quoteInto('object = ?',$object);
+
+        return $this->getTable()->delete($where);
+    }
+    
     
     public function deleteAll(){
         if(APPLICATION_ENV != 'production'){

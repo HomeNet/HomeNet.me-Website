@@ -132,6 +132,25 @@ class Core_Model_Auth_Internal implements Core_Model_Auth_Interface {
 
         return $u->id;
     }
+    
+    public function changeUsername($id, $newUsername) {
+        $table = new Core_Model_Auth_Internal_DbTable();
+        $object = $table->find($id)->current();
+        $object->username = $newUsername;
+        $object->password = $this->hashPassword($newUsername, $object->password);
+        $object->save();
+    }
+    
+    public function changePassword($id, $newPassword, $oldPassword = false) {
+        $table = new Core_Model_Auth_Internal_DbTable();
+        $object = $table->find($id)->current();
+        if(($oldPassword === false) || ($object->password ==  $this->hashPassword($object->username,  $oldPassword))){
+            $object->password = $this->hashPassword($object->username, $newPassword);
+            $object->save();
+            return true;
+        } 
+        return false;
+    }
 
     public function delete($id) {
         $table = new Core_Model_Auth_Internal_DbTable();

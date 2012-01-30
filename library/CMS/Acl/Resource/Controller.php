@@ -36,12 +36,12 @@ class CMS_Acl_Resource_Controller implements Zend_Acl_Resource_Interface
     /**
      * Sets the Resource identifier
      *
-     * @param  string $resourceId
+     * @param  string $controller
      * @return void
      */
-    public function __construct($resourceId)
+    public function __construct($controller)    
     {
-        $this->_resourceId = 'c'.strtolower((string) $resourceId);
+        $this->_resourceId = 'c'.strtolower((string) $controller);
     }
 
     /**

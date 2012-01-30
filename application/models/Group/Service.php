@@ -75,6 +75,15 @@ class Core_Model_Group_Service {
         return $result;
     }
     
+    public function getList(){
+        $objects = $this->getObjects();
+        $array = array();
+        foreach($objects as $object){
+            $array[$object->id] = $object->title;
+        }
+        return $array;
+    }
+    
     
 
     /**

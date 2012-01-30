@@ -32,6 +32,20 @@ class HomeNet_Model_HouseUser implements HomeNet_Model_HouseUser_Interface {
     public $user;
     public $order = 0;
     public $permissions = '';
+    
+    const PERMISSION_NONE = 0;
+    const PERMISSION_VIEW = 1;
+    const PERMISSION_EXPORT = 2;
+    const PERMISSION_CODE = 3;
+    const PERMISSION_ADD = 4;
+    const PERMISSION_EDIT = 5;
+    const PERMISSION_TRASH = 6;
+    const PERMISSION_DELETE = 7;   
+    const PERMISSION_CUSTOM = 9;
+    const PERMISSION_ADMIN = 10;
+    
+
+    
 
     public function __construct(array $config = array()) {
         if (isset($config['data'])) {

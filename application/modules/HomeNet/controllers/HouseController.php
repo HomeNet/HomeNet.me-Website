@@ -31,12 +31,19 @@ class HomeNet_HouseController extends Zend_Controller_Action
     
     protected $service;
     
+    
     public function init()
     {
+        
         $this->view->heading = 'Home'; //for generic templates
 
         //$this->_house = $this->_getParam('house');
         $this->service = new HomeNet_Model_House_Service();
+
+        $acl = new HomeNet_Model_Acl($this->_getParam('house'));
+        $acl->checkAccess('house', $this->getRequest()->getActionName());
+
+        
         $this->view->house = $this->_house = HomeNet_Model_House_Manager::getHouseById($this->_getParam('house'));
         
         //setup bread crumbs

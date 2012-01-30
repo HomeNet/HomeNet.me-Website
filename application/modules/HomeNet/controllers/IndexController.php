@@ -32,6 +32,10 @@ class HomeNet_IndexController extends Zend_Controller_Action {
     
     public function init() {
         $this->_house = $this->_getParam('house');
+        
+       
+        
+        
     }
 
     public function indexAction() {

@@ -126,16 +126,28 @@ class Core_Model_User_Service {
      * @return Core_Model_User
      * @throws InvalidArgumentException 
      */
-    public function update($user) {
-        if ($user instanceof Core_Model_User_Interface) {
-            $h = $user;
-        } elseif (is_array($user)) {
-            $h = new Core_Model_User(array('data' => $user));
+    public function update($mixed) {
+        if ($mixed instanceof Core_Model_User_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_User(array('data' => $mixed));
         } else {
             throw new InvalidArgumentException('Invalid Object');
         }
+        
+        $oldObject = $this->getObjectById($object->id);
+        if($oldObject->primary_group != $object->primary_group){
+            $membershipService = new Core_Model_User_Membership_Service();
+            $membershipService->deleteByUserGroup($object->id, $oldObject->primary_group);
+            $membershipService->add($object->id, $object->primary_group);
+        }
+        
+        if($oldObject->username != $object->username){
+            $auth = new Core_Model_Auth_Internal();
+            $auth->changeUsername($object->id, $object->username);
+        }
 
-        return $this->getMapper()->save($h);
+        return $this->getMapper()->save($object);
     }
 
     /**
@@ -143,19 +155,34 @@ class Core_Model_User_Service {
      * @return boolean Success
      * @throws InvalidArgumentException 
      */
-    public function delete($user) {
-        if (is_int($user)) {
-            $h = new Core_Model_User();
-            $h->id = $user;
-        } elseif ($user instanceof Core_Model_User_Interface) {
-            $h = $user;
-        } elseif (is_array($user)) {
-            $h = new Core_Model_User(array('data' => $user));
+    public function delete($mixed) {
+        if (is_int($mixed)) {
+            $object = new Core_Model_User();
+            $object->id = $mixed;
+        } elseif ($mixed instanceof Core_Model_User_Interface) {
+            $object = $mixed;
+        } elseif (is_array($mixed)) {
+            $object = new Core_Model_User(array('data' => $mixed));
         } else {
             throw new InvalidArgumentException('Invalid Object');
         }
+        
+        $userid = $object->id;
+        $result = $this->getMapper()->delete($object);
+        
+        $aclService = new Core_Model_Acl_User_Service();
+        $aclService->deleteByUser($userid);
+        
+        $authService = new Core_Model_Auth_Internal();
+        $authService->delete($userid);
+        
+        $membershipService = new Core_Model_User_Membership_Service();
+        $membershipService->deleteByUser($userid);
+        
+        
+        //@todo create event subscribe system so additional module data is also deleted
 
-        return $this->getMapper()->delete($h);
+        return $result;
     }
 
     /**

@@ -102,6 +102,22 @@ class Core_Model_Acl_Group_Service {
 
         return $array;
     }
+    
+    /**
+     * @param array $groups Array of Group Ids
+     * @param string $module
+     * @param integer $collection
+     * @return Core_Model_Acl_Group[] 
+     */
+    public function getObjectsByGroupsModuleCollection(array $groups, $module, $collection) {
+        $rows = $this->getMapper()->fetchObjectsByGroupsModuleCollection($groups, $module, $collection);
+        $array = array();
+        foreach ($rows as $row) {
+            $array[$row->group][] = $row;
+        }
+
+        return $array;
+    }
 
     /**
      * @param array $groups Array of Group Ids
@@ -138,6 +154,19 @@ class Core_Model_Acl_Group_Service {
         }
 
         return $array;
+    }
+    
+    public function allow($group, $module, $controller = null, $action = null, $collection = null, $obj = null){
+        $object = new Core_Model_Acl_Group();
+        $object->group = $group;
+        $object->module = $module;
+        $object->controller = $controller;
+        $object->action = $action;
+        $object->collection = $collection;
+        $object->object = $obj;
+        $object->permission = 1;
+        
+        return $this->create($object);
     }
 
     /**
@@ -196,6 +225,36 @@ class Core_Model_Acl_Group_Service {
 
     public function deleteByGroup($group) {
         return $this->getMapper()->deleteByGroup($group);
+    }
+    
+    public function deleteByModule($module) {
+        if(($module === null) || !is_string($module)){
+            throw new InvalidArgumentException('Invalid Module');
+        }
+        return $this->getMapper()->deleteByModule($module);
+    }
+    
+    public function deleteByModuleCollection($module, $collection) {
+        if(($module === null) || !is_string($module)){
+            throw new InvalidArgumentException('Invalid Module');
+        }
+        if(($collection === null) || !is_numeric($collection)){
+            throw new InvalidArgumentException('Invalid Collection');
+        }
+        return $this->getMapper()->deleteByModuleCollection($module, $collection);
+    }
+    
+    public function deleteByModuleControllerObject($module, $controller, $object) {
+        if(($module === null) || !is_string($module)){
+            throw new InvalidArgumentException('Invalid Module');
+        }
+        if(($controller === null) || !is_string($controller)){
+            throw new InvalidArgumentException('Invalid Controller');
+        }
+        if(($object === null)){
+            throw new InvalidArgumentException('Invalid Object');
+        }
+        return $this->getMapper()->deleteByModuleControllerObject($module, $controller, $object);
     }
 
     /**

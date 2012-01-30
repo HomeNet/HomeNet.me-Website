@@ -73,6 +73,13 @@ class ErrorController extends Zend_Controller_Action {
                 $this->getResponse()->setHttpResponseCode(404);
                 $this->view->message = '404 Page not found';
                 break;
+             case 403:
+                 $code = 403;
+                // 404 error -- controller or action not found
+                $this->getResponse()->setHttpResponseCode(403);
+                $this->view->message = '403 Forbidden';
+                break;
+            
             default:
                 $code = 500;
                 // application error

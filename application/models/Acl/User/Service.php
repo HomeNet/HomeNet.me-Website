@@ -81,6 +81,16 @@ class Core_Model_Acl_User_Service {
     public function getObjectsByUserModule($user, $module) {
         return $this->getMapper()->fetchObjectsByUserModule($user, $module);
     }
+    
+    /**
+     * @param integer $user User Id
+     * @param string $module
+     * @param int $collection   Object Id
+     * @return Core_Model_Acl_User[] 
+     */
+    public function getObjectsByUserModuleCollection($user, $module, $collection) {
+        return $this->getMapper()->fetchObjectsByUserModuleCollection($user, $module, $collection);
+    }
 
     /**
      * @param integer $user User Id
@@ -92,6 +102,9 @@ class Core_Model_Acl_User_Service {
     public function getObjectsByUserModuleControllerObject($user, $module, $controller, $object = null) {
         return $this->getMapper()->fetchObjectsByUserModuleControllerObject($user, $module, $controller, $object);
     }
+    
+    
+    
 
     /**
      * @param integer $user User Id
@@ -103,6 +116,20 @@ class Core_Model_Acl_User_Service {
     public function getObjectsByUserModuleControllerObjects($user, $module, $controller, array $objects) {
         return $this->getMapper()->fetchObjectsByUserModuleControllerObjects($user, $module, $controller, $objects);
     }
+    
+     public function allow($user, $module, $controller = null, $action = null, $collection = null, $obj = null){
+        $object = new Core_Model_Acl_User();
+        $object->user = $user;
+        $object->module = $module;
+        $object->controller = $controller;
+        $object->action = $action;
+        $object->collection = $collection;
+        $object->object = $obj;
+        $object->permission = 1;
+        
+        return $this->create($object);
+    }
+    
 
 //    public function getObjectsBySection($section){
 //        $contents = $this->getMapper()->fetchObjectsBySection($section);
@@ -135,6 +162,8 @@ class Core_Model_Acl_User_Service {
         } else {
             throw new InvalidArgumentException('Invalid Object');
         }
+        
+       // var_dump($object);
 
         return $this->getMapper()->save($object);
     }
@@ -182,6 +211,50 @@ class Core_Model_Acl_User_Service {
      */
     public function deleteByUser($user) {
         return $this->getMapper()->deleteByUser($user);
+    }
+    
+   public function deleteByModule($module) {
+        if(($module === null) || !is_string($module)){
+            throw new InvalidArgumentException('Invalid Module');
+        }
+        return $this->getMapper()->deleteByModule($module);
+    }
+    
+    public function deleteByModuleCollection($module, $collection) {
+        if(($module === null) || !is_string($module)){
+            throw new InvalidArgumentException('Invalid Module');
+        }
+        if(($collection === null) || !is_numeric($collection)){
+            throw new InvalidArgumentException('Invalid Collection');
+        }
+        return $this->getMapper()->deleteByModuleCollection($module, $collection);
+    }
+    
+     public function deleteByUserModuleCollection($user, $module, $collection) {
+         if(($user === null) || !is_numeric($user)){
+            throw new InvalidArgumentException('Invalid User');
+        }
+        if(($module === null) || !is_string($module)){
+            throw new InvalidArgumentException('Invalid Module');
+        }
+        if(($collection === null) || !is_numeric($collection)){
+            throw new InvalidArgumentException('Invalid Collection');
+        }
+        return $this->getMapper()->deleteByUserModuleCollection($user, $module, $collection);
+    }
+    
+    
+    public function deleteByModuleControllerObject($module, $controller, $object) {
+        if(($module === null) || !is_string($module)){
+            throw new InvalidArgumentException('Invalid Module');
+        }
+        if(($controller === null) || !is_string($controller)){
+            throw new InvalidArgumentException('Invalid Controller');
+        }
+        if(($object === null)){
+            throw new InvalidArgumentException('Invalid Object');
+        }
+        return $this->getMapper()->deleteByModuleControllerObject($module, $controller, $object);
     }
 
     /**

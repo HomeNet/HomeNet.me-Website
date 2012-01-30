@@ -15,6 +15,11 @@ class HomeNet_ComponentController extends Zend_Controller_Action
 
     public function graphAjaxAction()
     {
+        $acl = new HomeNet_Model_Acl($this->_getParam('house'));
+        $acl->checkAccess('house', 'index');
+        
+        
+        
         $this->_helper->layout()->disableLayout();
 
         $service = new HomeNet_Model_Component_Service();

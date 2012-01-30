@@ -105,11 +105,24 @@ class Installer extends CMS_Installer_Abstract {
         $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'user', 'action' => null, 'permission' => 1);
         //  $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'login', 'action' => null, 'permission' => 0);
 
-        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'gTest', 'action' => 'index', 'permission' => 1);
-        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'gTest', 'action' => 'add', 'permission' => 1);
-        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'gTest', 'action' => 'edit', 'permission' => 0);
-        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'gTest', 'action' => 'edit', 'object' => 1, 'permission' => 1);
-        $group_acls[] = array('group' => $result->id, 'module' => 'core', 'controller' => 'gTest', 'action' => 'edit', 'object' => 2, 'permission' => 0);
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'index', 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'add', 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'edit', 'permission' => 0);
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'edit', 'object' => 1, 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'edit', 'object' => 2, 'permission' => 0);
+        
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'index', 'collection'=>1, 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'add', 'collection'=>1, 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'edit', 'collection'=>1, 'permission' => 0);
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'edit', 'collection'=>1, 'object' => 1, 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'edit', 'collection'=>1, 'object' => 2, 'permission' => 0);
+        
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'index', 'collection'=>2, 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'add',   'collection'=>2, 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'edit', 'collection'=>2, 'permission' => 0);
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'edit', 'collection'=>2, 'object' => 1, 'permission' => 1);
+        $group_acls[] = array('group' => $result->id, 'module' => 'test', 'controller' => 'group', 'action' => 'edit', 'collection'=>2, 'object' => 2, 'permission' => 0);
+        
 
 
         $contentAdmin = array(
@@ -160,6 +173,11 @@ class Installer extends CMS_Installer_Abstract {
         $manager = new Core_Model_User_Manager();
         $manager->login(array('username'=>'testSuperAdmin','password'=>'password'));
     }
+    public function loginAsMember(){
+        unset($_SESSION);
+        $manager = new Core_Model_User_Manager();
+        $manager->login(array('username'=>'testMember','password'=>'password'));
+    }
 
     public function installTest() {
 
@@ -178,7 +196,7 @@ class Installer extends CMS_Installer_Abstract {
         $user = array(
             'status' => 1,
             'primary_group' => $this->group->members->id,
-            'username' => 'TestUser1',
+            'username' => 'testMember',
             'name' => 'Test User',
             'location' => 'Random',
             'email' => 'testuser1@mcdportal.com',
@@ -186,13 +204,26 @@ class Installer extends CMS_Installer_Abstract {
 
         $this->user->member = $result = $uService->create($user);
 
-        $user_auth_internal[] = array('id' => $result->id, 'username' => 'TestUser1', 'password' => 'password');
+        $user_auth_internal[] = array('id' => $result->id, 'username' => 'testMember', 'password' => 'password');
 
-        $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'uTest', 'action' => 'index', 'permission' => 1);
-        $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'uTest', 'action' => 'add', 'permission' => 1);
-        $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'uTest', 'action' => 'edit', 'permission' => 0);
-        $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'uTest', 'action' => 'edit', 'object' => 1, 'permission' => 1);
-        $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'uTest', 'action' => 'edit', 'object' => 2, 'permission' => 0);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'index', 'permission' => 1);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'add', 'permission' => 1);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'edit', 'permission' => 0);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'edit', 'object' => 1, 'permission' => 1);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'edit', 'object' => 2, 'permission' => 0);
+        
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'index', 'collection'=>1 , 'permission' => 1);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'add', 'collection'=>1 ,'permission' => 1);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'edit', 'collection'=>1 ,'permission' => 0);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'edit', 'collection'=>1 ,'object' => 1, 'permission' => 1);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'edit', 'collection'=>1 ,'object' => 2, 'permission' => 0);
+        
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'index', 'collection'=>2 , 'permission' => 1);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'add',   'collection'=>2 , 'permission' => 1);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'edit',  'collection'=>2 , 'permission' => 0);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'edit',  'collection'=>2 , 'object' => 1, 'permission' => 1);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'edit',  'collection'=>2 , 'object' => 2, 'permission' => 0);
+        
 
         //user
         $user = array(
@@ -208,7 +239,7 @@ class Installer extends CMS_Installer_Abstract {
     
         $user_auth_internal[] = array('id' => $result->id, 'username' => 'TestUser2', 'password' => 'password');
 
-        $user_acls[] = array('user' => $result->id, 'module' => 'core', 'controller' => 'test', 'action' => 'special', 'permission' => 1);
+        $user_acls[] = array('user' => $result->id, 'module' => 'test', 'controller' => 'user', 'action' => 'special', 'permission' => 1);
 
         //admin
         $admin = array(

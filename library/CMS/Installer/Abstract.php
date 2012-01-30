@@ -80,7 +80,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return array
      */
-    public function installUserAcl() {
+    public function getUserAcl() {
         // return $acl[] = array()
 
 
@@ -92,7 +92,7 @@ abstract class CMS_Installer_Abstract {
      * 
      * @return array
      */
-    public function installGroupAcl() {
+    public function getGroupAcl() {
         return array();
     }
 

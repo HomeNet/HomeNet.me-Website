@@ -34,7 +34,8 @@ class HomeNet_Model_HouseUser_ServiceTest extends PHPUnit_Framework_TestCase {
         $object = new HomeNet_Model_HouseUser();
         
         $object->user = 1;
-        $object->house = $this->homenetInstaller->house->test->id;
+        $object->house = $this->homenetInstaller->house->id;
+        $object->permissions = array(HomeNet_Model_HouseUser::PERMISSION_VIEW, HomeNet_Model_HouseUser::PERMISSION_ADD);
 
         $result = $this->service->create($object);
 
@@ -45,7 +46,7 @@ class HomeNet_Model_HouseUser_ServiceTest extends PHPUnit_Framework_TestCase {
     private function validateResult($result) {
         $this->assertNotNull($result->id);
         $this->assertEquals(1, $result->user);
-        $this->assertEquals($this->homenetInstaller->house->test->id, $result->house);
+        $this->assertEquals($this->homenetInstaller->house->id, $result->house);
     }
     
 //$this->service->getMapper()///////////////////////////////////////////////////
@@ -112,7 +113,7 @@ class HomeNet_Model_HouseUser_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testCreate_validArray() {
         $array = array(
             'user' => 1,
-        'house' => $this->homenetInstaller->house->test->id);
+        'house' => $this->homenetInstaller->house->id);
 
         $result = $this->service->create($array);
         $this->validateResult($result);
@@ -132,7 +133,7 @@ class HomeNet_Model_HouseUser_ServiceTest extends PHPUnit_Framework_TestCase {
 
         //update values
         $object->user = 2;
-        $object->house = $this->homenetInstaller->house->test2->id;
+        $object->house = $this->homenetInstaller->house2->id;
 
         $result = $this->service->update($object);
 
@@ -140,7 +141,7 @@ class HomeNet_Model_HouseUser_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertNotNull($result->id);
         $this->assertEquals(2, $result->user);
-        $this->assertEquals($this->homenetInstaller->house->test2->id, $result->house);
+        $this->assertEquals($this->homenetInstaller->house2->id, $result->house);
     }
 
     public function testUpdate_validArray() {
@@ -150,7 +151,7 @@ class HomeNet_Model_HouseUser_ServiceTest extends PHPUnit_Framework_TestCase {
 
         //update values
         $array['user'] = 2;
-        $array['house'] = $this->homenetInstaller->house->test2->id;
+        $array['house'] = $this->homenetInstaller->house2->id;
 
         $result = $this->service->update($array);
 
@@ -158,7 +159,7 @@ class HomeNet_Model_HouseUser_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertNotNull($result->id);
         $this->assertEquals(2, $result->user);
-        $this->assertEquals($this->homenetInstaller->house->test2->id, $result->house);
+        $this->assertEquals($this->homenetInstaller->house2->id, $result->house);
     }
 
     public function testUpdate_invalidObject() {
@@ -175,6 +176,7 @@ class HomeNet_Model_HouseUser_ServiceTest extends PHPUnit_Framework_TestCase {
 
         //test delete
         $id = $object->id;
+        
         $this->service->delete($object);
 
         //verify that it was deleted

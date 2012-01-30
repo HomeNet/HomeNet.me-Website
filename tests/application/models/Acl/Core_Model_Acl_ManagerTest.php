@@ -9,7 +9,9 @@ class Core_Model_Acl_ManagerTest extends PHPUnit_Framework_TestCase {
     /**
      * @var Core_Model_Acl_Service
      */
-    protected $object;
+    protected $manager;
+    
+    protected $installer;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -17,13 +19,13 @@ class Core_Model_Acl_ManagerTest extends PHPUnit_Framework_TestCase {
      */
     protected function setUp() {
         
-        Core_Model_Installer::install();
+        $this->installer = new Installer();
+        $this->installer->installTest();
 
-        $uService = new Core_Model_User_Service();
-        $user = $uService->getObjectById(Core_Model_Installer::$userMember);
+        //$uService = new Core_Model_User_Service();
+        //$user = $uService->getObjectById();
         
-        $this->object = new Core_Model_Acl_Manager($user);
-        
+        $this->manager = new Core_Model_Acl_Manager($this->installer->user->member);
     }
 
     /**
@@ -31,15 +33,15 @@ class Core_Model_Acl_ManagerTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        Core_Model_Installer::uninstall();
+
     }
 
 
     public function testSetUser() {
         $user = new Core_Model_User();
-        $this->object->setUser($user);
+        $this->manager->setUser($user);
         
-        $this->assertInstanceOf('Core_Model_User', $this->object->getUser());
+        $this->assertInstanceOf('Core_Model_User', $this->manager->getUser());
         
     }
 
@@ -58,92 +60,104 @@ class Core_Model_Acl_ManagerTest extends PHPUnit_Framework_TestCase {
     }
     
     public function testGetBaseAcl(){
-        $result = $this->object->getBaseAcl('core');
+        $result = $this->manager->getBaseAcl('core');
         $this->assertInstanceOf('CMS_Acl', $result);
     }
 
     
     public function testGetGroupAcl() {
         $uService = new Core_Model_User_Service();
-        $user = $uService->getObjectById(Core_Model_Installer::$userGuest);
+        //$user = $uService->getObjectById(Core_Model_Installer::$userGuest);
         
-        $this->object = new Core_Model_Acl_Manager($user);
+        $this->manager = new Core_Model_Acl_Manager($this->installer->user->guest);
         
         
-        $result = $this->object->getGroupAcl('core');
+        $result = $this->manager->getGroupAcl('core');
         $this->assertInstanceOf('Zend_Acl', $result);
-        $this->assertTrue($result->isAllowed(new CMS_Acl_Role_Group(Core_Model_Installer::$groupGuest), new CMS_Acl_Resource_Controller('index')));
+        $this->assertTrue($result->isAllowed($this->installer->group->guests, new CMS_Acl_Resource_Controller('index')));
          
          
     }
     
     
     public function testGetUserAcl() {
-        $result = $this->object->getUserAcl('core');
+        $result = $this->manager->getUserAcl('core');
         $this->assertInstanceOf('Zend_Acl', $result);
-        $this->assertTrue($result->isAllowed(new CMS_Acl_Role_User(Core_Model_Installer::$userMember), new CMS_Acl_Resource_Controller('index')));
+        $this->assertTrue($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Controller('index')));
     }
 
 
     public function testGetGroupAclObjects() {
-        $result = $this->object->getGroupAclObjects('core','gTest',array(1,2,3));
+        $result = $this->manager->getGroupAclObjects('test','group',array(1,2,3));
         $this->assertInstanceOf('Zend_Acl', $result);
         
-        $this->assertTrue ($result->isAllowed(new CMS_Acl_Role_Group(Core_Model_Installer::$groupMember), new CMS_Acl_Resource_Controller('gTest'),'index'));
-        $this->assertFalse($result->isAllowed(new CMS_Acl_Role_Group(Core_Model_Installer::$groupMember), new CMS_Acl_Resource_Controller('gTest'),'edit'));
-        $this->assertTrue ($result->isAllowed(new CMS_Acl_Role_Group(Core_Model_Installer::$groupMember), new CMS_Acl_Resource_Controller('gTest'),'add'));
-        $this->assertTrue ($result->isAllowed(new CMS_Acl_Role_Group(Core_Model_Installer::$groupMember), new CMS_Acl_Resource_Object('gTest',1),'edit'));
-        $this->assertFalse($result->isAllowed(new CMS_Acl_Role_Group(Core_Model_Installer::$groupMember), new CMS_Acl_Resource_Object('gTest',2),'edit'));
-        $this->assertFalse($result->isAllowed(new CMS_Acl_Role_Group(Core_Model_Installer::$groupMember), new CMS_Acl_Resource_Object('gTest',3),'edit'));
+        $this->assertTrue ($result->isAllowed($this->installer->group->members, new CMS_Acl_Resource_Controller('group'),'index'));
+        $this->assertFalse($result->isAllowed($this->installer->group->members, new CMS_Acl_Resource_Controller('group'),'edit'));
+        $this->assertTrue ($result->isAllowed($this->installer->group->members, new CMS_Acl_Resource_Controller('group'),'add'));
+        $this->assertTrue ($result->isAllowed($this->installer->group->members, new CMS_Acl_Resource_Object('group',1),'edit'));
+        $this->assertFalse($result->isAllowed($this->installer->group->members, new CMS_Acl_Resource_Object('group',2),'edit'));
+        $this->assertFalse($result->isAllowed($this->installer->group->members, new CMS_Acl_Resource_Object('group',3),'edit'));
         
         
     }
 
 
     public function testGetUserAclObjects() {
-       $result = $this->object->getUserAclObjects('core','uTest',array(1,2,3));
-       $this->assertInstanceOf('Zend_Acl', $result);
-       
-           $this->assertTrue($result->isAllowed(new CMS_Acl_Role_User(Core_Model_Installer::$userMember), new CMS_Acl_Resource_Controller('uTest'),'index'));
-        $this->assertFalse($result->isAllowed(new CMS_Acl_Role_User(Core_Model_Installer::$userMember), new CMS_Acl_Resource_Controller('uTest'),'edit'));
-        $this->assertTrue($result->isAllowed(new CMS_Acl_Role_User(Core_Model_Installer::$userMember), new CMS_Acl_Resource_Controller('uTest'),'add'));
-        $this->assertTrue($result->isAllowed(new CMS_Acl_Role_User(Core_Model_Installer::$userMember), new CMS_Acl_Resource_Object('uTest',1),'edit'));
-        $this->assertFalse($result->isAllowed(new CMS_Acl_Role_User(Core_Model_Installer::$userMember), new CMS_Acl_Resource_Object('uTest',2),'edit'));
-        $this->assertFalse($result->isAllowed(new CMS_Acl_Role_User(Core_Model_Installer::$userMember), new CMS_Acl_Resource_Object('uTest',3),'edit'));
-       
-       
+        $result = $this->manager->getUserAclObjects('test', 'user', array(1, 2, 3));
+        $this->assertInstanceOf('Zend_Acl', $result);
+
+        $this->assertTrue ($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Controller('user'), 'index'));
+        $this->assertFalse($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Controller('user'), 'edit'));
+        $this->assertTrue ($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Controller('user'), 'add'));
+        $this->assertTrue ($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Object('user', 1), 'edit'));
+        $this->assertFalse($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Object('user', 2), 'edit'));
+        $this->assertFalse($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Object('user', 3), 'edit'));
     }
     
-    public function testUserMemberAllowed(){
-        $result = $this->object->getUserAcl('core');
+    
+    public function testGetUserAclCollection() {
+        $result = $this->manager->getUserAclCollection('test', 1);
         $this->assertInstanceOf('Zend_Acl', $result);
-        $this->assertTrue($result->isAllowed(new CMS_Acl_Role_User(Core_Model_Installer::$userMember), new CMS_Acl_Resource_Controller('index'),'index'));
-        $this->assertTrue($result->isAllowed(new CMS_Acl_Role_User(Core_Model_Installer::$userMember), new CMS_Acl_Resource_Controller('user'),'add'));
+
+        $this->assertTrue ($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Controller('user'), 'index'));
+        $this->assertFalse($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Controller('user'), 'edit'));
+        $this->assertTrue ($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Controller('user'), 'add'));
+        $this->assertTrue ($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Object('user', 1), 'edit'));
+        $this->assertFalse($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Object('user', 2), 'edit'));
+        $this->assertFalse($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Object('user', 3), 'edit'));
+    }
+    
+    
+    public function testUserMemberAllowed(){
+        $result = $this->manager->getUserAcl('core');
+        $this->assertInstanceOf('Zend_Acl', $result);
+        $this->assertTrue($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Controller('index'),'index'));
+        $this->assertTrue($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Controller('user'),'add'));
     }
     
     public function testUserMemberDenied(){
-        $result = $this->object->getUserAcl('core');
-        $this->assertFalse($result->isAllowed(new CMS_Acl_Role_User(Core_Model_Installer::$userMember), new CMS_Acl_Resource_Controller('login'),'index'));
+        $result = $this->manager->getUserAcl('core');
+        $this->assertFalse($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Controller('login'),'index'));
     }
     public function testUserMemberInvalidControllerDenied(){
-        $result = $this->object->getUserAcl('core');
-        $this->assertFalse($result->isAllowed(new CMS_Acl_Role_User(Core_Model_Installer::$userMember), new CMS_Acl_Resource_Controller('notInPermissions'),'index'));
+        $result = $this->manager->getUserAcl('core');
+        $this->assertFalse($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Controller('notInPermissions'),'index'));
     }
     
     public function testGroupMemberAllowed(){
-         $result = $this->object->getGroupAcl('core');
+         $result = $this->manager->getGroupAcl('core');
         $this->assertInstanceOf('Zend_Acl', $result);
-        $this->assertTrue($result->isAllowed(new CMS_Acl_Role_Group(Core_Model_Installer::$groupMember), new CMS_Acl_Resource_Controller('index')));
+        $this->assertTrue($result->isAllowed($this->installer->group->members, new CMS_Acl_Resource_Controller('index')));
     }
     
     public function testGroupMemberDenied(){
-         $result = $this->object->getGroupAcl('core');
+         $result = $this->manager->getGroupAcl('core');
         $this->assertInstanceOf('Zend_Acl', $result);
-        $this->assertFalse($result->isAllowed(new CMS_Acl_Role_Group(Core_Model_Installer::$groupMember), new CMS_Acl_Resource_Controller('login')));
+        $this->assertFalse($result->isAllowed($this->installer->group->members, new CMS_Acl_Resource_Controller('login')));
     }
     public function testModuleDoesNotExistIsDenied(){
-        $result = $this->object->getUserAcl('core');
-        $this->assertFalse($result->isAllowed(new CMS_Acl_Role_User(Core_Model_Installer::$userMember), new CMS_Acl_Resource_Controller('notInPermissions'),'index'));
+        $result = $this->manager->getUserAcl('core');
+        $this->assertFalse($result->isAllowed($this->installer->user->member, new CMS_Acl_Resource_Controller('notInPermissions'),'index'));
     }
 
 }

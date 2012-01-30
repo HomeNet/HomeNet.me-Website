@@ -9,15 +9,17 @@ class Core_Model_User_Membership_ServiceTest extends PHPUnit_Framework_TestCase 
    /**
      * @var Core_Model_User_Membership_Service
      */
-    protected $object;
+    protected $service;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new Core_Model_User_Membership_Service();
-        Core_Model_Installer::install();
+        $this->service = new Core_Model_User_Membership_Service();
+        $this->service->deleteAll();
+        $installer = new Installer();
+      //  $installer->installTest();
     }
 
     /**
@@ -25,13 +27,12 @@ class Core_Model_User_Membership_ServiceTest extends PHPUnit_Framework_TestCase 
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-       $this->object->deleteAll();
-       Core_Model_Installer::uninstall();
+       
     }
 
     public function testGetMapper() {
 
-        $this->assertInstanceOf('Core_Model_User_Membership_MapperInterface', $this->object->getMapper());
+        $this->assertInstanceOf('Core_Model_User_Membership_MapperInterface', $this->service->getMapper());
     }
 
     /**
@@ -40,37 +41,58 @@ class Core_Model_User_Membership_ServiceTest extends PHPUnit_Framework_TestCase 
     public function testSetMapper() {
         
         $mapper = new Core_Model_User_Membership_MapperDbTable();
-         $this->object->setMapper($mapper);
+         $this->service->setMapper($mapper);
         
-        $this->assertInstanceOf('Core_Model_User_Membership_MapperInterface', $this->object->getMapper());
-        $this->assertEquals($mapper, $this->object->getMapper());
+        $this->assertInstanceOf('Core_Model_User_Membership_MapperInterface', $this->service->getMapper());
+        $this->assertEquals($mapper, $this->service->getMapper());
         //$this->ass
     }
     
- 
-
+    private function _fillObject($object, $seed = 0) {
+        $data = $this->_getTestData($seed);
+        foreach ($data as $key => $value) {
+            $object->$key = $value;
+        }
+        return $object;
+    }
+    private function _fillArray($array, $seed = 0) {
+        if(is_object($array)){
+            $array = $array->toArray();
+        }
+        return array_merge($array, $this->_getTestData($seed));
+    }
     
-    
-
-    private function createValidUserMembership() {
+    private function _getTestData($seed = 0) {
         
-        $userMembership = new Core_Model_User_Membership();
-        $userMembership->user = 1;
-        $userMembership->group = 2;
+        $array = array('user' => 1 + $seed,
+        'group' => 2 + $seed);
+  
+        return $array;
+    }
+    
+    private function _createValidObject($seed = 0) {
+        $object = new Core_Model_User_Membership();
+        $object = $this->_fillObject($object, $seed);
 
-
-        $result = $this->object->create($userMembership);
-
+        $result = $this->service->create($object);
         $this->assertInstanceOf('Core_Model_User_Membership_Interface', $result);
         return $result;
     }
+     private function _validateResult($result, $seed = 0){
+        
+        $this->assertInstanceOf('Core_Model_User_Membership_Interface', $result);
+        $this->assertNotNull($result->id);
+        $this->assertEquals(1 + $seed, $result->user);
+        $this->assertEquals(2 + $seed, $result->group);
+    }
+
     
-    public function testCreateInvalidUserMembership() {
+    public function testCreate_Invalid() {
         $userMembership = new Core_Model_User_Membership();
         $userMembership->user = 1;
         
         $this->setExpectedException('Exception');
-        $result = $this->object->create($userMembership);
+        $result = $this->service->create($userMembership);
     }
 //    
 //    public function testDuplicateUrl() {
@@ -80,174 +102,222 @@ class Core_Model_User_Membership_ServiceTest extends PHPUnit_Framework_TestCase 
 //        $userMembership2 = $this->createValidUserMembership();
 //    }
 
-    public function testCreateValidFromObject() {
+    public function testCreate_validObject() {
 
-        $result = $this->createValidUserMembership();       
-
-        $this->assertNotNull($result->id);
-        $this->assertEquals(1, $result->user);
-        $this->assertEquals(2, $result->group);
-        $this->assertNotNull($result->created);
+        $result = $this->_createValidObject();
+        $this->_validateResult($result);
     }
     
-    public function testCreateFromArray() {
+    public function testCreate_validArray() {
 
-        $userMembership = array(
-            'user' => 1,
-            'group' => 2);
+        $result = $this->service->create($this->_getTestData());
 
-        $result = $this->object->create($userMembership);
-
-        $this->assertInstanceOf('Core_Model_User_Membership_Interface', $result);
-
-        $this->assertNotNull($result->id);
-        $this->assertEquals(1, $result->user);
-        $this->assertEquals(2, $result->group);
-        $this->assertNotNull($result->created);
+       $this->_validateResult($result);
     }
 
-    public function testCreateException() {
+    public function testCreate_invalidObject() {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->create($badObject);
+        $create = $this->service->create($badObject);
     }
+//$this->service->getObjectById($object->id);///////////////////////////////////
+    public function testGetObjectById_valid() {
 
-    public function testGetObjectById() {
+        $object = $this->_createValidObject();
 
-        //setup
-        $userMembership = $this->createValidUserMembership();
-
-        //test getObject
-        $result = $this->object->getObjectById($userMembership->id);
+        $result = $this->service->getObjectById($object->id);
         
-        $this->assertInstanceOf('Core_Model_User_Membership_Interface', $result);
-        
-        $this->assertNotNull($result->id);
-        $this->assertEquals(1, $result->user);
-        $this->assertEquals(2, $result->group);
-        $this->assertNotNull($result->created);
+        $this->_validateResult($result);
     }
     
-//    public function testGetObjectByUrl() {
-//
-//        //setup
-//        $userMembership = $this->createValidUserMembership();
-//
-//        //test getObject
-//        $result = $this->object->getObjectByUrl($userMembership->url);
-//        
-//        $this->assertInstanceOf('Core_Model_User_Membership_Interface', $result);
-//
-//        $this->assertEquals($userMembership->id, $result->id);
-//        $this->assertEquals(0, $result->set);
-//        $this->assertEquals(1, $result->parent);
-//        $this->assertEquals(2, $result->order);
-//        $this->assertEquals('testUrl', $result->url);
-//        $this->assertEquals('testTitle', $result->title);
-//        $this->assertEquals('testDescription', $result->description);
-//    }
-//    
-//     public function testGetInvalidObjectByUrl() {
+    public function testGetObjectById_null() {
+
+        $this->setExpectedException('InvalidArgumentException');
+
+        $result = $this->service->getObjectById(null);
+    }
+    
+//$this->service->getGroupIdsByUser($user);/////////////////////////////////////
+     public function testGetGroupIdsByUser_valid(){
+        $object = $this->_createValidObject();
+
+        $results = $this->service->getGroupIdsByUser($object->user);
+        
+        $this->assertEquals(1, count($results));
+     }
+     
+     public function testGetGroupIdsByUser_invalid(){
+         $this->setExpectedException('NotFoundException');
+        $results = $this->service->getGroupIdsByUser(100);
+        $this->assertEquals(0, count($results));
+     }
+     
+     public function testGetGroupIdsByUser_null(){
+         $this->setExpectedException('InvalidArgumentException');
+        $results = $this->service->getGroupIdsByUser(null);
+        $this->assertEquals(0, count($results));
+     }
+//$this->service->getObjectsByUser($user);///////////////////////////////////
+    public function testGetObjectsByUser_valid() {
+
+        $object = $this->_createValidObject();
+        $results = $this->service->getObjectsByUser($object->user);
+        
+        $this->_validateResult($results[0]);
+    }
+    
+    public function testGetObjectsByUser_null() {
+
+        $this->setExpectedException('InvalidArgumentException');
+        $result = $this->service->getObjectsByUser(null);
+    }
+    
+//    public function testGetObjecstByUser_notFound() {
 //
 //        $this->setExpectedException('NotFoundException');
-//        $result = $this->object->getObjectByUrl("testnotindatabase");
-//
+//        $result = $this->service->getObjectsByUser(100);
 //    }
+//$this->service->getObjectByUserGroup($user, $group);///////////////////////////////////
+    public function testGetObjectByUserGroup_valid() {
 
-    //membership doesn't need update, just add and remove
-//    public function testUpdateFromObject() {
-//
-//        //setup
-//        $userMembership = $this->createValidUserMembership();
-//
-//        //update values
-//        $userMembership->user = 1;
-//        $userMembership->group = 3;
-//
-//        $result = $this->object->update($userMembership);
-//
-//        $this->assertInstanceOf('Core_Model_User_Membership_Interface', $result);
-//
-//        $this->assertEquals($userMembership->id,$result->id);
-//        $this->assertEquals(1, $result->user);
-//        $this->assertEquals(3, $result->group);
-//        $this->assertNotNull($result->created);
-//    }
-//    
-//    public function testUpdateFromArray() {
-//
-//        //setup
-//        $userMembership = $this->createValidUserMembership();
-//
-//        $array = $userMembership->toArray();
-//        
-//        //update values
-//        $array['user'] = 1;
-//        $array['group'] = 3;
-//
-//        $result = $this->object->update($array);
-//
-//        $this->assertInstanceOf('Core_Model_User_Membership_Interface', $result);
-//
-//        $this->assertEquals($userMembership->id,$result->id);
-//        $this->assertEquals(1, $result->user);
-//        $this->assertEquals(3, $result->group);
-//        $this->assertNotNull($result->created);
-//    }
-//    
-//
-//    public function testUpdateException() {
-//        $this->setExpectedException('InvalidArgumentException');
-//
-//        $badObject = new StdClass();
-//        $create = $this->object->update($badObject);
-//    }
-
-    public function testDeleteObject() {
-
-        //setup
-        $userMembership = $this->createValidUserMembership();
-
-        //test delete
-        $this->object->delete($userMembership);
-
-        //verify that it was deleted
-        $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($userMembership->id);
-    }
-
-    public function testDeleteId() {
-
-        //setup
-        $userMembership = $this->createValidUserMembership();
-       // $this->fail("id: ".$userMembership->id);
-        $this->object->delete((int)$userMembership->id);
+        $object = $this->_createValidObject();
+        $result = $this->service->getObjectByUserGroup($object->user, $object->group);
         
-        $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($userMembership->id);  
+        $this->_validateResult($result);
     }
     
-    public function testDeleteArray() {
+    public function testGetObjectByUserGroup_nullUser() {
 
-        //setup
-        $userMembership = $this->createValidUserMembership();
-       // $this->fail("id: ".$userMembership->id);
-        $this->object->delete($userMembership->toArray());
-        
+        $this->setExpectedException('InvalidArgumentException');
+        $result = $this->service->getObjectByUserGroup(null, 2);
+    }
+    
+     public function testGetObjectByUserGroup_nullGroup() {
+
+        $this->setExpectedException('InvalidArgumentException');
+        $result = $this->service->getObjectByUserGroup(2, null);
+    }
+    
+    public function testGetObjectByUserGroup_notFound() {
+
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($userMembership->id); 
+        $result = $this->service->getObjectByUserGroup(5,5);
+    }
+    
+//$this->service->add($user, $group);///////////////////////////////////////////
+    public function testAdd_valid() {
+
+        $object = (object) $this->_getTestData();
+        $result = $this->service->add($object->user, $object->group);
+        
+        $this->_validateResult($result);
+    }
+    
+    public function testAdd_nullUser() {
+
+        $this->setExpectedException('InvalidArgumentException');
+        $result = $this->service->add(null, 2);
+    }
+    
+     public function testAdd_nullGroup() {
+
+        $this->setExpectedException('InvalidArgumentException');
+        $result = $this->service->add(2, null);
+    }
+     
+//$this->service->delete($object);//////////////////////////////////////////////
+    public function testDelete_validObject() {
+
+        $object = $this->_createValidObject();
+        $this->service->delete($object);
+
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($object->id);
     }
 
-    public function testDeleteException() {
+    public function testDelete_validId() {
+        
+        $object = $this->_createValidObject();
+        $this->service->delete((int)$object->id);
+        
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($object->id);  
+    }
+    
+    public function testDelete_validArray() {
+
+        $object = $this->_createValidObject();
+        $this->service->delete($object->toArray());
+        
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($object->id); 
+    }
+
+    public function testDelete_invalidObject() {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->delete($badObject);
+        $create = $this->service->delete($badObject);
+    }
+    
+//$this->service->deleteByUser($user);//////////////////////////////////////////////
+    public function testDeleteByUser_valid() {
+
+        $object = $this->_createValidObject();
+        $this->service->deleteByUser($object->user);
+
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($object->id);
     }
 
+    public function testDeleteByUser_null() {
+
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByUser(null);
+    }
+    
+    //$this->service->deleteByUserGroup($user, $group);//////////////////////////////////////////////
+    public function testDeleteByUserGroup_valid() {
+
+        $object = $this->_createValidObject();
+        $this->service->deleteByUserGroup($object->user, $object->group);
+
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($object->id);
+    }
+
+    public function testDeleteByUserGroup_nullUser() {
+
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByUserGroup(null, 1);
+    }
+    
+    public function testDeleteByUserGroup_nullGroup() {
+
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByUserGroup(1, null);
+    }
+    
+    //$this->service->deleteByGroup($group);//////////////////////////////////////////////
+    public function testDeleteByGroup_valid() {
+
+        $object = $this->_createValidObject();
+        $this->service->deleteByGroup($object->group);
+
+        $this->setExpectedException('NotFoundException');
+        $result = $this->service->getObjectById($object->id);
+    }
+
+    public function testDeleteByGroup_null() {
+
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByGroup(null);
+    }
+    
+//$this->service->deleteAll();//////////////////////////////////////////////////
     public function testDeleteAll() {
-//        $this->object->deleteAll();
+//        $this->service->deleteAll();
     }
 
 }

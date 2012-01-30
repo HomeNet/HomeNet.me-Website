@@ -99,6 +99,19 @@ class HomeNet_Model_HouseUser_Service {
         }
         return $result;
     }
+    
+    public function add($house, $user, $permissions = null){
+        
+        if(!is_array($permissions)){
+            $permissions = array($permissions);
+        }
+        
+        $object = new HomeNet_Model_HouseUser();
+        $object->house = $house;
+        $object->user = $user;
+        $object->permissions = $permissions;
+        $this->create($object);
+    }
 
 /**
      * Create a new HouseUser
@@ -123,6 +136,47 @@ class HomeNet_Model_HouseUser_Service {
       //  $houseService->clearCacheById($result->house);
 
         $types = $houseService->getTypes();
+        
+        $aclService = new Core_Model_Acl_User_Service();
+        
+        if($result->permissions !== null && is_array($result->permissions)){
+            
+            if(in_array(HomeNet_Model_HouseUser::PERMISSION_VIEW, $result->permissions)){
+                $aclService->allow($result->user, 'homenet', null, 'index', $result->house);
+            }
+            
+            if(in_array(HomeNet_Model_HouseUser::PERMISSION_CODE, $result->permissions)){
+                $aclService->allow($result->user, 'homenet', 'node', 'code', $result->house);
+            }
+            
+            if(in_array(HomeNet_Model_HouseUser::PERMISSION_EXPORT, $result->permissions)){
+                $aclService->allow($result->user, 'homenet', 'component', 'export', $result->house);
+            }
+            
+            if(in_array(HomeNet_Model_HouseUser::PERMISSION_ADD, $result->permissions)){
+                $aclService->allow($result->user, 'homenet', null, 'add', $result->house);
+                $aclService->allow($result->user, 'homenet', null, 'configure', $result->house);
+            }
+            
+            if(in_array(HomeNet_Model_HouseUser::PERMISSION_EDIT, $result->permissions)){
+                $aclService->allow($result->user, 'homenet', null, 'edit', $result->house);
+            }
+            
+            if(in_array(HomeNet_Model_HouseUser::PERMISSION_TRASH, $result->permissions)){
+                $aclService->allow($result->user, 'homenet', null, 'trash', $result->house);
+                $aclService->allow($result->user, 'homenet', null, 'trashed', $result->house);
+                $aclService->allow($result->user, 'homenet', null, 'untrash', $result->house);
+            }
+            
+            if(in_array(HomeNet_Model_HouseUser::PERMISSION_DELETE, $result->permissions)){
+                $aclService->allow($result->user, 'homenet', null, 'delete', $result->house);
+            }
+            
+            if(in_array(HomeNet_Model_HouseUser::PERMISSION_ADMIN, $result->permissions)){
+                $aclService->allow($result->user, 'homenet', null, null, $result->house);
+            }
+
+        }
 
         //$table = new HomeNet_Model_DbTable_Alerts();
 
@@ -173,14 +227,17 @@ class HomeNet_Model_HouseUser_Service {
         } else {
             throw new InvalidArgumentException('Invalid UserModel');
         }
+        
+        
 
-        return $this->getMapper()->delete($object);
-
-        $result = $this->getMapper()->delete($houseUser);
+        //$result = $this->getMapper()->delete($object);
+        
+        $service = new Core_Model_Acl_User_Service();
+        $service->deleteByUserModuleCollection($object->user, 'homenet', $object->house);
 
        // $houseService = new HomeNet_Model_House_Service();
        // $houseService->clearCacheById($result->house);
-
+        $result = $this->getMapper()->delete($object);
         return $result;
     }
 

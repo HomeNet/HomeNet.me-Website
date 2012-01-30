@@ -34,17 +34,6 @@ class HomeNet_SetupController extends Zend_Controller_Action {
     public function init() {
         
         $this->_step = $this->_getParam('id');
-        
-
-//        $ajaxContext = $this->_helper->getHelper('AjaxContext');
-//        $ajaxContext->addActionContext('testConection', 'html')
-//                ->addActionContext('testBase', 'html')
-//                ->addActionContext('testLed', 'html')
-//                ->initContext();
-//
-//        if ($this->getRequest()->isXmlHttpRequest()) {
-//            return;
-//        }
     }
 
     public function indexAction() {
@@ -103,6 +92,10 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $step = $this->_step;
 
         if ($step > 1) {
+            
+            $acl = new HomeNet_Model_Acl($this->_getParam('house'));
+            $acl->checkAccess('setup', 'add');
+            
             $this->_house = $this->_housesService->getObjectById($this->_getParam('house'));
         }
 
@@ -137,8 +130,12 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $house->setSetting('setup', 2);
         $house = $this->_housesService->create($house);
         
+        $houseUserService = new HomeNet_Model_HouseUser_Service();
+        $user = Core_Model_User_Manager::getUser();
+        $houseUserService->add($house->id, $user->id, HomeNet_Model_HouseUser::PERMISSION_ADMIN);
+        
         $messageService = new HomeNet_Model_Message_Service();
-        $url = $this->view->url(array('controller'=>'setup', 'house' => $house->id, 'action' => 'index'), 'homenet-house-id');
+        $url = $this->view->url(array('controller'=>'setup', 'house' => $house->id, 'action' => 'index'), 'homenet-house');
         $messageService->add(HomeNet_Model_Message::NEWITEM, 'Congrates on starting your HomeNet. If you need to, you can return to the <a href="'.$url.'">Setup Wizard</a>', $user->id);
        
 
@@ -528,6 +525,8 @@ class HomeNet_SetupController extends Zend_Controller_Action {
     }
 
     public function finishAction() {
+        $acl = new HomeNet_Model_Acl($this->_getParam('house'));
+        $acl->checkAccess('setup', 'add');
         //test remote led
     }
     

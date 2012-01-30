@@ -61,7 +61,7 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
         return array('node_models', 'device_models', 'component_models');
     }
     
-    public function installGroupAcl() {
+    public function getGroupAcl() {
         
         
         
@@ -207,6 +207,23 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
                 'regions' => array(1,2));
             $this->house2 = $service->create($array);
         }
+        
+//        if (in_array('house_user', $list)) {
+//
+//            $service = new HomeNet_Model_HouseUser_Service;
+//            $array = array(
+//                'user' => 1,
+//                'url' => 'my-house',
+//                'name' => 'My House',
+//                'description' => 'My Description',
+//                'location' => 'My Location',
+//                'gps' => '0, 0',
+//                'type' => 'house',
+//                'regions' => array(1));
+//            $this->house = $service->create($array);
+//        }
+        
+        
         if (in_array('apikey', $list)) {
             $service = new HomeNet_Model_Apikey_Service;
             $this->apikey = $service->createApikeyForHouse($this->house->id);
@@ -287,6 +304,13 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
     }
 
     function uninstallTest() {
+        
+        $service = new Core_Model_Acl_User_Service();
+        $service->deleteByModule('homenet');
+        
+        $service = new Core_Model_Acl_Group_Service();
+        $service->deleteByModule('homenet');
+        
         $service = new HomeNet_Model_Apikey_Service();
         $service->deleteAll();
 

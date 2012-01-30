@@ -42,7 +42,7 @@ class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
             // If not in this module, return early
             return;
         }
-        $skip = array('setup', 'login', 'node-models', 'device-models', 'subdevice-models');
+        $skip = array('setup', 'login', 'node-model', 'device-model', 'component-model');
 
         if (in_array(strtolower($request->getControllerName()), $skip)) {
             // If doesn't apply to this controller, return early
@@ -60,18 +60,20 @@ class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
         // $userHousesIds = $service->getHouseIdsByUser();
         $userHousesIds = HomeNet_Model_House_Manager::getHouseIds();
         
-        if(empty($userHousesIds)){
-            return;
-        }
+//        if(empty($userHousesIds)){
+//            return;
+//        }
+        
+        //Make person can see house;        
+        $acl = new HomeNet_Model_Acl($house);
+        $acl->checkAccess('house', 'index');//throws exception if denied
         
 
         $houses = array();
 
         if ($house) {
 
-            //check to see if it's one of the current users houses
-
-
+            //check to see if it's one of the current users houses'
             if (in_array($house, $userHousesIds)) {
                 //one of the users houses
                 $houses = $service->getObjectsByIdsWithRooms($userHousesIds);
@@ -86,6 +88,8 @@ class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
                 $houses = array();
             }
         }
+       // var_dump($houses);
+       // exit;
 
         $this->_houses = $houses;
 

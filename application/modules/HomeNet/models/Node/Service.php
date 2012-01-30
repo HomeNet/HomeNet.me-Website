@@ -372,6 +372,10 @@ class HomeNet_Model_Node_Service {
             throw new InvalidArgumentException('Invalid Node');
         }
         
+        if($object->status === null){
+            $object->status = HomeNet_Model_Node::STATUS_LIVE;
+        }
+        
         $result = $this->getMapper()->save($object);
         
         $object->id = $result->id; //patch to fix null id, $node missing some parameters

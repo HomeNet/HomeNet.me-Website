@@ -339,8 +339,12 @@ class HomeNet_Model_Device_Service {
         } else {
             throw new InvalidArgumentException('Invalid Device');
         }
+        
+        if($object->status === null){
+            $object->status = HomeNet_Model_Device::STATUS_LIVE;
+        }
 
-        $result = $this->getMapper()->save($object);
+        $device = $this->getMapper()->save($object);
 
         $components = $object->getComponents(false);
 
@@ -348,15 +352,15 @@ class HomeNet_Model_Device_Service {
 
             $sService = new HomeNet_Model_Component_Service();
             foreach ($components as $component) {
-                $component->status = $object->status;
-                $component->house = $object->house;
-                $component->room = $object->getRoom()->id;
-                $component->device = $result->id;
+                $component->status = $device->status;
+                $component->house = $device->house;
+                $component->room = $device->getRoom()->id;
+                $component->device = $device->id;
 
                 $sService->create($component);
             }
         }
-        return $result;
+        return $device;
     }
 
     /**

@@ -32,6 +32,8 @@ class HomeNet_ApikeyController extends Zend_Controller_Action
     public function init()
     {
         $this->view->house= $this->_house = $this->_getParam('house');
+        $acl = new HomeNet_Model_Acl($this->_house);
+        $acl->checkAccess('house', $this->getRequest()->getActionName());
     }
 
     public function indexAction()

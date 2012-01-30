@@ -25,7 +25,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class CMS_Acl_Resource_Object implements Zend_Acl_Resource_Interface, CMS_Acl_Parent_Interface
+class CMS_Acl_Resource_Collection implements Zend_Acl_Resource_Interface
 {
     /**
      * Unique id of Resource
@@ -33,7 +33,7 @@ class CMS_Acl_Resource_Object implements Zend_Acl_Resource_Interface, CMS_Acl_Pa
      * @var string
      */
     protected $_resourceId;
-    protected  $_parent;
+
 
     /**
      * Sets the Resource identifier
@@ -42,11 +42,10 @@ class CMS_Acl_Resource_Object implements Zend_Acl_Resource_Interface, CMS_Acl_Pa
      * @param  string $object
      * @return void
      */
-    public function __construct($controller, $object)
+    public function __construct($collection)
     {
-         
-        $this->_parent = new CMS_Acl_Resource_Controller($controller);
-        $this->_resourceId =  $this->_parent->getResourceId().'o'.strtolower((string) $object);
+      //  $this->_parent = new CMS_Acl_Resource_Controller($controller);
+        $this->_resourceId = 'x'.strtolower((string) $collection);
     }
 
     /**
@@ -59,15 +58,7 @@ class CMS_Acl_Resource_Object implements Zend_Acl_Resource_Interface, CMS_Acl_Pa
         return $this->_resourceId;
     }
     
-     /**
-     * Defined by Zend_Acl_Parent_Interface; returns the Resource identifier
-     *
-     * @return string
-     */
-    public function getParent()
-    {
-        return $this->_parent;
-    }
+   
 
     /**
      * Defined by Zend_Acl_Resource_Interface; returns the Resource identifier

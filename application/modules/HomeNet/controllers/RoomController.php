@@ -40,6 +40,15 @@ class HomeNet_RoomController extends Zend_Controller_Action {
     
     public function init() {
         
+        $acl = new HomeNet_Model_Acl($this->_getParam('house'));
+        
+        $action = $this->getRequest()->getActionName();
+        if($action == 'info' || $action == 'control'){
+            $action = 'index';
+        }
+
+        $acl->checkAccess('house', $action);
+        
         $this->service = new HomeNet_Model_Room_Service();
         $this->view->heading = 'Room'; //for generic templates
         

@@ -18,7 +18,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new Core_Model_Acl_User_Service();
+        $this->service = new Core_Model_Acl_User_Service();
     }
 
     /**
@@ -26,22 +26,22 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        $this->object->deleteAll();
+        $this->service->deleteAll();
     //    $this->createTestUserAcls();
     }
 
     public function testGetMapper() {
 
-        $this->assertInstanceOf('Core_Model_Acl_User_MapperInterface', $this->object->getMapper());
+        $this->assertInstanceOf('Core_Model_Acl_User_MapperInterface', $this->service->getMapper());
     }
 
     public function testSetMapper() {
 
         $mapper = new Core_Model_Acl_User_MapperDbTable();
-        $this->object->setMapper($mapper);
+        $this->service->setMapper($mapper);
 
-        $this->assertInstanceOf('Core_Model_Acl_User_MapperInterface', $this->object->getMapper());
-        $this->assertEquals($mapper, $this->object->getMapper());
+        $this->assertInstanceOf('Core_Model_Acl_User_MapperInterface', $this->service->getMapper());
+        $this->assertEquals($mapper, $this->service->getMapper());
         //$this->ass
     }
 
@@ -51,10 +51,11 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
         $userAcl->module = 'core';
         $userAcl->controller = 'index';
         $userAcl->action = 'new';
+        $userAcl->collection = 3;
         $userAcl->object = 2;
         $userAcl->permission = 1;
 
-        $result = $this->object->create($userAcl);
+        $result = $this->service->create($userAcl);
 
         $this->assertInstanceOf('Core_Model_Acl_User_Interface', $result);
         return $result;
@@ -120,10 +121,11 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
             $acls[] = $acl;
 
             $acl['object'] = 3;
+            $acl['collection'] = 1;
             $acls[] = $acl;
         }
         foreach ($acls as $acl) {
-            $this->object->create($acl);
+            $this->service->create($acl);
         }
     }
 
@@ -135,7 +137,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
         $userAcl->action = 'new';
         //$userAcl->permission = 1;
         $this->setExpectedException('Exception');
-        $result = $this->object->create($userAcl);
+        $result = $this->service->create($userAcl);
     }
 
 //    
@@ -149,7 +151,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testGetObjectsByUser() {
 
         $this->createTestUserAcls();
-        $result = $this->object->getObjectsByUser(2);
+        $result = $this->service->getObjectsByUser(2);
     
         $this->assertEquals(8, count($result));
 
@@ -163,7 +165,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testGetObjectsByUserModule() {
         $this->createTestUserAcls();
-        $result = $this->object->getObjectsByUserModule(2, 'core');
+        $result = $this->service->getObjectsByUserModule(2, 'core');
  //echo debugArray($result->toArray());
         $this->assertEquals(3, count($result)); //verify
         foreach ($result as $acl) {
@@ -174,10 +176,27 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
             $this->assertEquals(1, $acl->permission);
         }
     }
+    
+    public function testGetObjectsByUserModuleCollection() {
+        $this->createTestUserAcls();
+        $result = $this->service->getObjectsByUserModuleCollection(2, 'test', 1);
+  //   echo debugArray($result->toArray());
+        $this->assertEquals(1, count($result));
+
+        foreach ($result as $acl) {
+
+            $this->assertNotNull($acl->id);
+            $this->assertEquals(2, $acl->user);
+            $this->assertTrue(in_array($acl->module, array('test',null)));
+            $this->assertTrue(in_array($acl->controller, array('test',null)));
+            $this->assertTrue(in_array($acl->object, array(3,null)));
+           // $this->assertEquals(1, $acl->permission);
+        }
+    }
 
     public function testGetObjectsByUserModuleControllerObject() {
         $this->createTestUserAcls();
-        $result = $this->object->getObjectsByUserModuleControllerObject(2, 'test', 'test', 1);
+        $result = $this->service->getObjectsByUserModuleControllerObject(2, 'test', 'test', 1);
   //   echo debugArray($result->toArray());
         $this->assertEquals(1, count($result));
 
@@ -194,7 +213,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testGetObjectsByUserModuleControllerObjects() {
         $this->createTestUserAcls();
-        $result = $this->object->getObjectsByUserModuleControllerObjects(2, 'test', 'test', array(1, 2));
+        $result = $this->service->getObjectsByUserModuleControllerObjects(2, 'test', 'test', array(1, 2));
         
         $this->assertEquals(2, count($result));
 
@@ -232,7 +251,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
             'object' => 2,
             'permission' => 0);
 
-        $result = $this->object->create($userAcl);
+        $result = $this->service->create($userAcl);
 
         $this->assertInstanceOf('Core_Model_Acl_User_Interface', $result);
 
@@ -249,7 +268,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->create($badObject);
+        $create = $this->service->create($badObject);
     }
 
     public function testGetObjectById() {
@@ -258,7 +277,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
         $userAcl = $this->createValidUserAcl();
 
         //test getObject
-        $result = $this->object->getObjectById($userAcl->id);
+        $result = $this->service->getObjectById($userAcl->id);
 
         $this->assertInstanceOf('Core_Model_Acl_User_Interface', $result);
 
@@ -277,7 +296,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
 //        $userAcl = $this->createValidUserAcl();
 //
 //        //test getObject
-//        $result = $this->object->getObjectByUrl($userAcl->url);
+//        $result = $this->service->getObjectByUrl($userAcl->url);
 //        
 //        $this->assertInstanceOf('Core_Model_Acl_User_Interface', $result);
 //
@@ -293,7 +312,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
 //     public function testGetInvalidObjectByUrl() {
 //
 //        $this->setExpectedException('NotFoundException');
-//        $result = $this->object->getObjectByUrl("testnotindatabase");
+//        $result = $this->service->getObjectByUrl("testnotindatabase");
 //
 //    }
 
@@ -310,7 +329,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
         $userAcl->object = 3;
         $userAcl->permission = 0;
 
-        $result = $this->object->update($userAcl);
+        $result = $this->service->update($userAcl);
 
         $this->assertInstanceOf('Core_Model_Acl_User_Interface', $result);
 
@@ -339,7 +358,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
         $array['permission'] = 0;
 
 
-        $result = $this->object->update($array);
+        $result = $this->service->update($array);
 
         $this->assertInstanceOf('Core_Model_Acl_User_Interface', $result);
 
@@ -356,7 +375,7 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->update($badObject);
+        $create = $this->service->update($badObject);
     }
 
     public function testDeleteObject() {
@@ -365,11 +384,11 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
         $userAcl = $this->createValidUserAcl();
 
         //test delete
-        $this->object->delete($userAcl);
+        $this->service->delete($userAcl);
 
         //verify that it was deleted
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($userAcl->id);
+        $result = $this->service->getObjectById($userAcl->id);
     }
 
     public function testDeleteId() {
@@ -377,10 +396,10 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
         //setup
         $userAcl = $this->createValidUserAcl();
         // $this->fail("id: ".$userAcl->id);
-        $this->object->delete((int) $userAcl->id);
+        $this->service->delete((int) $userAcl->id);
 
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($userAcl->id);
+        $result = $this->service->getObjectById($userAcl->id);
     }
 
     public function testDeleteArray() {
@@ -388,21 +407,104 @@ class Core_Model_Acl_User_ServiceTest extends PHPUnit_Framework_TestCase {
         //setup
         $userAcl = $this->createValidUserAcl();
         // $this->fail("id: ".$userAcl->id);
-        $this->object->delete($userAcl->toArray());
+        $this->service->delete($userAcl->toArray());
 
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($userAcl->id);
+        $result = $this->service->getObjectById($userAcl->id);
     }
 
-    public function testDeleteException() {
+    public function testDelete_invalid() {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->delete($badObject);
+        $create = $this->service->delete($badObject);
+    }
+    
+//$this->service->deleteByModule($module);//////////////////////////////////////
+    public function testDeleteByModule_valid() {
+        $object = $this->createValidUserAcl();
+        
+        $this->service->deleteByModule($object->module);
+        
+        $this->setExpectedException('NotFoundException');
+       $this->service->getObjectById($object->id);
+    }
+    
+    public function testDeleteByModule_null() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByModule(null);
+    }
+//$this->service->deleteByModuleCollection($module, $collection);///////////////
+    public function testDeleteByModuleCollection_valid() {
+        $object = $this->createValidUserAcl();
+        
+        $this->service->deleteByModuleCollection($object->module, $object->collection);
+        
+        $this->setExpectedException('NotFoundException');
+       $this->service->getObjectById($object->id);
+    }
+    public function testDeleteByModuleCollection_nullModule() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByModuleCollection(null, 1);
+
+    }
+    public function testDeleteByModuleCollection_nullCollection() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByModuleCollection('module', null);
+
+    }
+//$this->service->deleteByUserModuleCollection($module, $collection);///////////////
+    public function testDeleteByUserModuleCollection_valid() {
+        $object = $this->createValidUserAcl();
+        
+        $this->service->deleteByUserModuleCollection($object->user, $object->module, $object->collection);
+        
+        $this->setExpectedException('NotFoundException');
+        $this->service->getObjectById($object->id);
+    }
+    public function testDeleteByUserModuleCollection_nullUser() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByUserModuleCollection(null, 'module', 1);
+
+    }
+    public function testDeleteByUserModuleCollection_nullModule() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByUserModuleCollection(1, null, 1);
+
+    }
+    public function testDeleteByUserModuleCollection_nullCollection() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByUserModuleCollection(1, 'module', null);
+
+    }
+//$this->service->deleteByModuleControllerObject($module, $controller, $object);  
+    public function testDeleteByModuleControllerObject_valid() {
+        $object = $this->createValidUserAcl();
+        
+        $this->service->deleteByModuleControllerObject($object->module, $object->controller, $object->object);
+        
+        $this->setExpectedException('NotFoundException');
+        $this->service->getObjectById($object->id);
+    }
+    
+    public function testDeleteByModuleControllerObject_nullModule() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByModuleControllerObject(null, 'controller', 1);
+    }
+    
+    public function testDeleteByModuleControllerObject_nullController() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByModuleControllerObject('module', null, 1);
+    }
+    
+    public function testDeleteByModuleControllerObject_nullObject() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByModuleControllerObject('module', 'controller', null);
     }
 
+//$this->service->deleteAll();//////////////////////////////////////////////////
     public function testDeleteAll() {
-//        $this->object->deleteAll();
+//        $this->service->deleteAll();
     }
 
 }

@@ -55,10 +55,17 @@ Zend_Registry::set('cachemanager', $application->getBootstrap()->getResource('ca
 //$installer = new Installer();
 //$installer->installTest();
 
-
 $installer = new HomeNet_Installer();
+//$installer->installOptionalContent($installer->getOptionalContent());
 
-$installer->installOptionalContent($installer->getOptionalContent());
+
+//Install HomeNet Acl
+$group_acls = $installer->getGroupAcl();
+
+ $agService = new Core_Model_Acl_Group_Service();
+        foreach ($group_acls as $acl) {
+            $agService->create($acl);
+        }
 
 
 echo 'database installed';

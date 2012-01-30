@@ -114,5 +114,9 @@ class Core_Model_Group implements Core_Model_Group_Interface {
     public function clearSetting($setting) {
         unset($this->settings[$setting]);
     }
+    
+    public function getRoleId(){
+        return 'g'.(string) $this->id;
+    }
 
 }

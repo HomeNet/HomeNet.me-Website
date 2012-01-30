@@ -680,8 +680,10 @@ if (typeof Object.create === 'undefined') {
         
         
         updateTextarea: function(){
-          //  console.log(['collpase',this.htmlView]);
-           // if(this.htmlView !== false){return;}
+            //console.log(['collpase',this.htmlView]);
+            if(this.htmlView == true){
+                return;
+            }
                 var temp = this.editor.clone().detach();
                // temp.find('.block').each(function(index, element){ console.log('found block');$(element).wysiwygblock({collapse:true});});
                 temp.find('.block').wysiwygblock({collapse:true});

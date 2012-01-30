@@ -1,11 +1,15 @@
 <?php echo $this->heading('Users'); 
+
+$groupService = new Core_Model_Group_Service();
+$groups = $groupService->getList();
+
 ?>
 
 <div class="cms ui-widget ui-widget-content ui-corner-all">
 <div class="ui-widget-content">
     <table width="100%">
         <thead class="ui-widget-header">
-            <tr><th>Id</th><th>User</th><th>Name</th><th width="50"></th></tr>
+            <tr><th>Id</th><th>Primary Group</th><th>User</th><th>Name</th><th width="50"></th></tr>
         </thead>
         <tbody>
             <?php
@@ -14,6 +18,7 @@
             ?>
             <tr  class="<?php echo $this->cycle(array("", "ui-state-default"))->next() ?>" >
                 <td><?php echo $object->id ?></td>
+                <td><?php echo $groups[$object->primary_group] ?></td>
                 <td><?php echo $object->username ?></td>
                 <td><?php echo $object->name ?></td>
                 <td>

@@ -53,6 +53,12 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
         return $this->getTable()->find($id)->current();
     }
 
+    public function fetchObjectsByUser($user) {
+        $select = $this->getTable()->select('group')->where('user = ?', $user);
+        $results = $this->getTable()->fetchAll($select);
+        return $results;
+    }
+    
     public function fetchGroupIdsByUser($user) {
         $select = $this->getTable()->select('group')->where('user = ?', $user);
         $result = $this->getTable()->fetchAll($select);
@@ -65,7 +71,7 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
     }
 
     public function fetchUserIdsByGroup($group) {
-        $select = $this->getTable()->select('user')->where('group = ?', $group);
+        $select = $this->getTable()->select('user')->where('`group` = ?', $group);
         $result = $this->getTable()->fetchAll($select);
         $array = array();
         foreach ($result as $row) {
@@ -73,6 +79,11 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
         }
 
         return $array;
+    }
+    
+    public function fetchObjectByUserGroup($user, $group) {
+        $select = $this->getTable()->select()->where('`user` = ?', $user)->where('`group` = ?', $group);
+        return $this->getTable()->fetchRow($select);
     }
 
     public function save(Core_Model_User_Membership_Interface $object) {
@@ -113,9 +124,16 @@ class Core_Model_User_Membership_MapperDbTable implements Core_Model_User_Member
         $where = $this->getTable()->getAdapter()->quoteInto('user = ?', $user);
         return $this->getTable()->delete($where);
     }
+    
+    public function deleteByUserGroup($user, $group) {
+        $where = array();
+        $where[] = $this->getTable()->getAdapter()->quoteInto('`user` = ?', $user);
+        $where[] = $this->getTable()->getAdapter()->quoteInto('`group` = ?', $group);
+        return $this->getTable()->delete($where);
+    }
 
     public function deleteByGroup($group) {
-        $where = $this->getTable()->getAdapter()->quoteInto('group = ?', $group);
+        $where = $this->getTable()->getAdapter()->quoteInto('`group` = ?', $group);
         return $this->getTable()->delete($where);
     }
 

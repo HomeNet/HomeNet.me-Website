@@ -103,6 +103,10 @@ class Core_Model_Group_DbTableRow extends Zend_Db_Table_Row_Abstract implements 
     public function clearSetting($setting){
         unset($this->settings[$setting]);
     }
+    
+    public function getRoleId(){
+        return 'g'.(string) $this->id;
+    }
 
 }
 

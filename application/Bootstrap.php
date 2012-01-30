@@ -217,12 +217,16 @@ function debugArray($array) {
     return '<pre>' . print_r($array, 1) . '</pre>';
 }
 
+class NotAllowedException extends Exception {
+      protected $code = 403;  
+}
+
 class NotSupportedException extends Exception {
     
 }
 
 class NotFoundException extends DomainException {
-    
+    protected $code = 404;  
 }
 
 class DuplicateEntryException extends DomainException {

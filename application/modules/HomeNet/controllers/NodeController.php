@@ -38,6 +38,10 @@ class HomeNet_NodeController extends Zend_Controller_Action {
     private $service;
 
     public function init() {
+        
+        $acl = new HomeNet_Model_Acl($this->_getParam('house'));
+        $acl->checkAccess('house', $this->getRequest()->getActionName());
+        
         $this->service = new HomeNet_Model_Node_Service();
         
         $this->view->heading = 'Node'; //for generic templates

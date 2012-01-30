@@ -83,7 +83,11 @@ class Core_Model_Group_MapperDbTable implements Core_Model_Group_MapperInterface
      * @return Core_Model_Group_DbTableRow 
      */
     public function fetchObjectsByType($type) {
-        $select = $this->getTable()->select()->where('type = ?', $type);
+        if(is_array($type)){
+            $select = $this->getTable()->select()->where('type in (?)', $type);
+        } else {
+            $select = $this->getTable()->select()->where('type = ?', $type);
+        }
 
         return $this->getTable()->fetchAll($select);
     }

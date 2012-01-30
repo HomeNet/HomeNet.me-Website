@@ -36,6 +36,11 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
     private $service;
     
     public function init() {
+        
+        $acl = new HomeNet_Model_Acl($this->_getParam('house'));
+        $acl->checkAccess('house', $this->getRequest()->getActionName());
+        
+        
         $this->view->heading = 'Device'; //for generic templates
         $this->service = new HomeNet_Model_Device_Service();
 
@@ -53,17 +58,33 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
             'route'  => 'homenet',   
         ));
         
-        $this->view->breadcrumbs()->addPage(array(
-            'label'  => $this->_house->name,
-            'route'  => 'homenet-house',  
-            'controller' => 'house',
-            'params' => array('house'=>$this->_house->id)
-        ));
+//        $this->view->breadcrumbs()->addPage(array(
+//            'label'  => $this->_house->name,
+//            'route'  => 'homenet-house',  
+//            'controller' => 'house',
+//            'params' => array('house'=>$this->_house->id)
+//        ));
+//        
+//        $this->view->breadcrumbs()->addPage(array(
+//            'label'  => $this->_room->name,
+//            'route'  => 'homenet-house',  
+//            'controller' => 'room',
+//            'params' => array('house'=>$this->_house->id)
+//        ));
+//        
+//        $this->view->breadcrumbs()->addPage(array(
+//            'label'  => $this->_node->model_name,
+//            'route'  => 'homenet-house-id',  
+//            'controller' => 'node',
+//            'params' => array('house'=>$this->_house->id,
+//               // 'room'=>$this->_room->id,
+//                'id'=>$this->_node->address,)
+//        ));
         
-        $this->view->breadcrumbs()->addPage(array(
-            'label'  => $this->_room->name,
+         $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Nodes',
             'route'  => 'homenet-house',  
-            'controller' => 'room',
+            'controller' => 'node',
             'params' => array('house'=>$this->_house->id)
         ));
         
@@ -75,6 +96,16 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
                // 'room'=>$this->_room->id,
                 'id'=>$this->_node->address,)
         ));
+        
+        $this->view->breadcrumbs()->addPage(array(
+            'label'  => 'Devices',
+            'route'  => 'homenet-house-id',  
+            'controller' => 'node',
+            'params' => array('house'=>$this->_house->id,
+               // 'room'=>$this->_room->id,
+                'id'=>$this->_node->address,)
+            ));
+        
         if($this->_id !== null){
             $this->view->device =  $this->_device = $this->service->getObjectByHouseNodeaddressPosition($this->_house->id, $this->_node->address, $this->_id);
 

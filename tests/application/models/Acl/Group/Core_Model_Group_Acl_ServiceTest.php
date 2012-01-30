@@ -11,14 +11,14 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
     /**
      * @var Core_Model_Acl_Group_Service
      */
-    protected $object;
+    protected $service;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new Core_Model_Acl_Group_Service();
+        $this->service = new Core_Model_Acl_Group_Service();
     }
 
     /**
@@ -26,23 +26,28 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        $this->object->deleteAll();
+        $this->service->deleteAll();
     }
 
     public function testGetMapper() {
 
-        $this->assertInstanceOf('Core_Model_Acl_Group_MapperInterface', $this->object->getMapper());
+        $this->assertInstanceOf('Core_Model_Acl_Group_MapperInterface', $this->service->getMapper());
     }
 
     public function testSetMapper() {
 
         $mapper = new Core_Model_Acl_Group_MapperDbTable();
-        $this->object->setMapper($mapper);
+        $this->service->setMapper($mapper);
 
-        $this->assertInstanceOf('Core_Model_Acl_Group_MapperInterface', $this->object->getMapper());
-        $this->assertEquals($mapper, $this->object->getMapper());
+        $this->assertInstanceOf('Core_Model_Acl_Group_MapperInterface', $this->service->getMapper());
+        $this->assertEquals($mapper, $this->service->getMapper());
         //$this->ass
     }
+    
+    
+    
+    
+    
 
     private function createValidGroupAcl() {
         $groupAcl = new Core_Model_Acl_Group();
@@ -50,10 +55,11 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $groupAcl->module = 'core';
         $groupAcl->controller = 'index';
         $groupAcl->action = 'new';
+        $groupAcl->collection = 3;
         $groupAcl->object = 2;
         $groupAcl->permission = 1;
 
-        $result = $this->object->create($groupAcl);
+        $result = $this->service->create($groupAcl);
 
         $this->assertInstanceOf('Core_Model_Acl_Group_Interface', $result);
         return $result;
@@ -103,10 +109,12 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
             $acls[] = $acl;
 
             $acl['object'] = 3;
+             $acl['collection'] = 1;
+            
             $acls[] = $acl;
         }
         foreach ($acls as $acl) {
-            $this->object->create($acl);
+            $this->service->create($acl);
         }
     }
 
@@ -118,7 +126,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $groupAcl->action = 'new';
         //$groupAcl->permission = 1;
         $this->setExpectedException('Exception');
-        $result = $this->object->create($groupAcl);
+        $result = $this->service->create($groupAcl);
     }
 
 //    
@@ -132,7 +140,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testGetObjectsByGroup() {
 
         $this->createTestGroupAcls();
-        $result = $this->object->getObjectsByGroup(2);
+        $result = $this->service->getObjectsByGroup(2);
 
         $this->assertEquals(6, count($result));
 
@@ -146,7 +154,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testGetObjectsByGroups() {
         $this->createTestGroupAcls();
-        $result = $this->object->getObjectsByGroups(array(1, 2));
+        $result = $this->service->getObjectsByGroups(array(1, 2));
 
         $this->assertEquals(2, count($result));
         foreach ($result as $result2) {
@@ -164,7 +172,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testGetObjectsByGroupsModule() {
         $this->createTestGroupAcls();
-        $result = $this->object->getObjectsByGroupsModule(array(1, 2), 'core');
+        $result = $this->service->getObjectsByGroupsModule(array(1, 2), 'core');
 
         $this->assertEquals(2, count($result));
         foreach ($result as $result2) {
@@ -181,10 +189,31 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
             }
         }
     }
+    
+    public function testGetObjectsByGroupsModuleCollection() {
+        $this->createTestGroupAcls();
+        $result = $this->service->getObjectsByGroupsModuleCollection(array(1, 2), 'test', 1);
+
+        $this->assertEquals(1, count($result));
+
+        foreach ($result as $result2) {
+
+            $this->assertEquals(1, count($result2));
+
+            foreach ($result2 as $acl) {
+                $this->assertNotNull($acl->id);
+                $this->assertTrue(in_array($acl->group, array(1, 2)));
+                $this->assertTrue(in_array($acl->module, array('test',null)));
+                $this->assertTrue(in_array($acl->controller, array('test',null)));
+                $this->assertTrue(in_array($acl->object, array(1,null)));
+                $this->assertEquals(1, $acl->permission);
+            }
+        }
+    }
 
     public function testGetObjectsByGroupsModuleControllerObject() {
         $this->createTestGroupAcls();
-        $result = $this->object->getObjectsByGroupsModuleControllerObject(array(1, 2), 'test', 'test', 1);
+        $result = $this->service->getObjectsByGroupsModuleControllerObject(array(1, 2), 'test', 'test', 1);
 
         $this->assertEquals(1, count($result));
 
@@ -205,7 +234,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testGetObjectsByGroupsModuleControllerObjects() {
         $this->createTestGroupAcls();
-        $result = $this->object->getObjectsByGroupsModuleControllerObjects(array(1, 2), 'test', 'test', array(1, 2));
+        $result = $this->service->getObjectsByGroupsModuleControllerObjects(array(1, 2), 'test', 'test', array(1, 2));
 
         $this->assertEquals(2, count($result));
 
@@ -249,7 +278,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
             'object' => 2,
             'permission' => 0);
 
-        $result = $this->object->create($groupAcl);
+        $result = $this->service->create($groupAcl);
 
         $this->assertInstanceOf('Core_Model_Acl_Group_Interface', $result);
 
@@ -266,7 +295,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->create($badObject);
+        $create = $this->service->create($badObject);
     }
 
     public function testGetObjectById() {
@@ -275,7 +304,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $groupAcl = $this->createValidGroupAcl();
 
         //test getObject
-        $result = $this->object->getObjectById($groupAcl->id);
+        $result = $this->service->getObjectById($groupAcl->id);
 
         $this->assertInstanceOf('Core_Model_Acl_Group_Interface', $result);
 
@@ -287,32 +316,6 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(2, $result->object);
         $this->assertEquals(1, $result->permission);
     }
-
-//    public function testGetObjectByUrl() {
-//
-//        //setup
-//        $groupAcl = $this->createValidGroupAcl();
-//
-//        //test getObject
-//        $result = $this->object->getObjectByUrl($groupAcl->url);
-//        
-//        $this->assertInstanceOf('Core_Model_Acl_Group_Interface', $result);
-//
-//        $this->assertEquals($groupAcl->id, $result->id);
-//        $this->assertEquals(0, $result->set);
-//        $this->assertEquals(1, $result->parent);
-//        $this->assertEquals(2, $result->order);
-//        $this->assertEquals('testUrl', $result->url);
-//        $this->assertEquals('testTitle', $result->title);
-//        $this->assertEquals('testDescription', $result->description);
-//    }
-//    
-//     public function testGetInvalidObjectByUrl() {
-//
-//        $this->setExpectedException('NotFoundException');
-//        $result = $this->object->getObjectByUrl("testnotindatabase");
-//
-//    }
 
     public function testUpdateFromObject() {
 
@@ -327,7 +330,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $groupAcl->object = 3;
         $groupAcl->permission = 0;
 
-        $result = $this->object->update($groupAcl);
+        $result = $this->service->update($groupAcl);
 
         $this->assertInstanceOf('Core_Model_Acl_Group_Interface', $result);
 
@@ -356,7 +359,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $array['permission'] = 0;
 
 
-        $result = $this->object->update($array);
+        $result = $this->service->update($array);
 
         $this->assertInstanceOf('Core_Model_Acl_Group_Interface', $result);
 
@@ -373,7 +376,7 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->update($badObject);
+        $create = $this->service->update($badObject);
     }
 
     public function testDeleteObject() {
@@ -382,11 +385,11 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         $groupAcl = $this->createValidGroupAcl();
 
         //test delete
-        $this->object->delete($groupAcl);
+        $this->service->delete($groupAcl);
 
         //verify that it was deleted
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($groupAcl->id);
+        $result = $this->service->getObjectById($groupAcl->id);
     }
 
     public function testDeleteId() {
@@ -394,10 +397,10 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         //setup
         $groupAcl = $this->createValidGroupAcl();
         // $this->fail("id: ".$groupAcl->id);
-        $this->object->delete((int) $groupAcl->id);
+        $this->service->delete((int) $groupAcl->id);
 
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($groupAcl->id);
+        $result = $this->service->getObjectById($groupAcl->id);
     }
 
     public function testDeleteArray() {
@@ -405,21 +408,79 @@ class Core_Model_Acl_Group_ServiceTest extends PHPUnit_Framework_TestCase {
         //setup
         $groupAcl = $this->createValidGroupAcl();
         // $this->fail("id: ".$groupAcl->id);
-        $this->object->delete($groupAcl->toArray());
+        $this->service->delete($groupAcl->toArray());
 
         $this->setExpectedException('NotFoundException');
-        $result = $this->object->getObjectById($groupAcl->id);
+        $result = $this->service->getObjectById($groupAcl->id);
     }
 
     public function testDeleteException() {
         $this->setExpectedException('InvalidArgumentException');
 
         $badObject = new StdClass();
-        $create = $this->object->delete($badObject);
+        $create = $this->service->delete($badObject);
+    }
+    
+    public function testDeleteByModule_valid() {
+        $object = $this->createValidGroupAcl();
+        
+        $this->service->deleteByModule($object->module);
+        
+        $this->setExpectedException('NotFoundException');
+       $this->service->getObjectById($object->id);
+    }
+    
+    public function testDeleteByModule_null() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByModule(null);
+    }
+//$this->service->deleteByModuleCollection($module, $collection);///////////////
+    public function testDeleteByModuleCollection_valid() {
+        $object = $this->createValidGroupAcl();
+        
+        $this->service->deleteByModuleCollection($object->module, $object->collection);
+        
+        $this->setExpectedException('NotFoundException');
+       $this->service->getObjectById($object->id);
+    }
+    public function testDeleteByModuleCollection_nullModule() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByModuleCollection(null, 1);
+
+    }
+    public function testDeleteByModuleCollection_nullCollection() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByModuleCollection('module', null);
+
+    }
+//$this->service->deleteByModuleControllerObject($module, $controller, $object);  
+    public function testDeleteByModuleControllerObject_valid() {
+        $object = $this->createValidGroupAcl();
+        
+        $this->service->deleteByModuleControllerObject($object->module, $object->controller, $object->object);
+        
+        $this->setExpectedException('NotFoundException');
+        $this->service->getObjectById($object->id);
+    }
+    
+    public function testDeleteByModuleControllerObject_nullModule() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByModuleControllerObject(null, 'controller', 1);
+    }
+    
+    public function testDeleteByModuleControllerObject_nullController() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByModuleControllerObject('module', null, 1);
+    }
+    
+    public function testDeleteByModuleControllerObject_nullObject() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->deleteByModuleControllerObject('module', 'controller', null);
     }
 
+//$this->service->deleteAll();//////////////////////////////////////////////////
     public function testDeleteAll() {
-//        $this->object->deleteAll();
+//        $this->service->deleteAll();
     }
 
 }

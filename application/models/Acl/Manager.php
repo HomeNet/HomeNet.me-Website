@@ -20,6 +20,10 @@
  */
 
 /**
+ * @todo add function to clean cache
+ */
+
+/**
  * @package Core
  * @subpackage Acl
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
@@ -27,14 +31,17 @@
  */
 class Core_Model_Acl_Manager {
 
-    private static $_resourceCache = null;
-    private static $_modules = null;
+    private static $_resourceCache;
+    private static $_modules;
     private static $_acl = array();
-    private $_user = null;
-    private $_aclIdentifier = null;
+    private $_user;
+    private $_aclIdentifier;
     private $_aclTags = array();
-    
-    private static $_instance = null;
+
+    /**
+     * @var Core_Model_Acl_Manager
+     */
+    private static $_instance;
 
     public function __construct(Core_Model_User_Interface $user = null) {
         if ($user !== null) {
@@ -43,14 +50,16 @@ class Core_Model_Acl_Manager {
             $this->_user = Core_Model_User_Manager::getUser();
         }
     }
-    
-    static public function getInstance(){
-        if(self::$_instance === null){
+
+    /**
+     * @return Core_Model_Acl_Manager 
+     */
+    static public function getInstance() {
+        if (self::$_instance === null) {
             self::$_instance = new Core_Model_Acl_Manager();
         }
         return self::$_instance;
     }
-    
 
     public function setUser(Core_Model_User_Interface $user) {
         $this->_user = $user;
@@ -88,7 +97,7 @@ class Core_Model_Acl_Manager {
             self::$_modules = $front->getControllerDirectory();
         }
         //fix default
-        
+
 
         return self::$_modules;
     }
@@ -96,7 +105,7 @@ class Core_Model_Acl_Manager {
     /**
      * @return Zend_Acl
      */
-    private function _getAcl($module, $roles, $resource = null, $objects = null) {
+    private function _getAcl($roles, $module, $collection = null, $resource = null, $objects = null) {
 
         $identifiers = array($module);
 
@@ -108,7 +117,6 @@ class Core_Model_Acl_Manager {
                     $identifiers[] = $value;
                 }
             }
-
         } else {
             if ($roles instanceof Zend_Acl_Role_Interface) {
                 $identifiers[] = $roles->getRoleId();
@@ -126,7 +134,11 @@ class Core_Model_Acl_Manager {
             }
         }
 
-        $tags = $identifiers; //get tags before crazy has is added
+        if ($collection !== null) {
+            $identifiers[] = 'x' . $collection;
+        }
+
+        $tags = $identifiers; //get tags before crazy object list is added
         //format objects
         if ($objects !== null) {
             if (is_array($objects)) {
@@ -162,7 +174,7 @@ class Core_Model_Acl_Manager {
     private function _setAcl(CMS_Acl $acl, $identifier) {
 
         if ($identifier !== null) {
-          //  echo "\n" . print_r($this->_aclTags[$identifier], 1) . "\n";
+            //  echo "\n" . print_r($this->_aclTags[$identifier], 1) . "\n";
             $cache = $this->_getCache();
             $cache->save($acl, $identifier, $this->_aclTags[$identifier]); //
             self::$_acl[$identifier] = $acl;
@@ -255,14 +267,14 @@ class Core_Model_Acl_Manager {
     public function getBaseAcl($module) {
 
         $module = strtolower($module);
-        
-        $acl = $this->_getAcl($module, 'base');
+
+        $acl = $this->_getAcl('base', $module);
         if ($acl === false) { //cache call failed
             //this save some duplicate processing
             $identifier = $this->_getLastAclIdentifier();
 
             $gService = new Core_Model_Group_Service();
-            $results = $gService->getObjectsByType(0);
+            $results = $gService->getObjectsByType(0); //0 is everyone and owner, basiclly the built system users
 
             $groups = array();
             foreach ($results as $result) {
@@ -306,24 +318,24 @@ class Core_Model_Acl_Manager {
         }
         return $acl;
     }
-/**
- * @param string $module
- * @return CMS_Acl
- */
+
+    /**
+     * @param string $module
+     * @return CMS_Acl
+     */
     public function getGroupAcl($module) {
 
         $module = strtolower($module);
-        
+
         //get group list
         $memberships = $this->_user->getMemberships();
         $gRoles = array();
         foreach ($memberships as $groupId) {
             $gRoles[$groupId] = new CMS_Acl_Role_Group($groupId);
-            
-            
         }
 
-        $acl = $this->_getAcl($module, $gRoles);
+        $acl = $this->_getAcl($gRoles, $module);
+
         if ($acl === false) { //cache call failed
             //this save some duplicate processing
             $identifier = $this->_getLastAclIdentifier();
@@ -331,21 +343,18 @@ class Core_Model_Acl_Manager {
             $acl = $this->getBaseAcl($module);
 
             $service = new Core_Model_Acl_Group_Service();
-            
-            
+
             //add group roles
-            foreach($gRoles as $role){
+            foreach ($gRoles as $role) {
                 if (!$acl->hasRole($role)) {
                     $acl->addRole($role);
                 }
             }
 
-             
             $objects = $service->getObjectsByGroupsModule($memberships, $module);
 
             foreach ($objects as $group => $rules) {
 
-                
                 foreach ($rules as $rule) {
 
                     $cResource = null;
@@ -360,6 +369,9 @@ class Core_Model_Acl_Manager {
                     }
 
                     if ($rule->permission == 1) {
+                        if(empty($gRoles[$rule->group])){
+                            die('can\'t find '.$rule->group);
+                        }
                         $acl->allow($gRoles[$rule->group], $cResource, $rule->action);
                     } else {
                         $acl->deny($gRoles[$rule->group], $cResource, $rule->action);
@@ -369,37 +381,36 @@ class Core_Model_Acl_Manager {
 
             $this->_setAcl($acl, $identifier); //save to cache
         }
-        //save a copy to the cache
-        //   $this->_setAcl($module, $acl);
+
         return $acl;
     }
-/**
- * @param string $module
- * @return CMS_Acl
- */
+
+    /**
+     * @param string $module
+     * @return CMS_Acl
+     */
     public function getUserAcl($module) {
-        
+
         $module = strtolower($module);
-//die(debugArray($this->_user->getMemberships()));
+
         $uRole = new CMS_Acl_Role_User($this->_user->id);
 
-        $acl = $this->_getAcl($module, $uRole);
+        $acl = $this->_getAcl($uRole, $module);
         if ($acl === false) { //cache call failed
             //this save some duplicate processing
             $identifier = $this->_getLastAclIdentifier();
 
-
             $acl = $this->getGroupAcl($module);
 
             if (!$acl->hasRole($uRole)) {
-                
+
                 $memberships = $this->_user->getMemberships();
                 $parents = array();
-                
+
                 foreach ($memberships as $groupId) {
                     //$parent
-                    
-                    
+
+
                     $parents[] = new CMS_Acl_Role_Group($groupId);
                 }
 
@@ -436,14 +447,15 @@ class Core_Model_Acl_Manager {
         }
         return $acl;
     }
-/**
- * @param string $module
- * @param string $controller
- * @param array $objects
- * @return CMS_Acl 
- */
+
+    /**
+     * @param string $module
+     * @param string $controller
+     * @param array $objects
+     * @return CMS_Acl 
+     */
     public function getGroupAclObjects($module, $controller, $objects) {
-        
+
         $module = strtolower($module);
 
         //get group list
@@ -457,11 +469,10 @@ class Core_Model_Acl_Manager {
         $cResource = new CMS_Acl_Resource_Controller($controller);
 
 
-        $acl = $this->_getAcl($module, $gRoles, $cResource, $objects);
+        $acl = $this->_getAcl($gRoles, $module, null, $cResource, $objects);
         if ($acl === false) { //cache call failed
             //this save some duplicate processing
             $identifier = $this->_getLastAclIdentifier();
-
 
             $acl = $this->getGroupAcl($module);
 
@@ -518,20 +529,21 @@ class Core_Model_Acl_Manager {
         }
         return $acl;
     }
-/**
- * @param string $module
- * @param string $controller
- * @param array $objects
- * @return CMS_Acl 
- */
+
+    /**
+     * @param string $module
+     * @param string $controller
+     * @param array $objects
+     * @return CMS_Acl 
+     */
     public function getUserAclObjects($module, $controller, $objects) {
-        
+
         $module = strtolower($module);
 
         $uRole = new CMS_Acl_Role_User($this->_user->id);
         $cResource = new CMS_Acl_Resource_Controller($controller);
 
-        $acl = $this->_getAcl($module, $uRole, $cResource, $objects);
+        $acl = $this->_getAcl($uRole, $module, null, $cResource, $objects);
         if ($acl === false) { //cache call failed
             //this save some duplicate processing
             $identifier = $this->_getLastAclIdentifier();
@@ -568,6 +580,162 @@ class Core_Model_Acl_Manager {
                     $acl->allow($uRole, $oResource, $rule->action);
                 } else {
                     $acl->deny($uRole, $oResource, $rule->action);
+                }
+            }
+            $this->_setAcl($acl, $identifier); //save to cache
+        }
+        return $acl;
+    }
+
+    /**
+     * @param string $module
+     * @param string $controller
+     * @param array $collection
+     * @return CMS_Acl 
+     */
+    public function getGroupAclCollection($module, $collection) {
+
+        $controllerList = array();
+
+
+        $module = strtolower($module);
+
+        //get group list
+        $memberships = $this->_user->getMemberships();
+
+        $gRoles = array();
+        foreach ($memberships as $groupId) {
+            $gRoles[$groupId] = new CMS_Acl_Role_Group($groupId);
+        }
+
+        $acl = $this->_getAcl($gRoles, $module, $collection);
+        if ($acl === false) { //cache call failed
+            //this save some duplicate processing
+            $identifier = $this->_getLastAclIdentifier();
+
+           $acl = new CMS_Acl();
+           // $acl = $this->getGroupAcl($module);
+
+            //get group list
+            $service = new Core_Model_Acl_Group_Service();
+            $objects = $service->getObjectsByGroupsModuleCollection($memberships, $module, $collection);
+
+            //add collection
+            // $xResource = new CMS_Acl_Resource_Collection($collection);
+            //add the resource if it doesn't exist.
+            // if (!$acl->hasResource($xResource)) {
+            //     $acl->addResource($xResource);
+            // }
+
+            foreach ($objects as $group => $rules) {
+
+                $gRole = new CMS_Acl_Role_Group($group);
+
+                if (!$acl->hasRole($gRole)) {
+                    $acl->addRole($gRole);
+                }
+                // $parents[] = $gRole;
+
+                foreach ($rules as $rule) {
+
+                    $resource = null;
+
+                    if (($rule->controller) != null && !array_key_exists($rule->controller, $controllerList)) {
+
+                        //add controllers to collection                    
+                        $cResource = new CMS_Acl_Resource_Controller($rule->controller);
+
+                        //add the resource if it doesn't exist.
+                        if (!$acl->hasResource($cResource)) {
+                            $acl->addResource($cResource);
+                        }
+                        $controllerList[$rule->controller] = $cResource;
+                        $resource = $cResource;
+                    }
+
+                    if (($rule->controller !== null) && ($rule->object !== null)) {
+
+                        $oResource = new CMS_Acl_Resource_Object($rule->controller, $rule->object);
+
+                        if (!$acl->hasResource($oResource)) {
+                            $acl->addResource($oResource, $controllerList[$rule->controller]);
+                        }
+                        $resource = $oResource;
+                    }
+
+                    //create permissions
+                    if ($rule->permission == 1) {
+                        $acl->allow($gRole, $resource, $rule->action);
+                    } else {
+                        $acl->deny($gRole, $resource, $rule->action);
+                    }
+                }
+            }
+            $this->_setAcl($acl, $identifier); //save to cache
+        }
+        return $acl;
+    }
+
+    /**
+     * @param string $module
+     * @param string $controller
+     * @param array $collection
+     * @return CMS_Acl 
+     */
+    public function getUserAclCollection($module, $collection) {
+        $controllerList = array();
+
+        $module = strtolower($module);
+
+        $uRole = new CMS_Acl_Role_User($this->_user->id);
+
+        $acl = $this->_getAcl($uRole, $module, $collection);
+
+        if ($acl === false) { //cache call failed
+            $identifier = $this->_getLastAclIdentifier(); //this save some duplicate processing
+
+            $acl = $this->getGroupAclCollection($module, $collection);
+
+            $service = new Core_Model_Acl_User_Service();
+            $objects = $service->getObjectsByUserModuleCollection($this->_user->id, $module, $collection);
+
+            if (!$acl->hasRole($uRole)) {
+                $acl->addRole($uRole);
+            }
+
+            //assumes to have the most nulls at the top
+            foreach ($objects as $rule) {
+
+                $resource = null;
+
+                if (($rule->controller) != null && !array_key_exists($rule->controller, $controllerList)) {
+
+                    //add controllers to collection                    
+                    $cResource = new CMS_Acl_Resource_Controller($rule->controller);
+
+                    //add the resource if it doesn't exist.
+                    if (!$acl->hasResource($cResource)) {
+                        $acl->addResource($cResource);
+                    }
+                    $controllerList[$rule->controller] = $cResource;
+                    $resource = $cResource;
+                }
+
+                if (($rule->controller !== null) && ($rule->object !== null)) {
+
+                    $oResource = new CMS_Acl_Resource_Object($rule->controller, $rule->object);
+
+                    if (!$acl->hasResource($oResource)) {
+                        $acl->addResource($oResource, $controllerList[$rule->controller]);
+                    }
+                    $resource = $oResource;
+                }
+
+                //create permissions
+                if ($rule->permission == 1) {
+                    $acl->allow($uRole, $resource, $rule->action);
+                } else {
+                    $acl->deny($uRole, $resource, $rule->action);
                 }
             }
             $this->_setAcl($acl, $identifier); //save to cache

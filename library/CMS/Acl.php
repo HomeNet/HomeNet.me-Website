@@ -30,7 +30,8 @@ class CMS_Acl extends Zend_Acl {
     
     
      public function isAllowed($role  = null, $resource = null, $privilege = null) {
-        
+       
+         
          if(!$this->hasResource($resource)){
              $this->addResource($resource);
          }

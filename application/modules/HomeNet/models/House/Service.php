@@ -359,13 +359,9 @@ class HomeNet_Model_House_Service {
         //create user perrmissions
         $service = new HomeNet_Model_HouseUser_Service();
 
-        $houseUser = new HomeNet_Model_HouseUser;
-        $user = Core_Model_User_Manager::getUser();
-
-        $houseUser->user = $user->id;
-        $houseUser->house = $result->id;
-
-        $service->create($houseUser);
+       // $houseuserService= new HomeNet_Model_HouseUser_Service();
+       // $user = Core_Model_User_Manager::getUser();
+       // $houseuserService->add($result->id, $user->id);
 
         //reset session cache
         unset($_SESSION['HomeNet']['houses']);
