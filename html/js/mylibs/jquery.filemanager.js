@@ -6,9 +6,12 @@
     // The jQuery.aj namespace will automatically be created if it doesn't exist
     $.filemanager = {
         options: {
+            elementid:undefined,
+            url:undefined,
             title: "Files", 
             button:"Select",
-            progressBar: undefined
+            progressBar: undefined,
+            maxItems:0
         },
         
         container: undefined,
@@ -16,7 +19,6 @@
         selectCount: 0,
         
         init: function(options){
- 
             for(var i in options){
                 this.options[i] = options[i];
             }
@@ -42,20 +44,25 @@
         },
 
         create: function(){
-            
+          //  console.log('Create Upload');
             $('<div id="fileupload">\n\
     <div class="fileupload-buttonbar ui-widget-content ui-corner-all">\n\
-        <label class="fileinput-button">\n\
+        <span class="fileinput-button">\n\
             <span>Add files...</span>\n\
             <input type="file" name="files[]" multiple>\n\
-        </label>\n\
+        </span>\n\
         <button type="submit" class="start">Start upload</button>\n\
         <button type="reset" class="cancel">Cancel upload</button>\n\
     </div>\n\
     <div class="cms-filemanager-container dropzone files"></div>\n\
     </div>').appendTo(this.container);
             this.container.cmsfileupload({
-                url: this.options.rest+'?element=filemanager&method=upload',
+                url: this.options.url,//+'?element=filemanager&method=upload&folder='+this.options.folder+'&hash='+this.options.hash,
+                formData: {
+                    element: "FileManager", 
+                    method: "upload", 
+                    id: this.options.elementid
+                },
                 dropZone: this.container.find('.dropzone'),
                 progressBar: this.options.progressBar
                 });
@@ -68,26 +75,31 @@
         getSelected: function(){
             var items = [];
             this.container.find(".ui-selected").each(function(index, element){ 
+                
                 items.push($(element).data()); 
                 $(element).remove();   
                 
             });
             this.selectCount = 0;
+            //console.log(items);
             return items;
         }
 
     });
+    
    
     $.filemanagerlocal = $.extend({},$.filemanager, {
         options: {
             title: "File Browser",
             button:"Select",
-            rest: "",
-            folder: "",
-            hash: ""
+            id: "",//for some reason this is needed, it's not inherting right'
+            url: ""//for some reason this is needed, it's not inherting right'
+           // folder: "",
+           // hash: ""
         },
         
         create: function(){
+         //   console.log(['createfilemanager']);
             var that = this;
             this.itemContainer = $('<ol class="item-container"></ol>');
             this.itemContainer.selectable({
@@ -138,13 +150,16 @@
         },
 
         loadData: function() {
-            $.getJSON(this.options.rest, {
+          //  console.log(['loadData',this.options]);
+            $.getJSON(this.options.url, {
                 element: "FileManager", 
                 method: "items", 
-                folder: this.options.folder, 
-                hash: this.options.hash
+                id: this.options.elementid
+               // folder: this.options.folder, 
+               // hash: this.options.hash
             },
             $.proxy(this._loadData, this)).error(function() {
+                //console.log();
                 alert("Could Not Load Data");
             })
         },
@@ -163,6 +178,7 @@
         getSelected: function(){
             var items = [];
             this.itemContainer.find(".ui-selected").each(function(index, element){ 
+               // console.log($(element).data());
                 items.push($(element).data()); 
                 $(element).removeClass("ui-selected cms-selected");   
                 
@@ -173,6 +189,7 @@
         }
 
     });
+  
     
     $.filemanagerflickr = $.extend({}, $.filemanager, {
         options: {
@@ -183,6 +200,7 @@
         create: function() {
         }
     });
+  
     
 })(jQuery);
 
@@ -196,9 +214,9 @@
             maxItems: 1,
 
             managers: {
-                upload:  $.filemanagerupload,//.init({}),
-                 local:  $.filemanagerlocal,//.init({}),
-                flickr:  $.filemanagerflickr//.init({})
+                upload: $.filemanagerupload,//.init({}),
+                 local: $.filemanagerlocal,//.init({}),
+                flickr: $.filemanagerflickr//.init({})
             }
         },
     
@@ -219,14 +237,15 @@
                 var id = 'tabs-'+this.options.name+'-'+i+'-'+$.cmsTabCount;
                 $.cmsTabCount++;
                 this.options.managers[i] = $.extend(true, {}, this.options.managers[i]);
-                
+                //console.log(this.options)
                 this.options.managers[i].init({
-                    id: id,
+                    id:id,
+                    elementid: this.options.id,
                     index: i, 
                     maxItems: this.options.maxItems,  
-                    rest: this.options.rest, 
-                    folder: this.options.folder, 
-                    hash: this.options.hash
+                    url: this.options.url
+                   // folder: this.options.folder, 
+                  //  hash: this.options.hash
                     });
                 
                 tabs += '<li><a href="#'+id+'">'+this.options.managers[i].options.title+'</a></li>';
@@ -297,12 +316,14 @@
         },
 
         _loadTab: function(event,ui){
+           // console.log('show tab');
             var that = this;
           //  var that = $(this).data('filemanager');
             
             that.currentIndex = ui.index;
             that.currentTab = that.tabIndexes[ui.index];
             var manager = that.options.managers[that.currentTab];
+          //  console.log(['show tab',this.tabsCreated,manager.options.id]);
             if(that.tabsCreated[manager.options.id] != true){
                 that.tabsCreated[manager.options.id] = true;
                 //alert('create'+this.currentTab);
@@ -322,7 +343,9 @@
             //console.log(['managers', this.options.managers]);
             
             $.each(this.options.managers[this.currentTab].getSelected(), function(index,value){
-                that._trigger('selected', null ,value);
+                
+               // console.log(value);
+                 that._trigger('selected', null ,value);
             } );
         },
 

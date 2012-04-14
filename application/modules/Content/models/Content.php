@@ -210,10 +210,12 @@ class Content_Model_Content implements Content_Model_Content_Interface {
             //  debugArray($object->getValue());
             // $options['validators'] = $field->validators; // array('alnum', array('regex', false, '/^[a-z]/i')  );
             // $options['filters'] = $field->filters; //array('StringToLower');
-            //$options['attrib'] = $field->attributes;
-
+            
+           // $options['attrib'] = array('data-id'=> $field->id);
+            
 
             $e = $object->getElement($options, $field->options);
+            $e->setAttrib('data-id', $field->id);
             $form->applyDefaultDecorators($e);
             $form->addElement($e);
         }

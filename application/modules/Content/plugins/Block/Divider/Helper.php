@@ -62,11 +62,21 @@ class Content_Plugin_Block_Divider_Helper extends Content_Model_Plugin_BlockHelp
         return $this->_document->saveXML($body);
     }
     
+    public function exists(){
+        if($this->getDivider() === false){
+            return false;
+        }
+        return true;
+    }
 
-    
 
-    
-    public function renderBefore(){
+
+
+
+
+
+
+    public function before(){
         $old = $this->_element->getDocument();
         $text = $this->toText();
         
@@ -86,7 +96,7 @@ class Content_Plugin_Block_Divider_Helper extends Content_Model_Plugin_BlockHelp
        $this->_element->setDocument($old);
        return $out;
     }
-    public function renderAfter(){
+    public function after(){
         $old = $this->_element->getDocument();
          $text = $this->toText();
         

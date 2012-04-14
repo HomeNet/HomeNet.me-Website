@@ -43,18 +43,18 @@ class CMS_View_Helper_FormJsImage extends CMS_View_Helper_FormJsFileManager {
             $value['type'] = 'image';
         }
         
-        if(empty($params['folder'])){
-            $params['folder'] = '';
-        }
-        
-        $params['hash'] = securityHash($params['folder']);
+//        if(empty($params['folder'])){
+//            $params['folder'] = '';
+//        }
+//        
+//        $params['hash'] = securityHash($params['folder']);
 
         //add class;
-        $class = 'cms-element-image';
-        if (isset($attribs['class'])) {
-            $class = ' ' . $attribs['class'];
-        }
-        $attribs['class'] = $class;
+//        $class = 'cms-element-image';
+//        if (isset($attribs['class'])) {
+//            $class = ' ' . $attribs['class'];
+//        }
+//        $attribs['class'] = $class;
         
         if (!empty($value)) {
             $value['thumbnail'] = $this->view->imagePath($value['path'], 100, 75);

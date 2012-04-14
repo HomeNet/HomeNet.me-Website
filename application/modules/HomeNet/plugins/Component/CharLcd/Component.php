@@ -31,7 +31,7 @@ class HomeNet_Plugin_Component_CharLcd_Component extends HomeNet_Model_Component
     }
 
     /**
-     * Build the Actions that this subdevice can perform
+     * Build the Actions that this component can perform
      */
     public function buildControls() {
         $this->addControl(

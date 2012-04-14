@@ -155,6 +155,10 @@ class Content_Model_Template_Service {
         }
         //create cache
         $object->active = true;
+        
+        if($object->layout == ''){
+            $object->layout = null;
+        }
         //@todo test to see if url aleady exists
         //die(debugArray($h));
         return $this->getMapper()->save($object);
@@ -174,6 +178,9 @@ class Content_Model_Template_Service {
             throw new InvalidArgumentException('Invalid Object');
         }
         
+        if($object->layout == ''){
+            $object->layout = null;
+        }
         //create cache
         $object->active = true;
 

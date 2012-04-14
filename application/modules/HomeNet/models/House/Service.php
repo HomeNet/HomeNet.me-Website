@@ -360,7 +360,7 @@ class HomeNet_Model_House_Service {
         $service = new HomeNet_Model_HouseUser_Service();
 
        // $houseuserService= new HomeNet_Model_HouseUser_Service();
-       // $user = Core_Model_User_Manager::getUser();
+        $user = Core_Model_User_Manager::getUser();
        // $houseuserService->add($result->id, $user->id);
 
         //reset session cache

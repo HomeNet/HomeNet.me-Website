@@ -28,6 +28,9 @@
  */
 class HomeNet_Model_Component_MapperDbTable implements HomeNet_Model_Component_MapperInterface {
 
+    /**
+     * @var Zend_Db_Table 
+     */
     protected $_table = null;
 
     /**
@@ -41,12 +44,18 @@ class HomeNet_Model_Component_MapperDbTable implements HomeNet_Model_Component_M
         return $this->_table;
     }
 
+    /**
+     * @param type Zend_Db_Table 
+     */
     public function setTable($table) {
         $this->_table = $table;
     }
 
     
-
+    /**
+     * @param int $id
+     * @return HomeNet_Model_Component_DbTableRow 
+     */
     public function fetchObjectById($id) {
 
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
@@ -59,6 +68,12 @@ class HomeNet_Model_Component_MapperDbTable implements HomeNet_Model_Component_M
 
     }
 
+    /**
+     *
+     * @param int $device
+     * @param int $status
+     * @return Zend_Db_Table_Rowset_Abstract
+     */
     public function fetchObjectsByDevice($device, $status = HomeNet_Model_Component::STATUS_LIVE) {
 
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
@@ -71,6 +86,12 @@ class HomeNet_Model_Component_MapperDbTable implements HomeNet_Model_Component_M
         return $this->getTable()->fetchAll($select);
     }
 
+    /**
+     *
+     * @param int $room
+     * @param int $status
+     * @return Zend_Db_Table_Rowset_Abstract 
+     */
     public function fetchObjectsByRoom($room, $status = HomeNet_Model_Component::STATUS_LIVE) {
 
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
@@ -83,10 +104,15 @@ class HomeNet_Model_Component_MapperDbTable implements HomeNet_Model_Component_M
         return $this->getTable()->fetchAll($select);
     }
 
+    /**
+     * @param HomeNet_Model_Component_Interface $object
+     * @return HomeNet_Model_Component_DbTableRow 
+     */
+
     public function save(HomeNet_Model_Component_Interface $object) {
 
 
-        if (($object instanceof HomeNet_Model_Room_DbTableRow) && ($object->isConnected())) {
+        if (($object instanceof HomeNet_Model_Component_DbTableRow) && ($object->isConnected())) {
             return $object->save();
         } elseif ($object->id !== null) {
             $row = $this->getTable()->find($object->id)->current();
@@ -100,15 +126,21 @@ class HomeNet_Model_Component_MapperDbTable implements HomeNet_Model_Component_M
 
     }
 
+     /**
+     * @param HomeNet_Model_Component_Interface $object
+     * @return boolean
+     * 
+     * @throws InvalidArgumentException
+     */
     public function delete(HomeNet_Model_Component_Interface $component) {
 
-        if (($component instanceof HomeNet_Model_Room_DbTableRow) && ($component->isConnected())) {
+        if (($component instanceof HomeNet_Model_Component_DbTableRow) && ($component->isConnected())) {
             return $component->delete();
         } elseif (!is_null($component->id)) {
             return $this->getTable()->find($component->id)->current()->delete();
         }
 
-        throw new HomeNet_Model_Exception('Invalid Component');
+        throw new InvalidArgumentException('Invalid Component');
     }
 
     public function deleteAll() {

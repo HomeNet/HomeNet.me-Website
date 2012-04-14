@@ -48,13 +48,28 @@ class Content_Form_Template extends CMS_Form
         $content->setAttrib('cols','110');
         $this->addElement($content);
         
+        $layout = $this->createElement('select','layout');
+        $layout->setLabel('Layout: ');
 
+        //$layout->setRequired('true');
+      //  die('<pre>'.print_r($sets, 1));
+        $options = array('' => 'Default');
+        
+        $reflection = new Core_Model_Reflection_Service();
+        $layouts = $reflection->getLayouts();
+        
+        foreach($layouts as $value){
+            $options[$value] = $value;
+        }
+        
+        $layout->setMultiOptions($options);
+        $this->addElement($layout);
+        
 //        $element = $this->createElement('MultiCheckbox','sdfsfsdfsf');
 //        $options = array(1=>'test', 2=>'test2');
 //        $element->setMultiOptions($options);
 //       $element->setValue(array(2));
 //        $this->addElement($element);
-
 
         $this->addDisplayGroup($this->getElements(), 'category', array('legend' => 'Template'));
     }

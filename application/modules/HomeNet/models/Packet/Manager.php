@@ -26,7 +26,7 @@ class HomeNet_Model_Packet_Manager
             $this->saveDatapoint();
             /*
             $table = new HomeNet_Model_DbTable_Components();
-            $subdevice = $table->fetchAllByDevice($this->fromDevice);*/
+            $component = $table->fetchAllByDevice($this->fromDevice);*/
 
         } catch (Zend_Exception $e){
             return $e->message();

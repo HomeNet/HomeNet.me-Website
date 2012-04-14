@@ -27,7 +27,7 @@ defined('APPLICATION_PATH')
 
 // Define application environment
 defined('APPLICATION_ENV')
-    || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'development')); //
+    || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production')); //
 
 defined('APPLICATION_ROOT')
     || define('APPLICATION_ROOT', realpath(dirname(__FILE__) . '/..'));
@@ -54,7 +54,7 @@ $application->bootstrap();
 Zend_Registry::set('cachemanager', $application->getBootstrap()->getResource('cachemanager'));
 //$installer = new Installer();
 //$installer->installTest();
-
+if(APPLICATION_ENV == 'development'){
 $installer = new HomeNet_Installer();
 //$installer->installOptionalContent($installer->getOptionalContent());
 
@@ -70,4 +70,4 @@ $group_acls = $installer->getGroupAcl();
 
 echo 'database installed';
 
-
+}

@@ -33,19 +33,34 @@ class Content_Plugin_Element_Gallery_Element   extends Content_Model_Plugin_Elem
      * 
      * @return CMS_Sub_Form
      */
-    function getSetupForm($options = array()){
+    public function getSetupForm($options = array()){
         $form = parent::getSetupForm();
         
         $form->setLegend('Gallery Options');
         $path = $form->createElement('text','folder');
-        $path->setLabel('Path: ');
+        $path->setLabel('Folder: ');
         $config = Zend_Registry::get('config');
-        $path->setDescription('Path is Prefixed with: '.$config->site->uploadDirectory);
+        $path->setDescription('Path is Prefixed with: '.$config->site->uploadDirectory.DIRECTORY_SEPARATOR);
         $path->setRequired('true');
         $path->addFilter('StripTags');//@todo filter chars
+        $path->addFilter('Callback',array('callback' => 'cleanDir'));
+        $path->addValidator('Callback', false,  array('callback' => array($this, 'validateUploadPath')));
+        
         $form->addElement($path);
         
         return $form;
+    }
+    
+    public function validateUploadPath($value){
+        $config = Zend_Registry::get('config');
+        $fullPath = $config->site->uploadDirectory.DIRECTORY_SEPARATOR.$value;
+        if(!file_exists($fullPath)){
+            if(mkdir($fullPath, 0777, true)){
+                return true;
+            }
+            return false;
+        }
+        return true;
     }
     
     /**
@@ -58,8 +73,33 @@ class Content_Plugin_Element_Gallery_Element   extends Content_Model_Plugin_Elem
         
         $element = new CMS_Form_Element_JsGallery($config); 
         $view = Zend_Registry::get('view');
-        $element->setParams($options);
-        $element->setParam('rest', $view->url(array('controller'=>'content','action'=>'rest'),'content-admin'));
+       // $element->setParams($options);
+        $element->setParam('url', $view->url(array('controller'=>'content','action'=>'rest'),'content-admin'));
         return $element;
     }
+    
+    private $currentImage = 0;
+   // private $helper;// = new CMS_View_Helper_ImagePath();
+    
+    public  function image($width = null, $height = null){
+        
+        if($this->currentImage == count($this->_value)){
+            return false;
+        }
+        
+   
+        
+         $helper = new CMS_View_Helper_Image();
+         $helper->setView(Zend_Registry::get('view'));//@todo this is a bandaid that needs to be fixed
+        $string =  $helper->image($this->_value[$this->currentImage]['path'], $this->_value[$this->currentImage]['title'], $width, $height);
+         
+         $this->currentImage++;
+         return $string;
+    }
+    
+    public function reset(){
+        $this->currentImage = 0;
+    }
+        
+   
 }

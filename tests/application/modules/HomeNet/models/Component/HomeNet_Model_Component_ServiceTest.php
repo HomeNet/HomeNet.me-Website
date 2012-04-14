@@ -18,6 +18,9 @@ class HomeNet_Model_Component_ServiceTest extends PHPUnit_Framework_TestCase {
     protected function setUp() {
         $this->service = new HomeNet_Model_Component_Service;
         $this->service->deleteAll();
+        
+        $cm = new HomeNet_Model_ComponentModel_Service;
+        $cm->deleteAll();
     }
 
     protected function tearDown() {
@@ -38,9 +41,8 @@ class HomeNet_Model_Component_ServiceTest extends PHPUnit_Framework_TestCase {
         }
         return array_merge($array, $this->_getTestData($seed));
     }
-
-    private function _getTestData($seed = 0) {
-
+    
+    private function _createModel(){
         $array = array(
             'status' => HomeNet_Model_ComponentModel::LIVE,
             'plugin' => 'LED',
@@ -50,7 +52,12 @@ class HomeNet_Model_Component_ServiceTest extends PHPUnit_Framework_TestCase {
             'settings' => array('key' => 'value'));
 
         $service = new HomeNet_Model_ComponentModel_Service;
-        $model = $service->create($array);
+        return $service->create($array);
+    }
+
+    private function _getTestData($seed = 0) {
+
+        $model = $this->_createModel();
 
 
         return array(
@@ -128,7 +135,7 @@ class HomeNet_Model_Component_ServiceTest extends PHPUnit_Framework_TestCase {
         $object = $this->_createValidObject();
         $results = $this->service->getObjectsByDevice($object->device);
         $this->assertEquals(1, count($results));
-        $this->_validateResult($results[0]);
+        $this->_validateResult(reset($results));
     }
 
     public function testGetObjectsByDevice_invalid() {
@@ -160,7 +167,9 @@ class HomeNet_Model_Component_ServiceTest extends PHPUnit_Framework_TestCase {
 
 //$this->service->newObjectFromModel($id)///////////////////////////////////////   
     public function testNewObjectFromModel() {
-        $result = $this->service->newObjectFromModel(1);
+        
+        $model = $this->_createModel();
+        $result = $this->service->newObjectFromModel($model->id);
         $this->assertInstanceOf('HomeNet_Model_Component_Abstract', $result);
     }
 
@@ -236,13 +245,13 @@ class HomeNet_Model_Component_ServiceTest extends PHPUnit_Framework_TestCase {
     public function testDelete_validObject() {
         //setup
         $object = $this->_createValidObject();
-
+        $id = $object->id;
         //test delete
         $this->service->delete($object);
 
         //verify that it was deleted
         $this->setExpectedException('NotFoundException');
-        $result = $this->service->getObjectById($object->id);
+        $result = $this->service->getObjectById($id);
     }
 
     public function testDelete_validArray() {

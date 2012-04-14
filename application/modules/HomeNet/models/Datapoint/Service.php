@@ -102,7 +102,7 @@ class HomeNet_Model_Datapoint_Service {
     }
 
     /**
-     * Get the last datapoint of a subdevice
+     * Get the last datapoint of a component
      * 
      * @param int $id
      * @return HomeNet_Model_Datapoint (HomeNet_Model_Datapoint_Interface)

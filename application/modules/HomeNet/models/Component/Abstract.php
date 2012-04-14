@@ -95,7 +95,7 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
     
      public function fromArray(array $array) {
 
-        $vars = array('id', 'house', 'room', 'device', 'model',  'position', 'order', 'name', 
+        $vars = array('id', 'status', 'house', 'room', 'device', 'model',  'position', 'order', 'name', 
             'plugin', 'model_name', 'datatype');
 
         foreach ($array as $key => $value) {
@@ -117,6 +117,7 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
 
         $array = array(
             'id' => $this->id,
+            'status' => $this->status,
             'house' => $this->house,
             'room' => $this->room,
             'device' => $this->device,
@@ -188,7 +189,7 @@ abstract class HomeNet_Model_Component_Abstract implements HomeNet_Model_Compone
      * @return Zend_Form
      */
     public function getSettingsForm() {
-        $form = new Zend_Form();
+        $form = new CMS_Form();
 
         $showControl = $form->createElement('checkbox', 'showControl');
         $showControl->setLabel('Show Controls: ');

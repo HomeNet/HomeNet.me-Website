@@ -37,11 +37,11 @@ class CMS_View_Helper_FormJsGallery extends CMS_View_Helper_FormJsFileManager
         
 
         
-        if(empty($params['folder'])){
-            $params['folder'] = '';
-        }
-        
-        $params['hash'] = securityHash($params['folder']);
+//        if(empty($params['folder'])){
+//            $params['folder'] = '';
+//        }
+//        
+//        $params['hash'] = securityHash($params['folder']);
         
         //add class;
         $class = 'cms-element-gallery';

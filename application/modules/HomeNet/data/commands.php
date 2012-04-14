@@ -40,7 +40,7 @@ $c[0xC1] = array('name' => 'OFF/CLOSE',      'type' => HomeNet_Model_Payload::BY
 $c[0xC2] = array('name' => 'LEVEL',          'type' => HomeNet_Model_Payload::BYTE,      'reply' => HomeNet_Model_Packet::ACK,   'description' => 'Set device light level');
 $c[0xC3] = array('name' => 'CLEAR',          'type' => HomeNet_Model_Payload::BYTE,      'reply' => HomeNet_Model_Packet::ACK,   'description' => 'Clear device');
 
-$c[0xD0] = array('name' => 'GET VALUE',      'type' => HomeNet_Model_Payload::BYTE,      'reply' => HomeNet_Model_Packet::ACK,   'description' => 'Get value in native format from subdevice byte');
+$c[0xD0] = array('name' => 'GET VALUE',      'type' => HomeNet_Model_Payload::BYTE,      'reply' => HomeNet_Model_Packet::ACK,   'description' => 'Get value in native format from component byte');
 $c[0xD1] = array('name' => 'GET BYTE',       'type' => HomeNet_Model_Payload::BYTE,      'reply' => HomeNet_Model_Packet::ACK,   'description' => 'Get value');
 $c[0xD2] = array('name' => 'GET STRING',     'type' => HomeNet_Model_Payload::STRING,    'reply' => HomeNet_Model_Packet::ACK,   'description' => 'Get value');
 $c[0xD3] = array('name' => 'GET INT',        'type' => HomeNet_Model_Payload::INT,       'reply' => HomeNet_Model_Packet::ACK,   'description' => 'Get value');

@@ -30,7 +30,7 @@ class HomeNet_Plugin_Component_MotionSensor_Component extends HomeNet_Model_Comp
      public function saveDatapoint($value, $timestamp) {
 
         if (empty($this->settings['datatype'])) {
-            throw new Zend_Exception('this subdevice doesn\'t have a datatype to save a value');
+            throw new Zend_Exception('this component doesn\'t have a datatype to save a value');
         }
 
 
@@ -49,7 +49,7 @@ class HomeNet_Plugin_Component_MotionSensor_Component extends HomeNet_Model_Comp
 //
 //        $row = $table->createRow();
 //
-//        $row->subdevice = $this->id;
+//        $row->component = $this->id;
 //        $row->datetime = $timestamp;
 //
 //        //$value = $this->_convertValue($value);

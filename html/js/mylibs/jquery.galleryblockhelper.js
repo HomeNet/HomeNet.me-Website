@@ -3,10 +3,11 @@
     $.widget("cms.galleryblockhelper", $.cms.galleryelement, {
         options: {
             
-            folder:"",
-            hash:"",
+            //folder:"",
+            //hash:"",
             type:"",
-            rest:"",
+            url:"",
+            id:"",
             name:"image",
             className: "",
             layout: "default",
@@ -48,10 +49,11 @@
             }
             this.element.filemanager({
                 name: this.options.name,
-                folder: this.options.folder,
-                hash:   this.options.hash,
+                //folder: this.options.folder,
+                //hash:   this.options.hash,
+                id:   this.options.id,
                 type:   this.options.type,
-                rest:   this.options.rest,
+                url:   this.options.url,
                 maxItems:  this.options.maxItems,
                 selected: $.proxy(this.addImage,this)
             }
@@ -102,7 +104,7 @@
         },
         
         save: function(event, data){
-           console.log('Update Image');
+          // console.log('Update Image');
             var image =  $(this);
             
             image.data(data);

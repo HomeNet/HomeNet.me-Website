@@ -141,13 +141,13 @@ class HomeNet_Model_ComponentModel_Service {
 //            $objects[$value->id] = $value;
 //        }
 //
-//        $subdevices = array();
+//        $components = array();
 //        foreach($ids as $key => $value){
 //            $class = 'HomeNet_Plugin_Component_'.$objects[$value]->plugin.'_Component';
-//            $subdevices[] = new $class(array('data' => array('position'=> $key),'model'=>$objects[$value]));
+//            $components[] = new $class(array('data' => array('position'=> $key),'model'=>$objects[$value]));
 //        }
 //
-//        return $subdevices;
+//        return $components;
 //    }
     
     /**

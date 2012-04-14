@@ -10,13 +10,13 @@
     <td><?php echo $model->id ?></td>
     <td><?php echo $model->name ?></td>
     <td><?php echo $model->description ?></td>
-    <td><a class="button" href="<?php echo $this->url(array('model'=>$model->id, 'action'=>'edit'),'homenet-subdevicemodels-model'); ?>"><span class="ui-icon ui-icon-pencil"></span></a>
-        <a class="button" href="<?php echo $this->url(array('model'=>$model->id, 'action'=>'remove'),'homenet-subdevicemodels-model'); ?>"><span class="ui-icon ui-icon-closethick"></span></a></td>
+    <td><a class="button" href="<?php echo $this->url(array('model'=>$model->id, 'action'=>'edit'),'homenet-componentmodels-model'); ?>"><span class="ui-icon ui-icon-pencil"></span></a>
+        <a class="button" href="<?php echo $this->url(array('model'=>$model->id, 'action'=>'remove'),'homenet-componentmodels-model'); ?>"><span class="ui-icon ui-icon-closethick"></span></a></td>
 </tr>
 <?php } ?>
 </tbody>
 </table>
-<a class="button" href="<?php echo $this->url(array('action'=>'add'),'homenet-subdevicemodels'); ?>">Add Component Model</a>
+<a class="button" href="<?php echo $this->url(array('action'=>'add'),'homenet-componentmodels'); ?>">Add Component Model</a>
 */ ?>
 <?php echo $this->heading('Component Models'); ?>
 

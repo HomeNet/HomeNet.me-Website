@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
-ini_set("memory_limit", "16M");
+ini_set("memory_limit", "32M");
 error_reporting(E_ALL);
 date_default_timezone_set('America/New_York');
 // Define path to application directory
@@ -33,7 +33,7 @@ if(isset($_GET['setenv']) && $_GET['setenv'] == 'testing'){
 
 
 defined('APPLICATION_ENV')
-        || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'development'));
+        || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
 
 defined('APPLICATION_ROOT')
         || define('APPLICATION_ROOT', realpath(dirname(__FILE__) . '/..'));
@@ -47,12 +47,12 @@ set_include_path(implode(PATH_SEPARATOR, array(
             get_include_path(),
         )));
 
-require_once 'Zend/Loader/Autoloader.php';
-$autoloader = Zend_Loader_Autoloader::getInstance();
-$autoloader->setDefaultAutoloader(create_function('$class', "include str_replace('_', '/', \$class) . '.php';"));
+//require_once 'Zend/Loader/Autoloader.php';
+//$autoloader = Zend_Loader_Autoloader::getInstance();
+//$autoloader->setDefaultAutoloader(create_function('$class', "include str_replace('_', '/', \$class) . '.php';"));
 
 /** Zend_Application */
-//require_once 'Zend/Application.php';
+require_once 'Zend/Application.php';
 // Create application, bootstrap, and run
 $application = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini'); //
 $application->bootstrap();
@@ -79,7 +79,7 @@ if (!Zend_XmlRpc_Server_Cache::get($cacheFile, $server)) {
     $server->setClass('HomeNet_Model_Packet_XmlRpc', 'homenet.packet');
     $server->setClass('HomeNet_Model_Test_XmlRpc', 'homenet.test');
  
-    //Zend_XmlRpc_Server_Cache::save($cacheFile, $server);
+    Zend_XmlRpc_Server_Cache::save($cacheFile, $server);
 }
 //echo '<pre>';
 //print_r(unserialize(file_get_contents($cacheFile)));

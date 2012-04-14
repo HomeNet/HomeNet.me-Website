@@ -18,8 +18,6 @@
  * along with HomeNet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'Installer.php';
-
 /**
  * @package Core
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
@@ -28,6 +26,7 @@ require_once 'Installer.php';
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
     public static function autoload($class) {
+       // die('using my autoload');
         include str_replace('_', '/', $class) . '.php';
         return $class;
     }
@@ -45,16 +44,17 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
     }
 
     protected function _initLoaderResource() {
-        $resourceLoader = new Zend_Loader_Autoloader_Resource(array(
-                    'basePath' => APPLICATION_PATH,
-                    'namespace' => '',
-                ));
-
-        /*
-          $resourceLoader->addResourceType('acl', 'acls/', 'Acl')
-          ->addResourceType('form', 'forms/', 'Form')
-          ->addResourceType('model', 'models/', 'Model');
-         */
+//        $resourceLoader = new Zend_Loader_Autoloader_Resource(array(
+//                    'basePath' => APPLICATION_PATH,
+//                    'namespace' => '',
+//                ));
+//
+//        var_dump($resourceLoader->getDefaultResourceType());
+//        exit;
+//          $resourceLoader->addResourceType('acl', 'acls/', 'Acl')
+//          ->addResourceType('form', 'forms/', 'Form')
+//          ->addResourceType('model', 'models/', 'Model');
+         
     }
     
     protected function _initConfig()
@@ -118,33 +118,35 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         }
         
         $layout = Zend_Layout::startMvc();
+        
+        $base = APPLICATION_PATH.DIRECTORY_SEPARATOR.'themes'.DIRECTORY_SEPARATOR;
 
         //add default path
-        $layout->setLayoutPath(APPLICATION_PATH.'/layouts/scripts/');
-        $view->setScriptPath(APPLICATION_PATH.'/views/scripts');
+        $layout->setLayoutPath($base.'default'.DIRECTORY_SEPARATOR.'layouts');
+        $view->setScriptPath(  $base.'default'.DIRECTORY_SEPARATOR.'views');
 
         
        // $layout->add
         
         if($defaultTheme != 'default'){
-            if(!file_exists(APPLICATION_PATH.'/themes/'.$defaultTheme)){
-                throw new Zend_Exception('Theme folder Doesn&quot;t exsist: '.APPLICATION_PATH.'/themes/'.$defaultTheme);
+            if(!file_exists($base.$defaultTheme)){
+                throw new Zend_Exception('Theme folder Doesn&quot;t exsist: '.$base.$defaultTheme);
             }
-            //$layout->addLayoutPath(APPLICATION_PATH.'/themes/'.$defaultTheme.'/layouts/scripts/');
-            $layout->setLayoutPath(APPLICATION_PATH.'/themes/'.$defaultTheme.'/layouts/scripts/');
+            //$layout->addLayoutPath($base.$defaultTheme.'/layouts/scripts/');
+            $layout->setLayoutPath($base.$defaultTheme.'/layouts/');
             
-            $view->addScriptPath(APPLICATION_PATH.'/themes/'.$defaultTheme.'/views/scripts');
+            $view->addScriptPath($base.$defaultTheme.'/views/');
         }
 
         if(!empty($theme)){
-            if(!file_exists(APPLICATION_PATH.'/themes/'.$theme)){
-                throw new Zend_Exception('Theme folder Doesn&quot;t exsist: '.APPLICATION_PATH.'/themes/'.$theme);
+            if(!file_exists($base.$theme)){
+                throw new Zend_Exception('Theme folder Doesn&quot;t exsist: '.$base.$theme);
             }
             
-           // $layout->addLayoutPath(APPLICATION_PATH.'/themes/'.$theme.'/layouts/scripts/');
-            $layout->setLayoutPath(APPLICATION_PATH.'/themes/'.$theme.'/layouts/scripts/');
+           // $layout->addLayoutPath($base.$theme.'/layouts/scripts/');
+            $layout->setLayoutPath($base.$theme.'/layouts/');
             
-            $view->addScriptPath(APPLICATION_PATH.'/themes/'.$theme.'/views/scripts');
+            $view->addScriptPath($base.$theme.'/views/');
         }
         
         $layout->setLayout('one-column');
@@ -157,10 +159,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         $viewRenderer->setView($view);
         $viewRenderer->setViewScriptPathNoControllerSpec('generic/:action.:suffix');
 
- 
+ //
         //:moduleDir
         if(!empty($theme)){
-            $viewRenderer->setViewBasePathSpec(APPLICATION_PATH.'/themes/'.$theme.'/modules/:module/views');
+            $viewRenderer->setViewBasePathSpec($base.$theme.'/modules/:module/views');
         }
         Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
         Zend_Registry::set('layout', $layout);

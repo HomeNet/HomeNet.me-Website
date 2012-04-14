@@ -122,7 +122,9 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
         if (!empty($model->settings['components'])) {
             $cService = new HomeNet_Model_Component_Service();
             
-            foreach($model->settings['components'] as $value){
+            $array = $model->settings['components'];
+            
+            foreach($array as $value){
                 $component = $cService->newObjectFromModel($value);
                 if($model->settings['components']){
                     
@@ -136,6 +138,9 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
 
     public function getComponents($search = true) {
 
+       
+
+        
         if(!isset($this->_components) && empty($this->id)){
             $this->_components = array();
             
@@ -278,7 +283,7 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
     /**
      * Generate code for the node
      *
-     * @return Zend_Form
+     * @return CMS_Form
      */
     public function getConfigForm() {
         $rooms = array();
@@ -310,8 +315,8 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
 
         $components = $this->getComponents();
 
-        //debugArray($this->settings);
-       // die(debugArray($components));
+      //  debugArray($this->settings);
+       //die(debugArray($components));
 
         foreach ($components as $position => $component) {
 
@@ -336,7 +341,7 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
 
                 $sub->setLegend('Component ' . $position . ': ' . $component->name);
 
-                $form->addSubForm($sub, 'subdevice' . $position);
+                $form->addSubForm($sub, 'component' . $position);
             }
         }
 
@@ -348,8 +353,8 @@ abstract class HomeNet_Model_Device_Abstract implements HomeNet_Model_Device_Int
     public function processConfigForm($values) {
         $components = $this->getComponents();
         foreach ($components as $key => $value) {
-            if (!empty($value) && !empty($values['subdevice' . $key])) {
-                $value->processConfigForm($values['subdevice' . $key]);
+            if (!empty($value) && !empty($values['component' . $key])) {
+                $value->processConfigForm($values['component' . $key]);
             }
         }
     }

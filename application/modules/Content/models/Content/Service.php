@@ -113,8 +113,8 @@ class Content_Model_Content_Service {
      * @param int $section Section Id
      * @return Content_Model_Content[]
      */
-    public function getObjectsBySection($section) {
-        $objects = $this->getMapper()->fetchObjectsBySection($section);
+    public function getObjectsBySection($section, $select = array()) {
+        $objects = $this->getMapper()->fetchObjectsBySection($section, $select);
 
 //        if (empty($contents)) {
 //            throw new Exception('Apikey not found', 404);
@@ -126,7 +126,7 @@ class Content_Model_Content_Service {
      * @param int $category Section Id
      * @return Content_Model_Content[]
      */
-    public function getObjectsBySectionCategory($section, $mixed) {
+    public function getObjectsBySectionCategory($section, $mixed, $select = array()) {
         
         if(!is_numeric($section) && is_string($section)){
             $sService = new Content_Model_Section_Service();
@@ -149,7 +149,7 @@ class Content_Model_Content_Service {
             throw new InvalidArgumentException('Invalid Category: '.$mixed);
         }
         
-        $objects = $this->getMapper()->fetchObjectsBySectionCategory($s, $category);
+        $objects = $this->getMapper()->fetchObjectsBySectionCategory($s, $category, $select);
 
 //        if (empty($contents)) {
 //            throw new Exception('Apikey not found', 404);

@@ -230,7 +230,7 @@ class HomeNet_NodeController extends Zend_Controller_Action {
 
         if (!empty($_POST['confirm'])) {
             $name = $object->address;
-            $this->service->setStatusToDeleted($object);//($object);
+            $this->service->delete($object);//($object);
             $this->view->messages()->add('Successfully deleted node &quot;' . $name . '&quot;');
         }
         return $this->_redirect($this->view->url(array('controller' => 'node', 'house' => $this->_house->id), 'homenet-house'));

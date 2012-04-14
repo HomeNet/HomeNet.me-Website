@@ -3,9 +3,9 @@
 
 
 /* TEAM */
-  <your title>: <your name>
-  Site: 
-  Twitter: 
+Interactive Developer: Matthew Doll
+  Site: mcdportal.com
+  Twitter: @ArchiCroc
   Location: 
 
 /* THANKS */
@@ -14,7 +14,7 @@
 /* SITE */
   Standards: HTML5, CSS3
   Components: Modernizr, jQuery
-  Software:
+  Software: Custom CMS
   
 
                                     

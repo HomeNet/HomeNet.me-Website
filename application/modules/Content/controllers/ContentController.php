@@ -55,17 +55,17 @@ class Content_ContentController extends Zend_Controller_Action {
             'label' => $section->title,
             'route' => 'content-admin-id',
             'module' => 'Content',
-            'controller' => 'section',
-            'params' => array('id' => $id)
-        ));
-
-        $this->view->breadcrumbs()->addPage(array(
-            'label' => 'Content',
-            'route' => 'content-admin-id',
-            'module' => 'Content',
             'controller' => 'content',
             'params' => array('id' => $id)
         ));
+
+//        $this->view->breadcrumbs()->addPage(array(
+//            'label' => 'Content',
+//            'route' => 'content-admin-id',
+//            'module' => 'Content',
+//            'controller' => 'content',
+//            'params' => array('id' => $id)
+//        ));
 
         $this->view->heading = $section->title . ' Content';
 

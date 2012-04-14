@@ -227,86 +227,12 @@ td { vertical-align: top; }
 
 .breadcrumbs {
     margin: 5px 0;
+    font-size: 12px;
 }
 
 /*
 Default form style
 */
-label {
-    font-weight: bold;
-}
-
-form {
-    text-align: center;
-}
-
-legend {
-    font-size: 14px;
-    font-weight: bold;
-    text-align: center;
-    width:100%;
-
-}
-
-fieldset {
-    padding: 5px 0;
-    margin-bottom: 5px;
-    background-color: rgba(0, 0, 0, 0.4);
-
-}
-
-.form-element{
-    position: relative;
-    padding: 3px 0;
-    clear: both;
-}
-
-.form-element label {
-    float:left;
-    display: inline-block;
-    width: 49%;
-    text-align: right;
-    padding-right: 2px;
-    height:100%;
-}
-
-.form-input {
-    /* float:left; */
-    display: inline-block;
-    width: 49%;
-    text-align: left;
-    padding-left: 2px;
-}
-
-.form-input label {
-    display: block;
-    width:90%;
-    text-align: left;
-    padding-left: 2px;
-}
-
-.form-element-wide{
-    position: relative;
-    padding: 3px 0;
-    clear: both;
-}
-
-.form-element-wide label {
-    width: 100%;
-    text-align: center;
-    height:100%;
-}
-
-.form-input-wide  {
-    width: 100%;
-    text-align: center;
-}
-
-.form-input-wide label {
-    display: block;
-    width:90%;
-    text-align: center;
-}
 
 /*
 CMS Widget Styles
@@ -497,6 +423,7 @@ CMS File Manager
     text-align: left;
     color: #000;
     margin: 5px;
+    font-size: 12px !important;
 }
 
 .CodeMirror-scroll {

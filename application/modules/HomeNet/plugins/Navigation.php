@@ -23,7 +23,7 @@
 
 class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
 
-    private $_buildNav = false;
+    private static $_buildNav = false;
     private $_houses;
 
     public function preDispatch(Zend_Controller_Request_Abstract $request) {
@@ -53,25 +53,21 @@ class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
         //$layout->assign('column','sdfsfsffsf');
         //
         //check to see if we should a specfic house
-        $house = $request->getUserParam('house');
-
+        $house = $request->getUserParam('house');  
         $service = new HomeNet_Model_House_Service();
-
         // $userHousesIds = $service->getHouseIdsByUser();
         $userHousesIds = HomeNet_Model_House_Manager::getHouseIds();
-        
-//        if(empty($userHousesIds)){
-//            return;
-//        }
-        
-        //Make person can see house;        
-        $acl = new HomeNet_Model_Acl($house);
-        $acl->checkAccess('house', 'index');//throws exception if denied
-        
 
         $houses = array();
 
         if ($house) {
+    //        if(empty($userHousesIds)){
+    //            return;
+    //        }
+
+            //Make person can see house;        
+            $acl = new HomeNet_Model_Acl($house);
+            $acl->checkAccess('house', 'index');//throws exception if denied
 
             //check to see if it's one of the current users houses'
             if (in_array($house, $userHousesIds)) {
@@ -81,10 +77,10 @@ class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
                 //not the users house or is a guest
                 $houses[0] = $service->getObjectByIdWithRooms($house);
             }
-        } else {
+        } elseif(!empty($userHousesIds)) {
             try {
                 $houses = $service->getObjectsByIdsWithRooms($userHousesIds);
-            } catch (HomeNet_Model_Exception $e) {
+            } catch (Exception $e) {
                 $houses = array();
             }
         }
@@ -99,13 +95,17 @@ class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
         $skip = array('add', 'add2', 'edit', 'delete', 'remove', 'code');
         if (!in_array(strtolower($request->getActionName()), $skip)) {
 
-            $this->_buildNav = true;
+            self::$_buildNav = true;
         }
+    }
+    
+    public static function hideNavigation(){
+         self::$_buildNav = false;
     }
 
     public function postDispatch(Zend_Controller_Request_Abstract $request) {
 
-        if (!$this->_buildNav) {
+        if (!self::$_buildNav) {
             return;
         }
         //die(debugArray($this->_buildNav));
@@ -123,7 +123,7 @@ class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
             'ulClass' => 'navMenu ui-widget ui-state-default ui-corner-all'
         );
         $view = $layout->getView();
-        $view->navigation()->menu()->setPartial(array('_menu.phtml', 'default'));
+        $view->navigation()->menu()->setPartial(array('_menu.phtml', 'Core'));
 
         $menu = $view->navigation()
                 ->menu()

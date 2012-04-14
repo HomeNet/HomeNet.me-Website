@@ -30,9 +30,9 @@ interface HomeNet_Model_Component_MapperInterface {
 
     public function fetchObjectById($id);
 
-    public function fetchObjectsByDevice($device, $status);
+    //public function fetchObjectsByDevice($device, $status);
 
-    public function fetchObjectsByRoom($room, $status);
+  //  public function fetchObjectsByRoom($room, $status);
 
     public function save(HomeNet_Model_Component_Interface $object);
 

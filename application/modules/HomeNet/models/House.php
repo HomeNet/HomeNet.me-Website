@@ -107,7 +107,7 @@ class HomeNet_Model_House implements HomeNet_Model_House_Interface {
             $service = new HomeNet_Model_Room_Service();
             $this->rooms = $service->getObjectsByHouse($this->id);
         }
-        var_dump($this->rooms);
+       // var_dump($this->rooms);
         return $this->rooms;
     }
 

@@ -44,7 +44,7 @@ class Content_Plugin_Block_Html_Block  extends Content_Model_Plugin_Block  {
         
         
         
-        $this->_value['content'] = $doc->saveXML();
+        $this->_value['content'] = $doc->saveHTML();
         
         die(debugArray($this->_value));
     }  

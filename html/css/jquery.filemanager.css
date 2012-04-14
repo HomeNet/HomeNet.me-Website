@@ -1,4 +1,8 @@
 
+.cms-filemanager-container {
+   min-height:300px;
+}
+
 .cms-filemanager .item-container  {
     display: block;
     overflow: auto;
@@ -60,4 +64,9 @@
 
 .cms-filemanager .list-item .controls button {
     margin-bottom: 5px;
+}
+
+.cms-element-image{
+    height:93px;
+    overflow: hidden;
 }

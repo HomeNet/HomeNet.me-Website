@@ -3,10 +3,9 @@
     $.widget("cms.galleryelement", {
         options: {
             
-            folder:"",
-            hash:"",
-            type:"",
-            rest:"",
+            id:'',
+            type:'',
+            url:'',
             name:"image",
             className: "",
             layout: "default",
@@ -76,11 +75,12 @@
                 this.hideSelect();
             }
             this.element.filemanager({
+                id: this.options.id,
                 name: this.options.name,
-                folder: this.options.folder,
-                hash:   this.options.hash,
+            //    folder: this.options.folder,
+            //    hash:   this.options.hash,
                 type:   this.options.type,
-                rest:   this.options.rest,
+                url:   this.options.url,
                 maxItems:  this.options.maxItems,
                 selected: $.proxy(this.addImage,this)
             }
@@ -137,7 +137,11 @@
 
             var img = $('<div />');//document.createElement('div');
             //data.order = this.itemCount;
-            img.data(data);
+            var defaultImgData = {path:'', title:'',source:'', url:'', copyright:'', description:''};
+            
+            
+            
+            img.data($.extend(defaultImgData, data));
             img = this.addImageContents(img); 
             this.element.append(img);
             this.itemCount++;
@@ -255,14 +259,14 @@
             return false;
         },
         deleteImage:function(){
-            console.log('deleteImage');
+            //console.log('deleteImage');
           var parent = $(this).parent();
           $(this).remove(); 
           parent.trigger('update');
         },
         
         updateContainer: function(e){
-              console.log('updateContainer');
+            //  console.log('updateContainer');
             //console.log(['deleteImage',image, this]);
             this.showSelect();
             

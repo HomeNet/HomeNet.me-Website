@@ -449,11 +449,11 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $device->position = 1;
         $device->setRoom($room);
 
-        $subdevices = $device->getComponents();
-        $subdevices[0]->name = 'Red LED';
-        $subdevices[1]->name = 'Green LED';
+        $components = $device->getComponents();
+        $components[0]->name = 'Red LED';
+        $components[1]->name = 'Green LED';
 
-//    public $subdevices = 0;
+//    public $components = 0;
 //    public $created = null;
 //    public $settings = array();
         $dService->create($device);
@@ -465,12 +465,12 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $device->node = $node->id;
         $device->position = 2;
         $device->setRoom($room);
-//    public $subdevices = 0;
+//    public $components = 0;
 //    public $created = null;
 //    public $settings = array();
-        $subdevices = $device->getComponents();
-        $subdevices[0]->name = 'Simple LED';
-        $subdevices[0]->room = $room->id;
+        $components = $device->getComponents();
+        $components[0]->name = 'Simple LED';
+        $components[0]->room = $room->id;
         $dService->create($device);
 
         //save status

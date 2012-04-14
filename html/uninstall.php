@@ -27,7 +27,7 @@ defined('APPLICATION_PATH')
 
 // Define application environment
 defined('APPLICATION_ENV')
-    || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'development'));
+    || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
 
 defined('APPLICATION_ROOT')
     || define('APPLICATION_ROOT', realpath(dirname(__FILE__) . '/..'));
@@ -52,9 +52,10 @@ $application = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/config
 $application->bootstrap();
 
 Zend_Registry::set('cachemanager', $application->getBootstrap()->getResource('cachemanager'));
-
+if(APPLICATION_ENV == 'development'){
 Core_Model_Installer::uninstall();
 
 echo 'database removed';
+}
 
 

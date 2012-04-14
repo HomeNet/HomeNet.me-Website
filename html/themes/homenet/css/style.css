@@ -427,11 +427,11 @@ table .button {
     position: relative;
 }
 
-.homeNet-room-subdevice {
+.homeNet-room-component {
     padding:5px;
 }
 
-.homeNet-room-subdevice h2 {
+.homeNet-room-component h2 {
     margin:0 0 5px 0;
     font-size: 16px;
 }

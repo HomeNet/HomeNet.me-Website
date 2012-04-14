@@ -133,7 +133,20 @@ class Content_Model_Template_MapperCache implements Content_Model_Template_Mappe
             mkdir($dir);
         }
 //die($path);
-        file_put_contents($path, $content->content);
+        $extra = '';
+        if($content->layout !== null){
+            $extra = '<?php 
+    $_layout = Zend_Layout::getMvcInstance();
+    if ($_layout->isEnabled()) {
+        $_layout->setLayout(\''.$content->layout.'\');
+    } 
+?>
+';
+        }
+        
+        
+        
+        file_put_contents($path, $extra.$content->content);
         
         }
         return $this->_mapper->save($content);

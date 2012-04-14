@@ -37,41 +37,84 @@ class Content_Plugin_Element_DateTime_Element extends Content_Model_Plugin_Eleme
         $form = parent::getSetupForm($options);
         $form->setLegend('DateTime Options');
         
-        $type = $form->createElement('multiCheckbox', 'target');
-        $type->setLabel('Show: ');
-        $type->setRequired('true');
-
-        $options = array(
-            'year' => 'Year',
-            'month' => 'Month',
-            'day' => 'Day',
-            'hour' => 'Hour',
-            'minute' => 'Minute',
-            'second' => 'Second',
-        );
-        $type->setMultiOptions($options);
-        $form->addElement($type);
+//        $type = $form->createElement('multiCheckbox', 'target');
+//        $type->setLabel('Show: ');
+//        $type->setRequired('true');
+//
+////        $options = array(
+////            'year' => 'Year',
+////            'month' => 'Month',
+////            'day' => 'Day',
+////            'hour' => 'Hour',
+////            'minute' => 'Minute',
+////            'second' => 'Second',
+////        );
+//        $type->setMultiOptions($options);
+//        $form->addElement($type);
         
         $format = $form->createElement('select', 'format');
-        $format->setLabel('Format: ');
+        $format->setLabel('Entry Format: ');
+        $format->setDescription('How a date is formatted in the submission form');
         $format->setRequired('true');
+        
+        $tempDate = new Zend_Date();
+        $tempDate->setSecond(0);
 
         $options = array(
-            'd/M/yyyy' => '9-2-2009',
-            'EEEE, MMMM d, yyyy' => 'Monday February 9, 2009',
-            'MMMM d, yyyy' => 'February 9, 2011',
-            'yyyy-M-d' => '2009-2-9',
-            'yyyy-MM-dd' => '2009-02-09',
-            'd-M-yyyy' => '9-2-2011',
-            'dd-MM-yyyy' => '9-2-2011',
-            
+//            'd/M/yyyy' => '9-2-2009',
+//            'EEEE, MMMM d, yyyy' => 'Monday February 9, 2009',
+//            'MMMM d, yyyy' => 'February 9, 2011',
+//            'yyyy-M-d' => '2009-2-9',
+//            'yyyy-MM-dd' => '2009-02-09',
+//            'd-M-yyyy' => '9-2-2011',
+//            'dd-MM-yyyy' => '9-2-2011',
+            Zend_Date::DATE_FULL => $tempDate->toString(Zend_Date::DATE_FULL),
+            Zend_Date::DATE_LONG => $tempDate->toString(Zend_Date::DATE_LONG),
+            Zend_Date::DATE_MEDIUM => $tempDate->toString(Zend_Date::DATE_MEDIUM),
+            Zend_Date::DATE_SHORT => $tempDate->toString(Zend_Date::DATE_SHORT),
+            Zend_Date::TIMES => $tempDate->toString(Zend_Date::TIMES),
+            Zend_Date::TIME_FULL => $tempDate->toString(Zend_Date::TIME_FULL),
+            Zend_Date::TIME_LONG => $tempDate->toString(Zend_Date::TIME_LONG),
+            Zend_Date::TIME_MEDIUM => $tempDate->toString(Zend_Date::TIME_MEDIUM),
+            Zend_Date::TIME_SHORT => $tempDate->toString(Zend_Date::TIME_SHORT),
+            Zend_Date::DATETIME => $tempDate->toString(Zend_Date::DATETIME),
+            Zend_Date::DATETIME_FULL  => $tempDate->toString(Zend_Date::DATETIME_FULL),
+            Zend_Date::DATETIME_LONG => $tempDate->toString(Zend_Date::DATETIME_LONG),
+            Zend_Date::DATETIME_MEDIUM => $tempDate->toString(Zend_Date::DATETIME_MEDIUM),
+            Zend_Date::DATETIME_SHORT => $tempDate->toString(Zend_Date::DATETIME_SHORT),
+            Zend_Date::DATES => $tempDate->toString(Zend_Date::DATES)
+
         );
+    
+        $format->setValue(Zend_Date::DATETIME_SHORT);
         $format->setMultiOptions($options);
         $form->addElement($format);
         
+        
+        $default = $form->createElement('text','default');
+        $default->setLabel('Starting Value: ');
+        //$path->setRequired('true');
+        $default->addFilter('StripTags');//@todo filter chars
+        $form->addElement($default);
+        
+        
         return $form;
     }
-    /*Constant 	Description 	Corresponds best to 	Result
+    /*
+     * 
+     * 
+     * Zend_Date::TIMES 	Standard time (string, localized, default value) 	2009-02-13T14:53:27+01:00 	14:53:27
+Zend_Date::TIME_FULL 	Complete time (string, localized, complete) 	2009-02-13T14:53:27+01:00 	14:53 Uhr CET
+Zend_Date::TIME_LONG 	Long time (string, localized, Long) 	2009-02-13T14:53:27+01:00 	14:53:27 CET
+Zend_Date::TIME_MEDIUM 	Normal time (string, localized, normal) 	2009-02-13T14:53:27+01:00 	14:53:27
+Zend_Date::TIME_SHORT 	Abbreviated time (string, localized, abbreviated) 	2009-02-13T14:53:27+01:00 	14:53
+Zend_Date::DATETIME 	Standard date with time (string, localized, default value). 	2009-02-13T14:53:27+01:00 	13.02.2009 14:53:27
+Zend_Date::DATETIME_FULL 	Complete date with time (string, localized, complete) 	2009-02-13T14:53:27+01:00 	Friday, 13. February 2009 14:53 Uhr CET
+Zend_Date::DATETIME_LONG 	Long date with time (string, localized, long) 	2009-02-13T14:53:27+01:00 	13. February 2009 14:53:27 CET
+Zend_Date::DATETIME_MEDIUM 	Normal date with time (string, localized, normal) 	2009-02-13T14:53:27+01:00 	13.02.2009 14:53:27
+Zend_Date::DATETIME_SHORT 	Abbreviated date with time (string, localized, abbreviated)
+     * 
+     * Constant 	Description 	Corresponds best to 	Result
 G 	Epoch, localized, abbreviated 	                                Zend_Date::ERA              AD
 GG 	Epoch, localized, abbreviated 	                                Zend_Date::ERA              AD
 GGG 	Epoch, localized, abbreviated 	                                Zend_Date::ERA              AD
@@ -138,4 +181,51 @@ A 	Milliseconds from the actual day 	                        Zend_Date::MILLISEC
        // $element = new Zend_Form_Element_Text($field->name); 
         return $element;
     }
+    
+    /**
+     *  Format date for database
+     * 
+     * @return type 
+     */
+     public function getSaveValue(){
+        $value = $this->getValue(); 
+        if(!empty($value)){ 
+            return date( 'Y-m-d H:i:s', strtotime($this->getValue()));
+        } else {
+            return null;
+        }
+   }
+   
+   public function getFormValue(){
+       
+       
+       
+       $value = $this->getValue();
+       
+       if($value == '0000-00-00 00:00:00'){
+           $value = null;
+       }
+       
+       
+       if(empty($value)){
+           if(!empty($this->_options['default'])){
+               // die(strtotime());
+                $value = date('Y-m-d H:i:s', strtotime($this->_options['default']));
+           }
+       }
+       
+       if(!empty($value) && !empty($this->_options['format'])){
+           
+           $tempDate = new Zend_Date($value, Zend_Date::ISO_8601);        
+           $value = $tempDate->toString($this->_options['format']);  
+       }
+       
+       return $value;
+   }
+   
+   public function format($format){
+        $tempDate = new Zend_Date($this->_value, Zend_Date::ISO_8601);        
+        return $tempDate->toString($format);  
+   }
+    
 }

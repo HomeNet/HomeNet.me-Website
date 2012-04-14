@@ -30,18 +30,18 @@
 interface HomeNet_Model_Node_MapperInterface {
 
     public function fetchObjectById($id);
-
-    public function fetchObjectsByHouse($house, $status);
-
-    public function fetchObjectByHouseAddress($house,$address);
-
-    public function fetchNextAddressByHouse($house);
-
-    public function fetchObjectsByHouseType($house, $type);
-
+//
+//    public function fetchObjectsByHouse($house, $status);
+//
+//    public function fetchObjectByHouseAddress($house,$address);
+//
+//    public function fetchNextAddressByHouse($house);
+//
+//    public function fetchObjectsByHouseType($house, $type, $status);
+//
     public function save(HomeNet_Model_Node_Interface $object);
 
     public function delete(HomeNet_Model_Node_Interface $object);
-    
+   
     public function deleteAll();
 }

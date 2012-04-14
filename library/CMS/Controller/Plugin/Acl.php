@@ -27,9 +27,12 @@
 class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
 
     public function preDispatch(Zend_Controller_Request_Abstract $request) {
-
+        
         $config = Zend_Registry::get('config');
 
+        //die(get_include_path());
+        
+        
         $auth = Zend_Auth::getInstance();
 
         $user = Core_Model_User_Manager::getUser();
@@ -45,7 +48,7 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
         if (empty($module) || ($module == 'default')) {
             $module = 'core';
         }      
-
+       
         $aManager = Core_Model_Acl_Manager::getInstance();
 
         $acl = $aManager->getUserAcl($module);
@@ -89,8 +92,8 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
             $dispatcher = Zend_Controller_Front::getInstance()->getDispatcher();
 
             if (!$dispatcher->isDispatchable($request)) {           
-
-               $request->setControllerName('error');
+               $request->setModuleName('Core');
+               $request->setControllerName('Error');
                $request->setActionName('not-found');
    
                $request->setParam('error_message', 'Could not find route ' . $module . ' > ' . $controller . ' > ' . $action);            
@@ -108,13 +111,13 @@ class CMS_Controller_Plugin_Acl extends Zend_Controller_Plugin_Abstract {
               //  $view = Zend_Registry::get('view');
                 
                 
-                $request->setModuleName('core');
-                $request->setControllerName('login');
+                $request->setModuleName('Core');
+                $request->setControllerName('Login');
                 $request->setActionName('index');
                // $request->setParam('forward', true);
             } else {
                 die('Not Authorized: ' . $module . ' > ' . $request->controller . ' > ' . $action);
-                $request->setModuleName('core');
+                $request->setModuleName('Core');
                 $request->setControllerName('error');
                 $request->setActionName('noauth');
             }

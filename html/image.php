@@ -9,7 +9,7 @@ defined('APPLICATION_PATH')
 
 // Define application environment
 defined('APPLICATION_ENV')
-        || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'development'));
+        || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
 
 defined('APPLICATION_ROOT')
         || define('APPLICATION_ROOT', realpath(dirname(__FILE__) . '/..'));
@@ -83,7 +83,8 @@ $type =       (int)$_GET['t'];
 
 
 //breakdown the path and build the path
-$source = pathinfo(strtolower($_GET['s']));
+
+$source = pathinfo(strtolower(str_replace('\\', DIRECTORY_SEPARATOR, $_GET['s'])));
 $allowed = array('jpg','jpeg','png','bmp','gif');
 
 if(!in_array($source['extension'],$allowed)){
@@ -94,7 +95,7 @@ $filePath = $config->site->uploadDirectory . '/' . cleanDir($source['dirname']) 
 
 if (!file_exists($filePath)) {
     
-    error('missing image', $max_width, $max_height);
+    error('missing image:'.strtolower(str_replace('\\', DIRECTORY_SEPARATOR, $_GET['s'])), $max_width, $max_height);
 }
 
 
@@ -120,7 +121,7 @@ if (isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Sin
 //get the md5 hash of image to see if a image has already been cached
 //$md5 = md5_file($image_path);
 //die($md5);
-$cacheName = md5_file($filePath).$source['extension'];
+$cacheName = md5_file($filePath).'.'.$source['extension'];
 
 $folder = $type . '-' . $max_width . 'x' . $max_height;
 

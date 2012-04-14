@@ -176,7 +176,6 @@ class Content_FieldController extends Zend_Controller_Action {
         $section = $object->section;
 
         if (!empty($_POST['confirm'])) {
-            
             $label = $object->label;
             $service->delete($object);
             $this->view->messages()->add('Successfully Deleted Field &quot;' . $label . '&quot;');

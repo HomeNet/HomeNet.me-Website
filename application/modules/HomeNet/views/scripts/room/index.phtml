@@ -5,13 +5,13 @@
 <?php
 $timeCache = array();
 
-foreach ($this->subdevices as $subdevice) {
+foreach ($this->components as $component) {
 
-    if (!$subdevice->hasGraphs()) {
+    if (!$component->hasGraphs()) {
         continue;
     }
 
-    $presets = $subdevice->getGraphPresets();
+    $presets = $component->getGraphPresets();
 
     $first = reset($presets);
 
@@ -30,12 +30,12 @@ foreach ($this->subdevices as $subdevice) {
         $end2 = new Zend_Date($timeCache[$first['end']], Zend_Date::TIMESTAMP);
     }
 ?>
-    <div class="ui-widget ui-state-default ui-corner-all homeNet-room-subdevice">
-        <h2><?php echo $subdevice->name ?></h2>
+    <div class="ui-widget ui-state-default ui-corner-all homeNet-room-component">
+        <h2><?php echo $component->name ?></h2>
 
-        <div id="graph-<?php echo $subdevice->id ?>" class="subdevice-graph" style="height:100px;">
+        <div id="graph-<?php echo $component->id ?>" class="component-graph" style="height:100px;">
 
-            <img alt="graph" src="<?php echo $subdevice->getGraph($start2, $end2); ?>" />
+            <img alt="graph" src="<?php echo $component->getGraph($start2, $end2); ?>" />
         </div>
 <?php
 $links = array();
@@ -61,8 +61,8 @@ $links = array();
 
         
         $links[] = $this->ajaxLink($key,
-                $this->url(array('house' => $this->house, 'subdevice' => $subdevice->id, 'action' => 'graph', 'start' => $start, 'end' => $end), 'homenet-subdevice-graph'),
-                array('update' => '#graph-' . $subdevice->id));
+                $this->url(array('house' => $this->house, 'component' => $component->id, 'action' => 'graph', 'start' => $start, 'end' => $end), 'homenet-component-graph'),
+                array('update' => '#graph-' . $component->id));
         
     }
     echo implode(" &nbsp; ", $links);

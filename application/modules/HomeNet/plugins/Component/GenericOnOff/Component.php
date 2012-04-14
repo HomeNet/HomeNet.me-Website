@@ -32,7 +32,7 @@ class HomeNet_Plugin_Component_GenericOnOff_Component extends HomeNet_Model_Comp
     }
 
     /**
-     * Build the Actions that this subdevice can perform
+     * Build the Actions that this component can perform
      */
     public function buildControls() {
         $this->addControl(

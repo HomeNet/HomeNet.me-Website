@@ -34,7 +34,7 @@ class HomeNet_Plugin_Component_LED_Component extends HomeNet_Model_Component_Abs
 
 
     /**
-     * Build the Actions that this subdevice can perform
+     * Build the Actions that this component can perform
      */
     public function buildControls() {
         

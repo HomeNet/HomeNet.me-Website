@@ -58,16 +58,19 @@
         
         addImageContents: function(image){
             
+            
+            
             image.addClass('list-item ui-widget-content ui-corner-all');
             
+            var data = image.data();
             var name = this.options.name;
             if(this.options.maxItems != 1){
                 name += '['+this.count+']';
             }
             
-                     var item = '<div class="thumbnail"><img src="'+image.data('thumbnail')+'" alt="'+image.data('title')+'"></div>\n\
+                     var item = '<div class="thumbnail"><img src="'+data.thumbnail+'" alt="'+data.title+'"></div>\n\
                 <div class="details">\n\
-                <div class="title">'+image.data('title')+'</div>\n\
+                <div class="title">'+data.title+'</div>\n\
                 <div class="properties"></div>\n\
                     <div class="controls">\n\
                         <button class="delete">Remove</button>\n\
@@ -99,8 +102,6 @@
            });
             
             image.append(row);
-            
-            var data = image.data();
             
             image.append('<input class="path" type="hidden" name="'+name+'[path]"  value="'+data.path+'">'+
                 '<input class="title" type="hidden" name="'+name+'[title]"   value="'+data.title+'">'+

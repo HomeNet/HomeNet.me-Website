@@ -72,6 +72,8 @@ class Content_Model_Template implements Content_Model_Template_Interface {
     
     public $visible = false;
     
+    public $layout;
+    
     const SYSTEM = 0;
     const TEMPLATE = 1;
     const USER = 2;

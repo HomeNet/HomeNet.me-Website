@@ -6,7 +6,7 @@
 <div class="ui-widget-content">
 <table width="100%">
     <thead class="ui-widget-header">
-        <tr><th width="30">Device</th><th>Device</th><th width="55"></th></tr>
+        <tr><th width="30">Position</th><th>Device</th><th width="55"></th></tr>
     </thead>
     <tbody>
        <?php for($i = 1; $i <= $this->maxDevices; $i++){ ?>
@@ -16,14 +16,13 @@
                 $object = $this->devices[$i];
                 /*<th>Room</th><td><?php echo $rooms[$object->room]; ?></td>*/
             ?>
-            
             <td><?php echo $object->model_name; ?></td>
             <td>
                 <a class="button" data-text="false" data-icon="ui-icon-pencil" title="Edit Device &quot;<?php echo $i ?>&quot;" 
                    href="<?php echo $this->url(array('controller' => 'device', 'action' => 'edit', 'house' => $this->house->id, 'node' => $this->node->address, 'id' => $object->position),'homenet-house-node-id'); ?>">
                     Edit
                 </a> 
-                <a class="button" data-text="false" data-icon="ui-icon-trash" title="Trash Node &quot;<?php echo $i ?>&quot;" 
+                <a class="button" data-text="false" data-icon="ui-icon-trash" title="Trash Device &quot;<?php echo $i ?>&quot;" 
                    href="<?php echo $this->url(array('controller' => 'device', 'action' => 'trash', 'house' => $this->house->id, 'node' => $this->node->address, 'id' => $object->position),'homenet-house-node-id'); ?>">
                     Delete
                 </a>
@@ -31,7 +30,7 @@
             <?php  } else { ?>
             <td></td>
             <td>
-                 <a class="button" data-text="false" data-icon="ui-icon-plus" title="New Node &quot;<?php echo $i ?>&quot;" 
+                 <a class="button" data-text="false" data-icon="ui-icon-plus" title="Add Device &quot;<?php echo $i ?>&quot;" 
                    href="<?php echo $this->url(array('controller' => 'device', 'action' => 'new', 'house' => $this->house->id, 'node' => $this->node->address),'homenet-house-node'); ?>?position=<?php echo $i; ?>">
                     New
                 </a>

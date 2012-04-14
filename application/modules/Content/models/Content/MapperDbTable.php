@@ -84,15 +84,69 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
      * @param int $section 
      * @return Content_Model_DbTabeRow_SectionContent 
      */
-    public function fetchObjectsBySection($section) {
+//    public function fetchObjectsBySection($section) {
+//
+//        $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
+//        $select->setIntegrityCheck(false)
+//                ->where('section = ?', $section)
+//                ->join(array('c' => 'content_custom_' . $section), 'content_content.id = c.id AND 
+//                        content_content.active_revision = c.revision'
+//        )->order('content_content.active_revision DESC'); //,'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings')
+//
+//        $results = $this->getTable()->fetchAll($select);
+//       // die(debugArray($section));
+//        //  $row =  $this->getTable()->fetchRow($select);
+//        // $select = $this->getTable()->select()->from($this->getTable(),array(new Zend_Db_Expr('*'),new Zend_Db_Expr('MAX(revision)')))->where('section = ?',$section)->group('id');
+//        $objects = array();
+//        foreach ($results as $result) {
+//            $objects[] = new Content_Model_Content(array('data' => $result->toArray()));
+//        }
+//
+//        return $objects;
+//    }
+    
+    public function fetchObjectsBySection($section, $query = array(), $itemsPerPage = null, $currentPage = 1) {
 
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('section = ?', $section)
                 ->join(array('c' => 'content_custom_' . $section), 'content_content.id = c.id AND 
                         content_content.active_revision = c.revision'
-        )->order('content_content.active_revision DESC'); //,'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings')
+        ); //,'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings')
 
+        foreach($query as $value){
+            //if(!is_array)
+            $type = $value[0];
+            $column = isset($value[1])?$value[1]:null;
+            $value = isset($value[2])?$value[2]:null;
+            
+            switch($type){
+                case 'where':
+                    $select->where($column,$value);
+                    break;
+                case 'orWhere':
+                    $select->orWhere($column,$value);
+                    break;
+                case 'order':
+                    $select->order($column.' '.$value);
+                    break;
+                case 'limit':
+                    $select->limit($column, $value);
+                    break;
+                case 'limitPage':
+                    $select->limitPage($column, $value);
+                    break;
+                default:
+                    throw new InvalidArgumentException('Unkown query type: '.$type);
+                    break;
+            }
+            
+        }
+        
+        if($itemsPerPage !== null){
+            $select->limitPage($currentPage, $itemsPerPage);
+        }
+   
         $results = $this->getTable()->fetchAll($select);
        // die(debugArray($section));
         //  $row =  $this->getTable()->fetchRow($select);
@@ -111,7 +165,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
      * @param int $section 
      * @return Content_Model_DbTabeRow_SectionContent 
      */
-    public function fetchObjectsBySectionCategory($section, $id){
+    public function fetchObjectsBySectionCategory($section, $id, $query = array(), $itemsPerPage = null, $currentPage = 1){
 
       //  if()
         
@@ -121,9 +175,52 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
                 ->join(array('c' => 'content_custom_' . $section), 'content_content.id = c.id AND 
                         content_content.active_revision = c.revision')
                 ->join(array('cat'=>'content_content_categories'), 'content_content.id = cat.content'
-        )->where('cat.category = ?',$id)
-                ->order('content_content.active_revision DESC'); //,'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings')
+        )->where('cat.category = ?',$id);
+              //  ->order('content_content.active_revision DESC'); //,'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings')
 
+        
+        foreach($query as $value){
+            //if(!is_array)
+            $type = $value[0];
+            $column = isset($value[1])?$value[1]:null;
+            $value = isset($value[2])?$value[2]:null;
+            
+            switch($type){
+                case 'where':
+                    $select->where($column,$value);
+                    break;
+                case 'orWhere':
+                    $select->orWhere($column,$value);
+                    break;
+                case 'order':
+                    $select->order($column.' '.$value);
+                    break;
+                case 'limit':
+                    $select->limit($column, $value);
+                    break;
+                case 'limitPage':
+                    $select->limitPage($column, $value);
+                    break;
+                default:
+                    throw new InvalidArgumentException('Unkown query type: '.$type);
+                    break;
+            }
+            
+        }
+        
+        if($itemsPerPage !== null){
+            $select->limitPage($currentPage, $itemsPerPage);
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         $results = $this->getTable()->fetchAll($select);
        // die(debugArray($section));
         //  $row =  $this->getTable()->fetchRow($select);
@@ -275,7 +372,9 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
     }
     
     public function cleanCache(){
-        $cache =  $this->getTable()->getMetadataCache();
+        $cm = Zend_Registry::get('cachemanager');
+        $cache = $cm->getCache('database');
+        
         if(is_object($cache)){
          $cache->clean('all');
         }

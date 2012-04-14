@@ -31,13 +31,21 @@ class Content_Plugin_Element_Image_Rest {
         //folder
         //?method=sayHello&who=Davey&when=Day
     }
-    public function items($folder,$hash){
-        
-        if($hash != securityHash($folder)){
-            throw new Exception('Invalid Hash',500);
-        }
+    public function items($id){
+        $service = new Content_Model_Field_Service();
+       $element = $service->getObjectById($id);
+//        if($hash != securityHash($folder)){
+//            throw new Exception('Invalid Hash',500);
+//        }
+       
+       $options = array('folder'=>'','fileType'=>'images', 'maxSize' => 8000, 'maxFileSize' => 1000000, 'minFileSize' => 0);
+       
+       
+
+        $options = array_merge($options, $element->options);
+       
         $config = Zend_Registry::get('config');
-        $path = $config->site->uploadDirectory .'/'.$folder;
+        $path = $config->site->uploadDirectory .'/'.$options['folder'];
         $files = array();
         $types = array('.jpg','.jpeg','.png','.bmp');
         

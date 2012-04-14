@@ -35,20 +35,40 @@ class Content_Plugin_Element_Editor_Element extends Content_Model_Plugin_Element
      * 
      * @return CMS_Sub_Form
      */
-    function getSetupForm($options = array()) {
+      
+    public function getSetupForm($options = array()) {
         $form = parent::getSetupForm();
 
         $form->setLegend('Editor Options');
         $path = $form->createElement('text', 'folder');
         $path->setLabel('Upload Path: ');
         $config = Zend_Registry::get('config');
-        $path->setDescription('Path is Prefixed with: ' . $config->site->uploadDirectory . '/');
+        $path->setDescription('Path is Prefixed with: ' . $config->site->uploadDirectory . DIRECTORY_SEPARATOR);
         //$path->setRequired('true');
         $path->addFilter('StripTags'); //@todo filter chars
+        $path->addFilter('Callback', array('callback' => 'cleanDir'));
+        $path->addValidator('Callback', false, array('callback' => array($this, 'validateUploadPath')));
+       // 
         $form->addElement($path);
 
         return $form;
     }
+    
+    public function validateUploadPath($value) {
+        $config = Zend_Registry::get('config');
+        $fullPath = $config->site->uploadDirectory . DIRECTORY_SEPARATOR . $value;
+       // is_dir()
+        
+       // if (!file_exists($fullPath)){
+        if (!file_exists($fullPath)){
+            if (mkdir($fullPath, 0777, true)) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
 
     /**
      * Get the form element to display
@@ -61,12 +81,12 @@ class Content_Plugin_Element_Editor_Element extends Content_Model_Plugin_Element
         $element = new CMS_Form_Element_JsWysiwyg($config);
         $view = Zend_Registry::get('view');
         $element->setParams($options);
-        $element->setParam('rest', $view->url(array('controller' => 'content', 'action' => 'rest'), 'content-admin'));
+        $element->setParam('url', $view->url(array('controller' => 'content', 'action' => 'rest'), 'content-admin'));
         return $element;
     }
 
     public function getSaveValue() {
-        return $this->_processBlocks('save');
+        return str_replace(chr(13), '', $this->_processBlocks('save')); //strip carrage returns out
     }
 
     public function getFormValue() {
@@ -74,7 +94,7 @@ class Content_Plugin_Element_Editor_Element extends Content_Model_Plugin_Element
     }
 
     function render() {
-        return $this->_processBlocks('view');
+        return str_replace('&#13;', '', $this->_processBlocks('view'));
     }
 
     private function _processBlocks($render = 'view') {
@@ -134,10 +154,15 @@ class Content_Plugin_Element_Editor_Element extends Content_Model_Plugin_Element
         }
 
         $body = $doc->getElementsByTagName('body')->item(0);
-
-        $html = $doc->saveXML($body);
+        
+       // $body->
+        
+        $html = $doc->saveHTML();
+        $html = substr($html, 119, strlen($html) - 134);
+        return $html;
+       // die(htmlentities($html));
         //remove body tag
-        return substr($html, 6, strlen($html) - 13);
+        //return substr($html, 6, strlen($html) - 13);
     }
     
     private $_helpers = array();
@@ -152,6 +177,8 @@ class Content_Plugin_Element_Editor_Element extends Content_Model_Plugin_Element
         if(empty($this->_document)){
             $this->_document = new DOMDocument;
             if(!empty($this->_value)){
+              libxml_use_internal_errors(true); //supress errors caused by html5
+
                 $this->_document->loadHTML($this->_value);
             }
         }

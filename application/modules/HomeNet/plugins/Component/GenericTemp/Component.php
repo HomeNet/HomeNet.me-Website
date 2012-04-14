@@ -63,7 +63,7 @@ $convert->setMultiOptions(array('' => 'None',
 //    public function saveDatapoint( $timestamp) {
 //
 ////        if (empty($this->settings['datatype'])) {
-////            throw new Zend_Exception('this subdevice doesn\'t have a datatype to save a value');
+////            throw new Zend_Exception('this component doesn\'t have a datatype to save a value');
 ////        }
 //
 //
@@ -82,7 +82,7 @@ $convert->setMultiOptions(array('' => 'None',
 ////
 ////        $row = $table->createRow();
 ////
-////        $row->subdevice = $this->id;
+////        $row->component = $this->id;
 ////        $row->datetime = $timestamp;
 ////
 ////        //$value = $this->_convertValue($value);

@@ -138,7 +138,7 @@ class Content_SectionController extends Zend_Controller_Action
         if(!empty($_POST['confirm'])){
             $title = $object->title;
             $csService->delete($object);
-            $this->view->messages()->add('Successfully Added Section &quot;' . $title . '&quot;');
+            $this->view->messages()->add('Successfully Deleted Section &quot;' . $title . '&quot;');
 
         }
         return $this->_redirect($this->view->url(array('controller'=>'section'),'content-admin'));

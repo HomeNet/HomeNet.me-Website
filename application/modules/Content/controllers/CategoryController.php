@@ -67,7 +67,7 @@ class Content_CategoryController extends Zend_Controller_Action
             'params' => array('id' => $object->id)
         ));
 
-        $this->view->heading = $object->title.' Category Set';
+        $this->view->heading = $object->title.' Category';
         
        //return $section;
     }

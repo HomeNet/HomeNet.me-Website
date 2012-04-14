@@ -13,10 +13,10 @@ foreach ($this->components as $object) {
 
 
 ?>
-    <div class="ui-widget ui-state-default ui-corner-all homeNet-room-subdevice">
+    <div class="ui-widget ui-state-default ui-corner-all homeNet-room-component">
         <h2><?php echo $object->name ?></h2>
 
-        <div id="control-<?php echo $object->id ?>" class="subdevice-graph" style="">
+        <div id="control-<?php echo $object->id ?>" class="component-graph" style="">
 <?php echo $object->getControlForm(); ?>
 
         </div>

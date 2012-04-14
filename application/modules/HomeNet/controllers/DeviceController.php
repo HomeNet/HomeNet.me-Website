@@ -108,6 +108,8 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
         
         if($this->_id !== null){
             $this->view->device =  $this->_device = $this->service->getObjectByHouseNodeaddressPosition($this->_house->id, $this->_node->address, $this->_id);
+            $this->_device->setHouse($this->_house);
+            $this->_device->setRoom($this->_room);
 
             $this->view->breadcrumbs()->addPage(array(
             'label'  => $this->_device->model_name,
@@ -217,8 +219,8 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
 //        }        
 
         $object = $this->service->newObjectFromModel($model);
-        $object->house = $this->_house->id;
-        $object->setHouse($this->_house);
+       $object->house = $this->_house->id;
+       $object->setHouse($this->_house);
        $object->setRoom($this->_room);
 
         //get setup form
@@ -269,21 +271,17 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
 
         $object = $this->_device; //$dService->getObjectByNodePosition($this->view->node, $this->view->position);
-      //  var_dump($object);
-
-
-//$object->setHouse($this->view->house);
                 
         //get setup form
         $form = $object->getConfigForm();
 
-        $form->addElement('submit', 'add', array('label' => 'Update'));
+        $form->addElement('submit', 'add', array('label' => 'Update'));        
 
-      //  if (!$this->getRequest()->isPost() && !$form->isValid($_POST)) {
+        if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
             // Failed validation; redisplay form
             $this->view->form = $form;
             return;
-      //  }
+       }
 
       //  try {
             $object->processConfigForm($form->getValues());

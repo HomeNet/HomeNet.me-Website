@@ -41,8 +41,8 @@ class Content_Plugin_Element_FileManager_Element  extends Content_Model_Plugin_E
     function getSetupForm($options = array()){
          $form = parent::getSetupForm($options);
         $form->setLegend('Image Options');
-        $path = $form->createElement('text','path');
-        $path->setLabel('Path: ');
+        $path = $form->createElement('text','folder');
+        $path->setLabel('Folder: ');
         $path->setDescription('Path is Prefixed with: '.APPLICATION_ROOT);
         $path->setRequired('true');
         $path->addFilter('StripTags');//@todo filter chars

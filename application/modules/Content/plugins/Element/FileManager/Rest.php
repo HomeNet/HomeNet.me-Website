@@ -30,6 +30,7 @@ class Content_Plugin_Element_FileManager_Rest {
     
     private $config;
     private $element;
+    private $options;
     
     public function __construct(){
        $this->config = Zend_Registry::get('config'); 
@@ -62,17 +63,18 @@ class Content_Plugin_Element_FileManager_Rest {
             )
         );*/
     
-    public function upload(){//$id, $folder,$hash){ //$id = null
-         
-       // $service = new Content_Model_Field_Service();
-       // $element = $service->getObjectById($id);
+    public function upload($id){ //$id = null
+        
+       /* @todo acl required */ 
+        
+       $service = new Content_Model_Field_Service();
+       $element = $service->getObjectById($id);
+       
        $this->options = array('folder'=>'','fileType'=>'images', 'maxSize' => 8000, 'maxFileSize' => 1000000, 'minFileSize' => 0);
        
-       if(!empty($this->options['folder'])){
-           $this->options['folder'].='/';
-       }
+       
 
-       // $this->options = array_merge($options, $element->options);
+        $this->options = array_merge($this->options, $element->options);
         
         switch($this->options['fileType']){
             case "images":
@@ -131,10 +133,13 @@ class Content_Plugin_Element_FileManager_Rest {
         } else {
             header('Content-type: text/plain');
         }
+        //@todo look up md5 hash of file and see if we already have info for it;
         return json_encode($info);
         
     }
-        private function _validateFile($file) {
+    
+    
+    private function _validateFile($file) {
             
         if(isset($file['error']) && ($file['error'] != 0)){
             switch ($file['error']) {
@@ -166,7 +171,7 @@ class Content_Plugin_Element_FileManager_Rest {
             return 'maxFileSize';
         }
         if ($this->options['minFileSize'] &&
-            $file_size < $this->options['min_file_size']) {
+            $file_size < $this->options['minFileSize']) {
             return 'minFileSize';
         }
 //        if (is_int($this->options['max_number_of_files']) && (
@@ -183,6 +188,7 @@ class Content_Plugin_Element_FileManager_Rest {
         $file['ext'] = $info['extension'];
         $file['name'] = cleanFilename($info['filename']).'.'.$info['extension'];
         $file['size'] = intval($file['size']);
+        $file['title'] = $info['filename'];
 
         $error = $this->_validateFile($file);
         
@@ -192,14 +198,22 @@ class Content_Plugin_Element_FileManager_Rest {
             return $file;
         }
         unset($file['error']);
-        $file['path'] = $this->options['folder'].$file['name'];
+        
+        
+        
+        if(!empty($this->options['folder'])){
+           $this->options['folder'].=DIRECTORY_SEPARATOR;
+        }
+        
+        
+        //$file['path'] = $this->options['folder'].$file['name'];
 
-        $tempPath = $this->config->site->tempUploadDirectory.'/'.$file['name'].'.part';
-        $fullPath = $this->config->site->uploadDirectory.'/'.$file['path'];
+        $tempfile = $this->config->site->tempUploadDirectory.DIRECTORY_SEPARATOR.$file['name'].'.part';
+        $fullPath = $this->config->site->uploadDirectory.DIRECTORY_SEPARATOR.$this->options['folder'];
         clearstatcache();
         
         $append = false;
-        if(file_exists($tempPath) && ($file['size'] > filesize($tempPath))){
+        if(file_exists($tempfile) && ($file['size'] > filesize($tempfile))){
             
             $append = true;
         }
@@ -207,21 +221,28 @@ class Content_Plugin_Element_FileManager_Rest {
         if (is_uploaded_file($file['tmp_name'])) {
             // multipart/formdata uploads (POST method uploads)
             if ($append) {
-                file_put_contents($tempPath, fopen($file['tmp_name'], 'r'), FILE_APPEND );
+                file_put_contents($tempfile, fopen($file['tmp_name'], 'r'), FILE_APPEND );
             } else {
-                move_uploaded_file($file['tmp_name'], $tempPath);
+                move_uploaded_file($file['tmp_name'], $tempfile);
             }
         } else {
             // Non-multipart uploads (PUT method support)
-            file_put_contents($tempPath, fopen('php://input', 'r'), $append ? FILE_APPEND : 0 );
+            file_put_contents($tempfile, fopen('php://input', 'r'), $append ? FILE_APPEND : 0 );
         }
 
         $discardIncompleteUploads = false;
-        $file_size = filesize($tempPath);
+        $file_size = filesize($tempfile);
             
         if ($file_size === $file['size']) {
 
-            rename($tempPath, $fullPath);
+            $name = md5_file($tempfile).'.'.$file['ext'];
+            $fullfile = $fullPath.DIRECTORY_SEPARATOR.$name;
+            $file['path'] = $this->options['folder'].$name;
+            if(!file_exists($fullfile)){
+                rename($tempfile, $fullfile);
+            } else {
+                unlink($tempfile);
+            }
             
             if($this->options['fileType'] == 'images'){
                 $helper = new CMS_View_Helper_ImagePath();
@@ -233,9 +254,10 @@ class Content_Plugin_Element_FileManager_Rest {
             }
             $helper = new CMS_View_Helper_AttachmentPath();
             $file['download'] = $helper->attachmentPath($file['path']);
+           // 
 
         } elseif ($discardIncompleteUploads) {
-            unlink($file_path);
+            unlink($tempfile);
             $file['error'] = 'abort';
         }
         $file['uploaded_size'] = $file_size;
@@ -246,31 +268,77 @@ class Content_Plugin_Element_FileManager_Rest {
         
         unset($file['tmp_name']);
         
+        //= basename( $file['name'], $file['ext']);
+        
+        
         return $file;
     }
     
     
-    public function items($folder,$hash){
-        
-        if($hash != securityHash($folder)){
-            throw new Exception('Invalid Hash',500);
-        }
+//    public function items($folder,$hash){
+//        
+//        if($hash != securityHash($folder)){
+//            throw new Exception('Invalid Hash',500);
+//        }
+//        $config = Zend_Registry::get('config');
+//        $path = $config->site->uploadDirectory .'/'.$folder;
+//        $files = array();
+//        $types = array('.jpg','.jpeg','.png','.bmp');
+//        
+//        $helper = new CMS_View_Helper_ImagePath();
+//        
+//        if(!empty($folder)){
+//            $folder .= '/';
+//        }
+//        
+//       $count = 0;
+//        foreach (scandir($path) as $file) {
+//
+//            if (($file != '.') && ($file != '..') && !is_dir($file) && in_array(stristr($file,'.'), $types)) {
+//                $image = $folder.$file;
+//                $files[] = array('path' => $image, 
+//                    'thumbnail' => $helper->imagePath($image, 100, 100),
+//                    'preview' => $helper->imagePath($image, 480, 320),
+//                    'title'=>'Title '.$count,
+//                    'description'=>'description '.$count,
+//                    'source'=>'Source '.$count,
+//                    'url'=>'',
+//                    'copyright'=>'My Copyright '.$count);
+//                $count++;
+//            }
+//        }
+//        //return array('test'=>'test');
+//        return json_encode($files);
+//    }
+    public function items($id){
+        $service = new Content_Model_Field_Service();
+       $element = $service->getObjectById($id);
+//        if($hash != securityHash($folder)){
+//            throw new Exception('Invalid Hash',500);
+//        }
+       
+       $options = array('folder'=>'','fileType'=>'images', 'maxSize' => 8000, 'maxFileSize' => 1000000, 'minFileSize' => 0);
+       
+       
+
+        $options = array_merge($options, $element->options);
+       
         $config = Zend_Registry::get('config');
-        $path = $config->site->uploadDirectory .'/'.$folder;
+        $path = $config->site->uploadDirectory .DIRECTORY_SEPARATOR.$options['folder'];
         $files = array();
         $types = array('.jpg','.jpeg','.png','.bmp');
         
         $helper = new CMS_View_Helper_ImagePath();
+        $count = 0;
         
-        if(!empty($folder)){
-            $folder .= '/';
+        if(!file_exists($path)){
+            return 'Invalid Path';
         }
         
-       $count = 0;
         foreach (scandir($path) as $file) {
 
             if (($file != '.') && ($file != '..') && !is_dir($file) && in_array(stristr($file,'.'), $types)) {
-                $image = $folder.$file;
+                $image = $options['folder'].DIRECTORY_SEPARATOR.$file;
                 $files[] = array('path' => $image, 
                     'thumbnail' => $helper->imagePath($image, 100, 100),
                     'preview' => $helper->imagePath($image, 480, 320),
