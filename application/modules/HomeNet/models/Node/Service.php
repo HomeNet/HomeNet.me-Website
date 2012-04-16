@@ -89,8 +89,25 @@ class HomeNet_Model_Node_Service {
     public function getTypes(){
         return array(1 => 'Wireless Sensor Node', 2 => 'Wired Base Station', 3 => 'Internet Node');
     }
-
+    
     /**
+     * @return array
+     */
+    public function getNetworks(){
+        return array(
+            array('id'=>0, 'name'=>'Standalone (Arduino)', 'driver'=>'Standalone' ),
+            array('id'=>1, 'name'=>'RFM12B 915 mhz', 'driver'=>'Rfm12b'),
+            array('id'=>2, 'name'=>'RFM12B 868 mhz', 'driver'=>'Rfm12b'),
+            array('id'=>3, 'name'=>'RFM12B 434 mhz', 'driver'=>'Rfm12b'),
+            array('id'=>4, 'name'=>'Serial 232 *Placeholder*', 'driver'=>'Todo'),
+            array('id'=>5, 'name'=>'Serial 485 *Placeholder*', 'driver'=>'Todo'),
+            array('id'=>6, 'name'=>'Zigbee 2.4 ghz *Placeholder*', 'driver'=>'ZigBee'),
+            array('id'=>7, 'name'=>'Wifi *Placeholder*', 'driver'=>'Todo'),
+            array('id'=>8, 'name'=>'Ethernet *Placeholder*', 'driver'=>'Todo'),
+            );
+    }
+
+            /**
      * Get Node by id
      * 
      * @param int $id
