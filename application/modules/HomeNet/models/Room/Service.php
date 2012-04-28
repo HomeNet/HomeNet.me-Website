@@ -157,15 +157,18 @@ class HomeNet_Model_Room_Service {
         //$houseService->clearCacheById($result->house);
 
         $types = $houseService->getTypes();
-        $user = Core_Model_User_Manager::getUser();
 
-         $messageService = new HomeNet_Model_Message_Service();
-        //$messageService->add(HomeNet_Model_Alert::NEWITEM, '<strong>' . $user->name . '</strong> Added ' . $room->name . ' to their ' . $types[$this->house->type] . ' ' . $this->house->name . ' to HomeNet', null, $id);
-          $messageService->add(HomeNet_Model_Message::NEWITEM, '<span class="homenet-user" data-object="user" data-id="'.$user->id.'" data-field="name">' . $user->name . '</span> Added a new room 
-              <span class="homenet-room" data-object="room" data-id="'.$result->id.'" data-field="name">' . $result->name . '</span> to <span class="homenet-house" data-object="house" data-id="' . $house->id.'" data-field="name">' . $house->name.'</span>', null, $house->id);
-        // $mService = new HomeNet_Model_Message_Service();
-        // $mService->add(HomeNet_Model_Message::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added &quot;' . $result->name . '&quot; to ' . $house->name . '', null, $house->id);
-        //die('add message');
+        if (APPLICATION_ENV != 'testing') {
+            $user = Core_Model_User_Manager::getUser();
+
+            $messageService = new HomeNet_Model_Message_Service();
+            //$messageService->add(HomeNet_Model_Alert::NEWITEM, '<strong>' . $user->name . '</strong> Added ' . $room->name . ' to their ' . $types[$this->house->type] . ' ' . $this->house->name . ' to HomeNet', null, $id);
+            $messageService->add(HomeNet_Model_Message::NEWITEM, '<span class="homenet-user" data-object="user" data-id="' . $user->id . '" data-field="name">' . $user->name . '</span> Added a new room 
+              <span class="homenet-room" data-object="room" data-id="' . $result->id . '" data-field="name">' . $result->name . '</span> to <span class="homenet-house" data-object="house" data-id="' . $house->id . '" data-field="name">' . $house->name . '</span>', null, $house->id);
+            // $mService = new HomeNet_Model_Message_Service();
+            // $mService->add(HomeNet_Model_Message::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Added &quot;' . $result->name . '&quot; to ' . $house->name . '', null, $house->id);
+            //die('add message');
+        }
         return $result;
     }
 
@@ -188,7 +191,7 @@ class HomeNet_Model_Room_Service {
         $result = $this->getMapper()->save($object);
 
         $houseService = new HomeNet_Model_House_Service();
-       // $houseService->clearCacheById($result->house);
+        // $houseService->clearCacheById($result->house);
 
         return $result;
     }
@@ -231,4 +234,5 @@ class HomeNet_Model_Room_Service {
         }
         $this->getMapper()->deleteAll();
     }
+
 }

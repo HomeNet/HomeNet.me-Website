@@ -57,57 +57,57 @@ class HomeNet_Model_Node_Service {
         $this->_mapper = $mapper;
     }
 
-     protected function _getPlugin($object){
+    protected function _getPlugin($object) {
 
-        if(empty($object->plugin)){
+        if (empty($object->plugin)) {
             throw new InvalidArgumentException('Missing Node Plugin');
         }
-        
-        $class = 'HomeNet_Plugin_Node_'.$object->plugin.'_Node';
 
-        if(!class_exists($class,true)){
-            throw new Exception('Node Plugin: '.$object->plugin.' Doesn\'t Exist');
+        $class = 'HomeNet_Plugin_Node_' . $object->plugin . '_Node';
+
+        if (!class_exists($class, true)) {
+            throw new Exception('Node Plugin: ' . $object->plugin . ' Doesn\'t Exist');
         }
 
         return new $class(array('data' => $object->toArray()));
     }
 
-    protected function _getPlugins($nodes){
+    protected function _getPlugins($nodes) {
         $objects = array();
-        foreach($nodes as $object){
+        foreach ($nodes as $object) {
             $objects[] = $this->_getPlugin($object);
         }
 
         return $objects;
     }
-    
+
     /**
      * Get Node Types
      * 
      * @return array 
      */
-    public function getTypes(){
+    public function getTypes() {
         return array(1 => 'Wireless Sensor Node', 2 => 'Wired Base Station', 3 => 'Internet Node');
     }
-    
+
     /**
      * @return array
      */
-    public function getNetworks(){
+    public function getNetworks() {
         return array(
-            array('id'=>0, 'name'=>'Standalone (Arduino)', 'driver'=>'Standalone' ),
-            array('id'=>1, 'name'=>'RFM12B 915 mhz', 'driver'=>'Rfm12b'),
-            array('id'=>2, 'name'=>'RFM12B 868 mhz', 'driver'=>'Rfm12b'),
-            array('id'=>3, 'name'=>'RFM12B 434 mhz', 'driver'=>'Rfm12b'),
-            array('id'=>4, 'name'=>'Serial 232 *Placeholder*', 'driver'=>'Todo'),
-            array('id'=>5, 'name'=>'Serial 485 *Placeholder*', 'driver'=>'Todo'),
-            array('id'=>6, 'name'=>'Zigbee 2.4 ghz *Placeholder*', 'driver'=>'ZigBee'),
-            array('id'=>7, 'name'=>'Wifi *Placeholder*', 'driver'=>'Todo'),
-            array('id'=>8, 'name'=>'Ethernet *Placeholder*', 'driver'=>'Todo'),
-            );
+            array('id' => 0, 'name' => 'Standalone (Arduino)', 'driver' => 'Standalone'),
+            array('id' => 1, 'name' => 'RFM12B 915 mhz', 'driver' => 'Rfm12b'),
+            array('id' => 2, 'name' => 'RFM12B 868 mhz', 'driver' => 'Rfm12b'),
+            array('id' => 3, 'name' => 'RFM12B 434 mhz', 'driver' => 'Rfm12b'),
+            array('id' => 4, 'name' => 'Serial 232 *Placeholder*', 'driver' => 'Todo'),
+            array('id' => 5, 'name' => 'Serial 485 *Placeholder*', 'driver' => 'Todo'),
+            array('id' => 6, 'name' => 'Zigbee 2.4 ghz *Placeholder*', 'driver' => 'ZigBee'),
+            array('id' => 7, 'name' => 'Wifi *Placeholder*', 'driver' => 'Todo'),
+            array('id' => 8, 'name' => 'Ethernet *Placeholder*', 'driver' => 'Todo'),
+        );
     }
 
-            /**
+    /**
      * Get Node by id
      * 
      * @param int $id
@@ -121,7 +121,7 @@ class HomeNet_Model_Node_Service {
         }
 
         $result = $this->getMapper()->fetchObjectById($id);
-        
+
         if (empty($result)) {
             throw new NotFoundException('Node: ' . $id . ' Not Found', 404);
         }
@@ -148,12 +148,13 @@ class HomeNet_Model_Node_Service {
         }
 
         $results = $this->getMapper()->fetchObjectsByHouse($house, HomeNet_Model_Node::STATUS_LIVE);
-   
+
 //        if (empty($result)) {
 //            throw new NotFoundException('House: '.$house.' Not Found', 404);
 //        }
         return $this->_getPlugins($results);
     }
+
     /**
      * Get Nodes by house id
      * 
@@ -259,17 +260,17 @@ class HomeNet_Model_Node_Service {
         if (empty($house) || !is_numeric($house)) {
             throw new InvalidArgumentException('Invalid House Id');
         }
-        
+
         if (!is_numeric($type)) {
             throw new InvalidArgumentException('Invalid Type');
         }
-        
+
         $results = $this->getMapper()->fetchObjectsByHouseType($house, $type);
 
-  
+
         return $results;
     }
-    
+
     /**
      * Get the Id's of Internet nodes by house
      * 
@@ -282,18 +283,17 @@ class HomeNet_Model_Node_Service {
         if (empty($house) || !is_numeric($house)) {
             throw new InvalidArgumentException('Invalid House Id');
         }
-        
+
         $results = $this->getObjectsByHouseType($house, HomeNet_Model_Node::INTERNET);
-               
+
         $array = array();
-        foreach($results as $value){
-               $array[$value->id] = $value->address;
+        foreach ($results as $value) {
+            $array[$value->id] = $value->address;
         }
 
-  
+
         return $array;
     }
-    
 
 //    public function geObjectByIdWithModel($id, $columns){
 //        $node = $this->getMapper()->fetchNodeByIdWithModel($id, $columns);
@@ -312,11 +312,11 @@ class HomeNet_Model_Node_Service {
     /**
      * Get new Node Based on a NodeModel
      * 
-     * @param type $id
-     * @return driver 
+     * @param int $id
+     * @return HomeNet_Model_Node_Abstract 
      * @throws InvalidArgumentException
      */
-    public function newObjectFromModel($id) {
+    public function newObjectFromModel($id, $house = null, $room = null, $address = null) {
         if (empty($id) || !is_numeric($id)) {
             throw new InvalidArgumentException('Invalid House Id');
         }
@@ -324,49 +324,48 @@ class HomeNet_Model_Node_Service {
         $nmService = new HomeNet_Model_NodeModel_Service();
         $object = $nmService->getObjectById($id);
 
-        if(empty($object->plugin)){
+        if (empty($object->plugin)) {
             throw new InvalidArgumentException('Missing Component Driver');
         }
-        
-        $class = 'HomeNet_Plugin_Node_'.$object->plugin.'_Node';
 
-        if(!class_exists($class, true)){
-            throw new InvalidArgumentException('Node Plugin: '.$object->plugin.' Doesn\'t Exist');
+        $class = 'HomeNet_Plugin_Node_' . $object->plugin . '_Node';
+
+        if (!class_exists($class, true)) {
+            throw new InvalidArgumentException('Node Plugin: ' . $object->plugin . ' Doesn\'t Exist');
         }
 
-        return new $class(array('model' => $object));
+        return new $class(array('model' => $object, 'data'=>array('house'=>$house,'room'=>$room,'address'=>$address)));
     }
-    
-    
+
     /**
      * Mark a node as deleted and cascades to all child elements
      * 
      * @param HomeNet_Model_Node_Interface $object 
      */
-    public function trash(HomeNet_Model_Node_Interface $object){
+    public function trash(HomeNet_Model_Node_Interface $object) {
         $object->status = HomeNet_Model_Node::STATUS_TRASHED;
         $result = $this->update($object);
-        
+
         $devices = $object->getDevices();
         $service = new HomeNet_Model_Device_Service();
-        foreach($devices as $device){
+        foreach ($devices as $device) {
             $service->trash($device);
         }
         return $result;
     }
-    
+
     /**
      * Undelete a node and cascades to all child elements
      * 
      * @param HomeNet_Model_Node_Interface $object 
      */
-    public function untrash(HomeNet_Model_Node_Interface $object){
+    public function untrash(HomeNet_Model_Node_Interface $object) {
         $object->status = HomeNet_Model_Node::STATUS_LIVE;
         $result = $this->update($object);
-        
+
         $devices = $object->getDevices();
         $service = new HomeNet_Model_Device_Service();
-        foreach($devices as $device){
+        foreach ($devices as $device) {
             $service->untrash($device);
         }
         return $result;
@@ -380,7 +379,7 @@ class HomeNet_Model_Node_Service {
      * @throws InvalidArgumentException 
      */
     public function create($mixed) {
-       
+
         if ($mixed instanceof HomeNet_Model_Node_Interface) {
             $object = $mixed;
         } elseif (is_array($mixed)) {
@@ -388,19 +387,34 @@ class HomeNet_Model_Node_Service {
         } else {
             throw new InvalidArgumentException('Invalid Node');
         }
-        
-        if($object->status === null){
+
+        if ($object->status === null) {
             $object->status = HomeNet_Model_Node::STATUS_LIVE;
         }
-        
+
         $result = $this->getMapper()->save($object);
-        
-        $object->id = $result->id; //patch to fix null id, $node missing some parameters
+        $object->id = $result->id;
+
+        $devices = $object->getDevices();
+
+        if (!empty($devices)) {
+            $service = new HomeNet_Model_Device_Service();
+            foreach ($devices as $device) {
+                $device->status = $object->status;
+                $device->house = $object->house;
+                $device->setRoomId($object->room);
+                $device->node = $object->id;
+                $service->create($device);
+            }
+        }
+
+
+
+        //patch to fix null id, $node missing some parameters
 //        if ($object->type == HomeNet_Model_Node::INTERNET) {
 //
 //            $this->getInternetMapper()->save($object);
 //        }
-
 //        $houseService = new HomeNet_Model_HousesService();
 //        $house = $houseService->getHouseById($node->house);
 //        $houseService->clearCacheById($node->house);
@@ -438,6 +452,18 @@ class HomeNet_Model_Node_Service {
 
         $result = $this->getMapper()->save($object);
 
+        $devices = $object->getDevices();
+
+        if (!empty($devices)) {
+            $service = new HomeNet_Model_Device_Service();
+            foreach ($devices as $device) {
+                $service->update($device);
+            }
+        }
+
+
+
+
 //        if ($object->type == HomeNet_Model_Node::INTERNET) {
 //            $this->getInternetMapper()->save($object);
 //        }
@@ -464,12 +490,12 @@ class HomeNet_Model_Node_Service {
         } else {
             throw new InvalidArgumentException('Invalid Node');
         }
-        
+
         $devices = $object->getDevices();
 
         $result = $this->getMapper()->delete($object);
-        
-        
+
+
         if (!empty($devices)) {
 
             $deviceService = new HomeNet_Model_Device_Service();

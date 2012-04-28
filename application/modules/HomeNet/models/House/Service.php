@@ -269,7 +269,7 @@ class HomeNet_Model_House_Service {
     }
 
     public function getRegions(array $limit = array()) {
-        
+
         $regions = array('1' => 'First Floor',
             '2' => 'Second Floor',
             '3' => 'Third Floor',
@@ -278,11 +278,11 @@ class HomeNet_Model_House_Service {
             'B' => 'Basement',
             'A' => 'Attic',
             'O' => 'Outdoors');
-        
-        if(!empty($limit)){
+
+        if (!empty($limit)) {
             $regions = array_intersect_key($regions, array_flip($limit));
         }
-        
+
         return $regions;
     }
 
@@ -330,7 +330,7 @@ class HomeNet_Model_House_Service {
         } else {
             throw new InvalidArgumentException('Invalid House');
         }
-        
+
         if ($object->database === null) {
             $object->database = 1;
         }
@@ -348,31 +348,30 @@ class HomeNet_Model_House_Service {
         }
 
         $result = $this->getMapper()->save($object);
-        
+
         //create data tables
         $service = new HomeNet_Model_Datapoint_Service($result);
         $service->createTables();
-        
-        
+
+
 
         //add to house user
         //create user perrmissions
-        $service = new HomeNet_Model_HouseUser_Service();
+        // $service = new HomeNet_Model_HouseUser_Service();
+        if (APPLICATION_ENV != 'testing') {
+            // $houseuserService= new HomeNet_Model_HouseUser_Service();
+            $user = Core_Model_User_Manager::getUser();
+            // $houseuserService->add($result->id, $user->id);
+            //reset session cache
+            unset($_SESSION['HomeNet']['houses']);
 
-       // $houseuserService= new HomeNet_Model_HouseUser_Service();
-        $user = Core_Model_User_Manager::getUser();
-       // $houseuserService->add($result->id, $user->id);
 
-        //reset session cache
-        unset($_SESSION['HomeNet']['houses']);
-
-
-        //add alerts
-        $messageService = new HomeNet_Model_Message_Service();
-       // $url = $this->view->url(array('action' => 'index'), 'homenet-setup-index');
-       // $messageService->add(HomeNet_Model_Message::NEWITEM, 'Congrates on starting your HomeNet. If you need to, you can return to the <a href="/home/' . $result->id . '/setup">Setup Wizard</a>', $user->id);
-       $messageService->add(HomeNet_Model_Message::NEWITEM, '<strong>' . $user->name . '</strong> Added their home &quot;' . $result->name . '&quot; to HomeNet', null, $result->id);
-
+            //add alerts
+            $messageService = new HomeNet_Model_Message_Service();
+            // $url = $this->view->url(array('action' => 'index'), 'homenet-setup-index');
+            // $messageService->add(HomeNet_Model_Message::NEWITEM, 'Congrates on starting your HomeNet. If you need to, you can return to the <a href="/home/' . $result->id . '/setup">Setup Wizard</a>', $user->id);
+            $messageService->add(HomeNet_Model_Message::NEWITEM, '<strong>' . $user->name . '</strong> Added their home &quot;' . $result->name . '&quot; to HomeNet', null, $result->id);
+        }
         return $result;
     }
 

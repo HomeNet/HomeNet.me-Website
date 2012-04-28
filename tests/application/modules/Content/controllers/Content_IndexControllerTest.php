@@ -16,7 +16,7 @@ class Content_IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
      */
     protected function setUp() {
 
-        $this->installer = new Installer();
+        $this->installer = new Core_Installer();
         $this->installer->installTest();
         $this->installer->loginAsSuperAdmin();
         

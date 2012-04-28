@@ -109,7 +109,7 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
         if($this->_id !== null){
             $this->view->device =  $this->_device = $this->service->getObjectByHouseNodeaddressPosition($this->_house->id, $this->_node->address, $this->_id);
             $this->_device->setHouse($this->_house);
-            $this->_device->setRoom($this->_room);
+            $this->_device->setRoomId($this->_room->id);
 
             $this->view->breadcrumbs()->addPage(array(
             'label'  => $this->_device->model_name,
@@ -221,7 +221,7 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
         $object = $this->service->newObjectFromModel($model);
        $object->house = $this->_house->id;
        $object->setHouse($this->_house);
-       $object->setRoom($this->_room);
+       $object->setRoomId($this->_room->id);
 
         //get setup form
         $form = $object->getConfigForm();

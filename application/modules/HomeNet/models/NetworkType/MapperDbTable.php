@@ -69,7 +69,9 @@ class HomeNet_Model_NetworkType_MapperDbTable implements HomeNet_Model_NetworkTy
             return $object->save();
         } elseif ($object->id !== null) {
             $row = $this->getTable()->find($object->id)->current();
-        } else {
+        } 
+        
+        if(empty($row)) {
             $row = $this->getTable()->createRow();
         }
 

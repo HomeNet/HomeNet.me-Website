@@ -56,6 +56,10 @@ class HomeNet_Model_Component_Service {
         $this->_mapper = $mapper;
     }
     
+    /**
+     * @param HomeNet_Model_Component_Interface $object
+     * @return HomeNet_Model_Component_Abstract 
+     */
      protected function _getPlugin($object){
 
         if(empty($object->plugin)){
@@ -71,7 +75,11 @@ class HomeNet_Model_Component_Service {
         return new $class(array('data' => $object->toArray()));
     }
 
-    protected function _getPlugins($objects){
+     /**
+     * @param HomeNet_Model_Component_Interface[] $object
+     * @return HomeNet_Model_Component_Abstract[] 
+     */
+    protected function _getPlugins(array $objects){
         $plugins = array();
         foreach($objects as $key=>$object){
             $plugins[$key] = $this->_getPlugin($object);
@@ -176,7 +184,7 @@ class HomeNet_Model_Component_Service {
      * Get plugin by model
      * 
      * @param integer $id Model Id
-     * @return driver 
+     * @return HomeNet_Model_Component_Abstract 
      * @throws InvalidArgumentException
      */
     public function newObjectFromModel($id) {

@@ -28,8 +28,14 @@
 class HomeNet_NodeModelController extends Zend_Controller_Action {
     
     private $_id;
+    
+    /**
+     * @var HomeNet_Model_NodeModel_Service 
+     */
+    private $service;
 
     public function init() {
+        $this->service = new HomeNet_Model_NodeModel_Service();
         $this->view->id = $this->_id = $this->_getParam('id');
        $this->_setupCrumbs();
     }
@@ -58,9 +64,7 @@ class HomeNet_NodeModelController extends Zend_Controller_Action {
     }
 
     public function indexAction() {
-
-        $service = new HomeNet_Model_NodeModel_Service();
-        $this->view->objects = $service->getObjects();
+        $this->view->objects = $this->service->getObjects();
     }
 
     public function newAction() {
@@ -96,8 +100,7 @@ class HomeNet_NodeModelController extends Zend_Controller_Action {
         $form = new HomeNet_Form_NodeModel();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
         
-        $service = new HomeNet_Model_NodeModel_Service();
-        $object = $service->getObjectById($this->_id);
+        $object = $this->service->getObjectById($this->_id);
 
         if (!$this->getRequest()->isPost()) {
 
@@ -123,8 +126,7 @@ class HomeNet_NodeModelController extends Zend_Controller_Action {
 
         $object->fromArray($values);
 
-
-        $service->update($object);
+        $this->service->update($object);
         $this->view->messages()->add('Successfully updated NodeModel &quot;'.$object->name.'&quot;');
         return $this->_redirect($this->view->url(array('controller'=>'NodeModel', 'action'=>'index'),'homenet-admin')); 
     }
@@ -132,11 +134,11 @@ class HomeNet_NodeModelController extends Zend_Controller_Action {
     public function deleteAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         $form = new Core_Form_Confirm();
-        $service = new HomeNet_Model_NodeModel_Service();
-        $object = $service->getObjectById($this->view->id);
+
+        $object = $this->service->getObjectById($this->view->id);
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
-            
+
             $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to delete "' . $object->name . '"?'));
 
             $this->view->form = $form;
@@ -147,8 +149,7 @@ class HomeNet_NodeModelController extends Zend_Controller_Action {
         
         if (!empty($_POST['confirm'])) {
             $name = $object->name;
-            $service = new HomeNet_Model_NodeModel_Service();
-            $service->delete($object);
+            $this->service->delete($object);
             $this->view->messages()->add('Successfully deleted NodeModel &quot;'.$name.'&quot;');
         }
         

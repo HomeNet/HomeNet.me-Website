@@ -354,7 +354,7 @@ class HomeNet_Model_Device_Service {
             foreach ($components as $component) {
                 $component->status = $device->status;
                 $component->house = $device->house;
-                $component->room = $object->getRoom()->id;
+                $component->room = $object->getRoomId();
                 $component->device = $device->id;
 
                 $sService->create($component);
@@ -387,6 +387,8 @@ class HomeNet_Model_Device_Service {
 
             $sService = new HomeNet_Model_Component_Service();
             foreach ($components as $component) {
+                $component->status = $object->status;
+                $component->house = $object->house;
                 $sService->update($component);
             }
         }

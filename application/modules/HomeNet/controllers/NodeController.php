@@ -115,7 +115,7 @@ class HomeNet_NodeController extends Zend_Controller_Action {
             $this->view->form = $form;
             return;
         }
-
+        
         if (!$form->isValid($_POST)) {
             // Failed validation; redisplay form
             $this->view->form = $form;
@@ -126,6 +126,9 @@ class HomeNet_NodeController extends Zend_Controller_Action {
         //$nodeService = new HomeNet_Model_NodesService();
 
         $values = $form->getValues();
+        
+        
+        
 
         $node = $this->service->newObjectFromModel($values['model']);
         $node->fromArray($values);

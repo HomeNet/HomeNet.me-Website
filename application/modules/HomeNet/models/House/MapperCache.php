@@ -57,7 +57,7 @@ class HomeNet_Model_House_MapperCache implements HomeNet_Model_House_MapperInter
             return self::$_houses[$id];
         }
 
-        if (!$this->_houseCache->test((string)$id)) {
+        if (!$this->_houseCache->test((string) $id)) {
             //Not found in Cache
             $row = $this->_mapper->fetchObjectById($id);
             if(empty($row)){
@@ -66,7 +66,7 @@ class HomeNet_Model_House_MapperCache implements HomeNet_Model_House_MapperInter
 
             $house = $row;//->toArray();
             self::$_houses[$id] = $house;
-            $this->_houseCache->save($house,$id);
+            $this->_houseCache->save($house,(string) $id);
         } else {
             $house = $this->_houseCache->load((string) $id);
         }

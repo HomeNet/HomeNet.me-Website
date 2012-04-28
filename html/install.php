@@ -52,7 +52,7 @@ $application = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/config
 $application->bootstrap();
 
 Zend_Registry::set('cachemanager', $application->getBootstrap()->getResource('cachemanager'));
-//$installer = new Installer();
+//$installer = new Core_Installer();
 //$installer->installTest();
 if(APPLICATION_ENV == 'development'){
 $installer = new HomeNet_Installer();

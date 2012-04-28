@@ -19,7 +19,7 @@ class Core_Model_Acl_ManagerTest extends PHPUnit_Framework_TestCase {
      */
     protected function setUp() {
         
-        $this->installer = new Installer();
+        $this->installer = new Core_Installer();
         $this->installer->installTest();
 
         //$uService = new Core_Model_User_Service();

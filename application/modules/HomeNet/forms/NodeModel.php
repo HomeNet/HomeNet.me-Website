@@ -47,9 +47,9 @@ class HomeNet_Form_NodeModel extends CMS_Form {
         $status->addMultiOption('3', 'Internet Node');
         $this->addElement($status);
 
-        $driver = $this->createElement('text', 'driver');
-        $driver->setLabel('Driver: ');
-        $driver->setValue('HomeNet_Model_Device_Generic');
+        $driver = $this->createElement('text', 'plugin');
+        $driver->setLabel('Plugin: ');
+        $driver->setValue('Generic');
         $driver->setRequired('true');
         $driver->addFilter('StripTags');
         $this->addElement($driver);

@@ -24,7 +24,7 @@
  * @copyright Copyright (c) 2011 Matthew Doll <mdoll at homenet.me>.
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
-class Core_Form_Confirm extends Zend_Form 
+class Core_Form_Confirm extends CMS_Form 
 {
 
     public $label;
@@ -42,7 +42,7 @@ class Core_Form_Confirm extends Zend_Form
         $this->addElement('submit', 'confirm', array('label' => $this->label));
         $this->addElement('submit', 'cancel', array('label' => 'Cancel'));
 
-        $this->addElement('hash', 'hash', array('salt' => 'unique'));
+        //$this->addElement('hash', 'hash', array('salt' => 'unique'));
     }
 
 }

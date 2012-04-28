@@ -26,7 +26,7 @@
  */
 class HomeNet_Model_NetworkType implements HomeNet_Model_NetworkType_Interface {
     
-    public $id = null;
+    public $id;
     public $status;
     public $plugin;
     public $name;

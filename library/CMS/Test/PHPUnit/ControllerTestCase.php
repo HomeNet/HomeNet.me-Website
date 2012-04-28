@@ -1,28 +1,6 @@
 <?php
 
-abstract class cms_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_ControllerTestCase
-{
-
-    final public function bootstrap()
-    {
-        $this->reset();
-        if (null !== $this->bootstrap) {
-            if ($this->bootstrap instanceof Zend_Application) {
-                $this->bootstrap->bootstrap();
-                $this->_frontController = $this->bootstrap->getBootstrap()->getResource('frontcontroller');
-            } elseif (is_callable($this->bootstrap)) {
-                call_user_func($this->bootstrap);
-            } elseif (is_string($this->bootstrap)) {
-                require_once 'Zend/Loader.php';
-                if (Zend_Loader::isReadable($this->bootstrap)) {
-                    include $this->bootstrap;
-                }
-            }
-        }
-        $this->frontController
-             ->setRequest($this->getRequest())
-             ->setResponse($this->getResponse());
-    }
+abstract class CMS_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_ControllerTestCase {
 
     /**
      * Dispatch the MVC
@@ -31,12 +9,14 @@ abstract class cms_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Con
      * Then sets test case request and response objects in front controller,
      * disables throwing exceptions, and disables returning the response.
      * Finally, dispatches the front controller.
+     * 
+     * 
+     * Modfied to throw Exceptions so I can find issues
      *
      * @param  string|null $url
      * @return void
      */
-    public function dispatch($url = null)
-    {
+    public function dispatch($url = null) {
         // redirector should not exit
         $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('redirector');
         $redirector->setExit(false);
@@ -45,7 +25,7 @@ abstract class cms_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Con
         $json = Zend_Controller_Action_HelperBroker::getStaticHelper('json');
         $json->suppressExit = true;
 
-        $request    = $this->getRequest();
+        $request = $this->getRequest();
         if (null !== $url) {
             $request->setRequestUri($url);
         }
@@ -53,10 +33,10 @@ abstract class cms_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Con
 
         $controller = $this->getFrontController();
         $this->frontController
-             ->setRequest($request)
-             ->setResponse($this->getResponse())
-             ->throwExceptions(false)
-             ->returnResponse(false);
+                ->setRequest($request)
+                ->setResponse($this->getResponse())
+                ->throwExceptions(true)//the line that changed
+                ->returnResponse(false);
 
         if ($this->bootstrap instanceof Zend_Application) {
             $this->bootstrap->run();
@@ -65,31 +45,64 @@ abstract class cms_Test_PHPUnit_ControllerTestCase extends Zend_Test_PHPUnit_Con
         }
     }
 
-    /**
-     * Retrieve test case request object
-     *
-     * @return Zend_Controller_Request_Abstract
-     */
-    public function getRequest()
-    {
-        if (null === $this->_request) {
-            require_once 'Zend/Controller/Request/HttpTestCase.php';
-            $this->_request = new Zend_Controller_Request_HttpTestCase;
-        }
-        return $this->_request;
+    private $_module;
+    private $_controller;
+    private $_action;
+
+    protected function setModule($module) {
+        $this->_module = $module;
+        $this->getRequest()->setModuleName($module);
     }
 
-    /**
-     * Retrieve test case response object
-     *
-     * @return Zend_Controller_Response_Abstract
-     */
-    public function getResponse()
-    {
-        if (null === $this->_response) {
-            require_once 'Zend/Controller/Response/HttpTestCase.php';
-            $this->_response = new Zend_Controller_Response_HttpTestCase;
-        }
-        return $this->_response;
+    protected function setController($controller) {
+        $this->_controller = $controller;
+        $this->getRequest()->setControllerName($controller);
     }
+
+    protected function setAction($action) {
+        $this->_action = $action;
+        $this->getRequest()->setActionName($action);
+    }
+
+    protected function assertACM($action = null, $controller = null, $module = null) {
+
+        if ($action === null) {
+            $this->assertAction($this->_action);
+        } else {
+            $this->assertAction($action);
+        }
+
+        if ($controller === null) {
+            $this->assertController($this->_controller);
+        } else {
+            $this->assertController($controller);
+        }
+
+        if ($module === null) {
+            $this->assertModule($this->_module);
+        } else {
+            $this->assertModule($module);
+        }
+    }
+    
+    protected function _getTestData($seed = 0) {
+        
+        return array();
+    }
+
+    protected function _fillObject($object, $seed = 0) {
+        $data = $this->_getTestData($seed);
+        foreach ($data as $key => $value) {
+            $object->$key = $value;
+        }
+        return $object;
+    }
+
+    protected function _fillArray($array, $seed = 0) {
+        if (is_object($array)) {
+            $array = $array->toArray();
+        }
+        return array_merge($array, $this->_getTestData($seed));
+    }
+
 }

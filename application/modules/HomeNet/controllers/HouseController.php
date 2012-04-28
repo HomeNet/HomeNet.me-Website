@@ -72,13 +72,12 @@ class HomeNet_HouseController extends Zend_Controller_Action
 
     public function addAction()
     {
-        // action body
+
     }
 
     public function editAction()
     {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-
 
         $form = new HomeNet_Form_House();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
@@ -109,8 +108,8 @@ class HomeNet_HouseController extends Zend_Controller_Action
        //  $mService->add(HomeNet_Model_Message::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Updated &quot;' . $object->name . '&quot; in ' . $house->name . '', null, $this->view->house);
 
 
-        $this->view->messages()->add('Successfully updated room &quot;'.$object->name.'&quot;');
-        return $this->_redirect($this->view->url(array('controller'=>'house', 'action'=>'index', 'house' => $this->_house),'homenet-house'));
+        $this->view->messages()->add('Successfully updated &quot;'.$object->name.'&quot;');
+        return $this->_redirect($this->view->url(array('controller'=>'house', 'action'=>'index', 'house' => $this->_house->id),'homenet-house'));
     }
 
     public function deleteAction()
@@ -133,20 +132,9 @@ class HomeNet_HouseController extends Zend_Controller_Action
             $object->status = HomeNet_Model_House::STATUS_DELETED;
             $this->service->updated($object);
             
-            $this->view->messages()->add('Successfully deleted room &quot;'.$name.'&quot;');
-            return $this->_redirect($this->view->url(array('house' => $this->view->house), 'homenet-house'));
+            $this->view->messages()->add('Successfully deleted &quot;'.$name.'&quot;');
+            return $this->_redirect($this->view->url(array('house' =>  $this->_house->id), 'homenet-house'));
         }
-        return $this->_redirect($this->view->url(array('controller'=>'house', 'action'=>'index', 'house' => $this->_house), 'homenet-house'));
-    }
-
-    public function usersAction()
-    {
-        die('test');
-    }
-    public function installDatabaseAction()
-    {
-        $service = new HomeNet_Model_Datapoint_Service($this->_house,'int');
-        $service->createTables();
-        die('database installed');
+        return $this->_redirect($this->view->url(array('controller'=>'house', 'action'=>'index', 'house' => $this->_house->id), 'homenet-house'));
     }
 }

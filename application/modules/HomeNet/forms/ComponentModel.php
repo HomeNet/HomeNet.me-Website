@@ -39,8 +39,8 @@ class HomeNet_Form_ComponentModel extends CMS_Form {
         $status->addMultiOption('1', 'Live');
         $this->addElement($status);
 
-        $driver = $this->createElement('text', 'driver');
-        $driver->setLabel('Driver: ');
+        $driver = $this->createElement('text', 'plugin');
+        $driver->setLabel('plugin: ');
         $driver->setValue('HomeNet_Model_Component_Generic');
         $driver->setRequired('true');
         $driver->addFilter('StripTags');

@@ -28,8 +28,14 @@
 class HomeNet_DeviceModelController extends Zend_Controller_Action {
 
     private $_id;
+    
+    /**
+     * @var HomeNet_Model_Device_Service
+     */
+    private $service;
 
     public function init() {
+        $this->service = new HomeNet_Model_DeviceModel_Service();
         $this->view->id = $this->_id = $this->_getParam('id');
 
     $this->_setupCrumbs();
@@ -60,9 +66,8 @@ class HomeNet_DeviceModelController extends Zend_Controller_Action {
 
     public function indexAction() {
 
-        $service = new HomeNet_Model_DeviceModel_Service();
-        $this->view->categories = $service->getCategories();
-        $this->view->objects = $service->getObjects();
+        $this->view->categories = $this->service->getCategories();
+        $this->view->objects = $this->service->getObjects();
     }
 
     public function newAction() {
@@ -78,14 +83,13 @@ class HomeNet_DeviceModelController extends Zend_Controller_Action {
 
         $values = $form->getValues();
 
-        $deviceModel = new HomeNet_Model_DeviceModel();
+        $object = new HomeNet_Model_DeviceModel();
 
         $values['settings'] = unflattenArray($values['settings']);
 
-        $deviceModel->fromArray($values);
+        $object->fromArray($values);
 
-        $service = new HomeNet_Model_DeviceModel_Service();
-        $service->create($deviceModel);
+        $this->service->create($object);
 
         $this->view->messages()->add('Successfully added DeviceModel &quot;'.$object->name.'&quot;');
         return $this->_redirect($this->view->url(array('controller'=>'DeviceModel', 'action'=>'index'),'homenet-admin')); 
@@ -96,8 +100,7 @@ class HomeNet_DeviceModelController extends Zend_Controller_Action {
         $form = new HomeNet_Form_DeviceModel();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
         
-        $service = new HomeNet_Model_DeviceModel_Service();
-        $object = $service->getObjectById($this->_id);
+        $object = $this->service->getObjectById($this->_id);
 
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
@@ -123,7 +126,7 @@ class HomeNet_DeviceModelController extends Zend_Controller_Action {
 
         $object->fromArray($values);
 
-        $service->update($object);
+        $this->service->update($object);
 
         $this->view->messages()->add('Successfully updated DeviceModel &quot;'.$object->name.'&quot;');
         return $this->_redirect($this->view->url(array('controller'=>'DeviceModel', 'action'=>'index'),'homenet-admin')); 
@@ -133,8 +136,7 @@ class HomeNet_DeviceModelController extends Zend_Controller_Action {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         $form = new Core_Form_Confirm();
         
-        $service = new HomeNet_Model_DeviceModel_Service();
-        $object = $service->getObjectById($this->_id);
+        $object = $this->service->getObjectById($this->_id);
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
             
@@ -149,7 +151,7 @@ class HomeNet_DeviceModelController extends Zend_Controller_Action {
         //need to figure out why this isn't in values
         if (!empty($_POST['confirm'])) {
             $name = $object->name;
-            $service->delete($object);
+            $this->service->delete($object);
             $this->view->messages()->add('Successfully deleted DeviceModel &quot;'.$name.'&quot;');
         }
         return $this->_redirect($this->view->url(array('controller'=>'DeviceModel', 'action'=>'index'),'homenet-admin')); 

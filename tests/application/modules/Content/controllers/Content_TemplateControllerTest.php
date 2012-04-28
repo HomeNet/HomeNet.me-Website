@@ -19,7 +19,7 @@ class Content_TemplateControllerTest extends Zend_Test_PHPUnit_ControllerTestCas
      */
     protected function setUp() {
 
-        $this->installer = new Installer();
+        $this->installer = new Core_Installer();
         $this->installer->installTest();
         $this->installer->loginAsSuperAdmin();
         
@@ -230,7 +230,7 @@ class Content_TemplateControllerTest extends Zend_Test_PHPUnit_ControllerTestCas
         $this->getRequest()->setActionName('Delete');
         $this->getRequest()->setParam('id', $object->id);
         $this->getRequest()->setMethod('POST')
-                ->setPost(array('delete' => 'delete'));
+                ->setPost(array('confirm' => 'confirm'));
 
         //run
         $this->dispatch();

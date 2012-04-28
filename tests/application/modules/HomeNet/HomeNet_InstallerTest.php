@@ -49,7 +49,7 @@ class HomeNet_InstallerTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testInstallOptionalContent() {
-        $this->installer->installOptionalContent(array());
+        $this->installer->installOptionalContent($this->installer->getOptionalContent());
     }
 
 

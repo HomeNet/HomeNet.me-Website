@@ -47,13 +47,23 @@ class HomeNet_Model_DeviceModel_DbTableRow extends Zend_Db_Table_Row_Abstract im
     }
     
     public function uncompress(){
-        if(is_string($this->settings)){
+         if(isset($this->components) && is_string($this->components)){
+            $this->components = unserialize($this->components);
+        }
+        if (isset($this->settings) && is_string($this->settings)) {
             $this->settings = unserialize($this->settings);
+        } elseif(empty($this->settings)){
+            $this->settings = array();
         }
     }
     
     public function compress(){
-        if(is_array($this->settings)){
+         if(is_array($this->components)){
+            $this->components = serialize($this->components);
+        }
+        if(empty($this->settings)){
+            $this->settings = null;
+        } elseif(is_array($this->settings)) {
             $this->settings = serialize($this->settings);
         }
     }

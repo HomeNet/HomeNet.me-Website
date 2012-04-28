@@ -47,12 +47,16 @@ class HomeNet_Model_Device_DbTableRow extends Zend_Db_Table_Row_Abstract impleme
     }
     
     public function uncompress(){
-        if(is_string($this->settings)){
+        
+        $this->fixed = (bool) $this->fixed;
+        
+        if(isset($this->settings) && is_string($this->settings)){
             $this->settings = unserialize($this->settings);
         }
     }
     
     public function compress(){
+        $this->fixed = (int) $this->fixed;
         if(is_array($this->settings)){
             $this->settings = serialize($this->settings);
         }
@@ -91,6 +95,16 @@ class HomeNet_Model_Device_DbTableRow extends Zend_Db_Table_Row_Abstract impleme
 
         $service = new HomeNet_Model_Component_Service();
         return $service->getObjectsByDevice($this->id);
+    }
+    
+    protected $room;
+    
+    public function setRoomId($room) {
+        $this->room = $room;
+    }
+
+    public function getRoomId() {
+        return $this->room;
     }
 
 }

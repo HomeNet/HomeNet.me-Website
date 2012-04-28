@@ -16,7 +16,7 @@ class Content_CategorySetControllerTest extends Zend_Test_PHPUnit_ControllerTest
      */
     protected function setUp() {
 
-        $this->installer = new Installer();
+        $this->installer = new Core_Installer();
         $this->installer->installTest();
         $this->installer->loginAsSuperAdmin();
 
@@ -204,13 +204,16 @@ class Content_CategorySetControllerTest extends Zend_Test_PHPUnit_ControllerTest
         $this->getRequest()->setActionName('Delete');
         $this->getRequest()->setParam('id', $object->id);
         $this->getRequest()->setMethod('POST')
-                ->setPost(array('delete' => 'delete'));
+                ->setPost(array('confirm' => 'confirm'));
 
         //run
         $this->dispatch();
+      // var_dump($this->getResponse()->getBody());
+     //   die('early');
         $this->assertModule('Content');
         $this->assertController('CategorySet');
         $this->assertAction('Delete');
         $this->assertRedirect();
+    
     }
 }

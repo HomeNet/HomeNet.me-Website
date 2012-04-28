@@ -102,13 +102,11 @@ class HomeNet_Form_Node extends CMS_Form {
         $roomList = array_fill_keys(array_keys(array_flip($regions)), array());
         
         foreach($rooms as $room){
-            $room->region;
-            $room->id;
-            $room->name;
+           // $room->region;
+           // $room->id;
+          //  $room->name;
             $roomList[$regions[$room->region]][$room->id] = $room->name;
-        }
-  
-        
+        }        
         
         $room = $this->createElement('select', 'room');
         $room->setLabel("Room: ");

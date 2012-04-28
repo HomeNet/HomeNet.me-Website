@@ -26,15 +26,17 @@
  */
 class HomeNet_Model_NodeModel implements HomeNet_Model_NodeModel_Interface {
     
-    public $id = null;
+    public $id;
     public $status;
     public $type;
+    public $network_types = array();
+    public $devices = array();
     public $plugin;
     public $name;
     public $description;
     public $image;
     public $max_devices;
-    public $settings;
+    public $settings = array();
     public $created;
     
     const NORMAL = 0;

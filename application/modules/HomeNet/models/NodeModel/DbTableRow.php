@@ -45,16 +45,34 @@ class HomeNet_Model_NodeModel_DbTableRow extends Zend_Db_Table_Row_Abstract impl
     }
     
     public function uncompress(){
-        if(is_string($this->settings)){
-            $this->settings = unserialize($this->settings);
+        if (isset($this->devices) && is_string($this->devices)) {
+            $this->devices = unserialize($this->devices);
         }
-        if(empty($this->settings)){
+        
+        if (isset($this->settings) && is_string($this->settings)) {
+            $this->settings = unserialize($this->settings);
+        } elseif(empty($this->settings)){
             $this->settings = array();
+        }
+        
+        if(is_string($this->network_types)){
+            $this->network_types = unserialize($this->network_types);
         }
     }
     
     public function compress(){
-        if(is_array($this->settings)){
+        if(is_array($this->network_types)){
+            $this->network_types = serialize($this->network_types);
+        }
+        if(empty($this->devices)){
+            $this->devices = null;
+        } elseif(is_array($this->devices)) {
+            $this->devices = serialize($this->devices);
+        }
+        
+        if(empty($this->settings)){
+            $this->settings = null;
+        } elseif(is_array($this->settings)) {
             $this->settings = serialize($this->settings);
         }
     }

@@ -30,6 +30,7 @@ class HomeNet_Model_DeviceModel implements HomeNet_Model_DeviceModel_Interface {
     public $category;
     public $status;
     public $plugin;
+    public $components;
     public $name;
     public $description;
     public $image;

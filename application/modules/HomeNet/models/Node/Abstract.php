@@ -33,6 +33,7 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
     public $house;
     public $room;
     public $address;
+    public $networks = array();
     public $model;
     public $uplink = 0;
     public $description = '';
@@ -76,7 +77,7 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
 
    public function fromArray(array $array) {
 
-        $vars = array('id', 'status', 'address', 'model', 'uplink', 'house', 'room', 'description', 'created', 'model_name','max_devices', 'driver', 'type', 'ipaddress', 'direction');
+        $vars = array('id', 'status', 'address', 'networks', 'model', 'uplink', 'house', 'room', 'description', 'created', 'model_name','max_devices', 'driver', 'type', 'ipaddress', 'direction');
 
         foreach ($array as $key => $value) {
             if (in_array($key, $vars)) {
@@ -104,6 +105,7 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
             'id' => $this->id,
             'status' => $this->status,
             'address' => $this->address,
+            'networks' => $this->networks,
             'model' => $this->model,
             'uplink' => $this->uplink,
             'house' => $this->house,
@@ -121,6 +123,18 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
         $this->model = $model->id;
         $this->type = $model->type;
         $this->settings = array_merge($this->settings, $model->settings);
+        
+         $this->_devices = array();
+        if (!empty($model->devices)) {
+            $cService = new HomeNet_Model_Device_Service();
+            
+            foreach($model->devices as $value){
+                $device = $cService->newObjectFromModel($value['model']);
+                $device->fromArray($value);//load other values
+                $this->_devices[] = $device;
+            }
+        }
+        
     }
 
     public function getDevices(){

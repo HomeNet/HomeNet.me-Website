@@ -159,6 +159,6 @@ class Content_CategorySetController extends Zend_Controller_Action
             $csService->delete($object);
             $this->view->messages()->add('Successfully Deleted Category Set &quot;'.$title.'&quot;');
         }
-        return $this->_redirect($this->view->url(array('controller'=>'category-set'),'content-admin'));
+       return $this->_redirect($this->view->url(array('controller'=>'category-set'),'content-admin'));
     }
 }

@@ -174,7 +174,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         $this->bootstrap('FrontController');
         $front = $this->getResource('FrontController');
         if(APPLICATION_ENV == 'testing'){
-   
+
+            $front->setParam('noErrorHandler', true);
             $front->throwExceptions(true);
             $routes = $front->getRouter()->getRoutes();
            // $params = $front->get

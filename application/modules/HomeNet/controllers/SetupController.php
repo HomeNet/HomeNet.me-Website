@@ -27,13 +27,13 @@
  */
 class HomeNet_SetupController extends Zend_Controller_Action {
 
-    private $_step = 0;
-    private $_house = null;
-    private $_housesService = null;
+    private $_wizard;
+    private $_house;
+    private $_housesService;
 
     public function init() {
         
-        $this->_step = $this->_getParam('id');
+        $this->_wizard = $this->_getParam('wizard');
     }
 
     public function indexAction() {
@@ -83,15 +83,32 @@ class HomeNet_SetupController extends Zend_Controller_Action {
     public function createAction() {
         
     }
+    
+    private function getNextWizardUrl(){
+        if($this->_wizard !== null){
+            $pos = array_search($this->_wizard, $this->WIZARD);
+            if(empty($this->WIZARD[$pos+1])){
+                throw new OutOfRangeException('Item Not Found in Wizard List');
+            }
+            $next = $this->WIZARD[$pos+1];
+            
+            $this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'wizard', 'wizard' => $next), 'homenet-house-setup');
+        }
+        
+    }
+    
+    private $WIZARD = array('house','room','network','networkConfig','controller','base','baseCode','baseTest','remote','remoteCode','remoteTest','finished');
+    
+    //private $currentWizard;
 
-    public function stepAction() {
+    public function wizardAction() {
 
         //check that it's the right step for the house'
         $this->_housesService = new HomeNet_Model_House_Service();
 
-        $step = $this->_step;
+        $step = $this->_wizard;
 
-        if ($step > 1) {
+        if ($step !== 'house') {
             
             $acl = new HomeNet_Model_Acl($this->_getParam('house'));
             $acl->checkAccess('setup', 'add');
@@ -103,16 +120,16 @@ class HomeNet_SetupController extends Zend_Controller_Action {
 
 
 
-        if (($step > 0) && ($step < 10)) {
-            $this->_helper->viewRenderer('step' . $step);
-            $action = 'step' . $step . 'Action';
+        if (in_array($step, $WIZARD)) {
+            $this->_helper->viewRenderer('wizard'+  ucfirst($step));
+            $action = $step . 'Wizard';
             return $this->$action();
         }
 
         $this->_forward('error');
     }
 
-    public function step1Action() {
+    protected function houseWizard() {
         $form = new HomeNet_Form_House();
         $form->addElement('submit', 'submit', array('label' => 'Next'));
 
@@ -140,10 +157,10 @@ class HomeNet_SetupController extends Zend_Controller_Action {
        
 
         //redirect to the next step
-        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $house->id, 'action' => 'step', 'id' => 2), 'homenet-house-id'));
+        return $this->_redirect($this->getNextWizardUrl());
     }
 
-    public function step2Action() {
+    public function roomWizard() {
         
 
         $form = new HomeNet_Form_Room($this->_house->regions); //limit regions to what was previously selected  
@@ -169,10 +186,10 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $this->_housesService->update($this->_house);
 
         //redirect to the next step
-        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 3), 'homenet-house-id'));
+        return $this->_redirect($this->getNextWizardUrl());
     }
 
-    public function step3Action() {
+    public function apikeyWizard() {
 
         $housesService = new HomeNet_Model_House_Service();
         $rooms = $this->_house->getRooms();
@@ -269,10 +286,10 @@ class HomeNet_SetupController extends Zend_Controller_Action {
             $this->_housesService->update($this->_house);
         }
         //redirect to the next step
-        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 4), 'homenet-house-id'));
+        return $this->_redirect($this->getNextWizardUrl());
     }
 
-    public function step4Action() {
+    public function baseWizard() {
         
         $form = new HomeNet_Form_Node(2,$this->_house->id);  //only load model types 2
         $form->removeElement('uplink');
@@ -337,10 +354,10 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $this->_house->setSetting('setup', 5);
         $this->_housesService->update($this->_house);
 
-        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 5), 'homenet-house-id'));
+        return $this->_redirect($this->getNextWizardUrl());
     }
 
-    public function step5Action() {
+    public function baseCodeWizard() {
 
         $nService = new HomeNet_Model_Node_Service();
         $node = $nService->getObjectByHouseAddress($this->_house->id, 1);
@@ -363,10 +380,10 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $this->_house->setSetting('setup', 6);
         $this->_housesService->update($this->_house);
 
-        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 6), 'homenet-house-id'));
+        return $this->_redirect($this->getNextWizardUrl());
     }
 
-    public function step6Action() {
+    public function baseTestWizard() {
 
         //decide whether to show continue or finish based on node type
 
@@ -399,10 +416,10 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $this->_house->setSetting('setup', 7);
         $this->_housesService->update($this->_house);
 
-        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 7), 'homenet-house-id'));
+        return $this->_redirect($this->getNextWizardUrl());
     }
 
-    public function step7Action() {
+    public function remoteWizard() {
 
         $form = new HomeNet_Form_Node(1, $this->_house->id); //limit model type
         $form->removeElement('uplink');
@@ -477,10 +494,10 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $this->_house->setSetting('setup', 8);
         $this->_housesService->update($this->_house);
 
-        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 8), 'homenet-house-id'));
+        return $this->_redirect($this->getNextWizardUrl());
     }
 
-    public function step8Action() {
+    public function remoteCodeWizard() {
         //led code
         $nService = new HomeNet_Model_Node_Service();
         $node = $nService->getObjectByHouseAddress($this->_house->id, 2);
@@ -503,10 +520,10 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $this->_house->setSetting('setup', 9);
         $this->_housesService->update($this->_house);
 
-        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'step', 'id' => 9), 'homenet-house-id'));
+        return $this->_redirect($this->getNextWizardUrl());
     }
 
-    public function step9Action() {
+    public function remoteTestWizard() {
 
         $form = new CMS_Form();
 
@@ -521,10 +538,10 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         $this->_house->clearSetting('setup');
         $this->_housesService->update($this->_house);
 
-        return $this->_redirect($this->view->url(array('controller'=>'setup', 'house' => $this->_house->id, 'action' => 'finish'), 'homenet-house-id'));
+        return $this->_redirect($this->getNextWizardUrl());
     }
 
-    public function finishAction() {
+    public function finishWizard() {
         $acl = new HomeNet_Model_Acl($this->_getParam('house'));
         $acl->checkAccess('setup', 'add');
         //test remote led

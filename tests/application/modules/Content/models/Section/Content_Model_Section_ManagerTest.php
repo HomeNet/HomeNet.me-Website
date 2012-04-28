@@ -18,7 +18,7 @@ class Content_Model_Section_ManagerTest extends PHPUnit_Framework_TestCase {
      */
     protected function setUp() {
         $this->object = new Content_Model_Section_Manager;
-        $installer = new Installer();
+        $installer = new Core_Installer();
         $installer->installTest();
         $installer->loginAsSuperAdmin();
     }

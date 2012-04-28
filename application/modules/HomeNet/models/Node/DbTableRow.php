@@ -26,73 +26,77 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 class HomeNet_Model_Node_DbTableRow extends Zend_Db_Table_Row_Abstract implements HomeNet_Model_Node_Interface { // 
-
 //    public $rooms;
 
-    public function fromArray(array $array){
+    public function fromArray(array $array) {
 
-       
-        foreach($array as $key => $value){
-            if(array_key_exists($key, $this->_data)){
+
+        foreach ($array as $key => $value) {
+            if (array_key_exists($key, $this->_data)) {
                 $this->$key = $value;
             }
         }
         // die(debugArray($this));
     }
 
-    public function toArray(){
+    public function toArray() {
         return parent::toArray();
     }
 
-    public function init(){
+    public function init() {
         $this->uncompress();
     }
-    
-    public function uncompress(){
-        if(isset($this->settings) && is_string($this->settings)){
+
+    public function uncompress() {
+        if (isset($this->networks) && is_string($this->networks)) {
+            $this->networks = unserialize($this->networks);
+        }
+
+
+        if (isset($this->settings) && is_string($this->settings)) {
             $this->settings = unserialize($this->settings);
         }
     }
 
-    public function compress(){
-        if(is_array($this->settings)){
+    public function compress() {
+        if (is_array($this->networks)) {
+            $this->networks = serialize($this->networks);
+        }
+        if (is_array($this->settings)) {
             $this->settings = serialize($this->settings);
-       }
+        }
     }
 
-
-
-
-    public function save(){
-      $this->compress();
+    public function save() {
+        $this->compress();
         if (parent::save()) {
             $this->uncompress();
             return $this;
         }
     }
 
-    public function getSetting($setting){
-        if(isset($this->settings[$setting])){
+    public function getSetting($setting) {
+        if (isset($this->settings[$setting])) {
             return $this->settings[$setting];
         }
         return null;
     }
 
-    public function setSetting($setting, $value){
-        if($this->settings === null){
+    public function setSetting($setting, $value) {
+        if ($this->settings === null) {
             $this->settings = array($setting => $value);
             return;
         }
         //die(debugArray($this->settings));
 
-        $this->settings = array_merge($this->settings,array($setting => $value));
+        $this->settings = array_merge($this->settings, array($setting => $value));
     }
 
-    public function clearSetting($setting){
+    public function clearSetting($setting) {
         unset($this->settings[$setting]);
     }
-    
-    public function loadModel(HomeNet_Model_NodeModel_Interface $model){
+
+    public function loadModel(HomeNet_Model_NodeModel_Interface $model) {
 
         $this->model_name = $model->name;
         $this->model_settings = $model->settings;

@@ -58,7 +58,7 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
     }
 
     public function getOptionalContent() {
-        return array('node_models', 'device_models', 'component_models');
+        return array('node_models', 'device_models', 'component_models', 'network_types');
     }
     
     public function getGroupAcl() {
@@ -86,19 +86,42 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
 
         if (in_array('node_models', $list)) {
             $nodeModels = array();
+//        array('id'=>0, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'IP (Ethernet/Wifi)', 'plugin'=>'Todo'),
+//            array('id'=>1, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'Serial 232', 'plugin'=>'Todo'),
+//            array('id'=>2, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'RFM12B 915 mhz', 'plugin'=>'Rfm12b'),
+//            array('id'=>3, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'RFM12B 868 mhz', 'plugin'=>'Rfm12b'),
+//            array('id'=>4, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'RFM12B 434 mhz', 'plugin'=>'Rfm12b'),
+//            array('id'=>5, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'Serial 485 *Placeholder*', 'plugin'=>'Todo'),
+//            array('id'=>6, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'Zigbee 2.4 ghz *Placeholder*', 'plugin'=>'ZigBee'),
+            
+            $statusLights = array('position'=>1,'model'=>16, 'settings'=>null);
 
-            $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::INTERNET, 'plugin' => 'Processing', 'name' => 'Proccessing HomeNet App', 'description' => 'The original, basic Internet Node', 'image' => null, 'max_devices' => 0, 'settings' => null);
-            $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'plugin' => 'Arduino', 'name' => 'Arduino Node', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => array('serial' => true));
-            $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR, 'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz)', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => array('rf12b' => true, 'rf12b_freq' => 915));
-            $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR, 'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz)', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => array('rf12b' => true, 'rf12b_freq' => 433));
-            $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR, 'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz)', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => array('rf12b' => true, 'rf12b_freq' => 868));
-            $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz)', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => array('rf12b' => true, 'rf12b_freq' => 915, 'serial' => true));
-            $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz)', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => array('rf12b' => true, 'rf12b_freq' => 433, 'serial' => true));
-            $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz)', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => array('rf12b' => true, 'rf12b_freq' => 868, 'serial' => true));
-            $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'plugin' => 'Jeenode', 'name' => 'JeeLink (915mhz)', 'description' => '', 'image' => null, 'max_devices' => 1, 'settings' => array('rf12b' => true, 'rf12b_freq' => 915, 'serial' => true, 'node' => 'JeeLink'));
-            $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'plugin' => 'Jeenode', 'name' => 'JeeLink (433mhz)', 'description' => '', 'image' => null, 'max_devices' => 1, 'settings' => array('rf12b' => true, 'rf12b_freq' => 433, 'serial' => true, 'node' => 'JeeLink'));
-            $nodeModels[] = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'plugin' => 'Jeenode', 'name' => 'JeeLink (868mhz)', 'description' => '', 'image' => null, 'max_devices' => 1, 'settings' => array('rf12b' => true, 'rf12b_freq' => 868, 'serial' => true, 'node' => 'JeeLink'));
-
+            $nodeModels[] = array('id'=>1,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::INTERNET,    'networks_types' => array(1, 2), 'devices'=>null,           'plugin' => 'Processing', 'name' => 'HomeNet App', 'description' => 'The original, basic Internet Node', 'image' => null, 'max_devices' => 0, 'settings' => null);
+            
+            $nodeModels[] = array('id'=>2,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2),    'devices'=>null,           'plugin' => 'Arduino', 'name' => 'Arduino Node, Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            
+            $nodeModels[] = array('id'=>3,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2),    'devices'=>array($statusLights),  'plugin' => 'Arduino', 'name' => 'Arduino Node, w/Status Lights', 'description' => '', 'image' => null,  'max_devices' => 4,'settings' => null);
+            
+            $nodeModels[] = array('id'=>4,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'networks_types' => array(3),    'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>5,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'networks_types' => array(4),    'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>6,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'networks_types' => array(5),    'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            
+            $nodeModels[] = array('id'=>7,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'networks_types' => array(3),    'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz)  w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>8,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'networks_types' => array(4),    'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz)  w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>9,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'networks_types' => array(5),    'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz)  w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            
+            $nodeModels[] = array('id'=>10, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 3), 'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>11, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 4), 'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>12, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 5), 'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            
+            $nodeModels[] = array('id'=>13, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 3), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz) w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>14, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 4), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz) w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>15, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 5), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz) w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $statusLights['fixed'] = true;
+            $nodeModels[] = array('id'=>16, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 3), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeLink (915mhz)', 'description' => '', 'image' => null, 'max_devices' => 1, 'settings' => array('node' => 'JeeLink'));
+            $nodeModels[] = array('id'=>17, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 4), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeLink (868mhz)', 'description' => '', 'image' => null, 'max_devices' => 1, 'settings' => array('node' => 'JeeLink'));
+            $nodeModels[] = array('id'=>18, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 5), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeLink (433mhz)', 'description' => '', 'image' => null, 'max_devices' => 1, 'settings' => array('node' => 'JeeLink'));
+            
             $service = new HomeNet_Model_NodeModel_Service();
 
             foreach ($nodeModels as $object) {
@@ -109,28 +132,33 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
         if (in_array('device_models', $list)) {
             $deviceModels = array();
 
-            $deviceModels[] = array('id' => 1,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'plugin' => 'StubBool', 'name' => 'Boolean',                  'description' => 'Stub for logging Booleans',               'image' => null, 'settings' => array('components' => array(1),      'driver' => 'Boolean'));
-            $deviceModels[] = array('id' => 2,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'plugin' => 'StubByte', 'name' => 'Byte',                     'description' => 'Stub for logging byte values',            'image' => null, 'settings' => array('components' => array(2),      'driver' => 'Byte'));
-            $deviceModels[] = array('id' => 3,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'plugin' => 'StubInt', 'name' => 'Integer',                   'description' => 'Stub for logging integer values',         'image' => null, 'settings' => array('components' => array(3),      'driver' => 'Int'));
-            $deviceModels[] = array('id' => 4,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'plugin' => 'StubFloat', 'name' => 'Float',                   'description' => 'Stub for logging float values',           'image' => null, 'settings' => array('components' => array(4),      'driver' => 'Float'));
-            $deviceModels[] = array('id' => 5,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'plugin' => 'StubLong', 'name' => 'Long',                     'description' => 'Stub for logging long values',            'image' => null, 'settings' => array('components' => array(5),      'driver' => 'Long'));
-            $deviceModels[] = array('id' => 6,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'plugin' => 'StubFloat', 'name' => 'Temperature Sensor',      'description' => 'Stub for logging temperature data, Gives the option to convert values between C and F', 'image' => null, 'settings' => array('components' => array(11), 'driver' => 'Temp'));
-            $deviceModels[] = array('id' => 7,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'plugin' => 'StubOnOff', 'name' => 'On/Off',                  'description' => 'Stub for controlling an on/off device',   'image' => null, 'settings' => array('components' => array(6),      'driver' => 'OnOff'));
-            $deviceModels[] = array('id' => 8,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 1, 'plugin' => 'GenericSensor', 'name' => 'TMP37 (F)',           'description' => '',                                        'image' => null, 'settings' => array('components' => array(11),     'driver' => 'TMP37'));
-            $deviceModels[] = array('id' => 9,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 1, 'plugin' => 'Generic', 'name' => 'TMP421 (F)',                'description' => '',                                        'image' => null, 'settings' => array('components' => array(11),     'driver' => 'TMP421'));
-            $deviceModels[] = array('id' => 10, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 2, 'plugin' => 'GenericSensor', 'name' => 'SHT21',               'description' => '',                                        'image' => null, 'settings' => array('components' => array(11, 9),  'driver' => 'SHT21', 'component1name' => 'Humidity'));
-            $deviceModels[] = array('id' => 11, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 3, 'plugin' => 'GenericSensor', 'name' => 'BMP085',              'description' => '',                                        'image' => null, 'settings' => array('components' => array(19),     'driver' => 'BMP085'));
-            $deviceModels[] = array('id' => 12, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 4, 'plugin' => 'GenericSensor', 'name' => 'LDR',                 'description' => '',                                        'image' => null, 'settings' => array('components' => array(9),      'driver' => 'LDR', 'component0name' => 'Light Level'));
-            $deviceModels[] = array('id' => 13, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 6, 'plugin' => 'Generic', 'name' => 'Generic Switch',            'description' => 'Single Light Switch',                     'image' => null, 'settings' => array('components' => array(6),      'driver' => 'Switch'));
-            $deviceModels[] = array('id' => 14, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 7, 'plugin' => 'CharLcd', 'name' => 'Char LCD',                  'description' => '2 line character display',                'image' => null, 'settings' => array('components' => array(12),     'driver' => 'LCD'));
-            $deviceModels[] = array('id' => 15, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 7, 'plugin' => 'Generic', 'name' => 'Simple Led',                'description' => '',                                        'image' => null, 'settings' => array('components' => array(13),     'driver' => 'LED'));
-            $deviceModels[] = array('id' => 16, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 7, 'plugin' => 'Generic', 'name' => 'Status Lights',             'description' => '',                                        'image' => null, 'settings' => array('components' => array(13, 13), 'driver' => 'StatusLights', 'component0name' => 'Green LED', 'component1name' => 'Red LED'));
-            $deviceModels[] = array('id' => 17, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 7, 'plugin' => 'Generic', 'name' => 'RGB LED',                   'description' => '',                                        'image' => null, 'settings' => array('components' => array(14),     'driver' => 'RGBLED'));
-            $deviceModels[] = array('id' => 18, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 7, 'plugin' => 'Generic', 'name' => 'Mood Light',                'description' => '',                                        'image' => null, 'settings' => array('components' => array(15),     'driver' => 'MoodLight'));
-            $deviceModels[] = array('id' => 19, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 7, 'plugin' => 'Generic', 'name' => 'Servo Open/Close',          'description' => '',                                        'image' => null, 'settings' => array('components' => array(7),      'driver' => 'ServoOpenClose', 'includes' => array('Servo')));
-            $deviceModels[] = array('id' => 20, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 8, 'plugin' => 'Generic', 'name' => 'Contact Switch: Door',      'description' => '',                                        'image' => null, 'settings' => array('components' => array(17),     'driver' => 'ContactSwitch'));
-            $deviceModels[] = array('id' => 21, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 8, 'plugin' => 'Generic', 'name' => 'Contact Switch: Window',    'description' => '',                                        'image' => null, 'settings' => array('components' => array(16),     'driver' => 'ContactSwitch'));
-            $deviceModels[] = array('id' => 22, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 8, 'plugin' => 'Generic', 'name' => 'Motion Sensor',             'description' => '',                                        'image' => null, 'settings' => array('components' => array(18),     'driver' => 'MotionSensor'));
+            $deviceModels[] = array('id' => 1,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'components'=>array(array('position'=>0,'model'=>1)),  'plugin' => 'StubBool',        'name' => 'Boolean',                'description' => 'Stub for logging Booleans',               'image' => null, 'settings' => array('driver' => 'Boolean'));
+            $deviceModels[] = array('id' => 2,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'components'=>array(array('position'=>0,'model'=>2)),  'plugin' => 'StubByte',        'name' => 'Byte',                   'description' => 'Stub for logging byte values',            'image' => null, 'settings' => array('driver' => 'Byte'));
+            $deviceModels[] = array('id' => 3,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'components'=>array(array('position'=>0,'model'=>3)),  'plugin' => 'StubInt',         'name' => 'Integer',                'description' => 'Stub for logging integer values',         'image' => null, 'settings' => array('driver' => 'Int'));
+            $deviceModels[] = array('id' => 4,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'components'=>array(array('position'=>0,'model'=>4)),  'plugin' => 'StubFloat',       'name' => 'Float',                  'description' => 'Stub for logging float values',           'image' => null, 'settings' => array('driver' => 'Float'));
+            $deviceModels[] = array('id' => 5,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'components'=>array(array('position'=>0,'model'=>5)),  'plugin' => 'StubLong',        'name' => 'Long',                   'description' => 'Stub for logging long values',            'image' => null, 'settings' => array('driver' => 'Long'));
+            $deviceModels[] = array('id' => 6,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'components'=>array(array('position'=>0,'model'=>11)), 'plugin' => 'StubFloat',       'name' => 'Temperature Sensor',     'description' => 'Stub for logging temperature data,',      'image' => null, 'settings' => array('driver' => 'Temp'));
+            $deviceModels[] = array('id' => 7,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 0, 'components'=>array(array('position'=>0,'model'=>6)),  'plugin' => 'StubOnOff',       'name' => 'On/Off',                 'description' => 'Stub for controlling an on/off device',   'image' => null, 'settings' => array('driver' => 'OnOff'));
+            $deviceModels[] = array('id' => 8,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 1, 'components'=>array(array('position'=>0,'model'=>11)), 'plugin' => 'GenericSensor',   'name' => 'TMP37 (F)',              'description' => '',                                        'image' => null, 'settings' => array('driver' => 'TMP37'));
+            $deviceModels[] = array('id' => 9,  'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 1, 'components'=>array(array('position'=>0,'model'=>11)), 'plugin' => 'Generic',         'name' => 'TMP421 (F)',             'description' => '',                                        'image' => null, 'settings' => array('driver' => 'TMP421'));
+            $deviceModels[] = array('id' => 10, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 2, 'components'=>array(array('position'=>0,'model'=>11),
+                                                                                                                                  array('position'=>1,'model'=>9, 'name' => 'Humidity')),  
+                                                                                                                                                                     'plugin' => 'GenericSensor',   'name' => 'SHT21',                  'description' => '',                                        'image' => null, 'settings' => array('driver' => 'SHT21'));
+            $deviceModels[] = array('id' => 11, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 3, 'components'=>array(array('position'=>0,'model'=>19)), 'plugin' => 'GenericSensor',   'name' => 'BMP085',                 'description' => '',                                        'image' => null, 'settings' => array('driver' => 'BMP085'));
+            $deviceModels[] = array('id' => 12, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 4, 'components'=>array(array('position'=>0,'model'=>9, 'name'=>'Light Level')),  
+                                                                                                                                                                     'plugin' => 'GenericSensor',   'name' => 'LDR',                    'description' => '',                                        'image' => null, 'settings' => array('driver' => 'LDR'));
+            $deviceModels[] = array('id' => 13, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 6, 'components'=>array(array('position'=>0,'model'=>6)),  'plugin' => 'Generic',         'name' => 'Generic Switch',         'description' => 'Single Light Switch',                     'image' => null, 'settings' => array('driver' => 'Switch'));
+            $deviceModels[] = array('id' => 14, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 7, 'components'=>array(array('position'=>0,'model'=>12)), 'plugin' => 'CharLcd',         'name' => 'Char LCD',               'description' => '2 line character display',                'image' => null, 'settings' => array('driver' => 'LCD'));
+            $deviceModels[] = array('id' => 15, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 7, 'components'=>array(array('position'=>0,'model'=>13)), 'plugin' => 'Generic',         'name' => 'Simple Led',             'description' => '',                                        'image' => null, 'settings' => array('driver' => 'LED'));
+            $deviceModels[] = array('id' => 16, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 7, 'components'=>array(array('position'=>0,'model'=>13, 'name' => 'Red LED'),
+                                                                                                                                  array('position'=>1,'model'=>13, 'name' => 'Green LED')), 
+                                                                                                                                                                     'plugin' => 'Generic',         'name' => 'Status Lights',          'description' => '',                                        'image' => null, 'settings' => array('driver' => 'StatusLights', 'component0name' => 'Green LED', ));
+            $deviceModels[] = array('id' => 17, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 7, 'components'=>array(array('position'=>0,'model'=>14)), 'plugin' => 'Generic',         'name' => 'RGB LED',                'description' => '',                                        'image' => null, 'settings' => array('driver' => 'RGBLED'));
+            $deviceModels[] = array('id' => 18, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 7, 'components'=>array(array('position'=>0,'model'=>15)), 'plugin' => 'Generic',         'name' => 'Mood Light',             'description' => '',                                        'image' => null, 'settings' => array('driver' => 'MoodLight'));
+            $deviceModels[] = array('id' => 19, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 7, 'components'=>array(array('position'=>0,'model'=>7)),  'plugin' => 'Generic',         'name' => 'Servo Open/Close',       'description' => '',                                        'image' => null, 'settings' => array('driver' => 'ServoOpenClose', 'includes' => array('Servo')));
+            $deviceModels[] = array('id' => 20, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 8, 'components'=>array(array('position'=>0,'model'=>17)), 'plugin' => 'Generic',         'name' => 'Contact Switch: Door',   'description' => '',                                        'image' => null, 'settings' => array('driver' => 'ContactSwitch'));
+            $deviceModels[] = array('id' => 21, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 8, 'components'=>array(array('position'=>0,'model'=>16)), 'plugin' => 'Generic',         'name' => 'Contact Switch: Window', 'description' => '',                                        'image' => null, 'settings' => array('driver' => 'ContactSwitch'));
+            $deviceModels[] = array('id' => 22, 'status' => HomeNet_Model_DeviceModel::LIVE, 'category' => 8, 'components'=>array(array('position'=>0,'model'=>18)), 'plugin' => 'Generic',         'name' => 'Motion Sensor',          'description' => '',                                        'image' => null, 'settings' => array('driver' => 'MotionSensor'));
             
             $service = new HomeNet_Model_DeviceModel_Service();
 
@@ -170,12 +198,34 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
                 $service->create($object);
             }
         }
+        
+        
+        if (in_array('network_types', $list)) {
+            $network_types = array( //id 	status 	name 	description 	plugin 	settings
+             array('id'=>1, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'IP (Ethernet/Wifi)', 'plugin'=>'Todo'),
+            array('id'=>2, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'Serial 232', 'plugin'=>'Todo'),
+            array('id'=>3, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'RFM12B 915 mhz', 'plugin'=>'Rfm12b'),
+            array('id'=>4, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'RFM12B 868 mhz', 'plugin'=>'Rfm12b'),
+            array('id'=>5, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'RFM12B 434 mhz', 'plugin'=>'Rfm12b'),
+            array('id'=>6, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'Serial 485 *Placeholder*', 'plugin'=>'Todo'),
+            array('id'=>7, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'Zigbee 2.4 ghz *Placeholder*', 'plugin'=>'ZigBee'),
+
+           
+            );
+            
+            $service = new HomeNet_Model_NetworkType_Service();
+
+            foreach ($network_types as $object) {
+                $service->create($object);
+            }
+        }
+        
     }
 
     function installTest($list = array()) {
 
         $this->uninstallTest(); //remove any old data
-        //$this->installOptionalContent($this->getOptionalContent());
+        $this->installOptionalContent($this->getOptionalContent());
         
         
         
@@ -192,7 +242,7 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
                 'location' => 'My Location',
                 'gps' => '0, 0',
                 'type' => 'house',
-                'regions' => array(1));
+                'regions' => array(1,2));
             $this->house = $service->create($array);
 
 
@@ -274,7 +324,7 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
 
         if (in_array('device', $list)) {
 
-            $this->installOptionalContent(array('device_models', 'component_models'));
+           // $this->installOptionalContent(array('device_models', 'component_models'));
             
             $service = new HomeNet_Model_Device_Service;
             
@@ -289,7 +339,7 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
             $count = 1;
             foreach($devices as $key => $object){
                 $object->house = $this->house->id;
-                $object->room = 1;
+                $object->setRoomId(1);
                 $object->node = $this->node->id;
                 $object->position = $count;
                 $count++;

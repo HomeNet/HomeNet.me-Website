@@ -69,7 +69,8 @@ class HomeNet_Model_NodeModel_MapperDbTable implements HomeNet_Model_NodeModel_M
             return $object->save();
         } elseif ($object->id !== null) {
             $row = $this->getTable()->find($object->id)->current();
-        } else {
+        } 
+        if(empty($row)){
             $row = $this->getTable()->createRow();
         }
 
