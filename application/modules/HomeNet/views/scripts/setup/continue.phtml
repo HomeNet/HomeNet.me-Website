@@ -5,12 +5,12 @@
 </section>
 <?php   
 foreach ($this->houses as $house){
-    $step = $house->getSetting('setup');
+    $wizard = $house->getSetting('wizard');
 ?>
 <br />
 <section>
 <h3 class="inline"><?php echo $house->name ?></h3>
- <a class="button cms-button-icon-right" href="<?php echo $this->url(array('controller'=>'setup', 'house' => $house->id, 'action' => 'step', 'id' => $step), 'homenet-house-id') ?>">
+ <a class="button cms-button-icon-right" href="<?php echo $this->url(array('controller'=>'setup', 'house' => $house->id, 'action' => 'wizard', 'wizard' => $wizard), 'homenet-house-setup') ?>">
     Continue <span class="ui-icon ui-icon-circle-arrow-e "</span>
 </a>
 </section>

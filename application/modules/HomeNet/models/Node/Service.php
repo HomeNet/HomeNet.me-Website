@@ -318,7 +318,7 @@ class HomeNet_Model_Node_Service {
      */
     public function newObjectFromModel($id, $house = null, $room = null, $address = null) {
         if (empty($id) || !is_numeric($id)) {
-            throw new InvalidArgumentException('Invalid House Id');
+            throw new InvalidArgumentException('Invalid Model Id');
         }
 
         $nmService = new HomeNet_Model_NodeModel_Service();
@@ -336,6 +336,44 @@ class HomeNet_Model_Node_Service {
 
         return new $class(array('model' => $object, 'data'=>array('house'=>$house,'room'=>$room,'address'=>$address)));
     }
+    
+    /**
+     * Shorcut function for adding a new node
+     * 
+     * @param int $model Node Model ID
+     * @param int $house House ID
+     * @param int $room Room ID
+     * @param array $networks in array(networkId =>networkAddress) format
+     * @param string $description
+     * @param array $settings
+     * @param int $address if null, the system will use the next available
+     */
+    public function add($model,$house,$room, $networks, $description = '', $settings = null, $uplink = null, $address = null){
+
+        if (empty($house) || !is_numeric($house)) {
+            throw new InvalidArgumentException('Invalid House Id');
+        }
+        
+        if (empty($room) || !is_numeric($room)) {
+            throw new InvalidArgumentException('Invalid Room Id');
+        }
+        
+        $object = $this->newObjectFromModel($model);
+        $object->house = $house;
+        $object->room = $room;
+        $object->description = $description;
+        $object->address = $address;
+        
+        if($settings !== null && is_array($settings)){
+            $object->settings = $settings;
+        }
+        
+        if($object->address === null){    
+            $object->address = $this->getNextAddressByHouse($house);
+        }
+        return $this->create($object);
+    }
+    
 
     /**
      * Mark a node as deleted and cascades to all child elements

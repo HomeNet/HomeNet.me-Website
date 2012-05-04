@@ -29,4 +29,6 @@ along with HomeNet.  If not, see <http ://www.gnu.org/licenses/>.
          stopOnFailure="true">
 </phpunit-->
 
-<phpunit colors="false" verbose="true" />
+<phpunit colors="false" verbose="true" convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true" />

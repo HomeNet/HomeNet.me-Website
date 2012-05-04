@@ -53,7 +53,7 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
     }
     
     
-    private function createValidObject() {
+    private function _createValidObject() {
         $object = new HomeNet_Model_House();
         $object = $this->_fillObject($object, $this->_getTestData());
         $result = $this->service->create($object);
@@ -62,7 +62,7 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
         return $result;
     }
     
-    private function validateResult($result, $seed = 0){
+    private function _validateResult($result, $seed = 0){
         $this->assertInstanceOf('HomeNet_Model_House_Interface', $result);
         $this->assertNotNull($result->id);
         $this->assertEquals(1 + $seed, $result->status);
@@ -123,11 +123,11 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
     
 //$this->service->getObjectById($id)////////////////////////////////////////////
     public function testGetObjectById_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         $result = $this->service->getObjectById($object->id);
 
-        $this->validateResult($result);
+        $this->_validateResult($result);
     }
 
     public function testGetObjectById_invalid() {
@@ -142,11 +142,11 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
 
 //$this->service->getObjectByIdWithRooms($id)///////////////////////////////////
     public function testGetObjectByIdWithRooms_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         $result = $this->service->getObjectByIdWithRooms($object->id);
 
-        $this->validateResult($result);
+        $this->_validateResult($result);
     }
     
     public function testGetObjectByIdWithRooms_invalid() {
@@ -161,11 +161,11 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
 
 //$this->service->getObjectsByIds($ids)/////////////////////////////////////////
     public function testGetObjectsByIds_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         $results = $this->service->getObjectsByIds(array($object->id));
 
-        $this->validateResult(reset($results));
+        $this->_validateResult(reset($results));
     }
     
     public function testGetObjectsByIds_invalid() {
@@ -175,18 +175,22 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
 //$this->service->getObjectsByIdsWithRooms($ids)////////////////////////////////
     public function testGetObjectsByIdsWithRooms() {
         
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
         $results = $this->service->getObjectsByIdsWithRooms(array($object->id));
 
-        $this->validateResult(reset($results));
+        $this->_validateResult(reset($results));
     }
 
 //$this->service->getHouseIdsByUser($user)//////////////////////////////////////
-    public function testGetHouseIdsByUser_valid() {
-        $object = $this->createValidObject();
-        $user = Core_Model_User_Manager::getUser();
-        $result = $this->service->getHouseIdsByUser($user->id);
-    }
+//    public function testGetHouseIdsByUser_valid() {
+//        $object = $this->createValidObject();
+//        
+//       $installer = new Core_Installer();
+//        
+//        
+//      $user = Core_Model_User_Manager::getUser();
+//       $result = $this->service->getHouseIdsByUser($user->id);
+//    }
     public function testGetHouseIdsByUser_invalidArgument() {
         $this->setExpectedException('InvalidArgumentException');
         $this->service->getHouseIdsByUser('StringUser');
@@ -194,7 +198,7 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
     
 //$this->service->getRegionsById($id)///////////////////////////////////////////
     public function testGetRegionsById_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
         $result = $this->service->getRegionsById($object->id);
     }
     public function testGetRegionsById_invalid() {
@@ -232,16 +236,16 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
    
 //$this->service->create($mixed)////////////////////////////////////////////////
     public function testCreate_validObject() {
-        $result = $this->createValidObject();
+        $result = $this->_createValidObject();
 
         $this->assertNotNull($result->id);
-        $this->validateResult($result);
+        $this->_validateResult($result);
     }
 
     public function testCreate_validArray() {
         $array = $this->_getTestData();
         $result = $this->service->create($array);
-        $this->validateResult($result);
+        $this->_validateResult($result);
     }
 
     public function testCreate_invalidObject() {
@@ -254,24 +258,24 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
 //$this->service->update($mixed)////////////////////////////////////////////////
     public function testUpdate_validObject() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //update values
         $object = $this->_fillObject($object, $this->_getTestData(1));
 
         $result = $this->service->update($object);
 
-        $this->validateResult($result, 1);
+        $this->_validateResult($result, 1);
     }
 
     public function testUpdate_validArray() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
         $array = array_merge($object->toArray(), $this->_getTestData(1));
 
         $result = $this->service->update($array);
 
-        $this->validateResult($result, 1);
+        $this->_validateResult($result, 1);
     }
 
     public function testUpdate_invalidObject() {
@@ -284,7 +288,7 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
 //$this->service->delete($mixed)////////////////////////////////////////////////
     public function testDelete_validObject() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //test delete
         $id = $object->id;
@@ -297,7 +301,7 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testDelete_validArray() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //test delete
         $id = $object->id;
@@ -310,7 +314,7 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testDelete_validId() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //test delete
         $id = $object->id;

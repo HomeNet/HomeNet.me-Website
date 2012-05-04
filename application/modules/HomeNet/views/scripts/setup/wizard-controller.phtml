@@ -1,17 +1,17 @@
-<?php echo $this->heading('Step 3'); ?>
+<?php echo $this->heading('Setup Local Controller'); ?>
 <h2>Setup the HomeNet App</h2>
 <section>
-<p>In order to link your HomeNet System to your account you have to enter an API key into the HomeNetApp. </p>
-
-<p>Your unique api key is: </p>
+<p>The HomeNet App serves as the local controller, monitoring your local HomeNet and facilitating communication between nodes.</p>    
+<p>In order to link your HomeNet system to your HomeNet.me account you have to enter an API key into the HomeNet App. </p>
 </section>
 <br />
 <section>
+<p>Your unique api key is: </p> 
 <h2><?php echo $this->apikey ?></h2>
 </section>
 <br />
 <section>
-<p>If you haven't already, download and unzip HomeNet Developer Kit</p>
+<p>If you haven't already, download and unzip <a href="http://code.google.com/p/homenet/downloads/list">HomeNet Developer Kit</a></p>
 
 <p>Launch the Java HomeNetApp. Complete the setup wizard. When requested, copy and paste (or type this key) into the APIKEY field.</p>
 <p>Enable the Server feature, so Homenet can push updates from the Internet.</p>
@@ -19,7 +19,7 @@
 <h2>Firewall Setup</h2>
 <section>
 <p>If you are behind a NAT/Firewall/Router you will also need to setup <strong>Port Forwarding</strong> on you router. You will need to forward port 2443 to your PC</p>
-<p>Please enable the included UPnP port forwarding or add a firewall exception for port 2443. This is how HomeNet connects to the Web </p>
+<p>Please enable the included UPnP port forwarding or add a firewall exception for port 2443. This is how HomeNet.me connects to your local network</p>
 </section>
 <h2>Test Connection</h2>
 

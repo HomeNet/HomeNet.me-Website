@@ -46,6 +46,7 @@ class HomeNet_Model_DeviceModel_ServiceTest extends PHPUnit_Framework_TestCase {
         $array = array('category' => $seed,
             'status' => HomeNet_Model_DeviceModel::LIVE,
             'plugin' => 'LED',
+            'components' => array(array('position'=>1,'model'=>1,'name'=>'test', 'settings'=>array('key'=>$seed))),
             'name' => 'testModel'.$seed,
             'description' => 'test description'.$seed,
             'image' => 'test.jpg'.$seed,
@@ -80,7 +81,7 @@ class HomeNet_Model_DeviceModel_ServiceTest extends PHPUnit_Framework_TestCase {
             $this->assertEquals(HomeNet_Model_DeviceModel::LIVE, $result->status);
             $this->assertEquals('LED', $result->plugin);
         }
-     
+        $this->assertEquals($seed, $result->components[0]['settings']['key']);
         $this->assertEquals('testModel'.$seed, $result->name);
         $this->assertEquals('test description'.$seed, $result->description);
         $this->assertEquals('test.jpg'.$seed, $result->image);

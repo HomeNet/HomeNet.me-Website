@@ -18,7 +18,7 @@ class HomeNet_Model_AclTest extends PHPUnit_Framework_TestCase {
     protected function setUp() {
         
         
-        $this->installer = new Installer();
+        $this->installer = new Core_Installer();
         $this->installer->installTest();
         $this->installer->loginAsMember();
 

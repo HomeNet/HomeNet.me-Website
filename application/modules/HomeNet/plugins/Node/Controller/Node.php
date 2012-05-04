@@ -23,7 +23,7 @@
  *
  * @author Matthew Doll <mdoll at homenet.me>
  */
-class HomeNet_Plugin_Node_Processing_Node extends HomeNet_Model_Node_Abstract {
+class HomeNet_Plugin_Node_Controller_Node extends HomeNet_Model_Node_Abstract {
 
     public $type = self::INTERNET;
 

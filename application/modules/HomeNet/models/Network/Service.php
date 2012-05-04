@@ -201,8 +201,27 @@ class HomeNet_Model_Network_Service {
         return new $class(array('type' => $object));
     }
     
-    
-    
+    /**
+     * shortcut function for adding a new network
+     *
+     * @param int $type network type id
+     * @param int $house house id
+     * @param string $description
+     * @param array $settings
+     * @return HomeNet_Model_Network (HomeNet_Model_Network_Interface) 
+     */
+    public function add($type, $house, $description = '',$settings=array()){
+        $object = new HomeNet_Model_Network();
+        $object->type = $type;
+        $object->house = $house;
+        $object->description = $description;
+        $object->settings = $settings;
+                
+        return $this->create($object);
+        
+    }
+
+        
 
     /**
      * Create a new Network

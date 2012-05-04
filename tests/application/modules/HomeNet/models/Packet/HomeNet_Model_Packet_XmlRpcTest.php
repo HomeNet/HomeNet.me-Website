@@ -20,7 +20,7 @@ class HomeNet_Model_Packet_XmlRpcTest extends PHPUnit_Framework_TestCase {
     protected function setUp() {
         $this->client = new Zend_XmlRpc_Client('http://localhost/xmlrpc.php?setenv=testing');
         
-        $this->installer = new Installer();
+        $this->installer = new Core_Installer();
         $this->installer->installTest();
 
         $this->homenetInstaller = new HomeNet_Installer();

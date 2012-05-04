@@ -71,12 +71,13 @@ class HomeNet_Form_Node extends CMS_Form {
         $model = $this->createElement('select', 'model');
         $model->setLabel("Model: ");
         $model->addMultiOptions($models);
+        $model->setRequired();
         $this->addElement($model);
 
         $id = $this->createElement('text', 'address');
         $id->setLabel('Address: ');
         $id->setValue($this->id);
-        $id->setRequired('true');
+        $id->setRequired(true);
         $id->addFilter('Digits');
         $id->addValidator('Between', false, array('min' => 0, 'max' => 4095));
         $this->addElement($id);

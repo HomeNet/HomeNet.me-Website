@@ -144,7 +144,9 @@ public function getRoomList(){
     }
 
     public function clearSetting($setting){
-        unset($this->settings[$setting]);
+        $settings = $this->settings;
+        unset($settings[$setting]);
+        $this->settings = $settings;
     }
 
 }

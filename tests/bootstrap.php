@@ -22,7 +22,7 @@
 
 
 ini_set("memory_limit", "256M");
-error_reporting(E_ALL);
+error_reporting(-1);
 date_default_timezone_set('America/New_York');
 // Define path to application directory
 defined('APPLICATION_PATH')
@@ -50,10 +50,11 @@ function getEmailTempFile($transport = null)
 }
 
 require_once 'Zend/Loader/Autoloader.php';
+Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(false);
+
 
 $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->setDefaultAutoloader(create_function('$class', "include str_replace('_', '/', \$class) . '.php';"));
-
 
 
 //require_once 'Zend/Application.php';
@@ -65,6 +66,10 @@ $application = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/config
 //require_once APPLICATION_PATH.'/Installer.php';
 
 $application->bootstrap();
+
+
+
+
 Zend_Registry::set('cachemanager', $application->getBootstrap()->getResource('cachemanager'));
 
 

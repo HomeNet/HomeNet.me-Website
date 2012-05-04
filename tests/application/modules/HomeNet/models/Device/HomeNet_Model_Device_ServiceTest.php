@@ -17,10 +17,15 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        
+        $installer = new Core_Installer();
+        $installer->installTest(array('house', 'room', 'node'));
+        
+        
         $this->service = new HomeNet_Model_Device_Service;
         $this->homenetInstaller = new HomeNet_Installer();
         $this->homenetInstaller->installTest(array('house', 'room', 'node'));
-        $this->homenetInstaller->installOptionalContent(array('device_models', 'component_models'));
+        //$this->homenetInstaller->installOptionalContent(array('device_models', 'component_models'));
     }
 
     /**
@@ -60,16 +65,25 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
 //            'settings' => array('key' => 'value'));
 //        $service = new HomeNet_Model_NodeModel_Service;
 //        $model = $service->create($array);
+       
 
-        return
-                $array = array(
+
+         $array = array(
             'status' => HomeNet_Model_Node::STATUS_LIVE,
             'house' => $this->homenetInstaller->house->id,
             'node' => 1 + $seed,
             'model' => $this->homenetInstaller->deviceModel->id,
             'position' => 3 + $seed,
             'components' => 4 + $seed,
+            'fixed' => false,
             'settings' => array('key' => 'value' . $seed));
+        
+        if($seed % 2 == 0){
+            $array['fixed'] = true;
+        }
+        
+        return $array;
+        
     }
 
     private function _createValidObject($seed = 0) {
@@ -90,6 +104,11 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($this->homenetInstaller->deviceModel->id, $result->model);
         $this->assertEquals(3 + $seed, $result->position);
         $this->assertEquals(4 + $seed, $result->components);
+        if($seed % 2 == 0){
+            $this->assertEquals(true, $result->fixed);
+        } else {
+            $this->assertEquals(false, $result->fixed);
+        }
         $this->assertTrue(is_array($result->settings));
         $this->assertEquals('value' . $seed, $result->settings['key']);
     }

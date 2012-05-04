@@ -46,12 +46,15 @@ class HomeNet_Model_NodeModel_ServiceTest extends PHPUnit_Framework_TestCase {
         
         $array = array('type' => HomeNet_Model_Node::SENSOR,
             'status' => HomeNet_Model_NodeModel::LIVE,
+            'network_types' => array($seed),
+            'devices' => array(array('position'=>1,'model'=>1,'name'=>'test', 'settings'=>array('key'=>$seed))),
             'plugin' => 'Arduino',
             'name' => 'testModel'.$seed,
             'description' => 'test description'.$seed,
             'image' => 'test.jpg'.$seed,
             'max_devices' => 1+$seed,
-            'settings' => array('key' => 'value'.$seed));
+           'settings' => array('key' => 'value'.$seed)
+            );
         
         if($seed % 2 == 0){
             $array['type']   = HomeNet_Model_Node::INTERNET;
@@ -87,6 +90,8 @@ class HomeNet_Model_NodeModel_ServiceTest extends PHPUnit_Framework_TestCase {
      
         $this->assertNotNull($result->id);
         
+        $this->assertEquals($seed, $result->network_types[0]);
+        $this->assertEquals($seed, $result->devices[0]['settings']['key']);
         $this->assertEquals('testModel'.$seed, $result->name);
         $this->assertEquals('test description'.$seed, $result->description);
         $this->assertEquals('test.jpg'.$seed, $result->image);

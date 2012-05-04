@@ -30,14 +30,14 @@ class HomeNet_Model_NodeModel_Service {
     /**
      * Storage mapper
      * 
-     * @var HomeNet_Model_NodesMapperInterface  
+     * @var HomeNet_ModelNodes_MapperInterface  
      */
     protected $_mapper;
 
     /**
      * Get storage mapper
      * 
-     * @return HomeNet_Model_NodesMapper_Interface
+     * @return HomeNet_ModelNodes_MapperInterface
      */
     public function getMapper() {
 

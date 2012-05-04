@@ -96,31 +96,31 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
             
             $statusLights = array('position'=>1,'model'=>16, 'settings'=>null);
 
-            $nodeModels[] = array('id'=>1,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::INTERNET,    'networks_types' => array(1, 2), 'devices'=>null,           'plugin' => 'Processing', 'name' => 'HomeNet App', 'description' => 'The original, basic Internet Node', 'image' => null, 'max_devices' => 0, 'settings' => null);
+            $nodeModels[] = array('id'=>1,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::INTERNET,    'network_types' => array(1, 2), 'devices'=>null,           'plugin' => 'Controller', 'name' => 'HomeNet App', 'description' => 'HomeNet Desktop App', 'image' => null, 'max_devices' => 0, 'settings' => null);
             
-            $nodeModels[] = array('id'=>2,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2),    'devices'=>null,           'plugin' => 'Arduino', 'name' => 'Arduino Node, Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>2,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR, 'network_types' => array(2),    'devices'=>null,           'plugin' => 'Arduino', 'name' => 'Arduino Node, Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
             
-            $nodeModels[] = array('id'=>3,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2),    'devices'=>array($statusLights),  'plugin' => 'Arduino', 'name' => 'Arduino Node, w/Status Lights', 'description' => '', 'image' => null,  'max_devices' => 4,'settings' => null);
+            $nodeModels[] = array('id'=>3,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'network_types' => array(2),    'devices'=>array($statusLights),  'plugin' => 'Arduino', 'name' => 'Arduino Node, w/Status Lights', 'description' => '', 'image' => null,  'max_devices' => 4,'settings' => null);
             
-            $nodeModels[] = array('id'=>4,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'networks_types' => array(3),    'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
-            $nodeModels[] = array('id'=>5,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'networks_types' => array(4),    'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
-            $nodeModels[] = array('id'=>6,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'networks_types' => array(5),    'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>4,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'network_types' => array(3),    'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>5,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'network_types' => array(4),    'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>6,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'network_types' => array(5),    'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
             
-            $nodeModels[] = array('id'=>7,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'networks_types' => array(3),    'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz)  w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
-            $nodeModels[] = array('id'=>8,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'networks_types' => array(4),    'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz)  w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
-            $nodeModels[] = array('id'=>9,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'networks_types' => array(5),    'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz)  w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>7,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'network_types' => array(3),    'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz)  w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>8,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'network_types' => array(4),    'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz)  w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>9,  'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR,      'network_types' => array(5),    'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz)  w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
             
-            $nodeModels[] = array('id'=>10, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 3), 'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
-            $nodeModels[] = array('id'=>11, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 4), 'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
-            $nodeModels[] = array('id'=>12, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 5), 'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            //$nodeModels[] = array('id'=>10, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'network_types' => array(2, 3), 'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            //$nodeModels[] = array('id'=>11, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'network_types' => array(2, 4), 'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            //$nodeModels[] = array('id'=>12, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'network_types' => array(2, 5), 'devices'=>null,           'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz) Barebone', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
             
-            $nodeModels[] = array('id'=>13, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 3), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz) w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
-            $nodeModels[] = array('id'=>14, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 4), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz) w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
-            $nodeModels[] = array('id'=>15, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 5), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz) w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>10, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'network_types' => array(2, 3), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz) w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>11, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'network_types' => array(2, 4), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (868mhz) w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
+            $nodeModels[] = array('id'=>12, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'network_types' => array(2, 5), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeNode (433mhz) w/Status Lights', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => null);
             $statusLights['fixed'] = true;
-            $nodeModels[] = array('id'=>16, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 3), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeLink (915mhz)', 'description' => '', 'image' => null, 'max_devices' => 1, 'settings' => array('node' => 'JeeLink'));
-            $nodeModels[] = array('id'=>17, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 4), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeLink (868mhz)', 'description' => '', 'image' => null, 'max_devices' => 1, 'settings' => array('node' => 'JeeLink'));
-            $nodeModels[] = array('id'=>18, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'networks_types' => array(2, 5), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeLink (433mhz)', 'description' => '', 'image' => null, 'max_devices' => 1, 'settings' => array('node' => 'JeeLink'));
+            $nodeModels[] = array('id'=>13, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'network_types' => array(2, 3), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeLink (915mhz)', 'description' => '', 'image' => null, 'max_devices' => 1, 'settings' => array('node' => 'JeeLink'));
+            $nodeModels[] = array('id'=>14, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'network_types' => array(2, 4), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeLink (868mhz)', 'description' => '', 'image' => null, 'max_devices' => 1, 'settings' => array('node' => 'JeeLink'));
+            $nodeModels[] = array('id'=>15, 'status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::BASESTATION, 'network_types' => array(2, 5), 'devices'=>array($statusLights),  'plugin' => 'Jeenode', 'name' => 'JeeLink (433mhz)', 'description' => '', 'image' => null, 'max_devices' => 1, 'settings' => array('node' => 'JeeLink'));
             
             $service = new HomeNet_Model_NodeModel_Service();
 
@@ -256,7 +256,18 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
                 'type' => 'house',
                 'regions' => array(1,2));
             $this->house2 = $service->create($array);
+            
+            
+             $service = new HomeNet_Model_HouseUser_Service();
+            $array = array('user' => Core_Model_User_Manager::getUser()->id,
+                           'house' => $this->house->id,
+                           'permissions'=>array(HomeNet_Model_HouseUser::PERMISSION_ADMIN)
+                    );
+           $service->create($array);
+            
         }
+        
+        
         
 //        if (in_array('house_user', $list)) {
 //

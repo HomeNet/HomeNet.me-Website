@@ -29,16 +29,39 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
     protected function tearDown() {
         
     }
+    
+    
+    private function _fillObject($object, $seed = 0) {
+        $data = $this->_getTestData($seed);
+        foreach ($data as $key => $value) {
+            $object->$key = $value;
+        }
+        return $object;
+    }
 
-    private function createValidObject() {
+    private function _fillArray($array, $seed = 0) {
+        if (is_object($array)) {
+            $array = $array->toArray();
+        }
 
+        return array_merge($array, $this->_getTestData($seed));
+    }
+
+    private function _getTestData($seed = 0) {
+
+         $array = array(
+             'house' => $this->homenetInstaller->house->id,
+           // 'status' => HomeNet_Model_Room::STATUS_LIVE,
+            'region' => $seed+1,
+            'name' => 'My Room'.$seed,
+            'description' => 'My Description'.$seed);
+        return $array;
+        
+    }
+
+    private function _createValidObject($seed = 0) {
         $object = new HomeNet_Model_Room();
-        //$object->status = 1;
-        $object->house = $this->homenetInstaller->house->id;
-        $object->region = '2';
-        $object->name = 'My Room';
-        $object->description = 'My Description';
-        //$object->permissions;
+        $object = $this->_fillObject($object, $seed);
 
         $result = $this->service->create($object);
 
@@ -46,13 +69,13 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
         return $result;
     }
 
-    private function validateResult($result) {
+    private function _validateResult($result, $seed = 0) {
+        $this->assertInstanceOf('HomeNet_Model_Room_Interface', $result);
         $this->assertNotNull($result->id);
-        //$this->assertEquals(1, $result->status);
         $this->assertEquals($this->homenetInstaller->house->id, $result->house);
-        $this->assertEquals('2', $result->region);
-        $this->assertEquals('My Room', $result->name);
-        $this->assertEquals('My Description', $result->description);
+        $this->assertEquals($seed+1, $result->region);
+        $this->assertEquals('My Room'.$seed, $result->name);
+        $this->assertEquals('My Description'.$seed, $result->description);
     }
     
 //$this->service->getMapper()///////////////////////////////////////////////////
@@ -71,11 +94,11 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
 
 //$this->service->getObjectById($id)////////////////////////////////////////////
     public function testGetObjectById_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         $result = $this->service->getObjectById($object->id);
 
-        $this->validateResult($result);
+        $this->_validateResult($result);
     }
 
     public function testGetObjectById_invalid() {
@@ -89,12 +112,12 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGetObjectsByHouse_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
         $results = $this->service->getObjectsByHouse($this->homenetInstaller->house->id);
 
         $this->assertEquals(1, count($results));
 
-        $this->validateResult($results[0]);
+        $this->_validateResult($results[0]);
     }
 
     public function testGetObjectsByHouse_invalid() {
@@ -109,12 +132,12 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGetObjectsByHouses_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
         $results = $this->service->getObjectsByHouses(array($this->homenetInstaller->house->id, $this->homenetInstaller->house2->id));
 
         $this->assertEquals(1, count($results));
 
-        $this->validateResult($results[0]);
+        $this->_validateResult($results[0]);
     }
 
     public function testGetObjectsByHouses_invalid() {
@@ -130,12 +153,12 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGetObjectsByHouseRegion_valid() {
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
         $results = $this->service->getObjectsByHouseRegion($object->house, $object->region);
 
         $this->assertEquals(1, count($results));
 
-        $this->validateResult($results[0]);
+        $this->_validateResult($results[0]);
     }
 
     public function testGetObjectsByHouseRegion_invalid() {
@@ -156,22 +179,17 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
     
 //$this->service->create($mixed)////////////////////////////////////////////////
     public function testCreate_validObject() {
-        $result = $this->createValidObject();
+        $result = $this->_createValidObject();
 
         $this->assertNotNull($result->id);
-        $this->validateResult($result);
+        $this->_validateResult($result);
     }
 
     public function testCreate_validArray() {
-        $array = array(
-            //'status' => 1,
-            'house' => 1,
-            'region' => '2',
-            'name' => 'My Room',
-            'description' => 'My Description');
+        $array = $this->_getTestData();
 
         $result = $this->service->create($array);
-        $this->validateResult($result);
+        $this->_validateResult($result);
     }
 
     public function testCreate_invalidObject() {
@@ -180,53 +198,31 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
         $badObject = new StdClass();
         $this->service->create($badObject);
     }
-    
+
 //$this->service->update($mixed)////////////////////////////////////////////////
     public function testUpdate_validObject() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //update values
-        //$object->status = -1;
-        $object->house = $this->homenetInstaller->house2->id;
-        $object->region = '3';
-        $object->name = 'My Room2';
-        $object->description = 'My Description2';
+        $object = $this->_fillObject($object, 1);
 
         $result = $this->service->update($object);
 
-        $this->assertInstanceOf('HomeNet_Model_Room_Interface', $result);
-
-        $this->assertNotNull($result->id);
-        //$this->assertEquals(1, $result->status);
-        $this->assertEquals($this->homenetInstaller->house2->id, $result->house);
-        $this->assertEquals('3', $result->region);
-        $this->assertEquals('My Room2', $result->name);
-        $this->assertEquals('My Description2', $result->description);
+        $this->_validateResult($result, 1);
     }
 
     public function testUpdate_validArray() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
         $array = $object->toArray();
 
         //update values
-        //$array['status'] = -1;
-        $array['house'] = $this->homenetInstaller->house2->id;
-        $array['region'] = '3';
-        $array['name'] = 'My Room2';
-        $array['description'] = 'My Description2';
+        $array = $this->_fillArray($array, 1);
 
         $result = $this->service->update($array);
 
-        $this->assertInstanceOf('HomeNet_Model_Room_Interface', $result);
-
-        $this->assertNotNull($result->id);
-        //$this->assertEquals(1, $result->status);
-        $this->assertEquals($this->homenetInstaller->house2->id, $result->house);
-        $this->assertEquals('3', $result->region);
-        $this->assertEquals('My Room2', $result->name);
-        $this->assertEquals('My Description2', $result->description);
+        $this->_validateResult($result, 1);
     }
 
     public function testUpdate_invalidObject() {
@@ -239,7 +235,7 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
 //$this->service->delete($mixed)////////////////////////////////////////////////
     public function testDelete_validObject() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //test delete
         $id = $object->id;
@@ -252,7 +248,7 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testDelete_validArray() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //test delete
         $id = $object->id;
@@ -265,7 +261,7 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
 
     public function testDelete_validId() {
         //setup
-        $object = $this->createValidObject();
+        $object = $this->_createValidObject();
 
         //test delete
         $id = $object->id;

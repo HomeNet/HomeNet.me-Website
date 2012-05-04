@@ -170,7 +170,7 @@ class HomeNet_HouseControllerTest extends CMS_Test_PHPUnit_ControllerTestCase {
     public function testDeleteAction_submitDelete() {
         //setup
         $this->setAction('Delete');
-        $this->getRequest()->setParam('id', $this->object->id);
+        $this->getRequest()->setParam('house', $this->object->id);
         $this->getRequest()->setMethod('POST')
                 ->setPost(array('confirm' => 'confirm'));
 

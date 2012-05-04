@@ -17,6 +17,9 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
      */
     protected function setUp() {
         $this->service = new HomeNet_Model_Node_Service;
+        $this->service->deleteAll();
+        
+        
     }
 
     /**
@@ -24,7 +27,7 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        $this->service->deleteAll();
+        
         $service = new HomeNet_Model_NodeModel_Service;
         $service->deleteAll();
     }
@@ -50,6 +53,7 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
         $array = array('type' => HomeNet_Model_Node::SENSOR,
             'status' => HomeNet_Model_ComponentModel::LIVE,
             'plugin' => 'Jeenode',
+            'network_types' => array(1),
             'name' => 'testModel',
             'description' => 'test description',
             'image' => 'test.jpg',
@@ -61,6 +65,7 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
         return $array = array(
             'status' => HomeNet_Model_Node::STATUS_LIVE,
             'address' => 1 + $seed,
+            'networks'=>array(1=>'192.168.1.'+$seed),
             'model' => $model->id,
             'uplink' => 1 + $seed,
             'house' => 4 + $seed,
@@ -85,6 +90,7 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertNotNull($result->id);
         $this->assertEquals(1+$seed, $result->address);
       //  $this->assertEquals(2, $result->model);
+        $this->assertEquals('192.168.1.'+$seed, $result->networks[1]);
         $this->assertEquals(1+$seed, $result->uplink);
         $this->assertEquals(4+$seed, $result->house);
         $this->assertEquals(5+$seed, $result->room);
@@ -366,5 +372,29 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $badObject = new StdClass();
         $create = $this->service->delete($badObject);
+    }
+    
+ //$this->newObjectFromModel(16)////////////////////////////////////////////////    
+    //this should test that the devices properly cascade
+    public function testFullStack() {
+        $homenetInstaller = new HomeNet_Installer();
+        $homenetInstaller->installTest(array('house', 'room'));
+       // $homenetInstaller->installOptionalContent($homenetInstaller->getOptionalContent());
+
+
+        $object = $this->service->newObjectFromModel(16); //jeelink
+        $object->address = 1;
+        $object->house = $homenetInstaller->house->id;
+        $object->room = $homenetInstaller->room->id;
+        //$result->
+        $result = $this->service->create($object);
+
+        $this->assertInstanceOf('HomeNet_Model_Node_Abstract', $result);
+        $this->assertEquals(1, $result->address);
+        $this->assertEquals(16, $result->model);
+        //$this->assertEquals('192.168.1.'+$seed, $result->networks[1]);
+        // $this->assertEquals(1+$seed, $result->uplink);
+        $this->assertEquals($homenetInstaller->house->id, $result->house);
+        $this->assertEquals($homenetInstaller->room->id, $result->room);
     }
 }
