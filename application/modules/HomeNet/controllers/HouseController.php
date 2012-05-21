@@ -62,12 +62,8 @@ class HomeNet_HouseController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        //$house = $this->service->getObjectById($this->_house->id);
-
-        //$this->view->house = $house;
-        
-        $nodeService = new HomeNet_Model_Node_Service();
-        $this->view->nodes = $nodeService->getObjectsByHouse($this->_house->id);
+        $nodeService = new HomeNet_Model_Node_Service($this->_house->id);
+        $this->view->nodes = $nodeService->getObjects();
     }
 
     public function addAction()
@@ -130,7 +126,7 @@ class HomeNet_HouseController extends Zend_Controller_Action
         if (!empty($_POST['confirm'])) {
             $name = $object->name;
             $object->status = HomeNet_Model_House::STATUS_DELETED;
-            $this->service->updated($object);
+            $this->service->update($object);
             
             $this->view->messages()->add('Successfully deleted &quot;'.$name.'&quot;');
             return $this->_redirect($this->view->url(array('house' =>  $this->_house->id), 'homenet-house'));

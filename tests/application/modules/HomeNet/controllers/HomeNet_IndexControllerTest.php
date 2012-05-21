@@ -18,6 +18,8 @@ class HomeNet_IndexControllerTest extends CMS_Test_PHPUnit_ControllerTestCase {
         $this->installer->installTest();
         $this->installer->loginAsSuperAdmin();
         
+        $this->homenetInstaller = new HomeNet_Installer();
+        
         
         $this->bootstrap = new Zend_Application('testing', APPLICATION_PATH . '/configs/application.ini'); //
         $this->view = Zend_Registry::get('view');
@@ -36,6 +38,8 @@ class HomeNet_IndexControllerTest extends CMS_Test_PHPUnit_ControllerTestCase {
 
     public function testIndexAction_noHouses() {
         //setup
+        $this->homenetInstaller->uninstallTest();
+        
         $this->setAction('Index');
 
         //run
@@ -50,9 +54,7 @@ class HomeNet_IndexControllerTest extends CMS_Test_PHPUnit_ControllerTestCase {
      */
     public function testIndexAction_house() {
         //setup
-        $this->homenetInstaller = new HomeNet_Installer();
         $this->homenetInstaller->installTest(array('house','room'));
-        
         
         $this->setAction('Index');
 

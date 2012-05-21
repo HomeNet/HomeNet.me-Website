@@ -42,12 +42,13 @@ class HomeNet_NodeController extends Zend_Controller_Action {
         $acl = new HomeNet_Model_Acl($this->_getParam('house'));
         $acl->checkAccess('house', $this->getRequest()->getActionName());
         
-        $this->service = new HomeNet_Model_Node_Service();
-        
         $this->view->heading = 'Node'; //for generic templates
         
         $this->view->id = $this->_id = $this->_getParam('id');
         $this->view->house = $this->_house = HomeNet_Model_House_Manager::getHouseById($this->_getParam('house'));
+        
+        $this->service = new HomeNet_Model_Node_Service($this->_house->id);
+        
         
         //setup bread crumbs
         $this->view->breadcrumbs()->addPage(array(
@@ -92,11 +93,11 @@ class HomeNet_NodeController extends Zend_Controller_Action {
         }
         
 
-        $this->view->objects = $this->service->getObjectsByHouse($this->_house->id);
+        $this->view->objects = $this->service->getObjects();
     }
     
     public function trashedAction() {
-         $this->view->objects = $this->service->getTrashedObjectsByHouse($this->_house->id);
+         $this->view->objects = $this->service->getTrashedObjects();
     }
 
     public function newAction() {
@@ -110,7 +111,7 @@ class HomeNet_NodeController extends Zend_Controller_Action {
         if (!$this->getRequest()->isPost()) {
 
             $address = $form->getElement('address');
-            $address->setValue($this->service->getNextAddressByHouse($this->_house->id));
+            $address->setValue($this->service->getNextAddress());
 
             $this->view->form = $form;
             return;
@@ -126,9 +127,7 @@ class HomeNet_NodeController extends Zend_Controller_Action {
         //$nodeService = new HomeNet_Model_NodesService();
 
         $values = $form->getValues();
-        
-        
-        
+
 
         $node = $this->service->newObjectFromModel($values['model']);
         $node->fromArray($values);
@@ -252,7 +251,7 @@ class HomeNet_NodeController extends Zend_Controller_Action {
 
         //$settings = unserialize($model->settings);
 
-        $dService = new HomeNet_Model_Device_Service();
+        $dService = new HomeNet_Model_Device_Service($this->_house->id);
 
         $d = $dService->getObjectsByNode($this->_node->id);
 

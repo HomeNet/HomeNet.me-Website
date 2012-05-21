@@ -33,7 +33,20 @@ class HomeNet_Model_Component_Service {
      * @var HomeNet_Model_ComponentMapper_Interface
      */
     protected $_mapper;
+    
+    public function __construct($house = null) {
+        $this->setHouseId($house);
+    }
 
+    public function setHouseId($house){
+        $this->getMapper()->setHouseId($house);
+    }
+    
+    public function getHouseId(){
+       return $this->getMapper()->getHouseId();
+    }
+    
+    
     /**
      * Get storage mapper
      * 

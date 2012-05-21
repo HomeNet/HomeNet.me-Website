@@ -53,9 +53,9 @@ class HomeNet_SetupControllerTest extends CMS_Test_PHPUnit_ControllerTestCase {
         $service->update($house);
         
         if($installNode == 'controller'){
-            $networkService = new  HomeNet_Model_Network_Service();
-            $ip = $networkService->add(1,$house->id);
-            $serial = $networkService->add(2,$house->id);
+            $networkService = new  HomeNet_Model_Network_Service($house->id);
+            $ip = $networkService->add(1);
+            $serial = $networkService->add(2);
             
             $ipaddress = '127.0.0.1'; //localhost
 

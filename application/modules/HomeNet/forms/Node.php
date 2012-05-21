@@ -89,8 +89,8 @@ class HomeNet_Form_Node extends CMS_Form {
         $description->setAttrib('cols', '20');
         $this->addElement($description);
         
-        $nodeService = new HomeNet_Model_Node_Service;
-        $uplinks = $nodeService->getUplinksByHouse($this->house);
+        $nodeService = new HomeNet_Model_Node_Service($this->house);
+        $uplinks = $nodeService->getUplinks();
 
         $uplink = $this->createElement('select', 'uplink');
         $uplink->setLabel("Uplink: ");

@@ -33,6 +33,18 @@ class HomeNet_Model_Room_Service {
      * @var HomeNet_Model_Room_MapperInterface
      */
     protected $_mapper;
+    
+    public function __construct($house = null) {
+        $this->setHouseId($house);
+    }
+
+    public function setHouseId($house){
+        $this->getMapper()->setHouseId($house);
+    }
+    
+    public function getHouseId(){
+       return $this->getMapper()->getHouseId();
+    }
 
     /**
      * Get storage mapper
@@ -81,37 +93,29 @@ class HomeNet_Model_Room_Service {
     /**
      * Get all Rooms by house id
      * 
-     * @param int $house
      * @return HomeNet_Model_Room (HomeNet_Model_Room_Interface)
      * @throw InvalidArgumentException
      */
-    public function getObjectsByHouse($house) {
-        if (empty($house) || !is_numeric($house)) {
-            throw new InvalidArgumentException('Invalid House');
-        }
-        $results = $this->getMapper()->fetchObjectsByHouse($house);
+    public function getObjects() {
+        
+        return $this->getMapper()->fetchObjects();
+    }
 
-//        if (empty($results)) { //will only return
-//            throw new HomeNet_Model_Exception('House: '.$house.' Not Found', 404);
+//    /**
+//     * Get all Rooms by for an array of house ids
+//     * 
+//     * @param array $houses House Ids
+//     * @return HomeNet_Model_Room (HomeNet_Model_Room_Interface)
+//     * @throw InvalidArgumentException
+//     */
+//    public function getObjectsByHouses(array $houses) {
+//        if (empty($houses)) {
+//            throw new InvalidArgumentException('Invalid Houses');
 //        }
-        return $results;
-    }
-
-    /**
-     * Get all Rooms by for an array of house ids
-     * 
-     * @param array $houses House Ids
-     * @return HomeNet_Model_Room (HomeNet_Model_Room_Interface)
-     * @throw InvalidArgumentException
-     */
-    public function getObjectsByHouses(array $houses) {
-        if (empty($houses)) {
-            throw new InvalidArgumentException('Invalid Houses');
-        }
-        $results = $this->getMapper()->fetchObjectsByHouses($houses);
-
-        return $results;
-    }
+//        $results = $this->getMapper()->fetchObjectsByHouses($houses);
+//
+//        return $results;
+//    }
 
     /**
      * Get all Rooms for House in a specific region 
@@ -120,14 +124,12 @@ class HomeNet_Model_Room_Service {
      * @return HomeNet_Model_Room (HomeNet_Model_Room_Interface)
      * @throw InvalidArgumentException
      */
-    public function getObjectsByHouseRegion($house, $region) {
-        if (empty($house) || !is_numeric($house)) {
-            throw new InvalidArgumentException('Invalid Houses');
-        }
+    public function getObjectsByRegion($region) {
+
         if (empty($region) || !is_numeric($region)) {
             throw new InvalidArgumentException('Invalid Region');
         }
-        $results = $this->getMapper()->fetchObjectsByHouseRegion($house, $region);
+        $results = $this->getMapper()->fetchObjectsByRegion($region);
 
 //        if (empty($room)) {
 //            throw new HomeNet_Model_Exception('Room not found', 404);

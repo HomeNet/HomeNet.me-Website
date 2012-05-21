@@ -42,6 +42,9 @@ class Content_Form_Field extends CMS_Form
         $service = new Core_Model_Reflection_Service();
         $configs = $service->getPluginConfigsByModuleType('Content','Element');
         
+        //var_dump($configs);
+        //exit;
+        
         $options = array('' => 'Select One');
         
         foreach($configs as $key => $value){

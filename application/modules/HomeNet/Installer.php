@@ -202,13 +202,13 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
         
         if (in_array('network_types', $list)) {
             $network_types = array( //id 	status 	name 	description 	plugin 	settings
-             array('id'=>1, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'IP (Ethernet/Wifi)', 'plugin'=>'Todo'),
-            array('id'=>2, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'Serial 232', 'plugin'=>'Todo'),
-            array('id'=>3, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'RFM12B 915 mhz', 'plugin'=>'Rfm12b'),
-            array('id'=>4, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'RFM12B 868 mhz', 'plugin'=>'Rfm12b'),
-            array('id'=>5, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'RFM12B 434 mhz', 'plugin'=>'Rfm12b'),
-            array('id'=>6, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'Serial 485 *Placeholder*', 'plugin'=>'Todo'),
-            array('id'=>7, 'status' => HomeNet_Model_NetworkType::LIVE, 'name'=>'Zigbee 2.4 ghz *Placeholder*', 'plugin'=>'ZigBee'),
+            array('id'=>1, 'status' => HomeNet_Model_NetworkType::LIVE, 'class'=>HomeNet_Model_NetworkType::SYSTEM, 'name'=>'xIP (Ethernet/Wifi)', 'plugin'=>'Todo'),
+            array('id'=>2, 'status' => HomeNet_Model_NetworkType::LIVE, 'class'=>HomeNet_Model_NetworkType::SYSTEM,  'name'=>'Serial 232', 'plugin'=>'Todo'),
+            array('id'=>3, 'status' => HomeNet_Model_NetworkType::LIVE, 'class'=>HomeNet_Model_NetworkType::USER, 'name'=>'RFM12B 915 mhz', 'plugin'=>'Rfm12b'),
+            array('id'=>4, 'status' => HomeNet_Model_NetworkType::LIVE, 'class'=>HomeNet_Model_NetworkType::USER, 'name'=>'RFM12B 868 mhz', 'plugin'=>'Rfm12b'),
+            array('id'=>5, 'status' => HomeNet_Model_NetworkType::LIVE, 'class'=>HomeNet_Model_NetworkType::USER, 'name'=>'RFM12B 434 mhz', 'plugin'=>'Rfm12b'),
+            array('id'=>6, 'status' => HomeNet_Model_NetworkType::LIVE, 'class'=>HomeNet_Model_NetworkType::USER, 'name'=>'Serial 485 *Placeholder*', 'plugin'=>'Todo'),
+            array('id'=>7, 'status' => HomeNet_Model_NetworkType::LIVE, 'class'=>HomeNet_Model_NetworkType::USER, 'name'=>'Zigbee 2.4 ghz *Placeholder*', 'plugin'=>'ZigBee'),
 
            
             );
@@ -316,7 +316,7 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
             $array = array('status' => HomeNet_Model_NodeModel::LIVE, 'type' => HomeNet_Model_Node::SENSOR, 'plugin' => 'Jeenode', 'name' => 'JeeNode (915mhz)', 'description' => '', 'image' => null, 'max_devices' => 4, 'settings' => array('rf12b' => true, 'rf12b_freq' => 915));
             $this->nodeModel = $service->create($array);
 
-            $service = new HomeNet_Model_Node_Service;
+            $service = new HomeNet_Model_Node_Service($this->house->id);
             $array = array(
                 'status' => HomeNet_Model_Node::STATUS_LIVE,
                 'address' => 1,
@@ -337,7 +337,7 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
 
            // $this->installOptionalContent(array('device_models', 'component_models'));
             
-            $service = new HomeNet_Model_Device_Service;
+            $service = new HomeNet_Model_Device_Service($this->house->id);
             
             //HomeNet_Model_Component::BOOLEAN, HomeNet_Model_Component::BYTE,   HomeNet_Model_Component::INTEGER, HomeNet_Model_Component::FLOAT,    HomeNet_Model_Component::LONG
             $devices = array();
@@ -379,6 +379,12 @@ class HomeNet_Installer extends CMS_Installer_Abstract {
         $service->deleteAll();
 
         $service = new HomeNet_Model_ComponentModel_Service();
+        $service->deleteAll();
+        
+        $service = new HomeNet_Model_Network_Service();
+        $service->deleteAll();
+        
+        $service = new HomeNet_Model_NetworkType_Service();
         $service->deleteAll();
 
         //$service = new HomeNet_Model_Datapoint_Service();

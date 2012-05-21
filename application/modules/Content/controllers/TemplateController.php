@@ -97,6 +97,7 @@ class Content_TemplateController extends Zend_Controller_Action {
 
         //save
         $values = $form->getValues();
+        $values['content'] = base64_decode($values['content']);
         $values['owner'] = Core_Model_User_Manager::getUser()->id;
         $values['section'] = $this->view->id;
         $values['type'] = Content_Model_Template::USER;
@@ -136,6 +137,10 @@ class Content_TemplateController extends Zend_Controller_Action {
 
         //save
         $values = $form->getValues();
+        
+        
+        $values['content'] = base64_decode($values['content']);
+        
         $values['owner'] = Core_Model_User_Manager::getUser()->id;
         $object->fromArray($values);
         $service->update($object);

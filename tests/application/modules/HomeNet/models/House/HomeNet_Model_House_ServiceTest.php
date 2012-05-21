@@ -173,13 +173,13 @@ class HomeNet_Model_House_ServiceTest extends PHPUnit_Framework_TestCase {
     }
 
 //$this->service->getObjectsByIdsWithRooms($ids)////////////////////////////////
-    public function testGetObjectsByIdsWithRooms() {
-        
-        $object = $this->_createValidObject();
-        $results = $this->service->getObjectsByIdsWithRooms(array($object->id));
-
-        $this->_validateResult(reset($results));
-    }
+//    public function testGetObjectsByIdsWithRooms() {
+//        
+//        $object = $this->_createValidObject();
+//        $results = $this->service->getObjectsByIdsWithRooms(array($object->id));
+//
+//        $this->_validateResult(reset($results));
+//    }
 
 //$this->service->getHouseIdsByUser($user)//////////////////////////////////////
 //    public function testGetHouseIdsByUser_valid() {

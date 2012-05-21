@@ -46,40 +46,29 @@ class HomeNet_Model_Network_MapperDbTable implements HomeNet_Model_Network_Mappe
         $this->_table = $table;
     }
 
-    public function fetchObjectById($id) {
+        public function fetchObjectsByHouse($house) {
+
+        $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
+        $select->setIntegrityCheck(false)
+                ->where('house = ?', $house)
+               // ->where('homenet_networks.status = ?', $status)
+                ->join('homenet_network_types', 'homenet_network_types.id = homenet_networks.type', array('name', 'plugin', 'class', 'name AS type_name', 'settings AS type_settings'));
+
+        return $this->getTable()->fetchAll($select);
+    }
+    
+    public function fetchObjectByHouseId($house, $id) {
 
         //= array('name','driver', 'max_devices')
 
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('homenet_networks.id = ?', $id)
-                ->join('homenet_network_types', 'homenet_network_types.id = homenet_networks.type', array('plugin', 'settings AS type_settings'))
+                ->where('homenet_networks.house = ?', $house)
+                ->join('homenet_network_types', 'homenet_network_types.id = homenet_networks.type', array('name', 'plugin', 'class', 'settings AS type_settings'))
                 ->limit(1);
 
         return $this->getTable()->fetchRow($select);
-    }
-
-
-    public function fetchObjectsByHouse($house) {
-
-        $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
-        $select->setIntegrityCheck(false)
-                ->where('house = ?', $house)
-               // ->where('homenet_networks.status = ?', $status)
-                ->join('homenet_network_types', 'homenet_network_types.id = homenet_networks.type', array('plugin', 'name AS type_name', 'settings AS type_settings'));
-
-        return $this->getTable()->fetchAll($select);
-    }
-
-    public function fetchObjectsByRoom($room) {
-
-        $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
-        $select->setIntegrityCheck(false)
-                ->where('room = ?', $room)
-              //  ->where('homenet_networks.status = ?', $status)
-                ->join('homenet_network_types', 'homenet_network_types.id = homenet_networks.type', array('plugin', 'name AS type_name', 'settings AS type7l_settings'));
-
-        return $this->getTable()->fetchAll($select);
     }
 
     public function fetchObjectsByHouseType($house, $type) {
@@ -88,9 +77,7 @@ class HomeNet_Model_Network_MapperDbTable implements HomeNet_Model_Network_Mappe
         $select->setIntegrityCheck(false)
                 ->where('house = ?', $house)
                 ->where('type = ?', $type)
-                ->join('homenet_network_types', 'homenet_network_types.id = homenet_networks.type', array('plugin', 'name AS type_name', 'settings AS type_settings'));
-                
-        
+                ->join('homenet_network_types', 'homenet_network_types.id = homenet_networks.type', array('name', 'plugin', 'class', 'name AS type_name', 'settings AS type_settings'));
 
         return $this->getTable()->fetchAll($select);
     }

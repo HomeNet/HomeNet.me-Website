@@ -28,6 +28,10 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 interface HomeNet_Model_Node_MapperInterface {
+    
+    public function setHouseId($house);
+    
+    public function getHouseId();
 
     public function fetchObjectById($id);
 //

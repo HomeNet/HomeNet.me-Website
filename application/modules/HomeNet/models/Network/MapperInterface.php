@@ -29,7 +29,7 @@
  */
 interface HomeNet_Model_Network_MapperInterface {
 
-    public function fetchObjectById($id);
+    public function fetchObjectByHouseId($house, $id);
 //
 //    public function fetchObjectsByHouse($house, $status);
 //

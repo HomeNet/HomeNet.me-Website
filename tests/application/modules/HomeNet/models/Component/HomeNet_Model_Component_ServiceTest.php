@@ -16,7 +16,7 @@ class HomeNet_Model_Component_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->service = new HomeNet_Model_Component_Service;
+        $this->service = new HomeNet_Model_Component_Service(1);
         $this->service->deleteAll();
         
         $cm = new HomeNet_Model_ComponentModel_Service;
@@ -60,6 +60,9 @@ class HomeNet_Model_Component_ServiceTest extends PHPUnit_Framework_TestCase {
         $model = $this->_createModel();
 
 
+        
+        $this->service->setHouseId(6 + $seed);
+
         return array(
             'status' => HomeNet_Model_Component::STATUS_LIVE,
             'device' => 1 + $seed,
@@ -67,7 +70,7 @@ class HomeNet_Model_Component_ServiceTest extends PHPUnit_Framework_TestCase {
             'position' => 3 + $seed,
             'order' => 4 + $seed,
             'room' => 5 + $seed,
-            'house' => 6 + $seed,
+            'house' => $this->service->getHouseId(),
             'name' => 'testName' . $seed,
             'settings' => array('key' => 'value' . $seed));
     }

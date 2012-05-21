@@ -16,24 +16,16 @@ class HomeNet_Model_Network_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->service = new HomeNet_Model_Network_Service;
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown() {
-      //  $this->service->deleteAll();
-        $service = new HomeNet_Model_Network_Service;
-        $service->deleteAll(); //prep db
+        $this->service = new HomeNet_Model_Network_Service(1);
+        $this->service->deleteAll(); //prep db
     }
     
-     private function _fillObject($object, $seed = 0) {
+    private function _fillObject($object, $seed = 0) {
         $data = $this->_getTestData($seed);
         foreach ($data as $key => $value) {
             $object->$key = $value;
         }
+        
         return $object;
     }
     private function _fillArray($array, $seed = 0) {
@@ -49,16 +41,19 @@ class HomeNet_Model_Network_ServiceTest extends PHPUnit_Framework_TestCase {
           //create Network model
          $array = array(
             'status' => HomeNet_Model_NetworkType::LIVE,
+             'class' => HomeNet_Model_NetworkType::SYSTEM,
             'plugin' => 'Standalone',
             'name' => 'test name'.$seed,
             'description' => 'test description'.$seed,
             'settings' => array('key' => 'value'.$seed));
         $service = new HomeNet_Model_NetworkType_Service;
         $type = $service->create($array);
+        
+        $this->service->setHouseId(4 + $seed);
 
         return $array = array(
             'type' => $type->id,
-            'house' => 4 + $seed,
+            'house' => $this->service->getHouseId(),
             'settings' => array('key' => 'value' . $seed));
     }
     
@@ -82,8 +77,6 @@ class HomeNet_Model_Network_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('value'.$seed, $result->settings['key']);
     }
 
-    
-
 //$this->service->getMapper()///////////////////////////////////////////////////    
     public function testGetMapper() {
        $this->assertInstanceOf('HomeNet_Model_Network_MapperInterface', $this->service->getMapper());
@@ -98,8 +91,8 @@ class HomeNet_Model_Network_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($mapper, $this->service->getMapper());
     }
     
-//$this->service->getObjectById($id)////////////////////////////////////////////
-   public function testGetObjectById_valid() {
+//$this->service->getObjectByHouseId($id)////////////////////////////////////////////
+   public function testGetObjectByHouseId_valid() {
         $object = $this->_createValidObject();
         
         $result = $this->service->getObjectById($object->id);
@@ -107,7 +100,7 @@ class HomeNet_Model_Network_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->_validateResult($result);
     }
 
-    public function testGetObjectById_invalid() {
+    public function testGetObjectByHouseId_invalid() {
         $this->setExpectedException('NotFoundException');
         $this->service->getObjectById(1000);
     }
@@ -117,35 +110,28 @@ class HomeNet_Model_Network_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->service->getObjectById(null);
     }
 
-//$this->service->getObjectByHouse($house)//////////////////////////////////////
-    public function testGetObjectsByHouse_valid() {
+//$this->service->getObjects()//////////////////////////////////////
+    public function testGetObjects_valid() {
         $object = $this->_createValidObject();
         
-        $results = $this->service->getObjectsByHouse($object->house);
+        $results = $this->service->getObjects();
 
         $this->assertEquals(1, count($results));
         $this->_validateResult($results[0]);
     }
-     public function testGetObjectsByHouse_null() {
-        $this->setExpectedException('InvalidArgumentException');
-        $results = $this->service->getObjectsByHouse(null);
-    }
 
-//$this->service->getObjectsByHouseType($house, $type)//////////////////////////
-    public function testGetObjectByHouseType_valid() {
+//$this->service->getObjectsByType($type)//////////////////////////
+    public function testGetObjectByType_valid() {
         $object = $this->_createValidObject();
         
-        $results = $this->service->getObjectsByHouseType($object->house, $object->type);
+        $results = $this->service->getObjectsByType($object->type);
         $this->assertEquals(1, count($results));
         $this->_validateResult($results[0]);
     }
-    public function testGetObjectsByHouseType_houseNull() {
+    
+    public function testGetObjectsByType_Null() {
         $this->setExpectedException('InvalidArgumentException');
-        $results = $this->service->getObjectsByHouseType(null, 1);
-    }
-     public function testGetObjectsByHouseType_statusNull() {
-        $this->setExpectedException('InvalidArgumentException');
-        $results = $this->service->getObjectsByHouseType(100, null);
+        $this->service->getObjectsByType(null);
     }
     
 //$this->service->newObjectFromModel($model)////////////////////////////////////

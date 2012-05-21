@@ -33,14 +33,15 @@ abstract class Content_Model_Plugin_Template {
     
     public function getFieldSets(){
         $fieldSets = array();
-        $fieldSets['publish'] = array('title' => 'Publish', 'visible' => true);
+        $fieldSets['default'] = array('title' => 'Publish', 'visible' => true);
         return $fieldSets;
     }
     
-    public function getFields($fieldSets){
+    public function getFields(){
+        $fieldSets = $this->getFields();
           $fields = array();
          $fields['title'] = array(
-            'set' => $fieldSets['publish'],
+            'set' => $fieldSets['default'],
             'order' => 1,
             'type' => Content_Model_Field::SYSTEM,
             'element' => 'Text',
@@ -53,7 +54,7 @@ abstract class Content_Model_Plugin_Template {
             'required' => true,
             'visible' => true);
          $fields['url'] = array(
-            'set' => $fieldSets['publish'],
+            'set' => $fieldSets['default'],
             'order' => 2,
             'type' => Content_Model_Field::SYSTEM,
             'element' => 'Slug',

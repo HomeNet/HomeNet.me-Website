@@ -43,8 +43,9 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
     }
 
     public function getCustomTable($section) {
+        
         if (!array_key_exists($section, $this->_customTables)) {
-            $customTable = new Zend_Db_Table('content_custom_' . $section);
+            $customTable = new Zend_Db_Table('content_custom_' . $this->escapeInt($section));
             // die(debugArray($customTable->info(Zend_Db_Table::METADATA)));
             $this->_customTables[$section] = $customTable;
         }
@@ -110,7 +111,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('section = ?', $section)
-                ->join(array('c' => 'content_custom_' . $section), 'content_content.id = c.id AND 
+                ->join(array('c' => 'content_custom_' . $this->escapeInt($section)), 'content_content.id = c.id AND 
                         content_content.active_revision = c.revision'
         ); //,'homenet_node_models.id = homenet_nodes.model', array('driver', 'name AS modelName', 'type', 'settings')
 
@@ -327,7 +328,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
     public function addCustomTable($section) {
 
 
-        $table = 'content_custom_' . mysql_real_escape_string($section);
+        $table = 'content_custom_' . $this->escapeInt($section);
 
         //@todo security issue validate $section
         // return $this->getMapper()->prepareTable($section, $fields);
@@ -366,7 +367,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         }
 
         $element = new $class();
-        $result = $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` ADD `' . mysql_real_escape_string($field->name) . '` ' . $element->getMysqlColumn() . ' ');;
+        $result = $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . $this->escapeInt($field->section) . '` ADD `' . $this->escapeString($field->name) . '` ' . $element->getMysqlColumn() . ' ');;
         $this->cleanCache(); //reset metadata cache
         return $result;
     }
@@ -380,6 +381,13 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
         }
     }
     
+    public function escapeString($string){
+        return $this->getTable()->getAdapter()->quote($string);
+    }
+    
+    public function escapeInt($int){
+        return $this->getTable()->getAdapter()->quote($int,'INT');
+    }
 
     public function renameCustomField(Content_Model_Field_Interface $old, Content_Model_Field_Interface $field) {
         //@todo check to make sure section is valid
@@ -400,9 +408,11 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
 
         $element = new $class();
         
-        
+        if($field->section === null){
+            throw new Exception('Section Cannot be NULL');
+        }
 
-        $result = $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` CHANGE `' . mysql_real_escape_string($old->name) . '` `' . mysql_real_escape_string($field->name) . '` ' . $element->getMysqlColumn() . ' ');
+        $result = $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . $this->escapeInt($field->section) . '` CHANGE `' . $this->escapeString($old->name) . '` `' . $this->escapeString($field->name) . '` ' . $element->getMysqlColumn() . ' ');
         $this->cleanCache(); //reset metadata cache
         return $result;
         
@@ -410,7 +420,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
 
     public function removeCustomField(Content_Model_Field_Interface $field) {
         //alter table
-        $result = $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . mysql_real_escape_string($field->section) . '` DROP `' . mysql_real_escape_string($field->name) . '`');
+        $result = $this->getTable()->getAdapter()->query('ALTER TABLE `content_custom_' . $this->escapeInt($field->section) . '` DROP `' . $this->escapeString($field->name) . '`');
         $this->cleanCache(); //reset metadata cache
         return $result;
     }
@@ -418,7 +428,7 @@ class Content_Model_Content_MapperDbTable implements Content_Model_Content_Mappe
     public function removeCustomTable($section) {
         //drop table
         //DROP TABLE `content_section_5`
-        $result = $this->getTable()->getAdapter()->query('DROP TABLE IF EXISTS `content_custom_' . mysql_real_escape_string($section));
+        $result = $this->getTable()->getAdapter()->query('DROP TABLE IF EXISTS `content_custom_' . $this->escapeInt($section));
         $this->cleanCache(); //reset metadata cache
         return $result;
     }

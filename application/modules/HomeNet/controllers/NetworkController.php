@@ -27,7 +27,7 @@
  * 
  * 
  */
-class HomeNet_RoomController extends Zend_Controller_Action {
+class HomeNet_NetworkController extends Zend_Controller_Action {
 
     /**
      * 
@@ -35,7 +35,6 @@ class HomeNet_RoomController extends Zend_Controller_Action {
      */
     private $_id; 
     private $_house;
-    private $_room;
     protected $service;
     
     public function init() {
@@ -47,15 +46,14 @@ class HomeNet_RoomController extends Zend_Controller_Action {
             $action = 'index';
         }
 
-        $acl->checkAccess('house', $action);
+        $acl->checkAccess('network', $action);
         
         
-        $this->view->heading = 'Room'; //for generic templates
+        $this->view->heading = 'Network'; //for generic templates
         
         $this->view->id = $this->_id = $this->_getParam('id');
         $this->view->house = $this->_house = HomeNet_Model_House_Manager::getHouseById($this->_getParam('house'));
-        
-        $this->service = new HomeNet_Model_Room_Service($this->_house->id);
+        $this->service = new HomeNet_Model_Network_Service($this->_house->id);
         
         //$this->view->region = $this->_getParam('region');
 
@@ -74,61 +72,32 @@ class HomeNet_RoomController extends Zend_Controller_Action {
         ));
         
         if($this->_id !== null){
-            $this->view->room =  $this->_room = $this->_house->getRoomById($this->_id);
+            $this->view->room =  $this->_room = $this->_house->getRoomById($this->_getParam('id'));
 
             $this->view->breadcrumbs()->addPage(array(
                 'label'  => $this->_room->name,
                 'route'  => 'homenet-house-id',  
-                'controller' => 'room',
+                'controller' => 'network',
                 'params' => array('house'=>$this->_house->id, 'id'=>$this->_room->id)
             ));
         }
     }
 
     public function indexAction() {
-           $this->_helper->viewRenderer('info');
-            return $this->infoAction();
-        
-        //return $this->_forward('info');
-    }
-    
-        public function infoAction() {
-        $sService = new HomeNet_Model_Component_Service($this->_house->id);
-        $this->view->components = $sService->getObjectsByRoom($this->_room->id);
+        $this->view->networks = $this->service->getObjectsByHouse($this->_house->id);
     }
 
-    public function controlAction() {
-       
-        $sService = new HomeNet_Model_Component_Service($this->_house->id);
-        $this->view->components = $sService->getObjectsByRoom($this->_room->id);
 
-        if (!$this->getRequest()->isPost()) {
-            
-            return;
-        }
-
-        $component = $_POST['component'];
-        
-        if(!empty($this->view->components[$component])){
-            $this->view->components[$component]->processControlForm($_POST);
-        }
-    }
 
     public function newAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
-        
-        $hService = new HomeNet_Model_House_Service;
-        $regionIds = $hService->getRegionsById($this->_house->id);
-        
-        
-        $form = new HomeNet_Form_Room($regionIds);
+                
+        $form = new HomeNet_Form_NetworkTypes();
 
         $form->addElement('submit', 'submit', array('label' => 'Add'));
 
 
         if (!$this->getRequest()->isPost()) {
-            $regionElement = $form->getElement('region');
-            $regionElement->setValue($this->view->region);
             $this->view->form = $form;
             return;
         }
@@ -141,24 +110,22 @@ class HomeNet_RoomController extends Zend_Controller_Action {
 
         $values = $form->getValues();
 
-        $values['house'] = $this->_house->id;
+       // $values['house'] = $this->_house->id;
 
-        $object = $this->service->create($values);
+        $object = $this->service->add($values['type']);
 
-        $this->view->messages()->add('Successfully added room &quot;'.$object->name.'&quot;');
-        return $this->_redirect($this->view->url(array('controller'=>'house', 'action'=>'index', 'house' => $this->_house->id),'homenet-house'));
+        $this->view->messages()->add('Successfully added Network &quot;'.$object->name.'&quot;');
+        return $this->_redirect($this->view->url(array('controller'=>'network', 'action'=>'edit', 'house' => $this->_house->id),'homenet-house'));
     }
 
     public function editAction() {
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         
-        $homeService = new HomeNet_Model_House_Service();
-        $regions = $homeService->getRegionsById($this->_house->id);
-
-        $form = new HomeNet_Form_Room($regions);
+        $object = $this->service->getObjectById($id);//@todo this could be a security risk if I don't verify house too
+        
+        
+        $form = $object->getConfigForm();
         $form->addElement('submit', 'submit', array('label' => 'Update'));
-
-        $object = $this->service->getObjectById($this->_id);
 
         if (!$this->getRequest()->isPost()) {
             //load exsiting values
@@ -175,20 +142,19 @@ class HomeNet_RoomController extends Zend_Controller_Action {
 
         $object->fromArray($form->getValues());
 
-
-       
-      $this->service->update($object);
+        //$object->house = $this->view->house;
+        
+        $this->service->update($object);
 
        // $mService = new HomeNet_Model_Message_Service();
        //  $mService->add(HomeNet_Model_Message::NEWITEM, '<strong>' . $_SESSION['User']['name'] . '</strong> Updated &quot;' . $object->name . '&quot; in ' . $house->name . '', null, $this->view->house);
 
 
         $this->view->messages()->add('Successfully updated room &quot;'.$object->name.'&quot;');
-        return $this->_redirect($this->view->url(array('controller' => 'room', 'action'=>'index', 'house' => $this->_house->id, 'id'=>$object->id),'homenet-house-id'));
+        return $this->_redirect($this->view->url(array('controller' => 'network', 'action'=>'index', 'house' => $this->_house->id, 'id'=>$object->id),'homenet-house-id'));
     }
 
     public function deleteAction() {
-        //validate that all dependent devices have been removed
         $this->_helper->viewRenderer->setNoController(true); //use generic templates
         $form = new Core_Form_Confirm();
         
@@ -196,7 +162,7 @@ class HomeNet_RoomController extends Zend_Controller_Action {
 
         if (!$this->getRequest()->isPost() || !$form->isValid($_POST)) {
             
-            $form->addDisplayGroup($form->getElements(), 'node', array('legend' => 'Are you sure you want to remove "' . $object->name . '"?'));
+            $form->addDisplayGroup($form->getElements(), 'network', array('legend' => 'Are you sure you want to remove "' . $object->name . '"?'));
 
             $this->view->form = $form;
             return;
@@ -204,13 +170,12 @@ class HomeNet_RoomController extends Zend_Controller_Action {
 
         if (!empty($_POST['confirm'])) {
             $name = $object->name;
-          //  var_dump($object);
             $this->service->delete($object);
             
             $this->view->messages()->add('Successfully deleted room &quot;'.$name.'&quot;');
             return $this->_redirect($this->view->url(array('house' => $this->_house->id), 'homenet-house'));
         }
-        return $this->_redirect($this->view->url(array('controller'=>'room', 'action'=>'index', 'house' => $this->_house->id, 'id' => $this->_room->id), 'homenet-house-id'));
+        return $this->_redirect($this->view->url(array('controller'=>'network', 'action'=>'index', 'house' => $this->_house->id, 'id' => $this->_room->id), 'homenet-house-id'));
     }
 
 }

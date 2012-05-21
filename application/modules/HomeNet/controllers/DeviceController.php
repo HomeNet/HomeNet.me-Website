@@ -42,7 +42,7 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
         
         
         $this->view->heading = 'Device'; //for generic templates
-        $this->service = new HomeNet_Model_Device_Service();
+        
 
         $this->view->position = $this->_getParam('position');
         $this->view->id = $this->_id = $this->_getParam('id');
@@ -52,6 +52,9 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
      
         $this->view->node =  $this->_node = HomeNet_Model_Node_Manager::getNodeByHouseAddress($this->_house->id, $this->_getParam('node'));
         $this->view->room =  $this->_room = $this->_house->getRoomById($this->_node->room);
+        
+        $this->service = new HomeNet_Model_Device_Service($this->_house->id);
+        
         
         $this->view->breadcrumbs()->addPage(array(
             'label'  => 'Home',
@@ -107,7 +110,7 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
             ));
         
         if($this->_id !== null){
-            $this->view->device =  $this->_device = $this->service->getObjectByHouseNodeaddressPosition($this->_house->id, $this->_node->address, $this->_id);
+            $this->view->device =  $this->_device = $this->service->getObjectByNodeaddressPosition($this->_house->id, $this->_node->address, $this->_id);
             $this->_device->setHouse($this->_house);
             $this->_device->setRoomId($this->_room->id);
 
@@ -141,9 +144,8 @@ class HomeNet_DeviceController extends Zend_Controller_Action {
     }
     
     public function trashedAction() {
-        $dService = new HomeNet_Model_Device_Service();
 
-        $devices = $dService->getTrashedObjectsByNode($this->_node->id);
+        $devices = $this->service->getTrashedObjectsByNode($this->_node->id);
 
         $this->view->devices = $devices;
     }

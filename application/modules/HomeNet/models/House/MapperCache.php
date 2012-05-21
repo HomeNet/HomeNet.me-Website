@@ -136,40 +136,40 @@ class HomeNet_Model_House_MapperCache implements HomeNet_Model_House_MapperInter
         return $result;
     }
 
-    public function fetchObjectsByIdsWithRooms($ids) {      
-
-        //get existing house cache
-        $houses = $this->fetchObjectsByIds($ids);
-
-        foreach ($ids as $key => $id) {
-            //check to see if it is already loaded
-            if(!empty(self::$_houses[$id]->rooms)){
-                $houses[$id] = self::$_houses[$id];
-                unset($ids[$key]);
-            }
-            //check cache nexted
-            elseif (isset($houses[$id]->rooms)) {
-                //rooms has already be cached
-                unset($ids[$key]);
-            }
-        }
-
-        if(!empty($ids)){
-
-            $rows = $this->_mapper->fetchObjectsByIdsWithRooms($ids);
-            if(empty($rows)){
-                return $houses;
-            }
-
-            foreach ($rows as $row) {
-                $houses[$row->id] = $row;
-                self::$_houses[$id] = $houses[$row->id];
-                $this->_houseCache->save($houses[$row->id], $row->id);
-            }
-        }
-
-        return $houses;
-    }
+//    public function fetchObjectsByIdsWithRooms($ids) {      
+//
+//        //get existing house cache
+//        $houses = $this->fetchObjectsByIds($ids);
+//
+//        foreach ($ids as $key => $id) {
+//            //check to see if it is already loaded
+//            if(!empty(self::$_houses[$id]->rooms)){
+//                $houses[$id] = self::$_houses[$id];
+//                unset($ids[$key]);
+//            }
+//            //check cache nexted
+//            elseif (isset($houses[$id]->rooms)) {
+//                //rooms has already be cached
+//                unset($ids[$key]);
+//            }
+//        }
+//
+//        if(!empty($ids)){
+//
+//            $rows = $this->_mapper->fetchObjectsByIdsWithRooms($ids);
+//            if(empty($rows)){
+//                return $houses;
+//            }
+//
+//            foreach ($rows as $row) {
+//                $houses[$row->id] = $row;
+//                self::$_houses[$id] = $houses[$row->id];
+//                $this->_houseCache->save($houses[$row->id], $row->id);
+//            }
+//        }
+//
+//        return $houses;
+//    }
 
     public function save(HomeNet_Model_House_Interface $house) {
         $row = $this->_mapper->save($house);

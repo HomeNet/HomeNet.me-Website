@@ -56,6 +56,10 @@ class HomeNet_Model_NetworkType_Service {
     public function setMapper(HomeNet_Model_NetworkType_MapperInterface $mapper) {
         $this->_mapper = $mapper;
     }
+    
+    public function getTypes(){
+        return array('System','Template','User');
+    }
 
     /**
      * Get NodeModel by id

@@ -53,7 +53,7 @@ class HomeNet_IndexController extends Zend_Controller_Action {
 
         
         if (count($houseIds) > 0) {
-            $this->_forward('home');
+            $this->_forward('Home');
             return;
         }
 

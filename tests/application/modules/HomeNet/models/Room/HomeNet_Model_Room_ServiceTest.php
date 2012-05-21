@@ -17,9 +17,10 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->service = new HomeNet_Model_Room_Service;
         $this->homenetInstaller = new HomeNet_Installer();
         $this->homenetInstaller->installTest(array('house'));
+        
+        $this->service = new HomeNet_Model_Room_Service($this->homenetInstaller->house->id);
     }
 
     /**
@@ -110,71 +111,59 @@ class HomeNet_Model_Room_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException('InvalidArgumentException');
         $this->service->getObjectById(null);
     }
-
-    public function testGetObjectsByHouse_valid() {
+//$this->service->getObjects()///////////////////////////////////////////////////
+    public function testGetObjects_valid() {
         $object = $this->_createValidObject();
-        $results = $this->service->getObjectsByHouse($this->homenetInstaller->house->id);
+        $results = $this->service->getObjects();
 
         $this->assertEquals(1, count($results));
 
         $this->_validateResult($results[0]);
     }
 
-    public function testGetObjectsByHouse_invalid() {
-        $this->markTestIncomplete('More Validation required');
-        $this->setExpectedException('NotFoundException');
-        $this->service->getObjectsByHouse(1000);
-    }
 
-    public function testGetObjectsByHouse_null() {
-        $this->setExpectedException('InvalidArgumentException');
-        $this->service->getObjectsByHouse(null);
-    }
 
-    public function testGetObjectsByHouses_valid() {
+//    public function testGetObjectsByHouses_valid() {
+//        $object = $this->_createValidObject();
+//        $results = $this->service->getObjectsByHouses(array($this->homenetInstaller->house->id, $this->homenetInstaller->house2->id));
+//
+//        $this->assertEquals(1, count($results));
+//
+//        $this->_validateResult($results[0]);
+//    }
+//
+//    public function testGetObjectsByHouses_invalid() {
+//        $this->markTestIncomplete('More Validation required');
+//        $this->setExpectedException('NotFoundException');
+//        $this->service->getObjectsByHouses(array(1000, 1001));
+//    }
+//
+//    public function testGetObjectsByHouses_wrongType() {
+//        $this->markTestIncomplete('More Validation required');
+//        $this->setExpectedException('InvalidArgumentException');
+//        $this->service->getObjectsByHouses(array('wrongtype'));
+//    }
+
+//$this->service->getObjectsByRegion($region)///////////////////////////////////
+    public function testGetObjectsByRegion_valid() {
         $object = $this->_createValidObject();
-        $results = $this->service->getObjectsByHouses(array($this->homenetInstaller->house->id, $this->homenetInstaller->house2->id));
+        $results = $this->service->getObjectsByRegion($object->region);
 
         $this->assertEquals(1, count($results));
 
         $this->_validateResult($results[0]);
     }
 
-    public function testGetObjectsByHouses_invalid() {
-        $this->markTestIncomplete('More Validation required');
-        $this->setExpectedException('NotFoundException');
-        $this->service->getObjectsByHouses(array(1000, 1001));
+    public function testGetObjectsByRegion_invalid() {
+        $this->markTestIncomplete();//@todo validiate that section really exists
+       // $this->setExpectedException('NotFoundException');
+       // $this->service->getObjectsByRegion('15');
     }
 
-    public function testGetObjectsByHouses_wrongType() {
-        $this->markTestIncomplete('More Validation required');
-        $this->setExpectedException('InvalidArgumentException');
-        $this->service->getObjectsByHouses(array('wrongtype'));
-    }
-
-    public function testGetObjectsByHouseRegion_valid() {
-        $object = $this->_createValidObject();
-        $results = $this->service->getObjectsByHouseRegion($object->house, $object->region);
-
-        $this->assertEquals(1, count($results));
-
-        $this->_validateResult($results[0]);
-    }
-
-    public function testGetObjectsByHouseRegion_invalid() {
-        $this->markTestIncomplete('More Validation required');
-        $this->setExpectedException('NotFoundException');
-        $this->service->getObjectsByHouseRegion(1000, '2');
-    }
-
-    public function testGetObjectsByHouseRegion_nullHouse() {
-        $this->setExpectedException('InvalidArgumentException');
-        $this->service->getObjectsByHouseRegion(null, '2');
-    }
     
-    public function testGetObjectsByHouseRegion_nullRegion() {
+    public function testGetObjectsByRegion_null() {
         $this->setExpectedException('InvalidArgumentException');
-        $this->service->getObjectsByHouseRegion(1, null);
+        $this->service->getObjectsByRegion(null);
     }
     
 //$this->service->create($mixed)////////////////////////////////////////////////

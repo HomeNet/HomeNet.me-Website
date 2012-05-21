@@ -33,14 +33,31 @@ class HomeNet_Model_Network_Service {
      * @var HomeNet_Model_Network_MapperInterface
      */
     protected $_mapper;
+    
+    protected $_houseId;
+ 
+    public function __construct($house = null) {
+        $this->setHouseId($house);
+    }
+    
+    public function setHouseId($house){
+        if($house !== null){
+            if (empty($house) || !is_numeric($house)) {
+                throw new InvalidArgumentException('Invalid House ID');
+            }
+            $this->_houseId = $house;
+        }
+    }
+    
+    public function getHouseId(){
+        if($this->_houseId === null){
+            throw new InvalidArgumentException('Invalid House ID');
+        }
+        
+        return $this->_houseId;
+    }
 
-//    /**
-//     * Storage mapper for Internet Networks
-//     * 
-//     * @var HomeNet_Model_Network_Internet_MapperInterface
-//     */
-//    protected $_internetMapper;
-
+    
     /**
      * @return HomeNet_Model_Network_MapperInterface
      */
@@ -73,9 +90,6 @@ class HomeNet_Model_Network_Service {
             array('id'=>8, 'name'=>'Ethernet *Placeholder*', 'plugin'=>'Todo'),
             );
     }
-    
-    
-    
 
      protected function _getPlugin($object){
 
@@ -101,80 +115,61 @@ class HomeNet_Model_Network_Service {
         return $objects;
     }
     
-
-            /**
-     * Get Network by id
+    /**
+     * Get Network objects by House ID
      * 
-     * @param int $id
+     * @param int $house House ID
+     * @return HomeNet_Model_Network[] (HomeNet_Model_Network_Interface[])
+     * @throws InvalidArgumentException
+     */
+    public function getObjects() {
+        $results = $this->getMapper()->fetchObjectsByHouse($this->getHouseId(), HomeNet_Model_Network::STATUS_LIVE);
+
+        return $this->_getPlugins($results);
+    }
+
+    /**
+     * Get Network objects by Network ID
+     * 
+     * @param int $id Network ID
      * @return HomeNet_Model_Network (HomeNet_Model_Network_Abstract)
      * @throws InvalidArgumentException
      * @throws NotFoundException
      */
     public function getObjectById($id) {
         if (empty($id) || !is_numeric($id)) {
-            throw new InvalidArgumentException('Invalid Network');
+            throw new InvalidArgumentException('Invalid Network ID');
         }
 
-        $result = $this->getMapper()->fetchObjectById($id);
+        $result = $this->getMapper()->fetchObjectByHouseId($this->getHouseId(), $id);
         
         if (empty($result)) {
             throw new NotFoundException('Network: ' . $id . ' Not Found', 404);
         }
 
-//        if ($result->type == HomeNet_Model_Network::INTERNET) {
-//            $internet = $this->getInternetMapper()->fetchObjectById($id);
-//
-//            $result->fromArray($internet->toArray());
-//        }
-
         return $this->_getPlugin($result);
-    }
-
-    /**
-     * Get Networks by house id
-     * 
-     * @param int $house
-     * @return HomeNet_Model_Network[] (HomeNet_Model_Network_Interface[])
-     * @throws InvalidArgumentException
-     */
-    public function getObjectsByHouse($house) {
-        if (empty($house) || !is_numeric($house)) {
-            throw new InvalidArgumentException('Invalid House Id');
-        }
-
-        $results = $this->getMapper()->fetchObjectsByHouse($house, HomeNet_Model_Network::STATUS_LIVE);
-   
-//        if (empty($result)) {
-//            throw new NotFoundException('House: '.$house.' Not Found', 404);
-//        }
-        return $this->_getPlugins($results);
     }
   
     /**
-     * Get the Id's of Internet nodes by house
+     * Get Networks objects by House ID, NetworkType ID
      * 
-     * @param int $house
-     * @param int $type
+     * @param int $type Type
      * @return int[]
      * @throws InvalidArgumentException
      */
-    public function getObjectsByHouseType($house, $type) {
-        if (empty($house) || !is_numeric($house)) {
-            throw new InvalidArgumentException('Invalid House Id');
-        }
-        
+    public function getObjectsByType($type) {
+
         if (!is_numeric($type)) {
             throw new InvalidArgumentException('Invalid Type');
         }
         
-        $results = $this->getMapper()->fetchObjectsByHouseType($house, $type);
-
+        $results = $this->getMapper()->fetchObjectsByHouseType($this->getHouseId(), $type);
   
         return $results;
     }
     
     /**
-     * Get new Network Based on a NetworkModel
+     * Get new Network object based on a NetworkType ID
      * 
      * @param type $id
      * @return driver 
@@ -204,24 +199,21 @@ class HomeNet_Model_Network_Service {
     /**
      * shortcut function for adding a new network
      *
-     * @param int $type network type id
      * @param int $house house id
+     * @param int $type network type id
      * @param string $description
      * @param array $settings
      * @return HomeNet_Model_Network (HomeNet_Model_Network_Interface) 
      */
-    public function add($type, $house, $description = '',$settings=array()){
+    public function add($type, $description = '',$settings=array()){
         $object = new HomeNet_Model_Network();
         $object->type = $type;
-        $object->house = $house;
+        $object->house = $this->getHouseId();
         $object->description = $description;
         $object->settings = $settings;
                 
         return $this->create($object);
-        
     }
-
-        
 
     /**
      * Create a new Network

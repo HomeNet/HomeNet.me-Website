@@ -31,16 +31,16 @@ class HomeNet_Model_Node_Manager {
     public static function getNodesByHouse($house){
         
        // if(!isset($_SESSION['HomeNet']['houses'])){
-            $service = new HomeNet_Model_Node_Service();
-            return $service->getObjectsByHouse($house);
+            $service = new HomeNet_Model_Node_Service($house);
+            return $service->getObjects();
         //}
         
        // return $_SESSION['HomeNet']['houses'];
     }
     
     public static function getNodeByHouseAddress($house, $address){
-         $service = new HomeNet_Model_Node_Service();
-         return $service->getObjectByHouseAddress($house, $address);
+         $service = new HomeNet_Model_Node_Service($house);
+         return $service->getObjectByAddress($address);
        // $validHouses = 
         //validate acl for house
         

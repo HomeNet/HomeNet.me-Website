@@ -72,7 +72,13 @@ class HomeNet_Plugin_Navigation extends Zend_Controller_Plugin_Abstract {
             //check to see if it's one of the current users houses'
             if (in_array($house, $userHousesIds)) {
                 //one of the users houses
-                $houses = $service->getObjectsByIdsWithRooms($userHousesIds);
+               // $houses = $service->getObjectsByIdsWithRooms($userHousesIds);
+                foreach($userHousesIds as $value){
+                    $houses[] = $service->getObjectByIdWithRooms($value);
+                }
+                
+                
+                
             } else {
                 //not the users house or is a guest
                 $houses[0] = $service->getObjectByIdWithRooms($house);

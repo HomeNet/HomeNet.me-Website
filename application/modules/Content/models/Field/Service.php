@@ -171,7 +171,7 @@ class Content_Model_Field_Service {
         try {
             $found = $this->getObjectBySectionName($object->section, $object->name);
         } catch (NotFoundException $e) {
-            
+            //throw new DuplicateEntryException('Name already exists ');
         }
 
         if ($found !== null) {
@@ -182,10 +182,9 @@ class Content_Model_Field_Service {
 
         $old = $this->getObjectById($object->id);
 
-
         $field = $this->getMapper()->save($object);
 
-        if ($field->type != Content_Model_Field::SYSTEM) {
+        if (($field->type != Content_Model_Field::SYSTEM) && ($old->name != $field->name)) {
             $service = new Content_Model_Content_Service();
             $service->renameCustomField($old, $field);
         }

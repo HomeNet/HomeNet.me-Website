@@ -27,6 +27,10 @@
  * @author Matthew Doll <mdoll at homenet.me>
  */
 interface HomeNet_Model_Component_MapperInterface {
+    
+    public function setHouseId($house);
+    
+    public function getHouseId();
 
     public function fetchObjectById($id);
 

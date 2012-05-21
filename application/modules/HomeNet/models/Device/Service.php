@@ -33,6 +33,18 @@ class HomeNet_Model_Device_Service {
      * @var HomeNet_Model_DevicesMapperInterface
      */
     protected $_mapper;
+    
+    public function __construct($house = null) {
+        $this->setHouseId($house);
+    }
+    
+    public function setHouseId($house){
+        $this->getMapper()->setHouseId($house);
+    }
+    
+    public function getHouseId(){
+       return $this->getMapper()->getHouseId();
+    }
 
     /**
      * Get storage mapper
@@ -247,10 +259,8 @@ class HomeNet_Model_Device_Service {
      * @throws InvalidArgumentException
      * @throws NotFoundException
      */
-    public function getObjectByHouseNodeaddressPosition($house, $nodeAddress, $position) {
-        if (empty($house) || !is_numeric($house)) {
-            throw new InvalidArgumentException('Invalid House');
-        }
+    public function getObjectByNodeaddressPosition($nodeAddress, $position) {
+
         if (empty($nodeAddress) || !is_numeric($nodeAddress)) {
             throw new InvalidArgumentException('Invalid Node Address');
         }
@@ -258,10 +268,10 @@ class HomeNet_Model_Device_Service {
             throw new InvalidArgumentException('Invalid Device');
         }
         
-        $result = $this->getMapper()->fetchObjectByHouseNodeaddressPosition((int) $house, (int) $nodeAddress, (int) $position);
+        $result = $this->getMapper()->fetchObjectByNodeaddressPosition((int) $nodeAddress, (int) $position);
 
         if (empty($result)) {
-            throw new NotFoundException('Device not found ' . "$house, $nodeAddress, $position", 404);
+            throw new NotFoundException('Device not found ' . "$nodeAddress, $position", 404);
         }
 
         return $this->_getPlugin($result);

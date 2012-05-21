@@ -27,14 +27,18 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3
  */
 interface HomeNet_Model_Room_MapperInterface {
+    
+    public function setHouseId($house);
+    
+    public function getHouseId();
 
     public function fetchObjectById($id);
 
-    public function fetchObjectsByHouse($house);
+    public function fetchObjects();
 
     public function fetchObjectsByHouses($houses);
 
-    public function fetchObjectsByHouseRegion($house, $region);
+    public function fetchObjectsByRegion($region);
 
     public function save(HomeNet_Model_Room_Interface $object);
 

@@ -32,6 +32,32 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
     protected $_table = null;
 
      /**
+     * @var int House ID 
+     */
+    protected $_houseId;
+ 
+    public function __construct($house = null) {
+        $this->setHouseId($house);
+    }
+    
+    public function setHouseId($house){
+        if($house !== null){
+            if (empty($house) || !is_numeric($house)) {
+                throw new InvalidArgumentException('Invalid House ID');
+            }
+            $this->_houseId = $house;
+        }
+    }
+    
+    public function getHouseId(){
+        if($this->_houseId === null){
+            throw new InvalidArgumentException('Invalid House ID');
+        }
+        
+        return $this->_houseId;
+    }    
+    
+     /**
      * @return Zend_Db_Table;
      */
     public function getTable() {
@@ -46,35 +72,10 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
         $this->_table = $table;
     }
 
-//    public function fetchRowById($id) {
-//        return $this->getTable()->find($id)->current();
-//    }
-//
-//    public function fetchDeviceById($id) {
-//
-//        $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
-//        $select->setIntegrityCheck(false)
-//                ->where('id = ?', $id)
-//                ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin'))
-//                ->limit(1);
-//
-//        return $this->getTable()->fetchRow($select);
-//    }
-//
-//    public function fetchDeviceByNodePosition($node, $position) {
-//        $select = $this->getTable()->select()->where('node = ?', $node)
-//                        ->where('position = ?', $position);
-//        $rows = $this->getTable()->fetchAll($select);
-//        if ($rows->count() > 1) {
-//            throw new Zend_Exception('Duplicate Items in database');
-//        }
-//
-//        return $rows->current();
-//    }
-
      public function fetchObjectById($id) {
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
+                ->where('house = ?', $this->getHouseId())
                 ->where('homenet_devices.id = ?', $id)
                 ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin', 'name AS model_name'))
                 ->limit(1);
@@ -83,10 +84,10 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
 
     }
 
-
     public function fetchObjectByNodePosition($node, $position) {
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
+                ->where('house = ?', $this->getHouseId())
                 ->where('node = ?', $node)
                 ->where('position = ?', $position)
                 ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin', 'name AS model_name'))
@@ -96,17 +97,11 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
 
     }
 
-//    public function fetchDevicesByNode($node) {
-//        $select = $this->getTable()->select()->where('node = ?', $node)
-//                        ->order('position ASC');
-//
-//        return $this->getTable()->fetchAll($select);
-//    }
-
     public function fetchObjectsByNode($node, $status = HomeNet_Model_Component::STATUS_LIVE) {
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
                 ->where('node = ?', $node)
+                ->where('house = ?', $this->getHouseId())
                 ->where('homenet_devices.status = ?', $status)
                 ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin', 'name AS model_name'))
                 ->order('position ASC');
@@ -115,13 +110,14 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
 
     }
 
-    public function fetchObjectByHouseNodeaddressPosition($house, $nodeAddress, $position) {
+    public function fetchObjectByNodeaddressPosition($nodeAddress, $position) {
         $select = $this->getTable()->select(Zend_Db_Table::SELECT_WITH_FROM_PART);
         $select->setIntegrityCheck(false)
+                ->where('homenet_devices.house = ?', $this->getHouseId())
                 ->where('homenet_devices.position = ?', $position)
                 ->join('homenet_nodes', 'homenet_nodes.id = homenet_devices.node', array('house'))
                 ->where('homenet_nodes.address = ?', $nodeAddress)
-                ->where('homenet_nodes.house = ?', $house)
+                
                 ->join('homenet_device_models', 'homenet_device_models.id = homenet_devices.model', array('plugin', 'name AS model_name'))
                 ->limit(1);
 
@@ -135,6 +131,7 @@ class HomeNet_Model_Device_MapperDbTable implements HomeNet_Model_Device_MapperI
         $select->setIntegrityCheck(false)
                 ->from(null, array('homenet_devices.position AS device'))
                 ->where('homenet_devices.id = ?', $id)
+                ->where('homenet_devices.house = ?', $this->getHouseId())
                 ->join('homenet_nodes', 'homenet_nodes.id = homenet_devices.node', array('id AS node_id', 'address', 'uplink'))
                 ->limit(1);
 

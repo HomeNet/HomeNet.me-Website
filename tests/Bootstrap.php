@@ -21,7 +21,7 @@
 
 
 
-ini_set("memory_limit", "256M");
+ini_set("memory_limit", "512M");
 error_reporting(-1);
 date_default_timezone_set('America/New_York');
 // Define path to application directory

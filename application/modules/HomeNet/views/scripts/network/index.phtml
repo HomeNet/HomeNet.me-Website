@@ -1,0 +1,41 @@
+<?php echo $this->heading('Networks'); ?>
+
+<div class="cms ui-widget ui-widget-content ui-corner-all">
+<div class="ui-widget-content">
+<table width="100%">
+    <thead class="ui-widget-header">
+        <tr><th width="50">ID</th><th>Type</th><th>Name</th><th>Description</th><th width="55"></th></tr>
+    </thead>
+    <tbody>
+        <?php
+        $service = new HomeNet_Model_NetworkType_Service();
+        $types = $service->getTypes();
+        
+        foreach ($this->networks as $object) {
+            /* @var $object HomeNet_Model_Network */
+        ?>
+        <tr  class="<?php echo $this->cycle(array("", "ui-state-default"))->next() ?>" >
+            <td><?php echo $object->id ?></td>
+            <td><?php echo $types[$object->class] ?></td>
+            <td class="left"><?php echo $object->name ?></td>
+            <td class="left"><?php echo $object->description ?></td>
+            <td>
+                <a class="button" data-text="false" data-icon="ui-icon-pencil" title="Edit Network &quot;<?php echo $object->name ?>&quot;" 
+                   href="<?php echo $this->url(array('controller' => 'network', 'action' => 'edit', 'house' => $object->house, 'id' => $object->id),'homenet-house-id'); ?>">
+                    Edit
+                </a> 
+                <a class="button" data-text="false" data-icon="ui-icon-close" title="Delete Network &quot;<?php echo $object->name ?>&quot;" 
+                   href="<?php echo $this->url(array('controller' => 'network', 'action' => 'delete', 'house' => $object->house, 'id' => $object->id),'homenet-house-id'); ?>">
+                    Delete
+                </a>
+           </td>
+        </tr>
+        <?php
+        }
+        ?>
+    </tbody>
+</table>
+<a class="button" data-icon="ui-icon-plusthick" title="New Network" 
+   href="<?php echo $this->url(array('controller' => 'network', 'action' => 'new', 'house' => $this->house->id), 'homenet-house'); ?>">New</a>
+</div>
+</div>

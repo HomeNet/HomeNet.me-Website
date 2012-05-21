@@ -25,39 +25,32 @@
  * Description of Installer
  *
  * @author Matthew Doll <mdoll at homenet.me>
- */   
-class Content_Plugin_Template_Projects_Installer extends Content_Model_Plugin_Template {
-    
-    function getDependencies(){
+ */
+class Content_Plugin_Template_Blog_Installer extends Content_Model_Plugin_Template {
+
+    public function getDependencies() {
         $dependencies = array(
-            
         );
         return $dependencies;
     }
-     function getFieldSets(){
-        $fieldSets = array();
-        $fieldSets['default'] = array('title' => 'Project', 'visible' => true);
-        return $fieldSets;
+
+    public function getTemplates() {
+
+        $path = dirname(__FILE__);
+
+        $templates = array();
+        $templates[] = array(
+            'type' => Content_Model_Template::TEMPLATE,
+            'url' => 'index',
+            'content' => file_get_contents($path . '/index.phtml'));
+        return $templates;
     }
-    
-    function getFields(){
-        
+
+    public function getFields() {
+
         $fieldSets = $this->getFieldSets();
         $fields = parent::getFields($fieldSets);
-        
-        $fields['title']['label'] = 'Project Name';
-
-         $fields['categories'] = array(
-            'set' => $fieldSets['default'],
-            'order' => 3,
-            'type' => Content_Model_Field::TEMPLATE,
-            'element' => 'Categories',
-            'name' => 'categories',
-            'label' => 'Categories',
-            'locked' => false,
-            'required' => true,
-            'visible' => true);
-         $fields['date'] = array(
+        $fields['date'] = array(
             'set' => $fieldSets['publish'],
             'order' => 4,
             'type' => Content_Model_Field::TEMPLATE,
@@ -67,17 +60,28 @@ class Content_Plugin_Template_Projects_Installer extends Content_Model_Plugin_Te
             'locked' => false,
             'required' => true,
             'visible' => true);
-          $fields['content'] = array(
+        $fields['categories'] = array(
             'set' => $fieldSets['publish'],
             'order' => 2,
+            'type' => Content_Model_Field::TEMPLATE,
+            'element' => 'Categories',
+            'name' => 'categories',
+            'label' => 'Categories',
+            'locked' => false,
+            'required' => true,
+            'visible' => true);
+        $fields['content'] = array(
+            'set' => $fieldSets['publish'],
+            'order' => 3,
             'type' => Content_Model_Field::TEMPLATE,
             'element' => 'Editor',
             'name' => 'content',
             'label' => 'Content',
             'required' => true);
-         return $fields;
+
+        return $fields;
     }
-    
+
 //    function getContent(){
 //        return;
 //    }

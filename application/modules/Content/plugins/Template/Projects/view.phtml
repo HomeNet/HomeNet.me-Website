@@ -1,0 +1,13 @@
+<?php 
+$service = new Content_Model_Content_Service();
+$object = $service->getObjectByUrl($this->params['id']);
+?>
+<article>
+<header>
+<?php
+echo $this->heading($object->title);
+?><p><?php echo $object->date ?></p></header>
+<section>
+<?php echo $object->description ?>
+</section>
+</article>

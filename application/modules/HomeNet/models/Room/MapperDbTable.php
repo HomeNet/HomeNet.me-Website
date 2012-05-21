@@ -29,7 +29,33 @@
  */
 class HomeNet_Model_Room_MapperDbTable implements HomeNet_Model_Room_MapperInterface {
 
-    protected $_table = null;
+    protected $_table;
+    
+     /**
+     * @var int House ID 
+     */
+    protected $_houseId;
+ 
+    public function __construct($house = null) {
+        $this->setHouseId($house);
+    }
+    
+    public function setHouseId($house){
+        if($house !== null){
+            if (empty($house) || !is_numeric($house)) {
+                throw new InvalidArgumentException('Invalid House ID');
+            }
+            $this->_houseId = $house;
+        }
+    }
+    
+    public function getHouseId(){
+        if($this->_houseId === null){
+            throw new InvalidArgumentException('Invalid House ID');
+        }
+        
+        return $this->_houseId;
+    }
 
      /**
      * @return Zend_Db_Table;
@@ -48,12 +74,17 @@ class HomeNet_Model_Room_MapperDbTable implements HomeNet_Model_Room_MapperInter
 
     public function fetchObjectById($id) {
 
-        return $this->getTable()->find($id)->current();
+        $select = $this->getTable()->select()
+                ->where('house = ?', $this->getHouseId())
+                ->where('id = ?', $id)
+                ->limit(1);
+        return $this->getTable()->fetchRow($select);
     }
 
-    public function fetchObjectsByHouse($id) {
+    public function fetchObjects() {
 
-        $select = $this->getTable()->select()->where('house = ?', $id);
+        $select = $this->getTable()->select()
+                ->where('house = ?', $this->getHouseId());
         return $this->getTable()->fetchAll($select);
     }
 
@@ -63,9 +94,11 @@ class HomeNet_Model_Room_MapperDbTable implements HomeNet_Model_Room_MapperInter
         return $this->getTable()->fetchAll($select);
     }
 
-    public function fetchObjectsByHouseRegion($house, $region) {
+    public function fetchObjectsByRegion($region) {
 
-        $select = $this->getTable()->select()->where('house = ?', $house)->where('region = ?', $region);
+        $select = $this->getTable()->select()
+                ->where('house = ?', $this->getHouseId())
+                ->where('region = ?', $region);
         return $this->getTable()->fetchAll($select);
     }
 

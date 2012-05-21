@@ -20,12 +20,11 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
         
         $installer = new Core_Installer();
         $installer->installTest(array('house', 'room', 'node'));
-        
-        
-        $this->service = new HomeNet_Model_Device_Service;
+
         $this->homenetInstaller = new HomeNet_Installer();
         $this->homenetInstaller->installTest(array('house', 'room', 'node'));
-        //$this->homenetInstaller->installOptionalContent(array('device_models', 'component_models'));
+        
+        $this->service = new HomeNet_Model_Device_Service($this->homenetInstaller->house->id);
     }
 
     /**
@@ -209,33 +208,28 @@ class HomeNet_Model_Device_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->service->getObjectsByNode(null);
     }
 
-//$this->service->getObjectByHouseNodeaddressPosition($node,$nodeAddress,$position)
-    public function testGetObjectByHouseNodeaddressPosition_valid() {
+//$this->service->getObjectByNodeaddressPosition($node,$nodeAddress,$position)
+    public function testGetObjectByNodeaddressPosition_valid() {
         $object = $this->_createValidObject();
 
-        $result = $this->service->getObjectByHouseNodeaddressPosition($this->homenetInstaller->house->id, $this->homenetInstaller->node->address, $object->position);
+        $result = $this->service->getObjectByNodeaddressPosition($this->homenetInstaller->node->address, $object->position);
 
         $this->_validateResult($result);
     }
 
-    public function testGetObjectByHouseNodeaddressPosition_invalid() {
+    public function testGetObjectByNodeaddressPosition_invalid() {
         $this->setExpectedException('NotFoundException');
-        $this->service->getObjectByHouseNodeaddressPosition(1000, 1, 1);
+        $this->service->getObjectByNodeaddressPosition(1000, 1);
     }
 
-    public function testGetObjectByHouseNodeaddressPosition_nullHouse() {
+    public function testGetObjectByNodeaddressPosition_nullAddress() {
         $this->setExpectedException('InvalidArgumentException');
-        $this->service->getObjectByHouseNodeaddressPosition(null, 1, 1);
+        $this->service->getObjectByNodeaddressPosition(null, 1);
     }
 
-    public function testGetObjectByHouseNodeaddressPosition_nullAddress() {
+    public function testGetObjectByNodeaddressPosition_nullPosition() {
         $this->setExpectedException('InvalidArgumentException');
-        $this->service->getObjectByHouseNodeaddressPosition(1, null, 1);
-    }
-
-    public function testGetObjectByHouseNodeaddressPosition_nullPosition() {
-        $this->setExpectedException('InvalidArgumentException');
-        $this->service->getObjectByHouseNodeaddressPosition(1, 1, null);
+        $this->service->getObjectByNodeaddressPosition(1, null);
     }
 
 //$this->service->getObjectByIdWithNode($id)////////////////////////////////////    

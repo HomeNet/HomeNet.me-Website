@@ -225,7 +225,7 @@ class Core_Model_Reflection_Service {
         foreach (scandir($path) as $file) {
 
             if (($file != '.') && ($file != '..') && is_dir($path . DIRECTORY_SEPARATOR . $file)) {
-                $iniPath = $path . DIRECTORY_SEPARATOR . $file . DIRECTORY_SEPARATOR . 'Plugin.ini';
+                $iniPath = $path . DIRECTORY_SEPARATOR . $file . DIRECTORY_SEPARATOR . 'plugin.ini';
                 if (file_exists($iniPath)) {
                     // require_once($iniPath);
                     // $className = 'Content_Plugin_Template_' . $file . '_Installer';
@@ -233,9 +233,9 @@ class Core_Model_Reflection_Service {
                     //$templates[$file] = $className;
                     $configs[$file] = new Zend_Config_Ini($iniPath);
                     //$templates[$file] = $config->toArray();
-                    // } else {
-                    //     throw new Exception('Can Not load Template, Class DNE: '.$file );
-                    //  }
+                     } else {
+                         throw new Exception('Can Not load Template, Class DNE: '.$file. ' Path:'.$iniPath );
+                    // }
                 } //throw new Exception('Can Not load Template: '.$classPath );
             }
         }

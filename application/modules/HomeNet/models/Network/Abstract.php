@@ -30,7 +30,9 @@ abstract class HomeNet_Model_Network_Abstract implements HomeNet_Model_Network_I
 
     public $id;
     public $name;
-    public $driver;
+    public $type;
+
+
     public $description = '';
     public $created;
     public $settings = array();
@@ -44,7 +46,7 @@ abstract class HomeNet_Model_Network_Abstract implements HomeNet_Model_Network_I
     public $type_name;
     public $type_settings = array();
     
-    public $type;
+    public $class;
 
 
     protected $_devices;
@@ -72,7 +74,7 @@ abstract class HomeNet_Model_Network_Abstract implements HomeNet_Model_Network_I
 
    public function fromArray(array $array) {
 
-        $vars = array('id', 'status', 'type', 'house', 'description', 'created', 'updated','plugin');
+        $vars = array('id', 'status', 'type', 'house', 'description', 'created', 'updated','plugin','class','name');
 
         foreach ($array as $key => $value) {
             if (in_array($key, $vars)) {

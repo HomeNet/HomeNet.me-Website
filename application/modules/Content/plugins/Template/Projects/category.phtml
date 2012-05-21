@@ -1,0 +1,35 @@
+<?php 
+$service = new Content_Model_Section_Service();
+$section = $service->getObjectByUrl($this->params['section']);
+
+$service = new Content_Model_Category_Service();
+$category = $service->getObjectByUrl($this->params['id']);
+
+$service = new Content_Model_Content_Service();
+$objects = $service->getObjectsBySectionCategory($section->id,$category->id, array(array('order','date_published','DESC')));
+?>
+<header>
+<?php echo $this->heading($category->title); ?>
+<?php if(!empty($category->description)){  ?>
+<p><?php echo $category->description; ?></p>
+<?php } ?>
+</header>
+<?php
+foreach($objects as $object){
+
+$url = $this->url(array('controller'=>'projects', 'id'=>$object->url),'content-view');
+?>
+
+<section>
+<header>
+	<h2><a href="<?php echo $url ?>"><?php echo $object->title; ?></a></h2>
+	<p><?php echo $object->date; ?></p>
+</header>
+<?php echo $object->description->block('divider')->before(); ?>
+<?php 
+if($object->description->block('divider')->exists()){ ?><a class="content-readmore" href="<?php echo $url ?>">Read More</a><?php } ?>
+</section>
+
+<?php
+}
+?>

@@ -1,0 +1,7 @@
+<?php 
+$service = new Content_Model_Content_Service();
+$object = $service->getObjectByUrl($this->params['id']);
+
+echo $this->heading($object->title);
+echo $object->content;
+?>

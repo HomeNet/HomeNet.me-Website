@@ -210,19 +210,19 @@ class HomeNet_Model_House_Service {
      * @throws InvalidArgumentException 
      * @throws NotFoundException 
      */
-    public function getObjectsByIdsWithRooms($ids) {
-
-        if (empty($ids)) {
-            throw new InvalidArgumentException('Missing Houses');
-        }
-
-        $houses = $this->getMapper()->fetchObjectsByIdsWithRooms($ids);
-
-        if (empty($houses)) {
-            throw new NotFoundException('Houses not found', 404);
-        }
-        return $houses;
-    }
+//    public function getObjectsByIdsWithRooms($ids) {
+//
+//        if (empty($ids)) {
+//            throw new InvalidArgumentException('Missing Houses');
+//        }
+//
+//        $houses = $this->getMapper()->fetchObjectsByIdsWithRooms($ids);
+//
+//        if (empty($houses)) {
+//            throw new NotFoundException('Houses not found', 404);
+//        }
+//        return $houses;
+//    }
 
     /**
      * Find all the houses that belong to a user

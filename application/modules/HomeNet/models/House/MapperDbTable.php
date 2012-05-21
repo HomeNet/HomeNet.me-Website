@@ -76,10 +76,12 @@ class HomeNet_Model_House_MapperDbTable implements HomeNet_Model_House_MapperInt
         return $this->getTable()->fetchAll($select);
     }
 
+    
+    //@todo this needs to be replaced with class integration
     public function fetchObjectByIdWithRooms($id) {
         $house = $this->getTable()->find($id)->current();
-
-        $rooms = $this->getRoomsMapper()->fetchObjectsByHouse($id);
+        $this->getRoomsMapper()->setHouseId($id);
+        $rooms = $this->getRoomsMapper()->fetchObjects();
 
         foreach ($rooms as $key => $room) {
             $house->rooms[$room->id] = $room;
@@ -88,25 +90,25 @@ class HomeNet_Model_House_MapperDbTable implements HomeNet_Model_House_MapperInt
         return $house;
     }
 
-    public function fetchObjectsByIdsWithRooms($ids) {
-
-        $results = $this->fetchObjectsByIds($ids);
-
-        $roomsRaw = $this->getRoomsMapper()->fetchObjectsByHouses($ids);
-        //sort rooms into houses
-        $rooms = array_fill_keys($ids, array());
-        foreach ($roomsRaw as $key => $room) {
-            $rooms[$room->house][$room->id] = $room;
-        }
-
-
-        foreach ($results as $key => $value) {
-            if (array_key_exists($value->id, $rooms))
-                $results[$key]->rooms = $rooms[$value->id];
-        }
-
-        return $results;
-    }
+//    public function fetchObjectsByIdsWithRooms($ids) {
+//
+//        $results = $this->fetchObjectsByIds($ids);
+//
+//        $roomsRaw = $this->getRoomsMapper()->fetchObjectsByHouses($ids);
+//        //sort rooms into houses
+//        $rooms = array_fill_keys($ids, array());
+//        foreach ($roomsRaw as $key => $room) {
+//            $rooms[$room->house][$room->id] = $room;
+//        }
+//
+//
+//        foreach ($results as $key => $value) {
+//            if (array_key_exists($value->id, $rooms))
+//                $results[$key]->rooms = $rooms[$value->id];
+//        }
+//
+//        return $results;
+//    }
 
     public function save(HomeNet_Model_House_Interface $object) {
 

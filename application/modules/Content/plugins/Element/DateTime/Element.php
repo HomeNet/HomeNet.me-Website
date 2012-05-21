@@ -227,5 +227,15 @@ A 	Milliseconds from the actual day 	                        Zend_Date::MILLISEC
         $tempDate = new Zend_Date($this->_value, Zend_Date::ISO_8601);        
         return $tempDate->toString($format);  
    }
+   
+   public function render() {
+       
+       if(!empty($this->_options['format'])){
+               // die(strtotime());
+              
+              return $this->format($this->_options['format']);
+       }
+       return parent::render();
+   }
     
 }

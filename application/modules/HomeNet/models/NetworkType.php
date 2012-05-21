@@ -28,6 +28,7 @@ class HomeNet_Model_NetworkType implements HomeNet_Model_NetworkType_Interface {
     
     public $id;
     public $status;
+    public $class;
     public $plugin;
     public $name;
     public $description;
@@ -37,6 +38,11 @@ class HomeNet_Model_NetworkType implements HomeNet_Model_NetworkType_Interface {
     const INACTIVE = -1;
     const TESTING = 0;
     const LIVE = 1;
+    
+    
+  const SYSTEM = 0;
+  const TEMPLATE = 1;
+  const USER = 2;
 
     public function  __construct(array $config = array()) {
         if(isset($config['data'])){

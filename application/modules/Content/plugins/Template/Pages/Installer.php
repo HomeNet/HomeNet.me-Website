@@ -48,16 +48,22 @@ class Content_Plugin_Template_Pages_Installer extends Content_Model_Plugin_Templ
     }
     
     
-    public function getFields($fieldSets){
-         $fields = parent::getFields($fieldSets);
-         $fields[] = array(
-            'set' => $fieldSets['publish'],
+    public function getFields(){
+        
+         $fields = parent::getFields();
+         $fieldSets = $this->getFieldSets();
+         $fields['content'] = array(
+            'set' => $fieldSets['default'],
             'order' => 2,
             'type' => Content_Model_Field::TEMPLATE,
             'element' => 'Editor',
             'name' => 'content',
             'label' => 'Content',
             'required' => true);
+         
+         
+         
+         
          return $fields;
     }
     

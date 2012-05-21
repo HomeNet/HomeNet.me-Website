@@ -56,6 +56,10 @@ echo $this->heading($this->house->name); ?>
    href="<?php echo $this->url(array('controller' => 'apikey', 'action' => 'index', 'house' => $this->house->id), 'homenet-house'); ?>">
     Configure API Keys
 </a>
+<a class="button" data-icon="ui-icon-wrench" title="Configure Networks" 
+   href="<?php echo $this->url(array('controller' => 'network', 'action' => 'index', 'house' => $this->house->id), 'homenet-house'); ?>">
+    Configure Networks
+</a>
 
 
 

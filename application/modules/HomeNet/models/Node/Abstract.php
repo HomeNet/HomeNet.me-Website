@@ -142,7 +142,7 @@ abstract class HomeNet_Model_Node_Abstract implements HomeNet_Model_Node_Interfa
         //die(debugArray($this->settings));
 
         if(!isset($this->_devices)){
-            $dService = new HomeNet_Model_Device_Service();
+            $dService = new HomeNet_Model_Device_Service($this->house);
             $this->_devices = $dService->getObjectsByNode($this->id);
         }
         return $this->_devices;

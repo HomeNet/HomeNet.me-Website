@@ -44,7 +44,7 @@ class HomeNet_Form_NetworkTypes extends CMS_Form
         
 
         $type = $this->createElement('radio', 'network');
-        $type->setLabel("Primary Network");
+        $type->setLabel("Networks");
         $type->setRequired('true');
         
         $type->setMultiOptions($array);

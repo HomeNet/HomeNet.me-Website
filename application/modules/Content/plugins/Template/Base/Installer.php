@@ -36,8 +36,8 @@ class Content_Plugin_Template_Base_Installer extends Content_Model_Plugin_Templa
     }
     
     
-    function getFields($fieldSets){
-         $fields = parent::getFields($fieldSets);
+    function getFields(){
+         $fields = parent::getFields();
 //         $fields[] = array(
 //            'set' => $fieldSets['publish'],
 //            'order' => 2,

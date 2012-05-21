@@ -65,7 +65,7 @@ class CMS_View_Helper_FormJsCodeEditor extends CMS_View_Helper_FormJsElement
 
         //$params['layout'] = 'gallery';
        // $params['types'] = 'images';
-        
+        $this->view->headScript()->appendFile('/js/libs/jquery.base64.min.js');
         $this->view->headScript()->appendFile('/plugins/codemirror/lib/codemirror.js');
         $this->view->headLink()->appendStylesheet('/plugins/codemirror/lib/codemirror.css');
         $this->view->headLink()->appendStylesheet('/plugins/codemirror/theme/default.css');
@@ -94,7 +94,16 @@ class CMS_View_Helper_FormJsCodeEditor extends CMS_View_Helper_FormJsElement
         
         unset($params['type']);
            $this->view->jquery()->addOnLoad('var editor = CodeMirror.fromTextArea(document.getElementById("'.$attribs['id'].'"), '.str_replace('\/', '/', Zend_Json::encode($params,false,
-    array('enableJsonExprFinder' => true))).');');    
+    array('enableJsonExprFinder' => true))).");
+                   
+        var jEditor =  $('#$name');        
+        jEditor.parents('form').submit(function(){
+                 jEditor.val($.base64.encode(jEditor.val()));
+
+      })
+
+
+");    
 
         
         return '<textarea '.$this->_htmlAttribs($attribs).'>'.$value.'</textarea>';

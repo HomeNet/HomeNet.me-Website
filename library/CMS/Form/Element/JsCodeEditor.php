@@ -32,4 +32,12 @@ class CMS_Form_Element_JsCodeEditor extends CMS_Form_Element_JsElement
      */
     public $helper = 'formJsCodeEditor';
     public $wide = true;
+    
+   // private $decoded = false;
+    
+    public function __construct($spec, $options = null) {
+        parent::__construct($spec, $options);
+    }
+
+
 }

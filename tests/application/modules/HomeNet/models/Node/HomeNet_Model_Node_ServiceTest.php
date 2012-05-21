@@ -16,7 +16,7 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->service = new HomeNet_Model_Node_Service;
+        $this->service = new HomeNet_Model_Node_Service(1);
         $this->service->deleteAll();
         
         
@@ -61,14 +61,16 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
             'settings' => array('key' => 'value'));
         $service = new HomeNet_Model_NodeModel_Service;
         $model = $service->create($array);
+        
+        $this->service->setHouseId(4 + $seed);
 
         return $array = array(
             'status' => HomeNet_Model_Node::STATUS_LIVE,
             'address' => 1 + $seed,
-            'networks'=>array(1=>'192.168.1.'+$seed),
+            'networks'=>array(1=>'192.168.1.'.$seed),
             'model' => $model->id,
             'uplink' => 1 + $seed,
-            'house' => 4 + $seed,
+            'house' => $this->service->getHouseId(),
             'room' => 5 + $seed,
             'description' => 'test description' . $seed,
             'settings' => array('key' => 'value' . $seed));
@@ -90,7 +92,7 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertNotNull($result->id);
         $this->assertEquals(1+$seed, $result->address);
       //  $this->assertEquals(2, $result->model);
-        $this->assertEquals('192.168.1.'+$seed, $result->networks[1]);
+        $this->assertEquals('192.168.1.'.$seed, $result->networks[1]);
         $this->assertEquals(1+$seed, $result->uplink);
         $this->assertEquals(4+$seed, $result->house);
         $this->assertEquals(5+$seed, $result->room);
@@ -114,6 +116,33 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('HomeNet_Model_Node_MapperInterface', $this->service->getMapper());
         $this->assertEquals($mapper, $this->service->getMapper());
     }
+//$this->service->getObjectsByNetwork($network)////////////////////////////////////////////  
+     public function testGetObjectsByNetwork_valid() {
+        $object = $this->_createValidObject();
+        $result = $this->service->getObjectsByNetwork(1);
+
+         $this->_validateResult($result[0]);
+    }
+    
+     public function testGetObjectsByNetwork_null() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->service->getObjectsByNetwork(null);
+
+    }
+    
+//$this->service->getObjectByNetworkAddress($network, $address)////////////////////////////////////////////
+    public function testGetObjectByNetworkAddress_valid() {
+        $object = $this->_createValidObject();
+         $result = $this->service->getObjectByNetworkAddress(1, $object->networks[1]);
+
+          $this->_validateResult($result);
+    }
+    
+    public function testGetObjectByNetworkAddress_null() {
+$this->setExpectedException('InvalidArgumentException');
+         $this->service->getObjectByNetworkAddress(null, 'test');
+    }
+    
     
 //$this->service->getObjectById($id)////////////////////////////////////////////
    public function testGetObjectById_valid() {
@@ -134,30 +163,22 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->service->getObjectById(null);
     }
 
-//$this->service->getObjectByHouse($house)//////////////////////////////////////
-    public function testGetObjectsByHouse_valid() {
+//$this->service->getObject()///////////////////////////////////////////////////
+    public function testGetObjects_valid() {
         $object = $this->_createValidObject();
         
-        $results = $this->service->getObjectsByHouse($object->house);
+        $results = $this->service->getObjects();
 
         $this->assertEquals(1, count($results));
         $this->_validateResult($results[0]);
     }
-     public function testGetObjectsByHouse_null() {
-        $this->setExpectedException('InvalidArgumentException');
-        $results = $this->service->getObjectsByHouse(null);
-    }
     
 //$this->service->getTrashedObjectsByHouse($house)//////////////////////////////
-    public function testGetTrashedObjectsByHouse_valid() {
+    public function testGetTrashedObjects_valid() {
         $object = $this->_createValidObject();
-        $results = $this->service->getTrashedObjectsByHouse($object->house);
+        $results = $this->service->getTrashedObjects();
         $this->assertEquals(0, count($results));
        // $this->_validateResult($results[0]);
-    }
-    public function testGetTrashedObjectsByHouse_null() {
-        $this->setExpectedException('InvalidArgumentException');
-        $results = $this->service->getTrashedObjectsByHouse(null);
     }
     
 //$this->service->getObjectByRoom($room)////////////////////////////////////////
@@ -167,79 +188,61 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(1, count($results));
         $this->_validateResult($results[0]);
     }
+    
     public function testGetObjectsByRoom_null() {
         $this->setExpectedException('InvalidArgumentException');
         $results = $this->service->getObjectsByRoom(null);
     }
     
-//$this->service->getObjectByHouseAddress($house, $address)/////////////////////
-    public function testGetObjectByHouseAddress_valid() {
+//$this->service->getObjectByAddress($address)//////////////////////////////////
+    public function testGetObjectByAddress_valid() {
         $object = $this->_createValidObject();
-        $result = $this->service->getObjectByHouseAddress($object->house, $object->address);
+        $result = $this->service->getObjectByAddress($object->address);
         
         $this->_validateResult($result);
     }
-    public function testGetObjectByHouseAddress_houseNull() {
+    
+    public function testGetObjectByAddress_null() {
         $this->setExpectedException('InvalidArgumentException');
-        $result = $this->service->getObjectByHouseAddress(null, 1);
+        $result = $this->service->getObjectByAddress(null);
     }
-    public function testGetObjectByHouseAddress_addressNull() {
-        $this->setExpectedException('InvalidArgumentException');
-        $result = $this->service->getObjectByHouseAddress(1, null);
-    }
-    public function testGetObjectByHouseAddress_notFound() {
+
+    public function testGetObjectByAddress_notFound() {
         $this->setExpectedException('NotFoundException');
-        $result = $this->service->getObjectByHouseAddress(100, 100);
+        $result = $this->service->getObjectByAddress(100);
     }
 
 //$this->service->getNextAddressByHouse($house)/////////////////////////////////
-    public function testGetNextAddressByHouse_valid() {
+    public function testGetNextAddress_valid() {
         $object = $this->_createValidObject();
-        $result = $this->service->getNextAddressByHouse($object->house);
+        $result = $this->service->getNextAddress();
 
         $this->assertGreaterThan($object->address, $result);
     }
-    public function testGetNextAddressByHouse_null() {
-        $this->setExpectedException('InvalidArgumentException');
-        $result = $this->service->getNextAddressByHouse(null);
-    }
-    public function testGetNextAddressByHouse_notFound() {
-        $this->setExpectedException('NotFoundException');
-        $result = $this->service->getNextAddressByHouse(100);
-    }
-
-//$this->service->getObjectsByHouseType($house, $type)//////////////////////////
-    public function testGetObjectsByHouseType_valid() {
+//$this->service->getObjectsByType($type)///////////////////////////////////////
+    public function testGetObjectsByType_valid() {
         $object = $this->_createValidObject();
         
-        $results = $this->service->getObjectsByHouseType($object->house, HomeNet_Model_Node::SENSOR);
+        $results = $this->service->getObjectsByType(HomeNet_Model_Node::SENSOR);
         $this->assertEquals(1, count($results));
         $this->_validateResult($results[0]);
     }
-    public function testGetObjectsByHouseType_houseNull() {
+
+     public function testGetObjectsByHouseType_null() {
         $this->setExpectedException('InvalidArgumentException');
-        $results = $this->service->getObjectsByHouseType(null, HomeNet_Model_Node::SENSOR);
+        $results = $this->service->getObjectsByType(null);
     }
-     public function testGetObjectsByHouseType_statusNull() {
-        $this->setExpectedException('InvalidArgumentException');
-        $results = $this->service->getObjectsByHouseType(100, null);
-    }
-//$this->service->getUplinksByHouse($house)/////////////////////////////////////
+//$this->service->getUplinks()////////////////////////////////////////////////////
     /**
      * @todo create internet node to test against
      */
-    public function testGetUplinksByHouse_valid() {
+    public function testGetUplinks_valid() {
         $object = $this->_createValidObject();
         
-        $results = $this->service->getUplinksByHouse($object->house);
+        $results = $this->service->getUplinks();
         $this->assertEquals(0, count($results));
     }
-    public function testGetUplinksByHouse_null() {
-        $this->setExpectedException('InvalidArgumentException');
-        
-        $results = $this->service->getUplinksByHouse(null);
-    }
-    
+
 //$this->service->newObjectFromModel($model)////////////////////////////////////
     public function testNewObjectByModel_valid() {
         $object = $this->_createValidObject();
@@ -382,7 +385,7 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
        // $homenetInstaller->installOptionalContent($homenetInstaller->getOptionalContent());
 
 
-        $object = $this->service->newObjectFromModel(16); //jeelink
+        $object = $this->service->newObjectFromModel(13); //jeelink
         $object->address = 1;
         $object->house = $homenetInstaller->house->id;
         $object->room = $homenetInstaller->room->id;
@@ -391,7 +394,7 @@ class HomeNet_Model_Node_ServiceTest extends PHPUnit_Framework_TestCase {
 
         $this->assertInstanceOf('HomeNet_Model_Node_Abstract', $result);
         $this->assertEquals(1, $result->address);
-        $this->assertEquals(16, $result->model);
+        $this->assertEquals(13, $result->model);
         //$this->assertEquals('192.168.1.'+$seed, $result->networks[1]);
         // $this->assertEquals(1+$seed, $result->uplink);
         $this->assertEquals($homenetInstaller->house->id, $result->house);

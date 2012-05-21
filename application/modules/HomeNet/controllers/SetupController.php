@@ -131,7 +131,9 @@ class HomeNet_SetupController extends Zend_Controller_Action {
             }
         }
 
-        //die(debugArray($this->_house));
+        if ($this->_wizard == 'finished') {
+            $this->_house->clearSetting('wizard');
+        }
 
 
 
@@ -285,9 +287,9 @@ class HomeNet_SetupController extends Zend_Controller_Action {
             }
 
             //add Core Networks
-            $networkService = new HomeNet_Model_Network_Service();
-            $ip = $networkService->add(1, $this->_house->id);
-            $serial = $networkService->add(2, $this->_house->id);
+            $networkService = new HomeNet_Model_Network_Service($this->_house->id);
+            $ip = $networkService->add(1);
+            $serial = $networkService->add(2);
 
             $ipaddress = '127.0.0.1'; //localhost
             if (!empty($_SERVER['REMOTE_ADDR'])) {
@@ -363,18 +365,15 @@ class HomeNet_SetupController extends Zend_Controller_Action {
         }
         $uplink = current($ids);
 
-
         //get addtional networks
         $nodeModelService = new HomeNet_Model_NodeModel_Service();
         $model = $nodeModelService->getObjectById($values['model']);
 
-
-
         $networks = array_flip(array_diff($model->network_types, array(1, 2)));
 
-        $networkService = new HomeNet_Model_Network_Service();
+        $networkService = new HomeNet_Model_Network_Service($this->_house->id);
         foreach ($networks as $key => $value) {
-            $networks[$key] = $networkService->add($key, $this->_house->id)->id;
+            $networks[$key] = $networkService->add($key)->id;
         }
 
         $rooms = $this->_house->getRooms();
@@ -383,11 +382,9 @@ class HomeNet_SetupController extends Zend_Controller_Action {
             break;
         }
 
-
-
         //add homenet app 
         $nodeService = new HomeNet_Model_Node_Service();
-        $nodeService->add($values['model'], $this->_house->id, $room->id, null, 'Base Station Node', null, 1, 2);
+        $nodeService->add($this->_house->id, $room->id, null, 'Base Station Node', null, 1, 2);
 
 
 //        $node = $nService->newObjectFromModel($values['model']);

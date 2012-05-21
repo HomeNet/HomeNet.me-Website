@@ -32,7 +32,7 @@ interface HomeNet_Model_House_MapperInterface {
 
     public function fetchObjectByIdWithRooms($id);
 
-    public function fetchObjectsByIdsWithRooms($ids);
+   // public function fetchObjectsByIdsWithRooms($ids);
 
     public function save(HomeNet_Model_House_Interface $object);
 
